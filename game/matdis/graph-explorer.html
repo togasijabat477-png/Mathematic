@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graf Explorer – Matematika Diskrit</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050b14;
+  --surface: #0a1628;
+  --surface2: #0f1f3a;
+  --border: #1a3a5c;
+  --teal: #00e5cc;
+  --teal-dim: #00e5cc44;
+  --amber: #ffb020;
+  --amber-dim: #ffb02033;
+  --red: #ff4d6a;
+  --green: #39e75f;
+  --fg: #e2f0ff;
+  --fg2: #7a9bbf;
+  --font-head: 'Orbitron', monospace;
+  --font-body: 'Space Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,204,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,204,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+
+/* Header */
+.header {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(5,11,20,0.9);
+  backdrop-filter: blur(10px);
+}
+.back-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: var(--teal); text-decoration: none;
+  font-size: 0.75rem; font-family: var(--font-body);
+  border: 1px solid var(--teal-dim);
+  padding: 0.4rem 0.9rem; border-radius: 0.4rem;
+  transition: all 0.2s;
+}
+.back-btn:hover { background: var(--teal-dim); }
+.game-title {
+  font-family: var(--font-head);
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 20px rgba(0,229,204,0.5);
+}
+.hud {
+  display: flex; gap: 1.25rem; align-items: center;
+}
+.hud-item { text-align: center; }
+.hud-val {
+  font-family: var(--font-head);
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--amber);
+}
+.hud-label { font-size: 0.6rem; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Main Layout */
+.main {
+  position: relative; z-index: 1;
+  flex: 1; display: flex; flex-direction: column;
+  padding: 1rem 1.5rem 1.5rem;
+  gap: 1rem;
+}
+
+/* Mission Panel */
+.mission-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: 1rem;
+  flex-wrap: wrap;
+}
+.mission-badge {
+  background: var(--teal-dim);
+  border: 1px solid var(--teal);
+  color: var(--teal);
+  font-family: var(--font-head);
+  font-size: 0.65rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 2rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.mission-text { font-size: 0.85rem; color: var(--fg2); flex: 1; }
+.mission-text strong { color: var(--fg); }
+
+/* Game Area */
+.game-area {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1rem;
+  flex: 1;
+}
+@media (max-width: 700px) {
+  .game-area { grid-template-columns: 1fr; }
+}
+
+/* Canvas */
+.canvas-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  position: relative;
+  min-height: 380px;
+}
+canvas { display: block; width: 100%; height: 100%; }
+
+/* Sidebar */
+.sidebar { display: flex; flex-direction: column; gap: 0.75rem; }
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.panel-title {
+  font-family: var(--font-head);
+  font-size: 0.65rem;
+  color: var(--teal);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Path Display */
+.path-display {
+  display: flex; flex-wrap: wrap; gap: 0.35rem;
+  min-height: 2rem; align-items: center;
+}
+.path-node {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--amber);
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+}
+.path-arrow { color: var(--fg2); font-size: 0.7rem; }
+.path-empty { color: var(--fg2); font-size: 0.75rem; font-style: italic; }
+
+/* Info */
+.info-rows { display: flex; flex-direction: column; gap: 0.5rem; }
+.info-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; }
+.info-key { color: var(--fg2); }
+.info-val { color: var(--fg); font-family: var(--font-head); font-size: 0.65rem; }
+.tag-yes { color: var(--green); }
+.tag-no  { color: var(--red); }
+.tag-maybe { color: var(--amber); }
+
+/* Level list */
+.level-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.level-btn {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--fg2); font-family: var(--font-body);
+  font-size: 0.7rem; padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: all 0.2s; text-align: left;
+}
+.level-btn:hover { border-color: var(--teal); color: var(--fg); }
+.level-btn.active { border-color: var(--teal); background: var(--teal-dim); color: var(--teal); }
+.level-btn.done { border-color: var(--green); color: var(--green); }
+.level-stars { color: var(--amber); font-size: 0.65rem; }
+
+/* Buttons */
+.btn {
+  background: transparent; border: 1px solid var(--teal);
+  color: var(--teal); font-family: var(--font-head);
+  font-size: 0.65rem; letter-spacing: 0.08em;
+  padding: 0.55rem 1rem; border-radius: 0.4rem;
+  cursor: pointer; transition: all 0.2s; width: 100%;
+  text-transform: uppercase;
+}
+.btn:hover { background: var(--teal-dim); box-shadow: 0 0 20px rgba(0,229,204,0.2); }
+.btn-amber { border-color: var(--amber); color: var(--amber); }
+.btn-amber:hover { background: var(--amber-dim); }
+.btn-red { border-color: var(--red); color: var(--red); }
+.btn-red:hover { background: rgba(255,77,106,0.15); }
+
+/* Feedback */
+.feedback {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.8);
+  background: var(--surface2); border-radius: 1rem;
+  padding: 2.5rem 3rem; text-align: center;
+  border: 2px solid var(--teal);
+  box-shadow: 0 0 60px rgba(0,229,204,0.3);
+  z-index: 100;
+  opacity: 0; pointer-events: none;
+  transition: all 0.3s;
+}
+.feedback.show { opacity: 1; pointer-events: all; transform: translate(-50%,-50%) scale(1); }
+.feedback.fail { border-color: var(--red); box-shadow: 0 0 60px rgba(255,77,106,0.3); }
+.feedback-emoji { font-size: 3rem; margin-bottom: 0.75rem; }
+.feedback-title {
+  font-family: var(--font-head); font-size: 1.3rem; font-weight: 900;
+  color: var(--teal); margin-bottom: 0.5rem;
+}
+.feedback.fail .feedback-title { color: var(--red); }
+.feedback-sub { color: var(--fg2); font-size: 0.8rem; margin-bottom: 1.5rem; }
+.feedback-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+
+/* Overlay */
+.overlay {
+  position: fixed; inset: 0; background: rgba(5,11,20,0.7);
+  backdrop-filter: blur(4px); z-index: 99;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.overlay.show { opacity: 1; pointer-events: all; }
+</style>
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '../../index.html?page=game';
+  }
+}
+</script>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<header class="header">
+  <a class="back-btn" href="#" onclick="goBack();return false;">← Kembali</a>
+  <div class="game-title">⬡ Graf Explorer</div>
+  <div class="hud">
+    <div class="hud-item">
+      <div class="hud-val" id="hudScore">0</div>
+      <div class="hud-label">Skor</div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-val" id="hudLevel">1</div>
+      <div class="hud-label">Level</div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-val" id="hudMoves">0</div>
+      <div class="hud-label">Langkah</div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="mission-panel">
+    <div class="mission-badge" id="missionBadge">EULER PATH</div>
+    <div class="mission-text" id="missionText">Klik node untuk memulai. <strong>Tujuan:</strong> Lewati setiap <strong>edge (sisi)</strong> tepat satu kali!</div>
+  </div>
+
+  <div class="game-area">
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <div class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Jalur Saat Ini</div>
+        <div class="path-display" id="pathDisplay">
+          <span class="path-empty">Belum ada langkah...</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Info Graf</div>
+        <div class="info-rows" id="infoRows">
+          <div class="info-row"><span class="info-key">Node</span><span class="info-val" id="infoNodes">-</span></div>
+          <div class="info-row"><span class="info-key">Edge</span><span class="info-val" id="infoEdges">-</span></div>
+          <div class="info-row"><span class="info-key">Tipe Misi</span><span class="info-val" id="infoType">-</span></div>
+          <div class="info-row"><span class="info-key">Edge Dilalui</span><span class="info-val" id="infoVisited">0 / 0</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Level</div>
+        <div class="level-list" id="levelList"></div>
+      </div>
+
+      <button class="btn btn-amber" onclick="resetPath()">↺ Ulangi Jalur</button>
+      <button class="btn btn-red" onclick="loadLevel(currentLevel)">⟳ Reset Level</button>
+    </div>
+  </div>
+</main>
+
+<!-- Feedback Modal -->
+<div class="feedback" id="feedback">
+  <div class="feedback-emoji" id="fbEmoji">🎉</div>
+  <div class="feedback-title" id="fbTitle">Berhasil!</div>
+  <div class="feedback-sub" id="fbSub">Jalur Euler ditemukan!</div>
+  <div class="feedback-btns">
+    <button class="btn" onclick="nextLevel()">Level Berikutnya →</button>
+    <button class="btn btn-amber" onclick="closeFeedback()">Coba Lagi</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('canvasWrap');
+
+let W, H, scale;
+let nodes = [], edges = [], visitedEdges = new Set();
+let path = [], currentNode = null;
+let score = 0, currentLevel = 0;
+
+// ─── Level Definitions ───────────────────────────────────────
+const levels = [
+  {
+    name: 'Königsberg Dasar',
+    type: 'euler',
+    desc: 'Lewati setiap <strong>edge</strong> tepat satu kali (Jalur Euler)',
+    nodes: [
+      {id:0,x:0.25,y:0.5,label:'A'},
+      {id:1,x:0.5, y:0.25,label:'B'},
+      {id:2,x:0.75,y:0.5, label:'C'},
+      {id:3,x:0.5, y:0.75,label:'D'},
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,0],[0,2]],
+  },
+  {
+    name: 'Segi Enam',
+    type: 'euler',
+    desc: 'Lewati setiap <strong>edge</strong> tepat satu kali (Jalur Euler)',
+    nodes: [
+      {id:0,x:0.5, y:0.15,label:'A'},
+      {id:1,x:0.78,y:0.33,label:'B'},
+      {id:2,x:0.78,y:0.67,label:'C'},
+      {id:3,x:0.5, y:0.85,label:'D'},
+      {id:4,x:0.22,y:0.67,label:'E'},
+      {id:5,x:0.22,y:0.33,label:'F'},
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[0,3],[1,4]],
+  },
+  {
+    name: 'Hamilton Dasar',
+    type: 'hamilton',
+    desc: 'Kunjungi setiap <strong>node</strong> tepat satu kali (Sirkuit Hamilton)',
+    nodes: [
+      {id:0,x:0.2, y:0.2,label:'A'},
+      {id:1,x:0.8, y:0.2,label:'B'},
+      {id:2,x:0.8, y:0.8,label:'C'},
+      {id:3,x:0.2, y:0.8,label:'D'},
+      {id:4,x:0.5, y:0.5,label:'E'},
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,0],[0,4],[1,4],[2,4],[3,4]],
+  },
+  {
+    name: 'Bintang Lima',
+    type: 'euler',
+    desc: 'Gambar bintang tanpa mengangkat pena! (Jalur Euler)',
+    nodes: [
+      {id:0,x:0.5, y:0.1, label:'A'},
+      {id:1,x:0.85,y:0.65,label:'B'},
+      {id:2,x:0.18,y:0.38,label:'C'},
+      {id:3,x:0.82,y:0.38,label:'D'},
+      {id:4,x:0.15,y:0.65,label:'E'},
+    ],
+    edges: [[0,2],[2,1],[1,3],[3,4],[4,0]],
+  },
+  {
+    name: 'Petersen Mini',
+    type: 'hamilton',
+    desc: 'Temukan sirkuit Hamilton di graf ini!',
+    nodes: [
+      {id:0,x:0.5, y:0.15,label:'A'},
+      {id:1,x:0.82,y:0.38,label:'B'},
+      {id:2,x:0.7, y:0.78,label:'C'},
+      {id:3,x:0.3, y:0.78,label:'D'},
+      {id:4,x:0.18,y:0.38,label:'E'},
+      {id:5,x:0.5, y:0.38,label:'F'},
+      {id:6,x:0.65,y:0.55,label:'G'},
+      {id:7,x:0.58,y:0.75,label:'H'},
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4],[4,0],[0,5],[1,6],[2,7],[3,5],[4,6],[5,7],[6,7]],
+  },
+];
+
+function resize() {
+  W = wrap.clientWidth;
+  H = wrap.clientHeight;
+  canvas.width = W;
+  canvas.height = H;
+  scale = Math.min(W, H);
+  render();
+}
+
+// ─── Coordinate helpers ───────────────────────────────────────
+function nx(n) { return n.x * W * 0.82 + W * 0.09; }
+function ny(n) { return n.y * H * 0.82 + H * 0.09; }
+const R = () => Math.max(18, scale * 0.035);
+
+// ─── Rendering ────────────────────────────────────────────────
+function render() {
+  ctx.clearRect(0, 0, W, H);
+
+  const lvl = levels[currentLevel];
+
+  // Draw edges
+  lvl.edges.forEach((e, i) => {
+    const a = nodes[e[0]], b = nodes[e[1]];
+    const visited = visitedEdges.has(edgeKey(e[0], e[1]));
+    ctx.beginPath();
+    ctx.moveTo(nx(a), ny(a));
+    ctx.lineTo(nx(b), ny(b));
+    ctx.lineWidth = visited ? 4 : 2.5;
+    ctx.strokeStyle = visited ? '#00e5cc' : '#1a3a5c';
+    if (visited) {
+      ctx.shadowColor = '#00e5cc';
+      ctx.shadowBlur = 12;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  });
+
+  // Draw path highlight
+  for (let i = 0; i < path.length - 1; i++) {
+    const a = nodes[path[i]], b = nodes[path[i+1]];
+    ctx.beginPath();
+    ctx.moveTo(nx(a), ny(a));
+    ctx.lineTo(nx(b), ny(b));
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = 'rgba(0,229,204,0.3)';
+    ctx.stroke();
+  }
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const x = nx(n), y = ny(n), r = R();
+    const isCurrent = currentNode === n.id;
+    const inPath = path.includes(n.id);
+    const isStart = path[0] === n.id;
+
+    // Glow
+    if (isCurrent) {
+      ctx.beginPath();
+      ctx.arc(x, y, r + 8, 0, Math.PI * 2);
+      const g = ctx.createRadialGradient(x, y, r, x, y, r + 12);
+      g.addColorStop(0, 'rgba(0,229,204,0.4)');
+      g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g;
+      ctx.fill();
+    }
+
+    // Circle
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = isCurrent ? '#00e5cc'
+      : isStart && path.length > 0 ? '#ffb02033'
+      : inPath ? '#0f2a4a'
+      : '#0a1628';
+    ctx.fill();
+    ctx.strokeStyle = isCurrent ? '#00e5cc'
+      : isStart && path.length > 0 ? '#ffb020'
+      : inPath ? '#00e5cc88'
+      : '#1a3a5c';
+    ctx.lineWidth = isCurrent ? 3 : 2;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = isCurrent ? '#050b14' : '#e2f0ff';
+    ctx.font = `bold ${Math.max(10, r * 0.7)}px 'Orbitron', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(n.label, x, y);
+  });
+
+  // Update info
+  document.getElementById('infoNodes').textContent = nodes.length;
+  document.getElementById('infoEdges').textContent = lvl.edges.length;
+  document.getElementById('infoType').textContent = lvl.type === 'euler' ? 'Euler Path' : 'Hamilton Circuit';
+  document.getElementById('infoVisited').textContent = visitedEdges.size + ' / ' + (lvl.type === 'euler' ? lvl.edges.length : nodes.length);
+}
+
+function edgeKey(a, b) { return Math.min(a,b) + '-' + Math.max(a,b); }
+
+// ─── Interaction ───────────────────────────────────────────────
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const r = R();
+
+  nodes.forEach(n => {
+    const dx = nx(n) - mx, dy = ny(n) - my;
+    if (Math.sqrt(dx*dx + dy*dy) < r + 6) {
+      clickNode(n.id);
+    }
+  });
+});
+
+function clickNode(nid) {
+  const lvl = levels[currentLevel];
+
+  if (currentNode === null) {
+    // Start
+    currentNode = nid;
+    path = [nid];
+    updatePathDisplay();
+    render();
+    return;
+  }
+
+  if (nid === currentNode) return; // same node
+
+  if (lvl.type === 'euler') {
+    // Check edge exists and not visited
+    const hasEdge = lvl.edges.some(e =>
+      (e[0] === currentNode && e[1] === nid) || (e[1] === currentNode && e[0] === nid)
+    );
+    if (!hasEdge) { flash('Tidak ada edge langsung!'); return; }
+    const key = edgeKey(currentNode, nid);
+    if (visitedEdges.has(key)) { flash('Edge sudah dilalui!'); return; }
+    visitedEdges.add(key);
+    path.push(nid);
+    currentNode = nid;
+
+    if (visitedEdges.size === lvl.edges.length) {
+      setTimeout(() => showWin(lvl), 200);
+    }
+  } else {
+    // Hamilton
+    if (path.includes(nid) && !(nid === path[0] && path.length === nodes.length)) {
+      flash('Node sudah dikunjungi!'); return;
+    }
+    const hasEdge = lvl.edges.some(e =>
+      (e[0] === currentNode && e[1] === nid) || (e[1] === currentNode && e[0] === nid)
+    );
+    if (!hasEdge) { flash('Tidak ada edge langsung!'); return; }
+
+    path.push(nid);
+    currentNode = nid;
+    visitedEdges.add(edgeKey(path[path.length-2], nid));
+
+    if (path.length === nodes.length + 1 && nid === path[0]) {
+      setTimeout(() => showWin(lvl), 200);
+    }
+  }
+
+  updatePathDisplay();
+  render();
+}
+
+let flashTimeout;
+function flash(msg) {
+  const m = document.getElementById('missionText');
+  const orig = m.innerHTML;
+  m.innerHTML = `<span style="color:var(--red)">⚠ ${msg}</span>`;
+  clearTimeout(flashTimeout);
+  flashTimeout = setTimeout(() => m.innerHTML = orig, 1400);
+}
+
+function updatePathDisplay() {
+  const pd = document.getElementById('pathDisplay');
+  if (path.length === 0) {
+    pd.innerHTML = '<span class="path-empty">Belum ada langkah...</span>';
+    return;
+  }
+  pd.innerHTML = path.map((id, i) =>
+    `${i > 0 ? '<span class="path-arrow">→</span>' : ''}<span class="path-node">${nodes[id].label}</span>`
+  ).join('');
+  document.getElementById('hudMoves').textContent = path.length - 1;
+}
+
+function resetPath() {
+  path = []; currentNode = null; visitedEdges.clear();
+  updatePathDisplay();
+  document.getElementById('hudMoves').textContent = 0;
+  render();
+}
+
+function showWin(lvl) {
+  const bonus = Math.max(0, 100 - (path.length - nodes.length) * 5);
+  score += 100 + bonus;
+  document.getElementById('hudScore').textContent = score;
+
+  const fb = document.getElementById('feedback');
+  fb.classList.remove('fail');
+  document.getElementById('fbEmoji').textContent = '🎉';
+  document.getElementById('fbTitle').textContent = 'Jalur Ditemukan!';
+  document.getElementById('fbSub').textContent =
+    `${lvl.type === 'euler' ? 'Euler Path' : 'Hamilton Circuit'} berhasil! +${100 + bonus} poin`;
+  fb.classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+
+  levelDone[currentLevel] = true;
+  buildLevelList();
+}
+
+function closeFeedback() {
+  document.getElementById('feedback').classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
+  resetPath();
+}
+
+function nextLevel() {
+  closeFeedback();
+  if (currentLevel < levels.length - 1) loadLevel(currentLevel + 1);
+}
+
+// ─── Level Loading ─────────────────────────────────────────────
+let levelDone = levels.map(() => false);
+
+function loadLevel(i) {
+  currentLevel = i;
+  const lvl = levels[i];
+  nodes = lvl.nodes.map(n => ({...n}));
+  edges = lvl.edges;
+  path = []; currentNode = null; visitedEdges.clear();
+
+  document.getElementById('hudLevel').textContent = i + 1;
+  document.getElementById('hudMoves').textContent = 0;
+  document.getElementById('missionBadge').textContent =
+    lvl.type === 'euler' ? 'EULER PATH' : 'HAMILTON CIRCUIT';
+  document.getElementById('missionText').innerHTML = lvl.desc +
+    (lvl.type === 'euler'
+      ? ' <span style="color:var(--fg2);font-size:0.78rem">Klik node awal, lalu klik node selanjutnya.</span>'
+      : ' <span style="color:var(--fg2);font-size:0.78rem">Kunjungi semua node dan kembali ke awal.</span>');
+
+  buildLevelList();
+  updatePathDisplay();
+  resize();
+}
+
+function buildLevelList() {
+  const ll = document.getElementById('levelList');
+  ll.innerHTML = '';
+  levels.forEach((lvl, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'level-btn' + (i === currentLevel ? ' active' : '') + (levelDone[i] ? ' done' : '');
+    btn.innerHTML = `<span>${i+1}. ${lvl.name}</span><span class="level-stars">${levelDone[i] ? '★★★' : '☆☆☆'}</span>`;
+    btn.onclick = () => { closeFeedback(); loadLevel(i); };
+    ll.appendChild(btn);
+  });
+}
+
+window.addEventListener('resize', resize);
+loadLevel(0);
+</script>
+</body>
+</html>

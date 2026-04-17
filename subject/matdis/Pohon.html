@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Pohon - Matematika Diskrit</title>
+    <style>
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --bg-color: #f4f7f6;
+    --text-color: #333;
+    --white: #ffffff;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.example-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.step-list {
+    background: #eef2f3;
+    padding: 20px;
+    border-left: 5px solid var(--secondary-color);
+}
+
+.tree {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.tree ul {
+    padding-top: 20px; 
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+}
+
+.tree li {
+    float: left; 
+    text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0 5px;
+}
+
+.tree li::before, .tree li::after {
+    content: '';
+    position: absolute; 
+    top: 0; 
+    right: 50%;
+    border-top: 2px solid var(--secondary-color);
+    width: 50%; 
+    height: 20px;
+}
+.tree li::after {
+    right: auto; 
+    left: 50%;
+    border-left: 2px solid var(--secondary-color);
+}
+
+.tree li:only-child::after, .tree li:only-child::before {
+    display: none;
+}
+.tree li:only-child { padding-top: 0; }
+.tree li:first-child::before, .tree li:last-child::after {
+    border: 0 none;
+}
+.tree li:last-child::before {
+    border-right: 2px solid var(--secondary-color);
+    border-radius: 0 5px 0 0;
+}
+.tree li:first-child::after {
+    border-radius: 5px 0 0 0;
+}
+
+/* Garis vertikal dari parent */
+.tree ul ul::before {
+    content: '';
+    position: absolute; 
+    top: 0; 
+    left: 50%;
+    border-left: 2px solid var(--secondary-color);
+    width: 0; 
+    height: 20px;
+}
+
+.tree li div {
+    border: 2px solid var(--secondary-color);
+    padding: 10px 15px;
+    display: inline-block;
+    border-radius: 8px;
+    background: #ecf6fb;
+    font-weight: bold;
+    color: var(--primary-color);
+    transition: 0.3s;
+    position: relative;
+    z-index: 2;
+}
+
+.tree li div:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .container { padding: 20px; }
+    .tree li { padding: 15px 2px 0 2px; }
+    .tree li div { padding: 5px 10px; font-size: 12px; }
+}
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Pohon (Tree)</h1>
+<div class="section">
+    <h2>1. Pengertian Pohon</h2>
+    <p>
+        Pohon (Tree) adalah struktur dalam matematika diskrit yang merupakan bentuk khusus dari graf 
+        tak berarah yang <strong>terhubung</strong> dan <strong>tidak memiliki siklus (cycle)</strong>. 
+        Pohon digunakan untuk merepresentasikan hubungan hierarki antara elemen, sehingga sangat penting 
+        dalam ilmu komputer dan struktur data.
+    </p>
+    <p>
+        Secara formal, pohon dapat didefinisikan sebagai graf G = (V, E) yang memenuhi:
+        <ul>
+            <li>Setiap pasangan simpul terhubung oleh tepat satu jalur</li>
+            <li>Tidak terdapat lintasan yang kembali ke simpul awal (tidak ada siklus)</li>
+            <li>Jika terdapat n simpul, maka jumlah sisi adalah n - 1</li>
+        </ul>
+    </p>
+</div>
+
+<div class="section">
+    <h3>Karakteristik Pohon</h3>
+    <ul>
+        <li>Memiliki satu simpul khusus yang disebut <strong>root (akar)</strong></li>
+        <li>Memiliki hubungan parent (induk) dan child (anak)</li>
+        <li>Tidak ada siklus (loop)</li>
+        <li>Jumlah sisi selalu satu kurang dari jumlah simpul (|E| = |V| - 1)</li>
+        <li>Setiap simpul (kecuali root) memiliki tepat satu parent</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>Istilah Penting dalam Pohon</h3>
+    <ul>
+        <li><strong>Root</strong>: simpul paling atas dalam pohon</li>
+        <li><strong>Parent</strong>: simpul yang memiliki anak</li>
+        <li><strong>Child</strong>: simpul turunan dari parent</li>
+        <li><strong>Sibling</strong>: simpul yang memiliki parent yang sama</li>
+        <li><strong>Leaf (Daun)</strong>: simpul yang tidak memiliki anak</li>
+        <li><strong>Subtree</strong>: bagian dari pohon yang juga merupakan pohon</li>
+        <li><strong>Level</strong>: tingkat kedalaman simpul dari root</li>
+        <li><strong>Height (Tinggi)</strong>: panjang jalur terpanjang dari root ke leaf</li>
+        <li><strong>Degree</strong>: jumlah anak dari suatu simpul</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>2. Jenis-jenis Pohon</h2>
+
+    <h3>A. Pohon Biner (Binary Tree)</h3>
+  <p>
+Pohon Biner adalah jenis pohon yang paling populer dalam ilmu komputer. Pada pohon ini, setiap simpul (node) diperbolehkan memiliki <strong>paling banyak dua anak</strong>. Kedua anak tersebut biasanya dibedakan secara posisi, yaitu sebagai <strong>anak kiri (left child)</strong> dan <strong>anak kanan (right child)</strong>.
+</p>
+
+Karakteristik Khusus:
+<ul>
+<li>Derajat maksimal setiap simpul adalah 2.</li>
+<li>Memungkinkan adanya <strong>Pohon Kosong</strong> (pohon yang tidak memiliki simpul sama sekali).</li>
+<li>Urutan anak sangat penting; pohon dengan anak kiri saja berbeda dengan pohon yang hanya memiliki anak kanan saja.</li>
+</ul>
+
+Contoh Visual Pohon Biner:
+<div class="tree">
+<ul>
+<li>
+<div>A (Akar)</div>
+<ul>
+<li>
+<div>B (Kiri)</div>
+<ul>
+<li><div>D</div></li>
+<li><div>E</div></li>
+</ul>
+</li>
+<li>
+<div>C (Kanan)</div>
+<ul>
+<li><div>F</div></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+Jenis-jenis Pohon Biner:
+<div class="step-list">
+<ul>
+<li><strong>Full Binary Tree:</strong> Setiap simpul memiliki tepat 0 atau 2 anak (tidak ada simpul yang hanya punya 1 anak).</li>
+<li><strong>Perfect Binary Tree:</strong> Semua simpul dalam memiliki 2 anak dan semua leaf berada pada level yang sama.</li>
+<li><strong>Skewed Binary Tree:</strong> Pohon yang hanya condong ke satu sisi saja (hanya punya anak kiri saja atau kanan saja).</li>
+</ul>
+</div>
+
+<div class="example-box">
+<strong>Catatan Penting:</strong>
+Dalam implementasi pemrograman, pohon biner sering digunakan untuk <em>Binary Search Tree (BST)</em>, di mana nilai anak kiri selalu lebih kecil dari parent, dan nilai anak kanan selalu lebih besar dari parent.
+</div>
+   <div class="section">
+    <h3>B. Pohon Biner Lengkap (Complete Binary Tree)</h3>
+    <p>
+        Pohon Biner Lengkap adalah jenis pohon biner di mana setiap tingkat (level), kecuali mungkin yang terakhir, terisi sepenuhnya oleh simpul. Karakteristik paling penting adalah semua simpul pada level terakhir harus <strong>terisi sedapat mungkin dari sebelah kiri</strong>.
+    </p>
+
+    <strong>Aturan Pembentukan:</strong>
+    <ul>
+        <li>Semua level, mulai dari level 0 hingga $h-1$ (di mana $h$ adalah tinggi pohon), harus memiliki jumlah simpul maksimal.</li>
+        <li>Pada level terakhir (level daun), simpul-simpul ditambahkan mulai dari posisi paling kiri tanpa ada celah (lompatan).</li>
+        <li>Jika level terakhir tidak penuh, maka bagian yang kosong hanya boleh berada di sisi kanan.</li>
+    </ul>
+
+    <strong>Contoh Visual Pohon Biner Lengkap:</strong>
+    <div class="tree">
+        <ul>
+            <li>
+                <div>1</div>
+                <ul>
+                    <li>
+                        <div>2</div>
+                        <ul>
+                            <li><div>4</div></li>
+                            <li><div>5</div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div>3</div>
+                        <ul>
+                            <li><div>6</div></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="example-box">
+        <strong>Analisis Contoh:</strong>
+        <p>
+            Pada pohon di atas, level 0 (simpul 1) dan level 1 (simpul 2 dan 3) terisi penuh. Pada level terakhir, simpul 4, 5, dan 6 ditambahkan secara berurutan dari kiri. Karena tidak ada "celah" di antara simpul 4, 5, dan 6, maka pohon ini disebut <strong>Pohon Biner Lengkap</strong>.
+        </p>
+    </div>
+
+    <div class="step-list">
+        <strong>Mengapa ini penting?</strong>
+        <p>
+            Struktur ini sangat efisien untuk diimplementasikan ke dalam <em>Array</em>. Itulah sebabnya Pohon Biner Lengkap menjadi dasar utama dalam algoritma <strong>Heap Sort</strong> dan struktur data <strong>Priority Queue</strong>.
+        </p>
+    </div>
+</div>
+
+  <div class="section">
+    <h3>C. Pohon Biner Sempurna (Perfect Binary Tree)</h3>
+    <p>
+        Pohon Biner Sempurna adalah jenis pohon biner yang jauh lebih spesifik dibandingkan pohon lengkap. Dalam struktur ini, setiap simpul internal (bukan daun) <strong>harus memiliki tepat dua anak</strong>, dan semua simpul daun (leaf) wajib berada pada <strong>level atau kedalaman yang sama</strong>.
+    </p>
+
+    <strong>Aturan Pembentukan:</strong>
+    <ul>
+        <li>Setiap simpul induk (parent) tidak boleh memiliki hanya satu anak; pilihannya adalah memiliki dua anak atau tidak sama sekali.</li>
+        <li>Semua jalur dari akar (root) ke setiap daun memiliki panjang yang sama.</li>
+        <li>Jumlah total simpul pada pohon biner sempurna dengan tinggi $h$ dapat dihitung dengan rumus $2^{h+1} - 1$.</li>
+    </ul>
+
+    <strong>Contoh Visual Pohon Biner Sempurna:</strong>
+    <div class="tree">
+        <ul>
+            <li>
+                <div>A</div>
+                <ul>
+                    <li>
+                        <div>B</div>
+                        <ul>
+                            <li><div>D</div></li>
+                            <li><div>E</div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div>C</div>
+                        <ul>
+                            <li><div>F</div></li>
+                            <li><div>G</div></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="example-box">
+        <strong>Analisis Contoh:</strong>
+        <p>
+            Pada pohon di atas, simpul A, B, dan C masing-masing memiliki tepat dua anak. Selain itu, simpul daun (D, E, F, G) semuanya terletak pada level 2. Karena tidak ada celah dan semua daun sejajar, pohon ini dikategorikan sebagai <strong>Pohon Biner Sempurna</strong>.
+        </p>
+    </div>
+
+    <div class="step-list">
+        <strong>Perbedaan Utama:</strong>
+        <p>
+            Berbeda dengan pohon biner lengkap yang memperbolehkan level terakhir tidak penuh (asalkan terisi dari kiri), pohon biner sempurna <strong>wajib penuh</strong> di seluruh levelnya tanpa pengecualian.
+        </p>
+    </div>
+</div>
+
+   <div class="section">
+    <h3>D. Pohon Seimbang (Balanced Tree)</h3>
+    <p>
+        Pohon Seimbang (sering disebut sebagai <strong>AVL Tree</strong> dalam struktur data) adalah jenis pohon biner yang menjaga agar tingginya tetap minimal agar proses pencarian tetap cepat. Syarat utamanya adalah selisih tinggi (height) antara subtree kiri dan subtree kanan untuk setiap simpul <strong>tidak boleh lebih dari 1</strong>.
+    </p>
+
+    <strong>Aturan Pembentukan:</strong>
+    <ul>
+        <li>Untuk setiap simpul, hitung tinggi subtree kiri ($hL$) dan tinggi subtree kanan ($hR$).</li>
+        <li>Faktor Keseimbangan (Balance Factor) dihitung dengan rumus $|hL - hR| \leq 1$.</li>
+        <li>Jika selisihnya mencapai 2 atau lebih, maka pohon tersebut dikatakan tidak seimbang dan harus dilakukan "rotasi" untuk menyeimbangkannya kembali.</li>
+    </ul>
+
+    <strong>Contoh Visual Pohon Seimbang:</strong>
+    <div class="tree">
+        <ul>
+            <li>
+                <div>A</div>
+                <ul>
+                    <li>
+                        <div>B</div>
+                        <ul>
+                            <li><div>D</div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div>C</div>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    </div>
+
+    <div class="example-box">
+        <strong>Analisis Contoh:</strong>
+        <p>
+            Pada pohon di atas, simpul A memiliki subtree kiri dengan tinggi 2 (jalur A-B-D) dan subtree kanan dengan tinggi 1 (jalur A-C). Selisih tingginya adalah $|2 - 1| = 1$. Karena selisihnya tidak lebih dari 1, maka pohon ini masih dikategorikan sebagai <strong>Pohon Seimbang</strong>.
+        </p>
+    </div>
+
+    <div class="step-list">
+        <strong>Mengapa ini penting?</strong>
+        <p>
+            Pohon yang tidak seimbang (terlalu miring ke satu sisi) akan membuat kinerja pencarian menjadi lambat (seperti mencari dalam daftar linier). Dengan menjaga pohon tetap seimbang, waktu pencarian, penyisipan, dan penghapusan data tetap efisien secara logaritmik.
+        </p>
+    </div>
+</div>
+
+   <div class="section">
+    <h3>E. Binary Search Tree (BST)</h3>
+    <p>
+        Binary Search Tree (BST) atau Pohon Pencarian Biner adalah jenis pohon biner terurut yang dirancang khusus untuk mempercepat proses pencarian, penambahan, dan penghapusan data. Struktur ini bekerja berdasarkan prinsip perbandingan nilai pada setiap simpulnya.
+    </p>
+
+    <strong>Aturan Pembentukan:</strong>
+    <ul>
+        <li>Setiap simpul memiliki nilai (key).</li>
+        <li>Nilai pada semua simpul di <strong>subtree kiri</strong> harus lebih kecil dari nilai simpul akar (parent).</li>
+        <li>Nilai pada semua simpul di <strong>subtree kanan</strong> harus lebih besar dari nilai simpul akar (parent).</li>
+        <li>Subtree kiri dan kanan juga harus merupakan Binary Search Tree.</li>
+    </ul>
+
+    <strong>Contoh Visual Binary Search Tree:</strong>
+    <div class="tree">
+        <ul>
+            <li>
+                <div>8</div>
+                <ul>
+                    <li>
+                        <div>3</div>
+                        <ul>
+                            <li><div>1</div></li>
+                            <li><div>6</div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div>10</div>
+                        <ul>
+                            <li><div>14</div></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="example-box">
+        <strong>Analisis Contoh:</strong>
+        <p>
+            Perhatikan simpul akar dengan nilai <strong>8</strong>. Semua nilai di sebelah kirinya (3, 1, 6) lebih kecil dari 8, dan semua nilai di sebelah kanannya (10, 14) lebih besar dari 8. Aturan ini juga berlaku pada simpul 3, di mana 1 (kiri) lebih kecil dan 6 (kanan) lebih besar.
+        </p>
+    </div>
+
+    <div class="step-list">
+        <strong>Keunggulan BST:</strong>
+        <p>
+            Dengan aturan ini, kita tidak perlu memeriksa seluruh simpul saat mencari data. Jika nilai yang dicari lebih kecil dari akar, kita cukup mencari di sebelah kiri. Hal ini membuat rata-rata waktu pencarian menjadi jauh lebih singkat dibanding pencarian pada daftar linier.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>2. Representasi Pohon</h2>
+    <p>
+        Pohon dapat direpresentasikan dalam beberapa cara di dalam sistem komputer maupun secara matematis. Pemilihan representasi ini sangat bergantung pada efisiensi memori dan jenis operasi yang akan dilakukan (misalnya pencarian atau modifikasi data).
+    </p>
+    
+    <ul>
+        <li><strong>Diagram Grafis:</strong> Cara paling umum secara visual dengan menggunakan simpul (node) yang dihubungkan oleh sisi (edge) untuk menunjukkan hierarki.</li>
+        <li><strong>List (Parent-Child List):</strong> Menggunakan struktur data linear seperti linked list untuk menyimpan alamat memori simpul anak.</li>
+        <li><strong>Matriks Ketetanggaan (Adjacency Matrix):</strong> Menggunakan tabel dua dimensi untuk mencatat hubungan antar simpul (biasanya kurang efisien untuk pohon karena banyak ruang kosong).</li>
+        <li><strong>Array (khusus pohon biner):</strong> Menyimpan simpul secara berurutan dalam larik satu dimensi.</li>
+    </ul>
+
+    <div class="step-list">
+        <strong>Representasi dalam Array (Pohon Biner):</strong>
+        <p>
+            Untuk pohon biner lengkap, representasi array sangat efektif. Jika sebuah simpul berada pada indeks <strong>i</strong>, maka:
+        </p>
+        <ul>
+            <li>Anak kiri berada pada indeks <strong>2i + 1</strong></li>
+            <li>Anak kanan berada pada indeks <strong>2i + 2</strong></li>
+            <li>Induk (parent) berada pada indeks <strong>(i - 1) / 2</strong></li>
+        </ul>
+    </div>
+
+    <div class="example-box">
+        <strong>Contoh Representasi Array:</strong>
+        <p>Pohon dengan urutan: A (akar), B (kiri), C (kanan)</p>
+        <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
+            <tr style="background-color: #eef2f3;">
+                <th>Indeks</th>
+                <td>0</td>
+                <td>1</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <th>Data</th>
+                <td>A</td>
+                <td>B</td>
+                <td>C</td>
+            </tr>
+        </table>
+        <p><small>*Indeks 0 adalah akar, indeks 1 adalah anak kiri dari A, dan indeks 2 adalah anak kanan dari A.</small></p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>3. Traversal Pohon</h2>
+    <p>
+        Traversal adalah proses mengunjungi setiap simpul dalam pohon secara sistematis, sehingga setiap simpul dikunjungi tepat satu kali. Karena pohon bukan struktur data linear, terdapat beberapa urutan (order) jalan yang bisa digunakan.
+    </p>
+
+    <strong>Jenis-jenis Traversal:</strong>
+    <ul>
+        <li><strong>Preorder (Depth-First):</strong> Mengunjungi akar terlebih dahulu, kemudian seluruh subtree kiri, baru seluruh subtree kanan.</li>
+        <li><strong>Inorder (Depth-First):</strong> Mengunjungi seluruh subtree kiri, kemudian akar, baru seluruh subtree kanan. (Sering digunakan pada BST untuk mendapatkan urutan angka yang urut).</li>
+        <li><strong>Postorder (Depth-First):</strong> Mengunjungi seluruh subtree kiri, kemudian subtree kanan, baru terakhir adalah akarnya.</li>
+        <li><strong>Level Order (Breadth-First):</strong> Mengunjungi simpul berdasarkan tingkat kedalamannya, mulai dari level 0 (akar) hingga level terdalam dari kiri ke kanan.</li>
+    </ul>
+
+    <div class="example-box">
+        <strong>Pohon Referensi:</strong>
+        <div class="tree">
+            <ul>
+                <li>
+                    <div>A</div>
+                    <ul>
+                        <li>
+                            <div>B</div>
+                            <ul>
+                                <li><div>D</div></li>
+                                <li><div>E</div></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div>C</div>
+                            <ul>
+                                <li><div>F</div></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step-list">
+        <strong>Hasil Urutan Kunjungan:</strong>
+        <p>Berdasarkan pohon di atas, berikut adalah hasil dari masing-masing metode traversal:</p>
+        <table border="0" style="width: 100%; border-spacing: 10px;">
+            <tr>
+                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
+                    <strong>1. Preorder:</strong><br>
+                    <span style="color: var(--accent-color); font-weight: bold;">A &rarr; B &rarr; D &rarr; E &rarr; C &rarr; F</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
+                    <strong>2. Inorder:</strong><br>
+                    <span style="color: var(--accent-color); font-weight: bold;">D &rarr; B &rarr; E &rarr; A &rarr; F &rarr; C</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
+                    <strong>3. Postorder:</strong><br>
+                    <span style="color: var(--accent-color); font-weight: bold;">D &rarr; E &rarr; B &rarr; F &rarr; C &rarr; A</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
+                    <strong>4. Level Order:</strong><br>
+                    <span style="color: var(--accent-color); font-weight: bold;">A &rarr; B &rarr; C &rarr; D &rarr; E &rarr; F</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="example-box">
+        <strong>Tips Menghafal:</strong>
+        <p>Perhatikan posisi <strong>ROOT</strong> dalam namanya:</p>
+        <ul>
+            <li><strong>Pre</strong>-order: Root di <strong>depan</strong> (awal).</li>
+            <li><strong>In</strong>-order: Root di <strong>tengah</strong> (antara kiri dan kanan).</li>
+            <li><strong>Post</strong>-order: Root di <strong>belakang</strong> (akhir).</li>
+        </ul>
+    </div>
+</div>
+
+<div class="section">
+    <h2>4. Teorema Penting pada Pohon</h2>
+    <p>
+        Dalam studi matematika diskrit, terdapat beberapa teorema dasar yang mendefinisikan properti matematis dari sebuah pohon. Teorema ini sangat berguna untuk memvalidasi apakah suatu struktur graf layak disebut pohon atau tidak.
+    </p>
+
+    <ul>
+        <li><strong>Jumlah Sisi:</strong> Jika sebuah pohon memiliki $n$ buah simpul (vertex), maka jumlah sisi (edge) yang menghubungkannya pasti tepat sebanyak <strong>$n - 1$</strong>.</li>
+        <li><strong>Jumlah Daun:</strong> Pada sebuah pohon biner penuh (full binary tree), jumlah simpul daun (leaf) selalu sama dengan jumlah simpul internal ditambah satu ($\text{daun} = \text{simpul internal} + 1$).</li>
+        <li><strong>Tinggi Maksimum:</strong> Tinggi maksimum sebuah pohon biner dengan $n$ simpul adalah <strong>$n - 1$</strong>. Hal ini terjadi jika pohon berbentuk menyerupai garis lurus (skewed tree).</li>
+        <li><strong>Tinggi Minimum:</strong> Tinggi minimum yang mungkin untuk sebuah pohon biner dengan $n$ simpul adalah <strong>$\lceil \log_2(n+1) \rceil - 1$</strong>. Ini terjadi jika pohon tersebut sangat padat atau seimbang.</li>
+    </ul>
+
+    <div class="example-box">
+        <strong>Contoh Penerapan Teorema 1:</strong>
+        <p>Misalkan terdapat struktur organisasi perusahaan yang memiliki 25 orang anggota (simpul). Untuk memastikan semua orang terhubung dalam struktur hierarki tanpa ada siklus, maka dibutuhkan:</p>
+        <p style="text-align: center; font-weight: bold; background: #eef2f3; padding: 10px; border-radius: 5px;">
+            Sisi = n - 1 <br>
+            Sisi = 25 - 1 = 24 garis hubungan
+        </p>
+    </div>
+
+    <div class="tree">
+        <div style="display: flex; gap: 50px; justify-content: center; align-items: flex-start;">
+            <div>
+                <small>Tinggi Maksimum (Skewed)</small>
+                <ul>
+                    <li>
+                        <div>1</div>
+                        <ul>
+                            <li>
+                                <div>2</div>
+                                <ul>
+                                    <li><div>3</div></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <small>Tinggi Minimum (Balanced)</small>
+                <ul>
+                    <li>
+                        <div>1</div>
+                        <ul>
+                            <li><div>2</div></li>
+                            <li><div>3</div></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-list">
+        <strong>Mengapa Teorema ini penting?</strong>
+        <p>
+            Teorema ini membantu dalam analisis <strong>kompleksitas algoritma</strong>. Semakin kecil tinggi pohon (semakin mendekati tinggi minimum), maka proses pencarian data di dalamnya akan semakin cepat.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>5. Aplikasi Pohon dalam Kehidupan Nyata</h2>
+    <p>
+        Struktur pohon bukan hanya sekadar teori matematika, melainkan fondasi utama yang digunakan untuk memecahkan berbagai masalah kompleks di dunia nyata, mulai dari pengelolaan data hingga kecerdasan buatan.
+    </p>
+
+    <ul>
+        <li><strong>Struktur Folder pada Komputer:</strong> Sistem operasi (seperti Windows atau macOS) menggunakan struktur pohon untuk mengelola file. <em>Root</em> adalah drive utama (C:), <em>Branch</em> adalah folder, dan <em>Leaf</em> adalah file dokumen Anda.</li>
+        <li><strong>Silsilah Keluarga (Genealogy):</strong> Digunakan untuk melacak keturunan. Akar dimulai dari leluhur tertua, di mana setiap cabang merepresentasikan generasi berikutnya.</li>
+        <li><strong>Struktur Organisasi:</strong> Menunjukkan hierarki jabatan di perusahaan. CEO berada di posisi <em>Root</em>, diikuti oleh Manajer (Parent), dan staf operasional sebagai <em>Child</em> atau <em>Leaf</em>.</li>
+        <li><strong>Decision Tree (AI & Machine Learning):</strong> Digunakan dalam pengambilan keputusan otomatis. Setiap simpul internal mewakili "pertanyaan" atau "kondisi", dan setiap daun mewakili "hasil" atau "keputusan final".</li>
+        <li><strong>Parsing Ekspresi dalam Compiler:</strong> Saat Anda mengetik kode pemrograman, komputer mengubah rumus matematika seperti <code>(2 + 3) * 5</code> menjadi sebuah <em>Expression Tree</em> agar bisa dihitung dengan urutan yang benar.</li>
+        <li><strong>Pencarian Data (Binary Search Tree):</strong> Digunakan oleh basis data (database) berskala besar untuk menemukan data di antara jutaan record dalam hitungan milidetik.</li>
+    </ul>
+
+    <div class="example-box">
+        <strong>Studi Kasus: Pohon Keputusan (Decision Tree)</strong>
+        <p>Misalnya, sebuah bank menggunakan pohon untuk memutuskan pinjaman:</p>
+        <div class="tree">
+            <ul>
+                <li>
+                    <div>Apakah Gaji > 5 Juta?</div>
+                    <ul>
+                        <li>
+                            <div>Ya</div>
+                            <ul>
+                                <li><div style="background: #d4edda; border-color: #28a745;">Terima Pinjaman</div></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div>Tidak</div>
+                            <ul>
+                                <li>
+                                    <div>Punya Jaminan?</div>
+                                    <ul>
+                                        <li><div style="background: #d4edda; border-color: #28a745;">Terima</div></li>
+                                        <li><div style="background: #f8d7da; border-color: #dc3545;">Tolak</div></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step-list">
+        <strong>Kesimpulan:</strong>
+        <p>
+            Alasan utama mengapa struktur pohon begitu populer adalah karena <strong>efisiensi</strong>. Dengan struktur yang terorganisir secara hierarkis, kita bisa mempercepat akses informasi tanpa harus memeriksa seluruh elemen satu per satu.
+        </p>
+    </div>
+</div>
+
+  <div class="section">
+    <h2>6. Ciri-ciri Pohon (Tree Properties)</h2>
+    <p>
+        Sebuah graf dapat diklasifikasikan sebagai pohon jika dan hanya jika memenuhi kriteria tertentu. Memahami ciri-ciri ini sangat penting untuk membedakan pohon dari jenis graf lainnya, seperti graf umum yang mungkin memiliki sirkuit.
+    </p>
+
+    <ul>
+        <li><strong>Acyclic (Tidak Memiliki Siklus):</strong> Tidak ada lintasan yang berawal dan berakhir pada simpul yang sama. Artinya, Anda tidak akan pernah bisa kembali ke titik asal tanpa melewati sisi yang sama dua kali.</li>
+        <li><strong>Terhubung (Connected):</strong> Setiap pasang simpul dalam pohon selalu memiliki tepat satu lintasan tunggal yang menghubungkannya. Tidak boleh ada simpul yang terisolasi atau terpisah dari struktur utama.</li>
+        <li><strong>Properti Sisi (n-1 Edges):</strong> Jika sebuah pohon memiliki $n$ jumlah simpul, maka pohon tersebut harus memiliki tepat <strong>$n - 1$</strong> jumlah sisi. Jika kurang dari itu, graf tidak terhubung; jika lebih, maka graf pasti memiliki siklus.</li>
+        <li><strong>Simpul Tunggal (Root):</strong> Pada pohon berakar, terdapat satu simpul khusus yang menjadi sumber utama tanpa memiliki induk.</li>
+    </ul>
+
+    <div class="example-box">
+        <strong>Visualisasi Struktur Pohon:</strong>
+        <p>Perhatikan contoh di bawah ini. Pohon ini memiliki 6 simpul (A, B, C, D, E, F), sehingga berdasarkan rumus $n-1$, ia harus memiliki tepat 5 sisi penghubung.</p>
+        
+        <div class="tree">
+            <ul>
+                <li>
+                    <div>A (Root)</div>
+                    <ul>
+                        <li>
+                            <div>B</div>
+                            <ul>
+                                <li><div>D</div></li>
+                                <li><div>E</div></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div>C</div>
+                            <ul>
+                                <li><div>F</div></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step-list">
+        <strong>Analisis Teknis:</strong>
+        <p>
+            Jika kita mencoba menambahkan satu sisi lagi (misalnya menghubungkan D ke E), maka struktur ini akan berubah menjadi <strong>Graf Bersiklus</strong> dan bukan lagi sebuah pohon. Sebaliknya, jika kita menghapus satu sisi (misalnya sisi antara A dan C), maka graf akan menjadi <strong>Tidak Terhubung</strong> (Disconnected).
+        </p>
+    </div>
+</div>
+
+   <div class="section">
+    <h2>7. Istilah-Istilah pada Pohon (Tree Terminology)</h2>
+    <p>
+        Untuk memahami operasi pada pohon, kita harus mengenali terminologi yang digunakan untuk mendeskripsikan hubungan antar simpul di dalamnya. Hubungan ini sering kali dianalogikan dengan silsilah keluarga.
+    </p>
+
+    <ul>
+        <li><strong>Root (Akar):</strong> Simpul tunggal di bagian paling atas pohon yang tidak memiliki induk (parent).</li>
+        <li><strong>Parent (Induk):</strong> Simpul yang memiliki satu atau lebih simpul di bawahnya yang terhubung langsung.</li>
+        <li><strong>Child (Anak):</strong> Simpul yang berada di bawah simpul lain dan terhubung langsung sebagai turunan.</li>
+        <li><strong>Leaf (Daun):</strong> Simpul terminal atau simpul yang berada di ujung bawah dan tidak memiliki anak sama sekali.</li>
+        <li><strong>Sibling (Saudara):</strong> Simpul-simpul yang memiliki induk (parent) yang sama.</li>
+        <li><strong>Ancestor (Leluhur):</strong> Semua simpul yang berada pada jalur dari akar menuju simpul tertentu (termasuk induk, kakek, dst).</li>
+        <li><strong>Descendant (Keturunan):</strong> Semua simpul yang dapat dicapai dari sebuah simpul induk menuju ke bawah.</li>
+        <li><strong>Subtree (Upapohon):</strong> Struktur yang terdiri dari sebuah simpul beserta seluruh keturunannya.</li>
+    </ul>
+
+    <div class="example-box">
+        <strong>Identifikasi Hubungan pada Pohon:</strong>
+        <p>Berdasarkan visualisasi di bawah ini, mari kita bedah hubungannya:</p>
+        
+        <div class="tree">
+            <ul>
+                <li>
+                    <div>A</div>
+                    <ul>
+                        <li>
+                            <div>B</div>
+                            <ul>
+                                <li><div>D</div></li>
+                                <li><div>E</div></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div>C</div>
+                            <ul>
+                                <li><div>F</div></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <ul style="margin-top: 15px;">
+            <li><strong>A</strong> adalah <em>Root</em>.</li>
+            <li><strong>B</strong> adalah <em>Parent</em> dari D dan E.</li>
+            <li><strong>D dan E</strong> adalah <em>Sibling</em>.</li>
+            <li><strong>D, E, dan F</strong> adalah <em>Leaf</em> karena tidak punya anak.</li>
+            <li>Struktur <strong>B-D-E</strong> merupakan salah satu <em>Subtree</em> dari A.</li>
+        </ul>
+    </div>
+
+    <div class="step-list">
+        <strong>Ukuran Pohon:</strong>
+        <p>Selain hubungan, terdapat istilah untuk mengukur dimensi pohon:</p>
+        <ul>
+            <li><strong>Degree (Derajat):</strong> Jumlah anak yang dimiliki oleh sebuah simpul.</li>
+            <li><strong>Level (Tingkat):</strong> Tingkatan posisi simpul. Root berada pada level 0.</li>
+            <li><strong>Height (Tinggi):</strong> Level maksimum yang ada pada pohon tersebut.</li>
+        </ul>
+    </div>
+</div>
+
+   <div class="section">
+    <h3>Contoh Struktur Pohon</h3>
+    <p>
+        Untuk memberikan gambaran yang lebih nyata, mari kita perhatikan struktur pohon di bawah ini. Sebuah pohon biasanya dinamai berdasarkan simpul akarnya dan diidentifikasi melalui hubungan hierarkis antar simpulnya.
+    </p>
+
+    <div class="tree">
+        <ul>
+            <li>
+                <div>A</div>
+                <ul>
+                    <li>
+                        <div>B</div>
+                        <ul>
+                            <li><div>D</div></li>
+                            <li><div>E</div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div>C</div>
+                        <ul>
+                            <li><div>F</div></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="example-box">
+        <strong>Analisis Komponen Pohon:</strong>
+        <p>Berdasarkan ilustrasi grafis di atas, kita dapat mengidentifikasi elemen-elemennya sebagai berikut:</p>
+        <ul>
+            <li><strong>A</strong> bertindak sebagai <strong>Root</strong> (akar), karena merupakan titik awal dan tidak memiliki induk.</li>
+            <li><strong>B dan C</strong> adalah <strong>Child</strong> (anak) langsung dari simpul A. Sebaliknya, A adalah <em>Parent</em> dari B dan C.</li>
+            <li><strong>D, E, dan F</strong> dikategorikan sebagai <strong>Leaf</strong> (daun) karena berada di ujung hierarki dan tidak memiliki anak lagi.</li>
+        </ul>
+    </div>
+
+    <div class="step-list">
+        <strong>Fakta Menarik:</strong>
+        <p>
+            Meskipun dalam biologi akar pohon berada di bawah tanah, dalam ilmu komputer dan matematika diskrit, kita justru menggambar <strong>Root</strong> di bagian paling atas. Struktur ini sering disebut sebagai pohon terbalik.
+        </p>
+    </div>
+</div>
+
+   <div class="section">
+    <h2>8. Jenis-Jenis Pohon (Types of Trees)</h2>
+    <p>
+        Dalam matematika diskrit dan ilmu komputer, pohon diklasifikasikan ke dalam beberapa jenis berdasarkan struktur, jumlah anak, dan keseimbangan tingginya. Berikut adalah jenis-jenis pohon yang paling sering dipelajari:
+    </p>
+
+    <h3>1. Pohon Biner (Binary Tree)</h3>
+    <p>
+        Pohon Biner adalah jenis pohon yang paling mendasar di mana setiap simpul induk hanya diperbolehkan memiliki <strong>maksimal dua anak</strong>, yang biasanya disebut sebagai anak kiri (left child) dan anak kanan (right child).
+    </p>
+    <div class="tree">
+        <ul>
+            <li>
+                <div>A</div>
+                <ul>
+                    <li><div>B</div></li>
+                    <li><div>C</div></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <h3>2. Pohon Lengkap (Complete Binary Tree)</h3>
+    <p>
+        Sebuah pohon biner dikatakan lengkap jika semua levelnya terisi penuh oleh simpul, kecuali mungkin pada level terakhir. Pada level terakhir tersebut, simpul-simpul harus diisi secara berurutan dari <strong>kiri ke kanan</strong> tanpa ada celah kosong.
+    </p>
+    <div class="tree">
+        <ul>
+            <li>
+                <div>1</div>
+                <ul>
+                    <li>
+                        <div>2</div>
+                        <ul>
+                            <li><div>4</div></li>
+                            <li><div>5</div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div>3</div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <h3>3. Pohon Seimbang (Balanced Tree)</h3>
+    <p>
+        Pohon Seimbang adalah pohon biner di mana selisih tinggi (height) antara subtree kiri dan subtree kanan untuk setiap simpul tidak pernah lebih dari satu. Struktur ini sangat penting untuk menjaga efisiensi waktu operasi pencarian agar tetap stabil.
+    </p>
+    <div class="example-box">
+        <strong>Mengapa Klasifikasi ini Penting?</strong>
+        <p>
+            Perbedaan jenis pohon ini menentukan bagaimana data disimpan di memori. Misalnya, <strong>Pohon Lengkap</strong> sangat efisien jika disimpan menggunakan <em>Array</em>, sementara <strong>Pohon Seimbang</strong> sangat unggul dalam kecepatan algoritma pencarian (<em>Searching</em>).
+        </p>
+    </div>
+
+    <div class="step-list">
+        <strong>Ringkasan Perbedaan:</strong>
+        <ul>
+            <li><strong>Biner:</strong> Fokus pada jumlah anak (maksimal 2).</li>
+            <li><strong>Lengkap:</strong> Fokus pada kepadatan pengisian simpul dari kiri ke kanan.</li>
+            <li><strong>Seimbang:</strong> Fokus pada kesamaan tinggi antara cabang kiri dan kanan.</li>
+        </ul>
+    </div>
+</div>
+
+   <div class="section">
+    <h2>9. Traversal Pohon (Kunjungan Pohon)</h2>
+    <p>
+        Traversal adalah sebuah prosedur sistematis untuk mengunjungi setiap simpul (node) pada pohon tepat satu kali. Karena pohon merupakan struktur data non-linear, kita memerlukan aturan tertentu agar proses kunjungan berjalan teratur. Secara umum, terdapat tiga metode utama dalam <em>Depth-First Traversal</em>:
+    </p>
+
+    <div class="step-list">
+        <strong>Jenis-Jenis Traversal:</strong>
+        <ol>
+            <li>
+                <strong>Preorder (Root, Left, Right):</strong> 
+                Simpul akar dikunjungi terlebih dahulu, kemudian melakukan traversal ke subtree kiri, dan terakhir ke subtree kanan. 
+                <em>Kegunaan: Digunakan untuk menyalin struktur pohon atau membuat ekspresi awalan (prefix).</em>
+            </li>
+            <li>
+                <strong>Inorder (Left, Root, Right):</strong> 
+                Melakukan traversal ke subtree kiri terlebih dahulu, mengunjungi akar, kemudian baru ke subtree kanan. 
+                <em>Kegunaan: Pada Binary Search Tree (BST), metode ini akan menghasilkan urutan data yang tersortir menaik.</em>
+            </li>
+            <li>
+                <strong>Postorder (Left, Right, Root):</strong> 
+                Melakukan traversal ke subtree kiri, kemudian ke subtree kanan, dan terakhir mengunjungi akar. 
+                <em>Kegunaan: Digunakan untuk menghapus pohon atau mengevaluasi ekspresi matematika dalam bentuk postfix (reverse polish notation).</em>
+            </li>
+        </ol>
+    </div>
+
+    <div class="example-box">
+        <p><strong>Simulasi Traversal pada Pohon Berikut:</strong></p>
+        <div class="tree">
+            <ul>
+                <li>
+                    <div>A</div>
+                    <ul>
+                        <li>
+                            <div>B</div>
+                            <ul>
+                                <li><div>D</div></li>
+                                <li><div>E</div></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div>C</div>
+                            <ul>
+                                <li><div>F</div></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <strong>Hasil Kunjungan:</strong>
+        <ul style="list-style-type: none; padding-left: 0;">
+            <li>🔵 <strong>Preorder:</strong> A - B - D - E - C - F</li>
+            <li>🟢 <strong>Inorder:</strong> D - B - E - A - F - C</li>
+            <li>🔴 <strong>Postorder:</strong> D - E - B - F - C - A</li>
+        </ul>
+    </div>
+
+    <div class="step-list" style="border-left-color: var(--accent-color);">
+        <strong>Aturan Sederhana:</strong>
+        <p>
+            Bayangkan Anda berjalan mengelilingi pohon mulai dari sebelah kiri akar. 
+            <strong>Preorder</strong> mencatat simpul saat pertama kali dilewati, 
+            <strong>Inorder</strong> mencatat simpul saat berada di bagian bawahnya, dan 
+            <strong>Postorder</strong> mencatat simpul saat terakhir kali meninggalkan simpul tersebut.
+        </p>
+    </div>
+</div>
+
+        <div class="section">
+    <div class="example-box">
+        <strong>Analisis Hasil Traversal:</strong>
+        <p>
+            Berdasarkan struktur pohon yang memiliki akar <strong>A</strong>, cabang kiri <strong>B (dengan anak D, E)</strong>, dan cabang kanan <strong>C (dengan anak F)</strong>, berikut adalah urutan kunjungan sistematisnya:
+        </p>
+
+        <ul>
+            <li>
+                <strong>Preorder (A-B-D-E-C-F):</strong> 
+                Dimulai dari akar (A), lalu ke anak kiri (B), lanjut ke cucu kiri (D) dan kanan (E). Setelah cabang kiri selesai, pindah ke cabang kanan (C) dan terakhir ke (F).
+            </li>
+            <li>
+                <strong>Inorder (D-B-E-A-F-C):</strong> 
+                Dimulai dari posisi paling kiri (D), naik ke induknya (B), lalu ke anak kanan (E). Setelah sisi kiri selesai, baru mengunjungi akar utama (A), kemudian anak kiri dari C (yaitu F), dan berakhir di C.
+            </li>
+            <li>
+                <strong>Postorder (D-E-B-F-C-A):</strong> 
+                Mengunjungi semua daun terbawah terlebih dahulu. Mulai dari (D) dan (E), naik ke induknya (B). Kemudian pindah ke daun cabang lain (F), naik ke induknya (C), dan terakhir menutup kunjungan di akar utama (A).
+            </li>
+        </ul>
+    </div>
+
+    <div class="step-list">
+        <strong>Latihan Mandiri:</strong>
+        <p>
+            Cobalah untuk menuliskan kembali urutan ini tanpa melihat kunci jawaban. Jika hasil akhirnya selalu menempatkan <strong>A</strong> di depan pada <em>Preorder</em> dan di paling belakang pada <em>Postorder</em>, berarti pemahaman Anda sudah tepat!
+        </p>
+    </div>
+</div>
+
+   <div class="section">
+    <h2>10. Aplikasi Pohon dalam Teknologi dan Kehidupan</h2>
+    <p>
+        Struktur pohon bukan hanya sekadar konsep teori, melainkan fondasi utama yang memungkinkan efisiensi dalam berbagai sistem yang kita gunakan sehari-hari. Berikut adalah beberapa aplikasi utamanya:
+    </p>
+
+    <ul>
+        <li>
+            <strong>Struktur Folder Komputer (File System):</strong> 
+            Sistem operasi menggunakan pohon untuk mengelola file dan direktori. <em>Root</em> adalah drive utama (seperti C:), folder berfungsi sebagai simpul internal (internal nodes), dan file adalah daun (leaf) di ujung hierarki.
+        </li>
+        <li>
+            <strong>Struktur Organisasi:</strong> 
+            Digunakan untuk memodelkan hierarki kepemimpinan. Jabatan tertinggi (seperti CEO atau Direktur) menjadi akar, manajer sebagai induk, dan staf operasional sebagai simpul daun.
+        </li>
+        <li>
+            <strong>Algoritma Pencarian (Binary Search Tree - BST):</strong> 
+            Struktur ini memungkinkan komputer menemukan data dalam hitungan milidetik meskipun di antara jutaan record. Prinsip "kiri lebih kecil, kanan lebih besar" memangkas waktu pencarian secara signifikan.
+        </li>
+        <li>
+            <strong>Kecerdasan Buatan (Decision Tree):</strong> 
+            Dalam <em>Machine Learning</em>, pohon keputusan digunakan untuk memprediksi hasil. Setiap cabang mewakili sebuah kondisi logis, dan setiap daun mewakili kesimpulan atau klasifikasi akhir.
+        </li>
+        <li>
+            <strong>Parsing Ekspresi:</strong> 
+            Kompilator bahasa pemrograman menggunakan pohon (Expression Tree) untuk menerjemahkan rumus matematika atau kode menjadi instruksi yang dapat dipahami oleh prosesor.
+        </li>
+    </ul>
+
+    <div class="example-box">
+        <strong>Mengapa Pohon?</strong>
+        <p>
+            Alasan utama penggunaan struktur pohon adalah <strong>Efisiensi Skalabilitas</strong>. Bayangkan jika Anda harus mencari satu file di antara sejuta file dalam daftar lurus (linear), itu akan sangat lambat. Dengan pohon, Anda hanya perlu melewati beberapa "cabang" untuk menemukan tujuan Anda.
+        </p>
+    </div>
+
+    <div class="step-list">
+        <strong>Contoh Nyata:</strong>
+        <p>
+            Saat Anda mengetik alamat situs web di browser, sistem yang bernama <strong>DNS (Domain Name System)</strong> bekerja menggunakan struktur pohon global untuk mencari alamat IP server tujuan dalam waktu sekejap.
+        </p>
+    </div>
+</div>
+</body>
+</html>

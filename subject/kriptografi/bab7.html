@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Terintegrasi: Kriptografi & Matematika Modulo</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .paper {
+            background-color: white;
+            padding: 50px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+            margin-bottom: 30px;
+        }
+        /* Header Section */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #2600ff;
+            padding-bottom: 20px;
+        }
+        .bab-number {
+            font-size: 80px;
+            font-weight: bold;
+            border-right: 5px solid #2600ff;
+            padding-right: 20px;
+            margin-right: 20px;
+            line-height: 1;
+        }
+        .bab-title {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        /* Layout Helpers */
+        .section { margin-bottom: 40px; }
+        .content-container { display: flex; gap: 20px; margin-bottom: 20px; align-items: flex-start; }
+        .text-box { border: 1px solid #2600ff; padding: 15px; flex: 1; font-size: 14px; background: #fff; }
+        .image-box { width: 250px; text-align: center; flex-shrink: 0; }
+        .image-box img { width: 100%; height: auto; border: 1px solid #ddd; }
+        .source-link { font-size: 11px; margin-top: 5px; word-break: break-all; color: #666; }
+        
+        /* Math & Formulas */
+        .formula { font-weight: bold; font-style: italic; display: block; margin: 10px 0; text-align: center; }
+        .calculation-block {
+            margin: 15px 0 15px 20px;
+            font-family: "Courier New", Courier, monospace;
+            white-space: pre-wrap;
+            background: #f9f9f9;
+            padding: 15px;
+            border-left: 5px solid #ccc;
+            font-size: 14px;
+        }
+        .math-center { text-align: center; margin: 20px 0; font-size: 1.1em; }
+        
+        /* Tables */
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; text-align: center; }
+        th, td { border: 1px solid #2600ff; padding: 10px; }
+        .caesar-table { width: 60%; margin: 20px auto; }
+        .matrix-table { width: auto; min-width: 250px; margin: 20px auto; }
+        .matrix-table td { width: 40px; height: 40px; font-weight: bold; }
+
+        h2 { border-bottom: 2px solid #333; padding-bottom: 10px; margin-top: 40px; text-transform: uppercase; }
+        h3 { border-bottom: 1px solid #eee; padding-bottom: 5px; color: #222; }
+        .italic { font-style: italic; }
+        .bold { font-weight: bold; }
+        .highlight { font-weight: bold; color: #000; }
+        .indent { margin-left: 40px; }
+        hr { margin: 40px 0; border: 0; border-top: 2px dashed #ccc; }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<div class="paper">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+    <div class="header">
+        <div class="bab-number">
+            <div style="font-size: 24px;">BAB</div>7
+        </div>
+        <div class="bab-title">KRIPTOGRAFI & MATEMATIKA MODULO</div>
+    </div>
+
+    <div class="section">
+        <div class="bold">Capaian Pembelajaran Mata Kuliah:</div>
+        <ol>
+            <li>Mahasiswa mampu mengetahui konsep sederhana Kriptografi</li>
+            <li>Mahasiswa mampu menghitung dan menuliskan perhitungan Kriptografi</li>
+        </ol>
+
+        <h2 class="bold">I. Pengantar Kriptografi</h2>
+        
+        <div class="content-container">
+            <div class="text-box">
+                <b>Signal Protocol (TextSecure Protocol)</b><br>
+                Dipakai oleh Signal, WhatsApp, Messenger, Skype. Menggunakan kombinasi:<br>
+                <ul>
+                    <li><b>Elliptic Curve Cryptography (ECC)</b> &rarr; untuk pertukaran kunci.</li>
+                    <li><b>Double Ratchet Algorithm</b> &rarr; memperbarui kunci enkripsi tiap pesan.</li>
+                    <li><b>AES-256</b> &rarr; enkripsi simetris pesan.</li>
+                    <li><b>HMAC-SHA256</b> &rarr; verifikasi integritas pesan.</li>
+                </ul>
+            </div>
+            <div class="image-box">
+                <img src="gambar4.png" alt="Security Illustration">
+                <div class="source-link">Sumber: https://bit.ly/463Oegn</div>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <div class="image-box">
+                <img src="gambar3.jpg" alt="Digital Transaction">
+                <div class="source-link">Sumber: https://bit.ly/4nwjHxA</div>
+            </div>
+            <div class="text-box">
+                <b>Transaksi Keuangan dalam Kriptografi</b><br>
+                Melindungi nomor kartu kredit, PIN, dll.<br>
+                <ul>
+                    <li><b>AES</b> &rarr; enkripsi simetris cepat.</li>
+                    <li><b>RSA / ECC</b> &rarr; enkripsi asimetris untuk pertukaran kunci.</li>
+                    <li>Contoh: Protokol TLS (HTTPS) pada belanja online.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2 class="bold">II. Modular Arithmetic Operations</h2>
+        
+        <h3 class="italic">A. Commutative Laws</h3>
+        <ul>
+            <li>1. <strong>(w + x) mod n = (x + w) mod n</strong></li>
+            <li>2. <strong>(w &times; x) mod n = (x &times; w) mod n</strong></li>
+        </ul>
+        <div class="indent">
+            <p><b>Contoh:</b></p>
+            1. w=6, x=4, n=3 &rarr; (6+4) mod 3 = 10 mod 3 = 1<br>
+            2. w=2, x=5, n=4 &rarr; (2&times;5) mod 4 = 10 mod 4 = 2
+        </div>
+
+        <h3 class="italic">B. Modular Arithmetic Rules</h3>
+        <ol>
+            <li>[(a mod n) + (b mod n)] mod n = (a + b) mod n</li>
+            <li>[(a mod n) - (b mod n)] mod n = (a - b) mod n</li>
+            <li>[(a mod n) &times; (b mod n)] mod n = (a &times; b) mod n</li>
+        </ol>
+        
+        <div class="calculation-block">
+Contoh Pengurangan: a=37, b=3, n=10
+[(37 mod 10) - (3 mod 10)] mod 10 = (37 - 3) mod 10
+[7 - 3] mod 10 = 34 mod 10
+4 = 4
+        </div>
+
+        <h3 class="italic">C. Distributive Law</h3>
+        <div class="math-center bold">[w &times; (x + y)] mod n = [(w &times; x) + (w &times; y)] mod n</div>
+        <div class="calculation-block">
+Contoh: w=20, x=21, y=22, n=23
+[20 &times; (21 + 22)] mod 23 = [(20 &times; 21) + (20 &times; 22)] mod 23
+860 mod 23 = 860 mod 23
+9 = 9
+        </div>
+
+        <h3 class="italic">D. Additive Inverse (-w)</h3>
+        <p>Untuk setiap w &isin; Zn, terdapat z sedemikian hingga w + z &equiv; 0 mod n.</p>
+        <div class="calculation-block">
+Contoh: w = 42, n = 9
+42 + z &equiv; 0 (mod 9)
+z &equiv; -42 (mod 9)
+-42 &equiv; -42 + (9 &times; 5) = 3
+Maka inversnya adalah 3 karena 42 + 3 = 45 &equiv; 0 (mod 9)
+        </div>
+
+        <h3 class="italic">E. Property: Identities</h3>
+        <p>1. (0 + w) mod n = w mod n</p>
+        <p>2. (1 * w) mod n = w mod n</p>
+
+        <h3 class="italic">F. Eksponensial Modulo</h3>
+        <div class="math-center">Expression: <strong>x<sup>a</sup> (mod n)</strong></div>
+        <div class="calculation-block">
+Contoh 1: 2^11 mod 13
+2^2 = 4
+2^4 = 16 &equiv; 3 mod 13
+2^8 = 3^2 = 9 mod 13
+2^11 = 2^8 * 2^2 * 2^1 = 9 * 4 * 2 = 72
+72 mod 13 = 7 (Karena 13 * 5 = 65, sisa 7)
+
+Contoh 2: 52^11 mod 13
+52 = 13 * 4 &equiv; 0 mod 13
+Maka 52^11 &equiv; 0^11 &equiv; 0 mod 13
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2 class="bold">III. Caesar Cipher</h2>
+        <p class="italic">"Dapat direpresentasikan dengan menyelaraskan plaintext dengan ciphertext ke kiri atau kanan sebanyak jumlah pergeseran."</p>
+
+        <div class="text-box">
+            <strong>Rumus Matematis:</strong><br>
+            Enkripsi: \(C = (P + K) \pmod{26}\)<br>
+            Dekripsi: \(P = (C - K) \pmod{26}\)<br>
+            <small>Ket: A=0, B=1, ..., Z=25</small>
+        </div>
+
+        <h3>Tabel Rujukan Alfabet</h3>
+        <table>
+            <tr><td>a</td><td>b</td><td>c</td><td>d</td><td>e</td><td>f</td><td>g</td><td>h</td><td>i</td><td>j</td><td>k</td><td>l</td><td>m</td></tr>
+            <tr><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+            <tr><td>n</td><td>o</td><td>p</td><td>q</td><td>r</td><td>s</td><td>t</td><td>u</td><td>v</td><td>w</td><td>x</td><td>y</td><td>z</td></tr>
+            <tr><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td></tr>
+        </table>
+
+        <p class="highlight">Contoh Kasus 1 (Shift 4):</p>
+        <table class="caesar-table">
+            <thead><tr><th>Huruf Asli</th><th>Substitusi (K=4)</th></tr></thead>
+            <tbody>
+                <tr><td>s / a / y / a / k</td><td>w / e / c / e / o</td></tr>
+            </tbody>
+        </table>
+
+        <p class="highlight">Contoh Kasus 2: Plaintext "RUTH DAN FEBRI" (Key = 3)</p>
+        <p class="formula">C = E(3, P) = (P + 3) mod 26</p>
+        <div class="calculation-block">
+R → (17 + 3) mod 26 = 20 = U
+U → (20 + 3) mod 26 = 23 = X
+T → (19 + 3) mod 26 = 22 = W
+H → (7 + 3) mod 26 = 10 = K
+D → (3 + 3) mod 26 = 6 = G
+A → (10 + 3) mod 26 = 13 = D (Catatan: Sesuai sumber hal_10)
+N → (13 + 3) mod 26 = 16 = Q
+F → (5 + 3) mod 26 = 8 = I
+E → (4 + 3) mod 26 = 7 = H
+B → (1 + 3) mod 26 = 4 = E
+R → (17 + 3) mod 26 = 20 = U
+I → (8 + 3) mod 26 = 11 = L
+Hasil Cipher: UXWK GDQ IHEUL
+        </div>
+
+        <h3>Uji Coba Dekripsi (C - K) mod 26:</h3>
+        <ul>
+            <li><span class="highlight">Key 1:</span> TWVJ FCP HGDTK</li>
+            <li><span class="highlight">Key 2:</span> SVUI EBO GFCSJ</li>
+            <li><span class="highlight">Key 3:</span> RUTH DAN FEBRI (Kembali ke asal)</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2 class="bold">IV. Playfair Cipher</h2>
+        <p>Dikembangkan oleh Charles Wheatstone (1854). Menggunakan matriks 5x5 dengan ketentuan huruf <b>I = J</b>.</p>
+
+        <h3>Aturan Enkripsi:</h3>
+        <ul>
+            <li>Jika baris sama: geser ke kanan.</li>
+            <li>Jika kolom sama: geser ke bawah.</li>
+            <li>Jika berbeda baris & kolom: membentuk persegi panjang (ambil sudut lawan).</li>
+        </ul>
+
+        <div class="content-container">
+            <div style="flex: 1;">
+                <p><b>Contoh 1: FOR A BETTER FUTURE</b><br>Key: SEMANGAT PAGI (SEMANGTPGI)</p>
+                <table class="matrix-table">
+                    <tr><td>S</td><td>E</td><td>M</td><td>A</td><td>N</td></tr>
+                    <tr><td>G</td><td>T</td><td>P</td><td>I</td><td>B</td></tr>
+                    <tr><td>C</td><td>D</td><td>F</td><td>H</td><td>K</td></tr>
+                    <tr><td>L</td><td>O</td><td>Q</td><td>R</td><td>U</td></tr>
+                    <tr><td>V</td><td>W</td><td>X</td><td>Y</td><td>Z</td></tr>
+                </table>
+                <p>Digraf: FO RA BE TX ER FU TU RE<br>
+                <span class="highlight">Hasil: DQ YI/J TN PW AO KQ BO OA</span></p>
+            </div>
+
+            <div style="flex: 1;">
+                <p><b>Contoh 2: BELAJAR</b><br>Key: KELOMPOK (KELOMP)</p>
+                <table class="matrix-table">
+                    <tr><td>K</td><td>E</td><td>L</td><td>O</td><td>M</td></tr>
+                    <tr><td>P</td><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+                    <tr><td>F</td><td>G</td><td>H</td><td>I/J</td><td>N</td></tr>
+                    <tr><td>Q</td><td>R</td><td>S</td><td>T</td><td>U</td></tr>
+                    <tr><td>V</td><td>W</td><td>X</td><td>Y</td><td>Z</td></tr>
+                </table>
+                <p class="indent">
+                    <b>Enkripsi (BE LA JA RX):</b><br>
+                    BE&rarr;AL | LA&rarr;EB | JA&rarr;GC | RX&rarr;SW<br>
+                    <span class="highlight">Hasil: LAEBGCSW</span><br><br>
+                    <b>Dekripsi:</b><br>
+                    LA&rarr;BE | EB&rarr;LA | GC&rarr;JA | SW&rarr;RX<br>
+                    <span class="highlight">Hasil: BELAJAR</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

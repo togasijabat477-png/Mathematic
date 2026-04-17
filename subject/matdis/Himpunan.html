@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materi Lengkap Himpunan & Graf</title>
+
+<style>
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --bg-color: #f4f7f6;
+    --text-color: #333;
+    --white: #ffffff;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+header {
+    text-align: center;
+    border-bottom: 4px solid var(--secondary-color);
+    margin-bottom: 30px;
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+}
+
+.section {
+    margin-bottom: 50px;
+}
+
+.learning-box {
+    background: #eef2f3;
+    padding: 20px;
+    border-left: 5px solid var(--secondary-color);
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.example-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.answer-box {
+    background: #f9f9f9;
+    border-left: 5px solid var(--accent-color);
+    padding: 15px;
+}
+
+ul { margin-left: 20px; }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+<header>
+<h1>Materi Lengkap: Himpunan, Relasi, dan Teori Graf</h1>
+</header>
+
+<div class="section">
+<h2>1. Konsep Dasar Himpunan</h2>
+
+<p>
+Himpunan adalah kumpulan objek yang terdefinisi dengan jelas sehingga dapat ditentukan apakah suatu objek termasuk anggota himpunan tersebut atau tidak.
+Objek di dalam himpunan disebut <strong>elemen</strong> atau <strong>anggota</strong>.
+</p>
+
+<div class="learning-box">
+A = {1, 2, 3, 4}
+</div>
+
+<p>
+Penulisan himpunan menggunakan kurung kurawal { } dan elemen dipisahkan oleh koma.
+</p>
+
+<h3>Notasi Dasar Himpunan</h3>
+<ul>
+<li><strong>a ∈ A</strong> : a adalah anggota himpunan A</li>
+<li><strong>a ∉ A</strong> : a bukan anggota himpunan A</li>
+<li><strong>n(A)</strong> : banyaknya anggota himpunan A</li>
+</ul>
+
+<h3>Cara Menyatakan Himpunan</h3>
+<ul>
+<li><strong>Enumerasi (daftar)</strong> : A = {1,2,3,4}</li>
+<li><strong>Notasi pembentuk himpunan</strong> : A = {x | x &lt; 5}</li>
+<li><strong>Deskripsi kata-kata</strong> : A adalah himpunan bilangan kurang dari 5</li>
+<li><strong>Diagram Venn</strong> : representasi grafis menggunakan lingkaran</li>
+</ul>
+
+<h3>Jenis-jenis Himpunan</h3>
+<ul>
+<li><strong>Himpunan kosong (∅)</strong> : himpunan tanpa anggota</li>
+<li><strong>Himpunan hingga</strong> : jumlah anggotanya terbatas</li>
+<li><strong>Himpunan tak hingga</strong> : jumlah anggotanya tidak terbatas</li>
+<li><strong>Himpunan semesta (U)</strong> : himpunan yang memuat semua elemen yang sedang dibahas</li>
+<li><strong>Himpunan bagian (subset)</strong> : semua anggota A terdapat dalam B</li>
+<li><strong>Himpunan ekuivalen</strong> : dua himpunan dengan jumlah anggota sama</li>
+</ul>
+
+<h3>Relasi Antar Himpunan</h3>
+<ul>
+<li>A ⊆ B : A adalah himpunan bagian dari B</li>
+<li>A ⊂ B : A adalah himpunan bagian sejati dari B</li>
+<li>A = B : dua himpunan memiliki anggota yang sama</li>
+<li>A ⊄ B : A bukan himpunan bagian dari B</li>
+</ul>
+
+<h3>Operasi pada Himpunan</h3>
+
+<h4>A. Gabungan (Union)</h4>
+<p>
+Gabungan dua himpunan A dan B adalah himpunan yang berisi semua anggota A atau B.
+</p>
+<div class="learning-box">
+A ∪ B = {x | x ∈ A atau x ∈ B}
+</div>
+
+<h4>B. Irisan (Intersection)</h4>
+<p>
+Irisan adalah himpunan yang berisi anggota yang sama pada A dan B.
+</p>
+<div class="learning-box">
+A ∩ B = {x | x ∈ A dan x ∈ B}
+</div>
+
+<h4>C. Selisih (Difference)</h4>
+<p>
+Selisih A terhadap B adalah himpunan anggota A yang tidak ada di B.
+</p>
+<div class="learning-box">
+A − B = {x | x ∈ A dan x ∉ B}
+</div>
+
+<h4>D. Komplemen</h4>
+<p>
+Komplemen A adalah semua anggota semesta yang bukan anggota A.
+</p>
+<div class="learning-box">
+A' = {x | x ∈ U dan x ∉ A}
+</div>
+
+<h3>Contoh Operasi Himpunan</h3>
+
+<div class="learning-box">
+A = {1,2,3,4} <br>
+B = {3,4,5,6}
+</div>
+
+<ul>
+<li>A ∪ B = {1,2,3,4,5,6}</li>
+<li>A ∩ B = {3,4}</li>
+<li>A − B = {1,2}</li>
+<li>B − A = {5,6}</li>
+</ul>
+
+<h3>Hukum-hukum pada Operasi Himpunan</h3>
+<p>Operasi himpunan memiliki sifat-sifat seperti aljabar:</p>
+
+<ul>
+<li><strong>Komutatif</strong> : A ∪ B = B ∪ A, A ∩ B = B ∩ A</li>
+<li><strong>Asosiatif</strong> : (A ∪ B) ∪ C = A ∪ (B ∪ C)</li>
+<li><strong>Distributif</strong> : A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)</li>
+<li><strong>Identitas</strong> : A ∪ ∅ = A, A ∩ U = A</li>
+<li><strong>Idempoten</strong> : A ∪ A = A, A ∩ A = A</li>
+</ul>
+
+<h3>Hukum De Morgan</h3>
+<p>Hukum ini menghubungkan operasi komplemen, gabungan, dan irisan:</p>
+
+<div class="learning-box">
+(A ∪ B)' = A' ∩ B' <br>
+(A ∩ B)' = A' ∪ B'
+</div>
+
+<h3>Diagram Venn</h3>
+<p>
+Diagram Venn digunakan untuk memvisualisasikan hubungan antar himpunan menggunakan lingkaran dalam satu himpunan semesta.
+Diagram ini sangat membantu dalam memahami operasi gabungan, irisan, dan komplemen secara visual.
+</p>
+
+</div>
+
+<div class="section">
+<h2>2. Operasi Himpunan</h2>
+
+<p>
+Operasi pada himpunan digunakan untuk menggabungkan, membandingkan, atau mencari hubungan antara dua atau lebih himpunan.
+Operasi ini menjadi dasar penting dalam matematika diskrit, logika, dan ilmu komputer.
+</p>
+
+<div class="example-box">
+A = {1,2,3,4}<br>
+B = {3,4,5}
+</div>
+
+<h3>Jenis-jenis Operasi Himpunan</h3>
+
+<h4>A. Gabungan (Union)</h4>
+<p>
+Gabungan dua himpunan adalah himpunan yang berisi semua anggota dari kedua himpunan tanpa pengulangan.
+</p>
+<div class="learning-box">
+A ∪ B = {x | x ∈ A atau x ∈ B}
+</div>
+
+<h4>B. Irisan (Intersection)</h4>
+<p>
+Irisan adalah himpunan yang berisi anggota yang sama pada kedua himpunan.
+</p>
+<div class="learning-box">
+A ∩ B = {x | x ∈ A dan x ∈ B}
+</div>
+
+<h4>C. Selisih (Difference)</h4>
+<p>
+Selisih A terhadap B adalah himpunan anggota A yang tidak terdapat pada B.
+</p>
+<div class="learning-box">
+A − B = {x | x ∈ A dan x ∉ B}
+</div>
+
+<h4>D. Beda Simetris (Symmetric Difference)</h4>
+<p>
+Beda simetris adalah himpunan yang berisi anggota yang hanya terdapat pada salah satu himpunan, tetapi tidak pada keduanya.
+</p>
+<div class="learning-box">
+A ⊕ B = (A − B) ∪ (B − A)
+</div>
+
+<h3>Contoh Operasi Himpunan</h3>
+
+<div class="answer-box">
+A ∪ B = {1,2,3,4,5}<br>
+A ∩ B = {3,4}<br>
+A − B = {1,2}<br>
+B − A = {5}<br>
+A ⊕ B = {1,2,5}
+</div>
+
+<h3>Komplemen Himpunan</h3>
+<p>
+Komplemen suatu himpunan adalah himpunan semua anggota semesta yang tidak termasuk dalam himpunan tersebut.
+</p>
+
+<div class="learning-box">
+A' = {x | x ∈ U dan x ∉ A}
+</div>
+
+<h3>Tabel Ringkasan Operasi</h3>
+
+<table>
+<tr>
+<th>Operasi</th>
+<th>Simbol</th>
+<th>Makna</th>
+</tr>
+<tr>
+<td>Gabungan</td>
+<td>∪</td>
+<td>Semua anggota dari A atau B</td>
+</tr>
+<tr>
+<td>Irisan</td>
+<td>∩</td>
+<td>Anggota yang sama di A dan B</td>
+</tr>
+<tr>
+<td>Selisih</td>
+<td>−</td>
+<td>Anggota A yang tidak ada di B</td>
+</tr>
+<tr>
+<td>Beda Simetris</td>
+<td>⊕</td>
+<td>Anggota yang tidak sama antara A dan B</td>
+</tr>
+<tr>
+<td>Komplemen</td>
+<td>'</td>
+<td>Anggota semesta yang tidak ada di A</td>
+</tr>
+</table>
+
+<h3>Hukum-hukum Aljabar Himpunan</h3>
+<p>
+Operasi himpunan memiliki sifat-sifat yang mirip dengan aljabar biasa. Hukum-hukum ini digunakan untuk menyederhanakan ekspresi himpunan.
+</p>
+
+<h4>1. Hukum Komutatif</h4>
+<ul>
+<li>A ∪ B = B ∪ A</li>
+<li>A ∩ B = B ∩ A</li>
+</ul>
+
+<h4>2. Hukum Asosiatif</h4>
+<ul>
+<li>(A ∪ B) ∪ C = A ∪ (B ∪ C)</li>
+<li>(A ∩ B) ∩ C = A ∩ (B ∩ C)</li>
+</ul>
+
+<h4>3. Hukum Distributif</h4>
+<ul>
+<li>A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)</li>
+<li>A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)</li>
+</ul>
+
+<h4>4. Hukum Identitas</h4>
+<ul>
+<li>A ∪ ∅ = A</li>
+<li>A ∩ U = A</li>
+</ul>
+
+<h4>5. Hukum Komplemen</h4>
+<ul>
+<li>A ∪ A' = U</li>
+<li>A ∩ A' = ∅</li>
+</ul>
+
+<h4>6. Hukum Idempoten</h4>
+<ul>
+<li>A ∪ A = A</li>
+<li>A ∩ A = A</li>
+</ul>
+
+<h4>7. Hukum De Morgan</h4>
+<p>
+Hukum De Morgan menjelaskan hubungan antara komplemen, gabungan, dan irisan.
+</p>
+
+<div class="learning-box">
+(A ∪ B)' = A' ∩ B' <br>
+(A ∩ B)' = A' ∪ B'
+</div>
+
+<h3>Penerapan Operasi Himpunan</h3>
+<p>
+Dalam ilmu komputer, operasi himpunan digunakan pada:
+</p>
+<ul>
+<li>Basis data (operasi UNION, INTERSECT, EXCEPT pada SQL)</li>
+<li>Pencarian dan filtering data</li>
+<li>Logika boolean dalam pemrograman</li>
+<li>Teori graf dan algoritma</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>3. Relasi dan Fungsi</h2>
+
+<p>
+Relasi adalah hubungan antara elemen-elemen dari dua himpunan.
+Jika A dan B adalah dua himpunan, maka relasi R dari A ke B adalah himpunan pasangan berurutan (a, b) dengan a ∈ A dan b ∈ B.
+</p>
+
+<div class="learning-box">
+R ⊆ A × B
+</div>
+
+<p>
+Fungsi adalah relasi khusus di mana setiap elemen domain memiliki tepat satu pasangan di kodomain.
+</p>
+
+<div class="learning-box">
+f: A → B
+</div>
+
+<hr>
+
+<h3>Komponen Fungsi</h3>
+<ul>
+<li><strong>Domain</strong> : himpunan asal (A)</li>
+<li><strong>Kodomain</strong> : himpunan tujuan (B)</li>
+<li><strong>Range</strong> : himpunan nilai hasil yang benar-benar dipetakan</li>
+</ul>
+
+<div class="example-box">
+f(x) = x² <br>
+A = {1,2,3} <br>
+B = {1,2,3,4,5,6,7,8,9}
+</div>
+
+<div class="answer-box">
+Domain = {1,2,3} <br>
+Range = {1,4,9}
+</div>
+
+<hr>
+
+<h3>Representasi Relasi</h3>
+<p>Relasi dapat direpresentasikan dalam beberapa bentuk:</p>
+
+<ul>
+<li><strong>Himpunan pasangan berurutan</strong> : {(1,2), (2,3)}</li>
+<li><strong>Diagram panah</strong> : elemen domain dihubungkan ke kodomain</li>
+<li><strong>Matriks relasi</strong> : menggunakan tabel 0 dan 1</li>
+<li><strong>Graf berarah</strong> : simpul dan panah</li>
+</ul>
+
+<hr>
+
+<h3>Sifat-sifat Relasi</h3>
+
+<ul>
+<li><strong>Refleksif</strong> : (a,a) ∈ R</li>
+<li><strong>Simetris</strong> : jika (a,b) ∈ R maka (b,a) ∈ R</li>
+<li><strong>Transitif</strong> : jika (a,b) dan (b,c) ∈ R maka (a,c) ∈ R</li>
+</ul>
+
+<p>
+Relasi yang memiliki sifat refleksif, simetris, dan transitif disebut <strong>relasi ekuivalensi</strong>.
+</p>
+
+<hr>
+
+<h3>Jenis Fungsi</h3>
+
+<h4>1. Fungsi Injektif (Satu-satu)</h4>
+<p>
+Fungsi injektif adalah fungsi di mana elemen domain yang berbeda selalu memiliki hasil yang berbeda.
+</p>
+
+<div class="learning-box">
+f(a₁) = f(a₂) → a₁ = a₂
+</div>
+
+<h4>2. Fungsi Surjektif (Onto)</h4>
+<p>
+Fungsi surjektif adalah fungsi di mana setiap elemen pada kodomain memiliki pasangan dari domain.
+</p>
+
+<div class="learning-box">
+Range = Kodomain
+</div>
+
+<h4>3. Fungsi Bijektif</h4>
+<p>
+Fungsi bijektif adalah fungsi yang sekaligus injektif dan surjektif.
+Fungsi ini memiliki invers.
+</p>
+
+<div class="learning-box">
+f⁻¹: B → A
+</div>
+
+<hr>
+
+<h3>Komposisi Fungsi</h3>
+<p>
+Jika f: A → B dan g: B → C, maka komposisi fungsi ditulis:
+</p>
+
+<div class="learning-box">
+(g ∘ f)(x) = g(f(x))
+</div>
+
+<p>
+Komposisi fungsi berarti hasil dari fungsi pertama menjadi input bagi fungsi kedua.
+</p>
+
+<hr>
+
+<h3>Fungsi dalam Ilmu Komputer</h3>
+<ul>
+<li>Pemetaan data dalam array dan struktur data</li>
+<li>Fungsi matematika dalam algoritma</li>
+<li>Transformasi data pada basis data dan machine learning</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>4. Teori Graf</h2>
+
+<p>
+Graf adalah struktur matematika yang digunakan untuk merepresentasikan hubungan antar objek.
+Graf terdiri dari himpunan simpul (vertex) dan himpunan sisi (edge) yang menghubungkan pasangan simpul.
+</p>
+
+<div class="learning-box">
+G = (V, E)
+</div>
+
+<p>
+di mana:
+</p>
+<ul>
+<li>V = himpunan simpul (vertex)</li>
+<li>E = himpunan sisi (edge)</li>
+</ul>
+
+<h3>Contoh Graf</h3>
+<p>
+Jika V = {1,2,3} dan E = {(1,2), (2,3)}, maka graf menunjukkan bahwa simpul 1 terhubung ke 2, dan 2 terhubung ke 3.
+</p>
+
+<hr>
+
+<h3>Jenis-jenis Graf</h3>
+
+<ul>
+<li><strong>Graf Sederhana</strong> : tidak memiliki sisi ganda dan tidak memiliki loop</li>
+<li><strong>Graf Berarah (Directed Graph)</strong> : setiap sisi memiliki arah</li>
+<li><strong>Graf Tak Berarah (Undirected Graph)</strong> : sisi tidak memiliki arah</li>
+<li><strong>Graf Berbobot (Weighted Graph)</strong> : setiap sisi memiliki bobot atau nilai</li>
+<li><strong>Graf Lengkap (Complete Graph)</strong> : setiap simpul terhubung dengan semua simpul lain</li>
+<li><strong>Graf Terhubung (Connected Graph)</strong> : terdapat jalur antara setiap pasangan simpul</li>
+</ul>
+
+<hr>
+
+<h3>Terminologi Dasar Graf</h3>
+<ul>
+<li><strong>Adjacent (bertetangga)</strong> : dua simpul yang dihubungkan oleh sisi</li>
+<li><strong>Path (lintasan)</strong> : urutan simpul yang terhubung</li>
+<li><strong>Cycle (siklus)</strong> : lintasan yang kembali ke simpul awal</li>
+<li><strong>Subgraf</strong> : graf yang merupakan bagian dari graf lain</li>
+</ul>
+
+<hr>
+
+<h3>Derajat Simpul</h3>
+
+<p>
+Derajat simpul adalah jumlah sisi yang terhubung pada simpul tersebut.
+Pada graf tak berarah, setiap sisi yang incident pada simpul dihitung satu kali.
+</p>
+
+<div class="learning-box">
+d(v) = jumlah sisi yang terhubung ke simpul v
+</div>
+
+<h4>Graf Berarah</h4>
+<p>Pada graf berarah, derajat dibagi menjadi dua:</p>
+<ul>
+<li><strong>In-degree</strong> : jumlah sisi yang masuk ke simpul</li>
+<li><strong>Out-degree</strong> : jumlah sisi yang keluar dari simpul</li>
+</ul>
+
+<div class="learning-box">
+d(v) = d⁺(v) + d⁻(v)
+</div>
+
+<hr>
+
+<h3>Teorema Jabat Tangan (Handshake Lemma)</h3>
+
+<p>
+Jumlah seluruh derajat simpul dalam graf tak berarah selalu sama dengan dua kali jumlah sisi.
+Hal ini terjadi karena setiap sisi menghubungkan dua simpul.
+</p>
+
+<div class="example-box">
+∑ d(v) = 2|E|
+</div>
+
+<h4>Contoh</h4>
+
+<div class="example-box">
+Graf memiliki 3 sisi: (1-2), (2-3), (3-1)
+</div>
+
+<ul>
+<li>d(1) = 2</li>
+<li>d(2) = 2</li>
+<li>d(3) = 2</li>
+</ul>
+
+<div class="answer-box">
+∑ d(v) = 2 + 2 + 2 = 6 <br>
+2|E| = 2 × 3 = 6
+</div>
+
+<p>
+Kedua nilai sama, sehingga teorema terbukti.
+</p>
+
+<hr>
+
+<h3>Graf dalam Ilmu Komputer</h3>
+<ul>
+<li>Jaringan komputer dan internet</li>
+<li>Jejaring sosial</li>
+<li>Rute transportasi dan peta</li>
+<li>Struktur data pohon dan algoritma pencarian</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>5. Representasi Graf</h2>
+
+<p>
+Graf adalah struktur data yang digunakan untuk merepresentasikan hubungan antar objek.
+Graf terdiri dari <strong>simpul (vertex)</strong> dan <strong>sisi (edge)</strong>.
+Graf banyak digunakan dalam pemetaan jaringan, media sosial, rute transportasi, dan algoritma pencarian.
+</p>
+
+<h3>Komponen Graf</h3>
+<ul>
+<li><strong>Vertex (V)</strong> : titik atau simpul dalam graf</li>
+<li><strong>Edge (E)</strong> : hubungan antar simpul</li>
+</ul>
+
+<div class="learning-box">
+G = (V, E)
+</div>
+
+<h3>Jenis Graf</h3>
+<ul>
+<li>Graf tak berarah (Undirected Graph)</li>
+<li>Graf berarah (Directed Graph / Digraph)</li>
+<li>Graf berbobot (Weighted Graph)</li>
+<li>Graf tak berbobot (Unweighted Graph)</li>
+</ul>
+
+<h3>Metode Representasi Graf</h3>
+<p>
+Dalam komputer, graf tidak disimpan dalam bentuk gambar, melainkan dalam struktur data tertentu.
+Dua representasi yang paling umum digunakan adalah:
+</p>
+
+<ul>
+<li><strong>Matriks ketetanggaan (Adjacency Matrix)</strong></li>
+<li><strong>List ketetanggaan (Adjacency List)</strong></li>
+</ul>
+
+<hr>
+
+<h3>1. Matriks Ketetanggaan (Adjacency Matrix)</h3>
+
+<p>
+Matriks ketetanggaan adalah representasi graf menggunakan matriks berukuran n × n,
+di mana n adalah jumlah simpul. Nilai pada baris i dan kolom j menunjukkan apakah terdapat sisi antara simpul i dan j.
+</p>
+
+<div class="learning-box">
+0 1 0<br>
+1 0 1<br>
+0 1 0
+</div>
+
+<p>
+Contoh di atas menunjukkan graf dengan 3 simpul:
+</p>
+
+<ul>
+<li>Baris 1 kolom 2 bernilai 1 → simpul 1 terhubung dengan simpul 2</li>
+<li>Baris 2 kolom 3 bernilai 1 → simpul 2 terhubung dengan simpul 3</li>
+</ul>
+
+<h4>Kelebihan Matriks Ketetanggaan</h4>
+<ul>
+<li>Mudah diimplementasikan</li>
+<li>Cepat untuk mengecek apakah dua simpul terhubung</li>
+<li>Cocok untuk graf yang padat (banyak sisi)</li>
+</ul>
+
+<h4>Kekurangan Matriks Ketetanggaan</h4>
+<ul>
+<li>Menggunakan memori besar (O(n²))</li>
+<li>Tidak efisien untuk graf yang jarang (sparse graph)</li>
+</ul>
+
+<hr>
+
+<h3>2. List Ketetanggaan (Adjacency List)</h3>
+
+<p>
+List ketetanggaan menyimpan graf sebagai daftar simpul dan daftar tetangganya.
+Setiap simpul memiliki daftar simpul lain yang terhubung langsung dengannya.
+</p>
+
+<div class="learning-box">
+1 → 2<br>
+2 → 1, 3<br>
+3 → 2
+</div>
+
+<h4>Kelebihan List Ketetanggaan</h4>
+<ul>
+<li>Lebih hemat memori untuk graf jarang</li>
+<li>Efisien untuk traversal graf seperti DFS dan BFS</li>
+</ul>
+
+<h4>Kekurangan List Ketetanggaan</h4>
+<ul>
+<li>Pengecekan apakah dua simpul terhubung lebih lambat dibanding matriks</li>
+</ul>
+
+<hr>
+
+<h3>Perbandingan Matriks dan List Ketetanggaan</h3>
+
+<table>
+<tr>
+<th>Aspek</th>
+<th>Matriks</th>
+<th>List</th>
+</tr>
+<tr>
+<td>Memori</td>
+<td>Besar (n²)</td>
+<td>Kecil (V + E)</td>
+</tr>
+<tr>
+<td>Cek sisi</td>
+<td>Sangat cepat</td>
+<td>Lebih lambat</td>
+</tr>
+<tr>
+<td>Cocok untuk</td>
+<td>Graf padat</td>
+<td>Graf jarang</td>
+</tr>
+</table>
+
+<h3>Contoh Penggunaan Representasi Graf</h3>
+<ul>
+<li>Google Maps untuk mencari rute terpendek</li>
+<li>Jejaring sosial untuk relasi pertemanan</li>
+<li>Jaringan komputer untuk koneksi antar perangkat</li>
+<li>Algoritma seperti Dijkstra, BFS, dan DFS</li>
+</ul>
+
+</div>
+</body>
+</html>

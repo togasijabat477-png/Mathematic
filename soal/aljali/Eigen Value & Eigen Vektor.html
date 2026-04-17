@@ -1,0 +1,285 @@
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>Kuis Nilai & Vektor Eigen</title>
+        <style>
+            :root {
+                --primary: #8b5cf6;
+                --primary-dark: #6d28d9;
+                --bg-gradient: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+                --success: #10b981;
+                --danger: #ef4444;
+                --text-main: #1e293b;
+            }
+
+            * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+            body {
+                margin: 0; padding: 0;
+                font-family: "Times New Roman", Times, serif;
+                background: var(--bg-gradient);
+                color: var(--text-main);
+                min-height: 100vh;
+                display: flex; justify-content: center; align-items: center;
+            }
+
+            .container { width: 100%; max-width: 500px; padding: 15px; }
+
+            .card {
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+                padding: 24px; border-radius: 24px;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                border: 1px solid rgba(255, 255, 255, 0.5);
+            }
+
+            h2 { color: #4c1d95; margin-top: 0; font-size: 22px; }
+
+            button {
+                font-family: inherit;
+                display: block; width: 100%; padding: 16px;
+                margin: 12px 0; font-size: 16px; font-weight: bold;
+                color: white; border: none; border-radius: 15px;
+                background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+                cursor: pointer; transition: all 0.3s ease;
+            }
+
+            button:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(139, 92, 246, 0.3); }
+
+            .matrix-wrapper { display: flex; justify-content: center; align-items: center; margin: 20px 0; gap: 15px; }
+            .matrix {
+                display: inline-grid; gap: 10px 15px; padding: 10px 18px;
+                position: relative; border-left: 2px solid #4c1d95; border-right: 2px solid #4c1d95;
+            }
+            .matrix::before, .matrix::after {
+                content: ""; position: absolute; height: 10px; width: 10px; border-color: #4c1d95; border-style: solid;
+            }
+            .matrix::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+            .matrix::after { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+            .m-2x2 { grid-template-columns: repeat(2, auto); }
+            .m-3x3 { grid-template-columns: repeat(3, auto); }
+            .matrix div { font-size: 1.2rem; font-weight: bold; color: #5b21b6; min-width: 30px; }
+
+            #timer { background: #1e293b; color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; margin-bottom: 15px; display: inline-block; }
+            .progress { height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+            .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 0.4s ease; }
+
+            .option {
+                text-align: left; margin: 10px 0; padding: 15px;
+                border-radius: 12px; background: #f8fafc; border: 2px solid #e2e8f0;
+                cursor: pointer; transition: 0.2s;
+            }
+            .correct { background: var(--success) !important; color: white; }
+            .wrong { background: var(--danger) !important; color: white; }
+            .explanation {
+                margin-top: 15px; text-align: left; font-size: 14px; padding: 15px;
+                background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;
+                color: #166534; white-space: pre-line;
+            }
+            .hidden { display: none; }
+        </style>
+    </head>
+    <body>
+
+    <div class="container">
+        <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
+            Kembali ke Materi
+        </button>
+        <div id="startScreen" class="card">
+            <h2>Latihan & Soal Eigen Value & Eigen Vektor</h2>
+            <p style="color: #64748b; font-size: 14px;">
+                Jangan takut pada transformasi hidup, karena perubahan hanyalah ujian bagi konsistensi batin. Karakter sejati manusia berfungsi seperti Nilai Eigen; 
+                ia adalah konstanta yang bertahan di tengah variabel-variabel yang berubah. Saat lingkungan (matriks) menekan dan memaksa kita untuk berubah arah, karakter yang kuat akan memastikan bahwa esensi diri kita tetap selaras dengan arah aslinya. 
+                Transformasi sehebat apa pun hanya akan mengungkap seberapa besar 'nilai' yang kita miliki, tanpa pernah mampu mengubah inti dari siapa kita sebenarnya.
+            </p>
+            
+            <button onclick="startQuiz('easy')">Easy</button>
+            <button onclick="startQuiz('normal')" style="background:#6366f1">Medium</button>
+            <button onclick="startQuiz('hard')" style="background:#4338ca">Hard</button>
+
+            <div style="background: #f1f5f9; padding: 12px; border-radius: 12px; text-align: left; font-size: 12px;">
+                <strong>Detail Ujian:</strong>
+                <ul style="margin: 5px 0 0 0; padding-left: 18px;">
+                    <li>30 Soal Eigen Valeu & Eigen Vektor</li>
+                    <li>Waktu: 1 Jam 50 Menit</li>
+                    <li>Pembahasan lengkap setiap nomor</li>
+                </ul>
+            </div>
+        </div>
+
+            <div id="lastScore" style="margin-top:20px; font-weight:bold; font-size: 14px;"></div>
+        </div>
+
+        <div id="quizScreen" class="card hidden">
+            <div id="timer">Sisa Waktu: 110:00</div>
+            <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+            
+            <h3 id="questionTitle" style="font-size: 16px;"></h3>
+            <div id="matrixArea"></div>
+            
+            <div id="options"></div>
+            <div class="explanation hidden" id="explanation"></div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button id="nextBtn" onclick="nextQuestion()" style="flex: 2;">Berikiunya</button>
+                <button onclick="goHome()" style="flex: 1; background: #8d8d8d; font-size: 14px;">Kembali</button>
+            </div>
+        </div>
+
+        <div id="resultScreen" class="card hidden">
+            <h2>Hasil Akhir</h2>
+            <div id="scoreDisplay" style="font-size: 72px; font-weight: 800; color: var(--primary);">0</div>
+            <p>Jawaban Benar dari 30 Soal</p>
+            <button onclick="goHome()">Ulangi Latihan</button>
+        </div>
+    </div>
+
+    <script>
+    let current = 0;
+    let score = 0;
+    let questions = [];
+    let selected = null;
+    let timer;
+    let timeLeft = 6600;
+
+    function generateQuestions(level) {
+        let qArr = [];
+        for (let i = 0; i < 30; i++) {
+            if (level === 'easy') {
+                // Nilai Eigen Matriks Diagonal atau Segitiga (Mudah ditebak)
+                let l1 = Math.floor(Math.random() * 9) + 1;
+                let l2 = Math.floor(Math.random() * 5) - 5;
+                let a = l1, b = Math.floor(Math.random() * 5), c = 0, d = l2;
+                
+                qArr.push({
+                    type: 'val', vals: [a, b, c, d],
+                    o: shuffle([`λ = ${l1}`, `λ = ${l1+1}`, `λ = ${Math.abs(l2)}`, `λ = 0`, `λ = ${l1+l2}`]),
+                    a: `λ = ${l1}`,
+                    e: `Untuk matriks segitiga, nilai eigen adalah elemen diagonal utamanya.\nDiagonal: ${a} dan ${d}.\nJadi λ₁=${a}, λ₂=${d}.`
+                });
+            } else if (level === 'normal') {
+                // Verifikasi Vektor Eigen Ax = λx
+                // Matriks [1 2; 2 1], λ=3, x=[1; 1] atau λ=-1, x=[1; -1]
+                let vals = [1, 2, 2, 1];
+                let isCorrect = Math.random() > 0.5;
+                let v = isCorrect ? "[1, 1]" : "[1, 0]";
+                let ans = isCorrect ? "Benar" : "Salah";
+
+                qArr.push({
+                    type: 'vec', vals: vals, vec: v,
+                    o: ["Benar", "Salah"],
+                    a: ans,
+                    e: isCorrect ? `Ax = [1*1 + 2*1, 2*1 + 1*1] = [3, 3] = 3[1, 1]. \nMemenuhi syarat Ax = λx.` : `Ax tidak menghasilkan kelipatan dari vektor x.`
+                });
+            } else {
+                // Persamaan Karakteristik
+                let a = Math.floor(Math.random() * 4) + 1;
+                let trace = a + 2; 
+                qArr.push({
+                    type: 'char', vals: [a, 0, 0, 0, 2, 0, 0, 0, 5],
+                    o: shuffle([`λ = ${a}`, `λ = 0`, `λ = -${a}`, `λ = 1`, `λ = 9`]),
+                    a: `λ = ${a}`,
+                    e: `Pada matriks diagonal 3x3, nilai-nilai eigen adalah elemen diagonal itu sendiri: ${a}, 2, dan 5.`
+                });
+            }
+        }
+        return qArr;
+    }
+
+    function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+
+    function startQuiz(level){
+        questions = generateQuestions(level);
+        current = 0; score = 0; selected = null;
+        document.getElementById("startScreen").classList.add("hidden");
+        document.getElementById("quizScreen").classList.remove("hidden");
+        showQuestion();
+        startTimer();
+    }
+
+    function showQuestion(){
+        let q = questions[current];
+        let title = "";
+        if(q.type === 'val') title = "Manakah salah satu Nilai Eigen (λ) dari matriks ini?";
+        if(q.type === 'vec') title = `Apakah vektor x = ${q.vec} merupakan vektor eigen?`;
+        if(q.type === 'char') title = "Tentukan salah satu Nilai Eigen dari matriks 3x3 berikut:";
+
+        document.getElementById("questionTitle").innerText = `Soal ${current + 1}: ${title}`;
+        
+        let mClass = q.vals.length === 9 ? 'm-3x3' : 'm-2x2';
+        let mHTML = `<div class="matrix-wrapper"><div class="matrix ${mClass}">`;
+        q.vals.forEach(v => { mHTML += `<div>${v}</div>`; });
+        mHTML += `</div></div>`;
+        document.getElementById("matrixArea").innerHTML = mHTML;
+
+        let optHTML = "";
+        q.o.forEach((opt, i) => {
+            optHTML += `<div class='option' onclick='check("${opt}", this)'>${opt}</div>`;
+        });
+        document.getElementById("options").innerHTML = optHTML;
+        document.getElementById("explanation").classList.add("hidden");
+        updateProgress();
+    }
+
+    function check(valChosen, el){
+        if(selected !== null) return;
+        selected = valChosen;
+        let q = questions[current];
+
+        if(valChosen === q.a) {
+            score++;
+            el.classList.add('correct');
+        } else {
+            el.classList.add('wrong');
+            document.querySelectorAll('.option').forEach(opt => {
+                if(opt.innerText === q.a) opt.classList.add('correct');
+            });
+        }
+        document.getElementById("explanation").innerText = "Penjelasan:\n" + q.e;
+        document.getElementById("explanation").classList.remove("hidden");
+    }
+
+    function nextQuestion(){
+        if(selected === null) { alert("Pilih jawaban terlebih dahulu!"); return; }
+        current++;
+        selected = null;
+        if(current < questions.length) showQuestion();
+        else endQuiz();
+    }
+
+    function updateProgress(){
+        document.getElementById('progressBar').style.width = (current / 30 * 100) + '%';
+    }
+
+    function startTimer(){
+        if(timer) clearInterval(timer);
+        timer = setInterval(() => {
+            timeLeft--;
+            let m = Math.floor(timeLeft/60);
+            let s = timeLeft % 60;
+            document.getElementById('timer').innerText = `Sisa Waktu: ${m}:${s < 10 ? '0'+s : s}`;
+            if(timeLeft <= 0) endQuiz();
+        }, 1000);
+    }
+
+    function endQuiz(){
+        clearInterval(timer);
+        document.getElementById('quizScreen').classList.add('hidden');
+        document.getElementById('resultScreen').classList.remove('hidden');
+        document.getElementById('scoreDisplay').innerText = score;
+        localStorage.setItem("score_eigen", score);
+    }
+
+    function goHome() { window.location.href='../../index.html?page=materi'; }
+
+    window.onload = function(){
+        let last = localStorage.getItem("score_eigen");
+        if(last) document.getElementById("lastScore").innerText = "Skor terakhir: " + last + "/30";
+    }
+    </script>
+    </body>
+    </html>

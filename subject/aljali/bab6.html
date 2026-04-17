@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bab 6: Diagonalisasi Lengkap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; line-height: 1.6; color: #1a1a1a; }
+        .math-container { overflow-x: auto; margin: 15px 0; }
+        .header-bab { display: flex; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 20px; }
+        .bab-title { text-align: center; margin-right: 20px; }
+        .bab-label { font-size: 24px; font-weight: bold; margin: 0; }
+        .bab-number { font-size: 60px; font-weight: bold; line-height: 1; margin: 0; }
+        .divider { border-left: 4px solid #000; height: 80px; margin-right: 30px; }
+        .judul-utama { font-size: 24px; font-weight: bold; text-transform: uppercase; }
+        .section-title { font-weight: bold; margin-top: 20px; display: block; }
+        .bukti-text { padding-left: 20px; font-style: italic; color: #4a4a4a; }
+        .solution { border-left: 3px solid #e5e7eb; padding-left: 20px; margin: 15px 0; }
+        .matriks-row { display: flex; align-items: center; margin-bottom: 15px; font-size: 14px; flex-wrap: wrap; }
+        hr { margin: 30px 0; border-top: 1px solid #ddd; }
+    </style>
+</head>
+<body class="bg-gray-50 p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 md:p-12 shadow-xl border border-gray-200">
+        
+        <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+        <header class="header-bab">
+            <div class="bab-title">
+                <p class="bab-label">BAB</p>
+                <p class="bab-number">6</p>
+            </div>
+            <div class="divider"></div>
+            <h1 class="judul-utama">DIAGONALISASI</h1>
+        </header>
+
+        <section class="mb-8">
+            <h3 class="font-bold text-lg mb-2">Capaian Pembelajaran Mata Kuliah:</h3>
+            <ol class="list-decimal ml-6 mb-4">
+                <li>Mahasiswa mampu mengetahui konsep matriks diagonalisasi</li>
+                <li>Mahasiswa mampu menghitung dan menuliskan matriks diagonalisasi</li>
+            </ol>
+
+            <p class="section-title">Pengantar Diagonalisasi</p>
+            <div class="mb-4">
+                <strong>A. Diagonalisasi</strong>
+                <p class="text-justify indent-10">
+                    Sebuah matriks bujur sangkar A dikatakan dapat didiagonalisasi jika terdapat sebuah matriks P yang dapat dibalik sedemikian rupa sehingga <i>P<sup>-1</sup> AP</i> adalah sebuah matriks diagonal; matriks P dikatakan mendiagonalisasi A.
+                </p>
+            </div>
+
+            <div class="bg-gray-50 p-4 border-l-4 border-black">
+                <strong>Definisi</strong>
+                <p class="text-justify indent-10">
+                    Definisi Jika A dan D adalah matriks, kemudian matriks B sama dengan A maka terdapat sebuah invers matriks P yang dimana <i>D = P<sup>-1</sup> AP</i>
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <strong>B. Cara Menentukan Diagonalisasi Matriks:</strong>
+            <ol class="list-decimal ml-6 mt-2">
+                <li>Hitung nilai eigen dari A</li>
+                <li>Periksa apakah persamaan memiliki nilai eigen. Jika ada nilai eigen yang tidak memenuhi maka matriks tidak dapat didiagonalisasi. Jika tidak, Anda dapat melanjutkan ke langkah berikutnya.</li>
+                <li>Untuk setiap nilai eigen, carilah sebanyak mungkin vektor eigen yang bebas linier (jumlahnya sama dengan multiplisitas geometri nilai eigen).</li>
+                <li>Gabungkan semua vektor eigen sehingga membentuk matriks penuh \(P\)</li>
+                <li>Hitunglah matriks diagonal \(D\) yang elemen diagonalnya merupakan nilai eigen dari \(A\)</li>
+                <li>Diagonalisasi selesai: \(D = P^{-1} AP\)</li>
+            </ol>
+        </section>
+
+        <section class="mb-8">
+            <p class="font-bold mb-4">Contoh Matriks yang dapat didiagonalisasi dengan \(D = PAP^{-1}\)</p>
+            
+            <div class="matriks-row">
+                $$\begin{pmatrix} -12 & 15 \\ -10 & 13 \end{pmatrix} \text{ dapat didiagonalisasi karena } \begin{pmatrix} -2 & 3 \\ 1 & -1 \end{pmatrix} \begin{pmatrix} 3 & 0 \\ 0 & -2 \end{pmatrix} \begin{pmatrix} -2 & 3 \\ 1 & -1 \end{pmatrix}^{-1}$$
+            </div>
+
+            <div class="matriks-row">
+                $$\begin{pmatrix} 1/2 & 3/2 \\ 3/2 & 1/2 \end{pmatrix} \text{ dapat didiagonalisasi karena } \begin{pmatrix} 1 & 1 \\ 0 & -1 \end{pmatrix} \begin{pmatrix} 2 & 0 \\ 0 & -1 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 0 & -1 \end{pmatrix}^{-1}$$
+            </div>
+
+            <div class="matriks-row">
+                $$\frac{1}{5} \begin{pmatrix} -8 & 9 \\ 6 & 13 \end{pmatrix} \text{ dapat didiagonalisasi karena } \frac{1}{2} \begin{pmatrix} -1 & -3 \\ 2 & 1 \end{pmatrix} \begin{pmatrix} 2 & 0 \\ 0 & -1 \end{pmatrix} \left( \frac{1}{2} \begin{pmatrix} -1 & -3 \\ 2 & 1 \end{pmatrix} \right)^{-1}$$
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <p class="section-title text-lg">C. Lemma Kesamaan Diagonalisasi</p>
+            <p class="mb-4">Jika diberikan matriks \(n \times n\) pada A, B, dan C. Maka,</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <strong>1. \(A \sim A\) (reflektif)</strong>
+                    <div class="bukti-text">Bukti: Benar bahwa jika \(A \sim A\), maka \(P = I\)</div>
+                </div>
+                <div>
+                    <strong>2. Jika \(A \sim B\), maka \(B \sim A\) (simetris)</strong>
+                    <div class="bukti-text">
+                        Bukti: Jika \(A \sim B\) untuk beberapa \(P\) yang invertible terdapat \(A = P^{-1}BP\)<br>
+                        Maka \(PAP^{-1} = B \rightarrow (P^1)^{-1}AP^1 = B\) sehingga terbukti bahwa \(B \sim A\)
+                    </div>
+                </div>
+                <div>
+                    <strong>3. Jika \(A \sim B\) dan \(B \sim C\), maka \(A \sim C\) (transitif)</strong>
+                    <div class="bukti-text">
+                        Bukti: \(A \sim B\) and \(B \sim C \rightarrow\) terdapat matriks \(P\) dan \(Q\) maka:
+                        <div class="text-center my-2">
+                            \(A = P^{-1}BP, \quad B = Q^{-1}CQ\)<br>
+                            \(A = P^{-1}(Q^{-1}CQ)P = (QP)^{-1}C(QP)\)
+                        </div>
+                        sehingga terbukti bahwa \(A \sim C\).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-bold mb-4">Contoh Soal Detil</h2>
+
+            <p><strong>1. Diberikan matriks \( A = \begin{bmatrix} 5 & -3 \\ 6 & -4 \end{bmatrix} \), apakah matriks A memiliki diagonalisasi?</strong></p>
+            <div class="solution">
+                <p>Penyelesaian:</p>
+                <div class="math-container">
+                    $$ \det(\lambda I - A) = 0 \rightarrow \det\left( \begin{bmatrix} \lambda & 0 \\ 0 & \lambda \end{bmatrix} - \begin{bmatrix} 5 & -3 \\ 6 & -4 \end{bmatrix} \right) = \det\left( \begin{bmatrix} \lambda - 5 & 3 \\ -6 & \lambda + 4 \end{bmatrix} \right) $$
+                    $$ = (\lambda - 5)(\lambda + 4) - 3 \cdot (-6) = \lambda^2 - \lambda - 2 = (\lambda + 1)(\lambda - 2) $$
+                </div>
+                <p>\( \lambda_1 = -1 \rightarrow x_1 = \begin{bmatrix} 1 \\ 2 \end{bmatrix} \); &nbsp; \( \lambda_2 = 2 \rightarrow x_2 = \begin{bmatrix} 1 \\ 1 \end{bmatrix} \)</p>
+                <p>\( D = \begin{bmatrix} -1 & 0 \\ 0 & 2 \end{bmatrix} \quad P = \begin{bmatrix} 1 & 1 \\ 2 & 1 \end{bmatrix} \)</p>
+            </div>
+
+            <hr>
+
+            <p><strong>2. Hitunglah matriks \( P \) yang mendiagonalisasi \( A = \begin{bmatrix} \frac{1}{2} & \frac{3}{2} \\ \frac{3}{2} & \frac{1}{2} \end{bmatrix} \)</strong></p>
+            <div class="solution">
+                <p>Penyelesaian: \( f(\lambda) = \lambda^2 - Tr(A)\lambda + \det(A) = \lambda^2 - \lambda - 2 = (\lambda + 1)(\lambda - 2) \)</p>
+                <p>Nilai eigen: -1 dan 2. Untuk \( \lambda_1 = -1 \):</p>
+                <div class="math-container">
+                    $$ (A + 1I_2)v = 0 \iff \begin{bmatrix} \frac{3}{2} & \frac{3}{2} \\ \frac{3}{2} & \frac{3}{2} \end{bmatrix} v = 0 \rightarrow v_1 = \begin{pmatrix} -1 \\ 1 \end{pmatrix} $$
+                </div>
+                <p>Untuk \( \lambda_2 = 2 \):</p>
+                <div class="math-container">
+                    $$ (A - 2I_2)v = 0 \iff \begin{bmatrix} -\frac{3}{2} & \frac{3}{2} \\ \frac{3}{2} & -\frac{3}{2} \end{bmatrix} v = 0 \rightarrow v_2 = \begin{pmatrix} 1 \\ 1 \end{pmatrix} $$
+                </div>
+                <p>Maka \( P = \begin{bmatrix} -1 & 1 \\ 1 & 1 \end{bmatrix} \) dan \( D = \begin{bmatrix} -1 & 0 \\ 0 & 2 \end{bmatrix} \)</p>
+            </div>
+
+            <hr>
+
+            <p><strong>3. Tentukan invers matriks P dan diagonal matriks D untuk \( A = \begin{bmatrix} 2 & 0 & 0 \\ 1 & 4 & -1 \\ -2 & -4 & 4 \end{bmatrix} \)</strong></p>
+            <div class="solution">
+                <p>Nilai eigen: \(\lambda_1 = 2, \lambda_2 = 2, \lambda_3 = 6\).</p>
+                <p>Vektor eigen untuk \(\lambda = 2\): \( x_1 = \begin{bmatrix} -2 \\ 1 \\ 0 \end{bmatrix}, x_2 = \begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix} \). Untuk \(\lambda = 6\): \( x_3 = \begin{bmatrix} 0 \\ 1 \\ -2 \end{bmatrix} \).</p>
+                <div class="math-container">
+                    $$ P = \begin{bmatrix} -2 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & -2 \end{bmatrix} \implies P^{-1} = \begin{bmatrix} -1/4 & 1/2 & 1/4 \\ 1/2 & 1 & 1/2 \\ 1/4 & 1/2 & -1/4 \end{bmatrix} $$
+                    $$ P^{-1}AP = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 6 \end{bmatrix} $$
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-bold mb-4">4. Diagonalisasi dari sebuah matriks segitiga</h2>
+            <div class="math-container">
+                $$A = \begin{bmatrix} -1 & 2 & 4 & 0 \\ 0 & 3 & 1 & 7 \\ 0 & 0 & 5 & 8 \\ 0 & 0 & 0 & -2 \end{bmatrix}$$
+            </div>
+            <p>Elemen diagonal adalah nilai eigen: \(\lambda_1 = -1, \lambda_2 = 3, \lambda_3 = 5, \lambda_4 = -2\)</p>
+
+            <h2 class="text-xl font-bold mt-8 mb-4">Matriks yang tidak memiliki diagonalisasi</h2>
+            <p>Diberikan $$A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}$$. Nilai eigen \(\lambda_{1,2} = 1\).</p>
+            <div class="math-container">
+                $$(\lambda I - A) \rightarrow \begin{bmatrix} 0 & -1 \\ 0 & 0 \end{bmatrix} \rightarrow x_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}$$
+            </div>
+            <p class="bg-yellow-50 p-2">Karena hanya terdapat 1 eigen vector (kurang dari dimensi matriks), maka matriks ini <strong>tidak dapat didiagonalisasi</strong>.</p>
+        </section>
+
+        <section class="mb-8 bg-blue-50 p-6 rounded-lg">
+            <h2 class="text-xl font-bold mb-4">Pangkat sebuah matriks</h2>
+            <p class="italic mb-4">Jika \(D = P^{-1}AP\) maka \(A^n = PD^nP^{-1}\)</p>
+            
+            <p>Contoh perhitungan untuk \( A = \begin{pmatrix} 1/2 & 3/2 \\ 3/2 & 1/2 \end{pmatrix} \):</p>
+            <div class="math-container">
+                $$A^n = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix} \begin{pmatrix} 2^n & 0 \\ 0 & (-1)^n \end{pmatrix} \frac{1}{-2} \begin{pmatrix} -1 & -1 \\ -1 & 1 \end{pmatrix}$$
+                $$= \begin{pmatrix} 2^n & (-1)^n \\ 2^n & (-1)^{n+1} \end{pmatrix} \frac{1}{2} \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$$
+                $$= \frac{1}{2} \begin{pmatrix} 2^n + (-1)^n & 2^n + (-1)^{n+1} \\ 2^n + (-1)^{n+1} & 2^n + (-1)^n \end{pmatrix}$$
+            </div>
+            <p class="mt-4 text-sm">Catatan: Kita dapat menggunakan properti \((-1)^{n+2} = (-1)^2(-1)^n = (-1)^n\)</p>
+        </section>
+
+        <footer class="text-right font-bold mt-10 text-gray-400">
+            Halaman 75
+        </footer>
+    </div>
+
+</body>
+</html>

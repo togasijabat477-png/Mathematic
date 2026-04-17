@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temukan Jalannya!</title>
+    <style>
+        :root {
+            --background: hsl(222, 47%, 6%);
+            --foreground: hsl(210, 40%, 98%);
+            --card: hsl(222, 47%, 9%);
+            --primary: hsl(180, 100%, 50%);
+            --secondary: hsl(300, 100%, 60%);
+            --secondary-dark: hsl(300, 80%, 45%);
+            --muted: hsl(222, 30%, 15%);
+            --muted-foreground: hsl(215, 20%, 65%);
+            --accent: hsl(120, 100%, 50%);
+            --destructive: hsl(0, 84%, 60%);
+            --border: hsl(222, 30%, 20%);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            color: var(--foreground);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--muted-foreground);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .reset-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .reset-btn:hover {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        svg {
+            background: rgba(15, 23, 42, 0.35);
+            border-radius: 0.5rem;
+        }
+
+        .path-display {
+            text-align: center;
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: var(--accent);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '../../index.html?page=game';
+  }
+}
+</script>
+</head>
+<body>
+    <div class="container">
+        <a href="#" onclick="goBack();return false;" class="back-btn">← Kembali</a>
+
+        <div class="card">
+            <h1 class="title">Temukan Jalannya!</h1>
+            <p class="description" id="description"></p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Selesai</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pathLength">0</div>
+                <div class="stat-label">Panjang Jalur</div>
+            </div>
+            <div class="stat-card">
+                <button class="reset-btn" onclick="resetPath()">Reset Jalur</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <svg id="graphSvg" width="100%" height="400" viewBox="0 0 300 300"></svg>
+            <div class="path-display" id="pathDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let total = 0;
+        let graph = null;
+        let selectedPath = [];
+        let pathLength = 0;
+
+        function generateGraph() {
+            const nodeCount = 5;
+            const nodeIds = ['A', 'B', 'C', 'D', 'E'];
+            
+            const nodes = nodeIds.map((id, i) => {
+                const angle = (i * 2 * Math.PI) / nodeCount;
+                return {
+                    id,
+                    x: 150 + Math.cos(angle) * 100,
+                    y: 150 + Math.sin(angle) * 100,
+                };
+            });
+
+            const edges = [];
+            const edgeSet = new Set();
+            
+            for (let i = 0; i < nodeCount - 1; i++) {
+                const weight = Math.floor(Math.random() * 5) + 1;
+                edges.push({ from: nodeIds[i], to: nodeIds[i + 1], weight });
+                edgeSet.add(`${nodeIds[i]}-${nodeIds[i + 1]}`);
+            }
+            
+            for (let i = 0; i < 3; i++) {
+                const from = nodeIds[Math.floor(Math.random() * nodeCount)];
+                const to = nodeIds[Math.floor(Math.random() * nodeCount)];
+                const key = `${from}-${to}`;
+                const reverseKey = `${to}-${from}`;
+                
+                if (from !== to && !edgeSet.has(key) && !edgeSet.has(reverseKey)) {
+                    edges.push({ from, to, weight: Math.floor(Math.random() * 5) + 1 });
+                    edgeSet.add(key);
+                }
+            }
+
+            return { nodes, edges, start: 'A', end: 'E' };
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast success';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        function renderGraph() {
+            const svg = document.getElementById('graphSvg');
+            svg.innerHTML = '';
+
+            // Draw edges
+            graph.edges.forEach(edge => {
+                const fromNode = graph.nodes.find(n => n.id === edge.from);
+                const toNode = graph.nodes.find(n => n.id === edge.to);
+                if (!fromNode || !toNode) return;
+
+                const isInPath = 
+                    (selectedPath.includes(edge.from) && selectedPath.includes(edge.to)) &&
+                    Math.abs(selectedPath.indexOf(edge.from) - selectedPath.indexOf(edge.to)) === 1;
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', fromNode.x);
+                line.setAttribute('y1', fromNode.y);
+                line.setAttribute('x2', toNode.x);
+                line.setAttribute('y2', toNode.y);
+                line.setAttribute('stroke', isInPath ? '#3b82f6' : '#64748b');
+                line.setAttribute('stroke-width', isInPath ? 3 : 2);
+                line.setAttribute('opacity', isInPath ? 1 : 0.3);
+                svg.appendChild(line);
+
+                const midX = (fromNode.x + toNode.x) / 2;
+                const midY = (fromNode.y + toNode.y) / 2;
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', midX);
+                text.setAttribute('y', midY);
+                const fg = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim() || '#e2e8f0';
+                text.setAttribute('fill', fg);
+                text.setAttribute('font-size', '14');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = edge.weight;
+                svg.appendChild(text);
+            });
+
+            // Draw nodes
+            graph.nodes.forEach(node => {
+                const isStart = node.id === graph.start;
+                const isEnd = node.id === graph.end;
+                const isSelected = selectedPath.includes(node.id);
+                const isLast = node.id === selectedPath[selectedPath.length - 1];
+
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.style.cursor = 'pointer';
+                g.onclick = () => handleNodeClick(node.id);
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', node.x);
+                circle.setAttribute('cy', node.y);
+                circle.setAttribute('r', 20);
+                const css = getComputedStyle(document.documentElement);
+                const fillStart = css.getPropertyValue('--accent').trim() || '#10b981';
+                const fillEnd = css.getPropertyValue('--destructive').trim() || '#ef4444';
+                const fillSecondary = css.getPropertyValue('--secondary').trim() || '#3b82f6';
+                const fillAccent = css.getPropertyValue('--accent').trim() || '#f97316';
+                circle.setAttribute('fill', 
+                    isStart ? fillAccent :
+                    isEnd ? fillEnd :
+                    isLast ? fillSecondary :
+                    isSelected ? fillAccent :
+                    '#1e293b'
+                );
+                circle.setAttribute('stroke', '#3b82f6');
+                circle.setAttribute('stroke-width', isSelected ? 3 : 2);
+                g.appendChild(circle);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', node.x);
+                text.setAttribute('y', node.y);
+                const fg2 = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim() || '#e2e8f0';
+                text.setAttribute('fill', isSelected || isStart || isEnd ? 'white' : fg2);
+                text.setAttribute('font-size', '16');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dominant-baseline', 'middle');
+                text.style.pointerEvents = 'none';
+                text.textContent = node.id;
+                g.appendChild(text);
+
+                svg.appendChild(g);
+            });
+
+            document.getElementById('pathDisplay').textContent = `Jalur saat ini: ${selectedPath.join(' → ')}`;
+        }
+
+        function handleNodeClick(nodeId) {
+            const lastNode = selectedPath[selectedPath.length - 1];
+            
+            const edge = graph.edges.find(e =>
+                (e.from === lastNode && e.to === nodeId) ||
+                (e.to === lastNode && e.from === nodeId)
+            );
+
+            if (edge && !selectedPath.includes(nodeId)) {
+                selectedPath.push(nodeId);
+                pathLength += edge.weight;
+
+                if (nodeId === graph.end) {
+                    total++;
+                    score++;
+                    showToast(`Selesai! Panjang jalur: ${pathLength}`);
+                    setTimeout(() => {
+                        graph = generateGraph();
+                        selectedPath = [graph.start];
+                        pathLength = 0;
+                        updateUI();
+                    }, 2000);
+                }
+
+                updateUI();
+            }
+        }
+
+        function resetPath() {
+            selectedPath = [graph.start];
+            pathLength = 0;
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('description').textContent = `Klik node untuk membuat jalur dari ${graph.start} ke ${graph.end}`;
+            document.getElementById('score').textContent = score;
+            document.getElementById('pathLength').textContent = pathLength;
+            renderGraph();
+        }
+
+        // Initialize
+        graph = generateGraph();
+        selectedPath = [graph.start];
+        updateUI();
+    </script>
+</body>
+</html>

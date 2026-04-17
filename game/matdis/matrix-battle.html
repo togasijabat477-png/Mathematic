@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrix Battle – Aljabar Linear</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0c0c14;
+  --surface:  #12121e;
+  --surface2: #1a1a2e;
+  --border:   #2a2a44;
+  --violet:   #a78bfa;
+  --violet-d: #7c3aed;
+  --violet-g: rgba(167,139,250,0.15);
+  --amber:    #fbbf24;
+  --amber-g:  rgba(251,191,36,0.12);
+  --green:    #34d399;
+  --red:      #f87171;
+  --fg:       #f1f0ff;
+  --fg2:      #8b86b8;
+  --font-h:   'Bebas Neue', sans-serif;
+  --font-b:   'Rajdhani', sans-serif;
+  --font-m:   'Space Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-b);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(124,58,237,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 80%, rgba(167,139,250,0.06) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Header */
+.header {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(12,12,20,0.95);
+}
+.back-btn {
+  color: var(--violet); text-decoration: none;
+  font-family: var(--font-m); font-size: 0.72rem;
+  border: 1px solid rgba(167,139,250,0.3);
+  padding: 0.35rem 0.8rem; border-radius: 0.35rem;
+  transition: all 0.2s;
+}
+.back-btn:hover { background: var(--violet-g); }
+.gtitle {
+  font-family: var(--font-h);
+  font-size: clamp(1.2rem,3vw,1.8rem);
+  letter-spacing: 0.08em;
+  background: linear-gradient(135deg, var(--violet), var(--amber));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.score-bar { display: flex; gap: 1.5rem; align-items: center; }
+.score-item { text-align: center; }
+.score-val { font-family: var(--font-h); font-size: 1.4rem; color: var(--amber); }
+.score-lbl { font-size: 0.6rem; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* Main */
+.main { position: relative; z-index: 1; flex:1; display:flex; flex-direction:column; padding: 1rem 1.5rem 1.5rem; gap: 1rem; max-width: 900px; margin: 0 auto; width: 100%; }
+
+/* Mission */
+.mission {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--violet);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1.1rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.mission-type {
+  background: var(--violet-g); border: 1px solid var(--violet-d);
+  color: var(--violet); font-family: var(--font-m); font-size: 0.62rem;
+  padding: 0.2rem 0.6rem; border-radius: 2rem; white-space: nowrap;
+  letter-spacing: 0.06em;
+}
+.mission-q { font-size: 0.9rem; flex: 1; }
+.mission-q .hi { color: var(--amber); font-weight: 700; }
+.lives { display: flex; gap: 0.3rem; font-size: 1rem; }
+
+/* Layout */
+.game-layout { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: start; }
+@media(max-width:640px){ .game-layout { grid-template-columns: 1fr; } }
+
+/* Matrix display */
+.matrix-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1.25rem;
+}
+.matrix-label {
+  font-family: var(--font-h); font-size: 1rem; letter-spacing: 0.1em;
+  color: var(--violet); margin-bottom: 0.75rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.matrix-label span { font-family: var(--font-m); font-size: 0.62rem; color: var(--fg2); }
+.matrix-grid {
+  display: grid; gap: 0.4rem;
+  position: relative;
+}
+.matrix-grid::before,
+.matrix-grid::after {
+  content: '';
+  position: absolute;
+  top: -4px; bottom: -4px;
+  width: 4px; border-radius: 2px;
+  background: var(--violet);
+}
+.matrix-grid::before { left: -10px; }
+.matrix-grid::after  { right: -10px; }
+.matrix-row { display: flex; gap: 0.4rem; justify-content: center; }
+.matrix-cell {
+  width: 44px; height: 44px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-m); font-size: 0.9rem; font-weight: 700;
+  color: var(--fg);
+  transition: all 0.2s;
+}
+.matrix-cell.hi { border-color: var(--amber); color: var(--amber); background: var(--amber-g); }
+
+/* Operator */
+.op-center {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.5rem; padding-top: 3rem;
+}
+.op-symbol {
+  font-family: var(--font-h); font-size: 2.5rem;
+  color: var(--violet);
+  text-shadow: 0 0 20px rgba(167,139,250,0.5);
+}
+.eq-symbol {
+  font-family: var(--font-h); font-size: 2rem; color: var(--fg2);
+}
+
+/* Answer grid */
+.answer-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1.25rem;
+}
+.answer-label {
+  font-family: var(--font-h); font-size: 1rem; letter-spacing: 0.1em;
+  color: var(--amber); margin-bottom: 0.75rem;
+}
+.answer-grid { display: grid; gap: 0.4rem; }
+.answer-row { display: flex; gap: 0.4rem; justify-content: center; }
+.answer-cell {
+  width: 44px; height: 44px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 0.35rem;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-m); font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  position: relative;
+}
+.answer-cell:hover { border-color: var(--amber); background: var(--amber-g); }
+.answer-cell.filled { border-color: var(--violet); color: var(--violet); }
+.answer-cell.correct { border-color: var(--green); color: var(--green); background: rgba(52,211,153,0.1); }
+.answer-cell.wrong { border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.1); animation: shake 0.3s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+/* Number Picker */
+.picker {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 0.75rem;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+.pick-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--fg); font-family: var(--font-m); font-size: 0.75rem;
+  padding: 0.45rem; border-radius: 0.3rem;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.pick-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-g); }
+.pick-del {
+  grid-column: span 2;
+  background: rgba(248,113,113,0.08); border-color: var(--red); color: var(--red);
+}
+
+/* Progress */
+.progress-bar {
+  height: 4px; background: var(--surface2);
+  border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--violet), var(--amber));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* Explanation */
+.explanation {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1rem 1.25rem;
+  font-size: 0.82rem; color: var(--fg2); line-height: 1.7;
+  display: none;
+}
+.explanation.show { display: block; }
+.explanation strong { color: var(--fg); }
+.explanation .formula {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 0.4rem; padding: 0.5rem 0.75rem;
+  font-family: var(--font-m); font-size: 0.75rem; margin: 0.5rem 0;
+  color: var(--amber);
+}
+
+/* Toast */
+.toast {
+  position: fixed; top: 1.2rem; left: 50%; transform: translateX(-50%) translateY(-80px);
+  background: var(--green); color: #0c0c14;
+  font-family: var(--font-h); font-size: 1.1rem; letter-spacing: 0.08em;
+  padding: 0.6rem 1.5rem; border-radius: 0.5rem;
+  z-index: 200; transition: transform 0.3s ease;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.bad { background: var(--red); }
+
+/* Btn */
+.btn {
+  background: transparent; border: 1px solid var(--violet);
+  color: var(--violet); font-family: var(--font-h); font-size: 0.9rem;
+  letter-spacing: 0.08em; padding: 0.6rem 1.4rem;
+  border-radius: 0.4rem; cursor: pointer; transition: all 0.2s;
+}
+.btn:hover { background: var(--violet-g); }
+.btn-amber { border-color: var(--amber); color: var(--amber); }
+.btn-amber:hover { background: var(--amber-g); }
+
+/* Modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(12,12,20,0.85);
+  backdrop-filter: blur(6px); z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-bg.show { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 1rem; padding: 2.5rem 2rem; text-align: center;
+  max-width: 380px; width: 90%;
+  transform: scale(0.85); transition: transform 0.3s;
+}
+.modal-bg.show .modal { transform: scale(1); }
+.modal-emoji { font-size: 3.5rem; margin-bottom: 0.75rem; }
+.modal-title { font-family: var(--font-h); font-size: 2rem; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+.modal-sub { color: var(--fg2); font-size: 0.85rem; margin-bottom: 1.5rem; }
+.modal-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+</style>
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '../../index.html?page=game';
+  }
+}
+</script>
+</head>
+<body>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-emoji" id="mEmoji">🎯</div>
+    <div class="modal-title" id="mTitle" style="color:var(--amber)">Bagus!</div>
+    <div class="modal-sub" id="mSub"></div>
+    <div class="modal-btns">
+      <button class="btn" onclick="nextQuestion()">Soal Berikutnya →</button>
+      <button class="btn btn-amber" onclick="closeModal()">Lihat Penjelasan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<header class="header">
+  <a class="back-btn" href="#" onclick="goBack();return false;">← Kembali</a>
+  <div class="gtitle">Matrix Battle</div>
+  <div class="score-bar">
+    <div class="score-item"><div class="score-val" id="sScore">0</div><div class="score-lbl">Skor</div></div>
+    <div class="score-item"><div class="score-val" id="sQ">1</div><div class="score-lbl">Soal</div></div>
+    <div class="score-item"><div class="lives" id="lives">❤️❤️❤️</div></div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+
+  <div class="mission">
+    <div class="mission-type" id="mType">PENJUMLAHAN</div>
+    <div class="mission-q" id="mQ">Hitung hasil <span class="hi">A + B</span></div>
+  </div>
+
+  <div class="game-layout">
+    <div class="matrix-card">
+      <div class="matrix-label">Matriks A <span id="dimA"></span></div>
+      <div class="matrix-grid" id="matA"></div>
+    </div>
+    <div class="op-center">
+      <div class="op-symbol" id="opSymbol">+</div>
+      <div class="eq-symbol">=</div>
+    </div>
+    <div class="matrix-card">
+      <div class="matrix-label">Matriks B <span id="dimB"></span></div>
+      <div class="matrix-grid" id="matB"></div>
+    </div>
+  </div>
+
+  <div class="answer-card">
+    <div class="answer-label">Jawaban: Matriks Hasil</div>
+    <div class="answer-grid" id="ansGrid"></div>
+    <div class="picker" id="picker"></div>
+  </div>
+
+  <div class="explanation" id="expl"></div>
+</main>
+
+<script>
+let score = 0, qNum = 0, lives = 3, selectedCell = null;
+let A, B, correctAns, curQ, answerMatrix, totalCorrect = 0;
+const TOTAL = 12;
+
+// ─── Question bank ────────────────────────────────────────────
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randMat(r, c, lo, hi) {
+  return Array.from({length:r}, () => Array.from({length:c}, () => randInt(lo, hi)));
+}
+
+function generateQuestion(level) {
+  if (level < 4) {
+    // 2x2 addition
+    A = randMat(2,2,-5,9); B = randMat(2,2,-5,9);
+    const ans = A.map((row,i) => row.map((v,j) => v + B[i][j]));
+    return { type:'ADD', op:'+', desc:'Hitung hasil <span class="hi">A + B</span>', A, B, ans, dim:'2×2' };
+  } else if (level < 7) {
+    // 2x2 subtraction
+    A = randMat(2,2,-6,9); B = randMat(2,2,-6,9);
+    const ans = A.map((row,i) => row.map((v,j) => v - B[i][j]));
+    return { type:'SUB', op:'−', desc:'Hitung hasil <span class="hi">A − B</span>', A, B, ans, dim:'2×2' };
+  } else if (level < 10) {
+    // 2x2 x scalar
+    const k = randInt(2,4);
+    A = randMat(2,2,-4,6); B = [[k]];
+    const ans = A.map(row => row.map(v => v * k));
+    return { type:'SCALAR', op:'×'+k, desc:`Hitung hasil <span class="hi">${k} × A</span>`, A, B:null, scalar:k, ans, dim:'2×2' };
+  } else {
+    // 2x2 multiplication
+    A = randMat(2,2,-3,5); B = randMat(2,2,-3,5);
+    const ans = [
+      [A[0][0]*B[0][0]+A[0][1]*B[1][0], A[0][0]*B[0][1]+A[0][1]*B[1][1]],
+      [A[1][0]*B[0][0]+A[1][1]*B[1][0], A[1][0]*B[0][1]+A[1][1]*B[1][1]],
+    ];
+    return { type:'MUL', op:'×', desc:'Hitung hasil <span class="hi">A × B</span> (perkalian matriks)', A, B, ans, dim:'2×2' };
+  }
+}
+
+function loadQuestion() {
+  const expl = document.getElementById('expl');
+  expl.classList.remove('show');
+
+  curQ = generateQuestion(qNum);
+  answerMatrix = curQ.ans.map(row => row.map(() => null));
+  selectedCell = null;
+
+  document.getElementById('mType').textContent = curQ.type === 'ADD' ? 'PENJUMLAHAN' : curQ.type === 'SUB' ? 'PENGURANGAN' : curQ.type === 'SCALAR' ? 'SKALAR' : 'PERKALIAN';
+  document.getElementById('mQ').innerHTML = curQ.desc;
+  document.getElementById('opSymbol').textContent = curQ.op;
+  document.getElementById('sQ').textContent = qNum + 1;
+  document.getElementById('progFill').style.width = (qNum / TOTAL * 100) + '%';
+
+  renderMatrix('matA', curQ.A, 'dimA', curQ.dim);
+  if (curQ.B) renderMatrix('matB', curQ.B, 'dimB', curQ.dim);
+  else {
+    document.getElementById('matB').innerHTML = `<div style="font-size:2.5rem;color:var(--fg2);font-family:var(--font-h);text-align:center;padding:0.75rem">${curQ.scalar}</div>`;
+    document.getElementById('dimB').textContent = 'Skalar';
+  }
+
+  renderAnswerGrid();
+  renderPicker();
+}
+
+function renderMatrix(id, mat, dimId, dim) {
+  const el = document.getElementById(id);
+  el.style.gridTemplateRows = `repeat(${mat.length}, 1fr)`;
+  el.innerHTML = '';
+  mat.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'matrix-row';
+    row.forEach(val => {
+      const cell = document.createElement('div');
+      cell.className = 'matrix-cell';
+      cell.textContent = val;
+      if (val < 0) cell.style.color = 'var(--red)';
+      rowEl.appendChild(cell);
+    });
+    el.appendChild(rowEl);
+  });
+  if (dimId) document.getElementById(dimId).textContent = dim;
+}
+
+function renderAnswerGrid() {
+  const rows = curQ.ans.length, cols = curQ.ans[0].length;
+  const grid = document.getElementById('ansGrid');
+  grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+  grid.innerHTML = '';
+  curQ.ans.forEach((row, i) => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'answer-row';
+    row.forEach((_, j) => {
+      const cell = document.createElement('div');
+      cell.className = 'answer-cell';
+      cell.dataset.r = i; cell.dataset.c = j;
+      cell.onclick = () => selectCell(i, j);
+      rowEl.appendChild(cell);
+    });
+    grid.appendChild(rowEl);
+  });
+}
+
+function renderPicker() {
+  const p = document.getElementById('picker');
+  p.innerHTML = '';
+  // Build number set from possible answer range
+  const nums = [];
+  for (let n = -12; n <= 30; n++) nums.push(n);
+  // Curated: show a smart range
+  const allAns = curQ.ans.flat();
+  const mn = Math.min(...allAns) - 3, mx = Math.max(...allAns) + 3;
+  const range = [];
+  for (let n = mn; n <= mx; n++) range.push(n);
+  const show = [...new Set([...range])].slice(0, 18);
+
+  show.forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'pick-btn';
+    btn.textContent = n;
+    btn.onclick = () => pickNumber(n);
+    p.appendChild(btn);
+  });
+  const del = document.createElement('button');
+  del.className = 'pick-btn pick-del'; del.textContent = '⌫ Hapus';
+  del.onclick = () => clearCell();
+  p.appendChild(del);
+}
+
+function selectCell(r, c) {
+  selectedCell = [r, c];
+  document.querySelectorAll('.answer-cell').forEach(el => el.style.outline = 'none');
+  const el = document.querySelector(`.answer-cell[data-r="${r}"][data-c="${c}"]`);
+  if (el) el.style.outline = '2px solid var(--amber)';
+}
+
+function clearCell() {
+  if (!selectedCell) return;
+  const [r, c] = selectedCell;
+  answerMatrix[r][c] = null;
+  const el = document.querySelector(`.answer-cell[data-r="${r}"][data-c="${c}"]`);
+  el.className = 'answer-cell';
+  el.textContent = '';
+}
+
+function pickNumber(n) {
+  if (!selectedCell) { showToast('Pilih sel dulu!', true); return; }
+  const [r, c] = selectedCell;
+  answerMatrix[r][c] = n;
+  const el = document.querySelector(`.answer-cell[data-r="${r}"][data-c="${c}"]`);
+  el.className = 'answer-cell filled';
+  el.textContent = n;
+  el.style.outline = 'none';
+
+  // Auto-advance to next empty cell
+  const cells = document.querySelectorAll('.answer-cell');
+  let found = false;
+  for (let k = 0; k < cells.length; k++) {
+    const nr = +cells[k].dataset.r, nc = +cells[k].dataset.c;
+    if (answerMatrix[nr][nc] === null) {
+      selectCell(nr, nc); found = true; break;
+    }
+  }
+  if (!found) {
+    // All filled – auto-check
+    setTimeout(checkAnswer, 300);
+  }
+}
+
+function checkAnswer() {
+  let allCorrect = true;
+  let anyWrong = false;
+  const rows = curQ.ans.length, cols = curQ.ans[0].length;
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const el = document.querySelector(`.answer-cell[data-r="${i}"][data-c="${j}"]`);
+      if (answerMatrix[i][j] === curQ.ans[i][j]) {
+        el.className = 'answer-cell correct';
+      } else {
+        el.className = 'answer-cell wrong';
+        allCorrect = false; anyWrong = true;
+      }
+    }
+  }
+
+  if (allCorrect) {
+    score += 100 + (curQ.type === 'MUL' ? 50 : 0);
+    document.getElementById('sScore').textContent = score;
+    totalCorrect++;
+    showModal(true);
+  } else {
+    lives--;
+    updateLives();
+    if (lives <= 0) { setTimeout(gameOver, 800); return; }
+    showToast('Ada yang salah, coba lagi!', true);
+    setTimeout(() => {
+      // Reset wrong cells
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          const el = document.querySelector(`.answer-cell[data-r="${i}"][data-c="${j}"]`);
+          if (!el.classList.contains('correct')) {
+            el.className = 'answer-cell';
+            el.textContent = '';
+            answerMatrix[i][j] = null;
+          }
+        }
+      }
+    }, 900);
+  }
+}
+
+function updateLives() {
+  const h = ['❤️','❤️','❤️'].slice(0, lives).join('') + ['🖤','🖤','🖤'].slice(lives).join('');
+  document.getElementById('lives').textContent = h;
+}
+
+function showModal(win) {
+  const typeNames = { ADD:'Penjumlahan', SUB:'Pengurangan', SCALAR:'Perkalian Skalar', MUL:'Perkalian Matriks' };
+  document.getElementById('mEmoji').textContent = win ? '✅' : '💥';
+  document.getElementById('mTitle').textContent = win ? 'Tepat!' : 'Salah!';
+  document.getElementById('mTitle').style.color = win ? 'var(--green)' : 'var(--red)';
+  document.getElementById('mSub').textContent = win
+    ? `+${100 + (curQ.type==='MUL'?50:0)} poin! ${typeNames[curQ.type]} selesai.`
+    : 'Jawaban kurang tepat.';
+  document.getElementById('modalBg').classList.add('show');
+  showExplanation();
+}
+
+function closeModal() { document.getElementById('modalBg').classList.remove('show'); }
+function nextQuestion() {
+  closeModal();
+  qNum++;
+  if (qNum >= TOTAL) { gameOver(true); return; }
+  loadQuestion();
+}
+
+function showExplanation() {
+  const expl = document.getElementById('expl');
+  let html = '';
+  if (curQ.type === 'ADD' || curQ.type === 'SUB') {
+    const op = curQ.type === 'ADD' ? '+' : '−';
+    html = `<strong>Cara kerja ${curQ.type==='ADD'?'Penjumlahan':'Pengurangan'} Matriks:</strong><br>
+    Jumlahkan/kurangkan elemen yang berposisi sama.<br>
+    <div class="formula">C[i][j] = A[i][j] ${op} B[i][j]</div>
+    Contoh: A[0][0]=${curQ.A[0][0]} ${op} B[0][0]=${curQ.B[0][0]} = <strong style="color:var(--green)">${curQ.ans[0][0]}</strong>`;
+  } else if (curQ.type === 'SCALAR') {
+    html = `<strong>Perkalian Skalar:</strong><br>
+    Kalikan setiap elemen dengan konstanta.<br>
+    <div class="formula">C[i][j] = k × A[i][j]</div>
+    Contoh: ${curQ.scalar} × ${curQ.A[0][0]} = <strong style="color:var(--green)">${curQ.ans[0][0]}</strong>`;
+  } else {
+    html = `<strong>Perkalian Matriks (dot product):</strong><br>
+    C[i][j] = jumlah perkalian baris A ke-i dengan kolom B ke-j.<br>
+    <div class="formula">C[i][j] = Σ A[i][k] × B[k][j]</div>
+    Contoh: C[0][0] = ${curQ.A[0][0]}×${curQ.B[0][0]} + ${curQ.A[0][1]}×${curQ.B[1][0]} = <strong style="color:var(--green)">${curQ.ans[0][0]}</strong>`;
+  }
+  expl.innerHTML = html;
+  expl.classList.add('show');
+}
+
+function gameOver(win) {
+  const pct = Math.round(totalCorrect / TOTAL * 100);
+  document.getElementById('mEmoji').textContent = win ? '🏆' : '💔';
+  document.getElementById('mTitle').textContent = win ? 'Selesai!' : 'Game Over';
+  document.getElementById('mTitle').style.color = win ? 'var(--amber)' : 'var(--red)';
+  document.getElementById('mSub').textContent = `Skor: ${score} | Benar: ${totalCorrect}/${TOTAL} (${pct}%)`;
+  document.getElementById('modalBg').classList.add('show');
+  document.querySelector('.modal-btns').innerHTML =
+    `<button class="btn" onclick="restartGame()">Main Lagi</button>
+     <a class="btn btn-amber" href="../index.html">Beranda</a>`;
+}
+
+function restartGame() {
+  score = 0; qNum = 0; lives = 3; totalCorrect = 0;
+  document.getElementById('sScore').textContent = 0;
+  updateLives();
+  closeModal();
+  loadQuestion();
+}
+
+let toastTimer;
+function showToast(msg, bad) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (bad ? ' bad' : '') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

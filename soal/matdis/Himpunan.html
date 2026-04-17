@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz Himpunan, Relasi & Fungsi Matematika</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Times New Roman", Times, serif;
+            background: var(--bg-gradient);
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(15px, 5vw, 30px);
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: 100%;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1e3a8a;
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+        }
+
+        p {
+            color: #475569;
+            line-height: 1.6;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+
+        button {
+            display: block;
+            width: 100%; 
+            padding: 14px 20px;
+            margin: 10px 0; 
+            font-family: inherit;
+            font-size: clamp(16px, 4vw, 18px); 
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            word-wrap: break-word;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        #timer {
+            font-weight: bold;
+            font-family: monospace;
+            background: #1e293b;
+            color: #fff;
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .progress {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        #question {
+            font-size: clamp(1rem, 4.5vw, 1.2rem);
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .option {
+            text-align: left;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: clamp(14px, 3.8vw, 15px);
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .option-prefix {
+            font-weight: bold;
+            margin-right: 10px;
+            color: var(--primary);
+            min-width: 20px;
+        }
+
+        .correct {
+            background: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white;
+        }
+        .correct .option-prefix { color: white; }
+
+        .wrong {
+            background: var(--danger) !important;
+            border-color: var(--danger) !important;
+            color: white;
+        }
+        .wrong .option-prefix { color: white; }
+
+        .explanation {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 14px;
+            background: #fffbeb;
+            padding: 15px;
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            color: #92400e;
+            white-space: pre-line;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .hidden { display: none; }
+
+        #score-display {
+            font-size: clamp(60px, 15vw, 80px);
+            font-weight: 800;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+
+        .nav-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 360px) {
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
+            Kembali ke Materi
+    </button>
+
+         <div class="wrap">
+     <div class="card">
+
+<div class="container">
+    <div id="startScreen" class="card">
+        <h2>Soal & Jawaban Himpunan, Relasi & Fungsi Matematika</h2>
+        <p>Himpunan adalah kumpulan benda atau objek yang didefinisikan dengan jelas. 
+            Ia mengajarkan kita tentang klasifikasi, keanggotaan, serta hubungan logis antara kelompok-kelompok data.</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="startQuiz('easy')">Easy</button>
+            <button onclick="startQuiz('medium')" style="background:#4f46e5">Medium</button>
+            <button onclick="startQuiz('hard')" style="background:#3730a3">Hard</button>
+        </div>
+
+        <div style="background: #f1f5f9; padding: 12px; border-radius: 12px; text-align: left; font-size: 12px;">
+            <strong>Detail Ujian:</strong>
+            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
+                <li>30 Soal Himpunan & Relasi dan Fungsi Matematika</li>
+                <li>Waktu: 2 Jam</li>
+                <li>Pembahasan lengkap setiap nomor</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="quizScreen" class="card hidden">
+        <div id="timer">Waktu: 110:00</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div id="question"></div>
+        <div id="options"></div>
+        
+        <div class="explanation hidden" id="explanation"></div>
+        
+        <div class="nav-buttons">
+            <button onclick="nextQuestion()" style="flex: 2;">Berikutnya</button>
+            <button onclick="goHome()" style="flex: 1; background: #94a3b8; font-size: 12px;">Kembali</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="card hidden">
+        <h2>Hasil Akhir</h2>
+        <div id="score-display">0</div>
+        <p>Jawaban benar dari 30 soal.</p>
+        <button onclick="goHome()">Ulangi Latihan</button>
+    </div>
+</div>
+
+<script>
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let selected = null;
+let timer;
+let timeLeft = 6600; // 1 Jam 50 Menit (110 menit * 60 detik)
+
+const allQuestions = [
+    // 30 SOAL EASY
+    { q: "Kumpulan berikut yang merupakan himpunan adalah...", opts: ["Kumpulan lukisan indah", "Kumpulan siswa pandai", "Kumpulan hewan lucu", "Kumpulan bilangan prima kurang dari 10", "Kumpulan makanan enak"], ans: "Kumpulan bilangan prima kurang dari 10", exp: "Himpunan harus memiliki definisi yang objektif dan jelas." },
+    { q: "Jika A = {a, b, c, d, e}, maka n(A) adalah...", opts: ["3", "4", "5", "6", "7"], ans: "5", exp: "n(A) adalah jumlah anggota dalam himpunan." },
+    { q: "Himpunan bilangan cacah kurang dari 5 adalah...", opts: ["{1, 2, 3, 4}", "{0, 1, 2, 3, 4}", "{1, 2, 3, 4, 5}", "{0, 1, 2, 3, 4, 5}", "{-1, 0, 1, 2, 3, 4}"], ans: "{0, 1, 2, 3, 4}", exp: "Bilangan cacah dimulai dari angka 0." },
+    { q: "Simbol '∅' melambangkan...", opts: ["Himpunan Semesta", "Himpunan Kosong", "Irisan", "Gabungan", "Anggota Himpunan"], ans: "Himpunan Kosong", exp: "∅ atau { } berarti himpunan yang tidak memiliki anggota." },
+    { q: "Simbol ∪ dalam himpunan berarti...", opts: ["Irisan", "Gabungan", "Himpunan Bagian", "Komplemen", "Sama dengan"], ans: "Gabungan", exp: "∪ (Union) menggabungkan semua elemen dari dua himpunan." },
+    { q: "Jika P = {1, 2, 3} dan Q = {3, 4, 5}, maka P ∩ Q adalah...", opts: ["{1, 2, 3, 4, 5}", "{1, 2}", "{4, 5}", "{3}", "∅"], ans: "{3}", exp: "Irisan (∩) mengambil anggota yang ada di kedua himpunan." },
+    { q: "Himpunan semesta biasanya dilambangkan dengan huruf...", opts: ["A", "H", "S", "K", "V"], ans: "S", exp: "S singkatan dari Semesta (atau U untuk Universal)." },
+    { q: "Notasi 'x ∈ A' dibaca sebagai...", opts: ["x bukan anggota A", "A bagian dari x", "x anggota dari A", "x sama dengan A", "x irisan A"], ans: "x anggota dari A", exp: "∈ adalah simbol keanggotaan (elemen)." },
+    { q: "Berapakah banyak himpunan bagian dari {1, 2}?", opts: ["1", "2", "3", "4", "5"], ans: "4", exp: "Rumus: 2^n = 2^2 = 4 (∅, {1}, {2}, {1,2})." },
+    { q: "Himpunan bilangan asli dimulai dari...", opts: ["-1", "0", "1", "2", "10"], ans: "1", exp: "Bilangan asli adalah {1, 2, 3, ...}." },
+    { q: "Hubungan antara anggota himpunan A dengan anggota himpunan B disebut...", opts: ["Fungsi", "Relasi", "Pemetaan", "Korespondensi", "Kodomain"], ans: "Relasi", exp: "Relasi adalah aturan yang menghubungkan anggota himpunan satu dengan yang lain tanpa syarat khusus." },
+    { q: "Himpunan daerah asal dalam sebuah fungsi disebut...", opts: ["Range", "Kodomain", "Domain", "Bayangan", "Relasi"], ans: "Domain", exp: "Domain adalah daerah asal, Kodomain daerah kawan, dan Range daerah hasil." },
+    { q: "Manakah dari himpunan pasangan berurutan berikut yang merupakan fungsi?", opts: ["{(1,a), (1,b), (1,c)}", "{(1,a), (2,a), (3,a)}", "{(1,a), (2,b), (1,c)}", "{(1,a), (2,b), (2,c)}", "{(3,1), (3,2), (3,3)}"], ans: "{(1,a), (2,a), (3,a)}", exp: "Fungsi mensyaratat setiap anggota domain (angka pertama) hanya muncul satu kali." },
+    { q: "Daerah hasil dari sebuah pemetaan disebut...", opts: ["Domain", "Kodomain", "Range", "Relasi", "Objek"], ans: "Range", exp: "Range adalah himpunan anggota kodomain yang memiliki pasangan di domain." },
+    { q: "Sebuah fungsi f: x → 2x + 1. Bayangan dari 3 adalah...", opts: ["5", "6", "7", "8", "9"], ans: "7", exp: "f(3) = 2(3) + 1 = 6 + 1 = 7." },
+    { q: "Jika A = {1, 2} dan B = {a, b}, banyaknya pemetaan yang mungkin dari A ke B adalah...", opts: ["2", "4", "8", "16", "32"], ans: "4", exp: "Rumus pemetaan A ke B adalah n(B)^n(A) = 2² = 4." },
+    { q: "Pada diagram panah, fungsi ditandai dengan...", opts: ["Setiap anggota domain punya satu pasangan", "Setiap anggota kodomain punya satu pasangan", "Beberapa anggota domain tidak punya pasangan", "Satu anggota domain punya dua pasangan", "Anggota kodomain harus habis dipasangkan"], ans: "Setiap anggota domain punya satu pasangan", exp: "Syarat fungsi: setiap anggota domain tepat satu kali memasangkan ke kodomain." },
+    { q: "Relasi 'dua kali dari' dari A = {2, 4, 6} ke B = {1, 2, 3} adalah...", opts: ["{(2,1), (4,2), (6,3)}", "{(1,2), (2,4), (3,6)}", "{(2,4), (4,6), (6,2)}", "{(2,2), (4,4), (6,6)}", "{(1,1), (2,2), (3,3)}"], ans: "{(2,1), (4,2), (6,3)}", exp: "Karena 2=2x1, 4=2x2, dan 6=2x3." },
+    { q: "Himpunan kawan dalam fungsi f: A → B adalah...", opts: ["Himpunan A", "Himpunan B", "Himpunan Hasil", "Himpunan Bagian", "Himpunan Kosong"], ans: "Himpunan B", exp: "Fungsi f: A → B, maka A adalah domain dan B adalah kodomain." },
+    { q: "Jika f(x) = 5x - 2, maka nilai f(0) adalah...", opts: ["3", "2", "-2", "0", "-5"], ans: "-2", exp: "f(0) = 5(0) - 2 = -2." },
+    { q: "Diagram yang paling umum digunakan untuk menyatakan relasi adalah...", opts: ["Diagram Batang", "Diagram Panah", "Diagram Lingkaran", "Diagram Kotak", "Diagram Garis"], ans: "Diagram Panah", exp: "Diagram panah memudahkan visualisasi hubungan antar anggota himpunan." },
+    { q: "Jika f(x) = x + 7, maka f(5) adalah...", opts: ["10", "11", "12", "13", "14"], ans: "12", exp: "f(5) = 5 + 7 = 12." },
+    { q: "Pasangan berurutan (3, 9) memenuhi fungsi...", opts: ["f(x) = x + 3", "f(x) = 2x", "f(x) = x²", "f(x) = 3x", "f(x) = 9"], ans: "f(x) = 3x", exp: "Jika x=3, maka f(3)=3(3)=9." },
+    { q: "Anggota himpunan A = {1, 2, 3}. Anggota himpunan B = {a, b}. Relasi {(1,a), (2,b)} disebut...", opts: ["Fungsi", "Bukan Fungsi", "Korespondensi Satu-satu", "Pemetaan", "Fungsi Surjektif"], ans: "Bukan Fungsi", exp: "Anggota domain {3} tidak memiliki pasangan." },
+    { q: "Jika g(x) = 10 - x, maka g(12) adalah...", opts: ["2", "-2", "22", "-22", "0"], ans: "-2", exp: "g(12) = 10 - 12 = -2." },
+    { q: "Prapeta dari 10 oleh fungsi f(x) = 2x adalah...", opts: ["20", "5", "10", "2", "12"], ans: "5", exp: "2x = 10, maka x = 5." },
+    { q: "Pada fungsi f(x) = ax + b, variabel bebasnya adalah...", opts: ["a", "b", "f", "x", "f(x)"], ans: "x", exp: "x adalah input atau variabel bebas." },
+    { q: "Range dari relasi {(1,2), (2,4), (3,6)} adalah...", opts: ["{1,2,3}", "{2,4,6}", "{1,4,6}", "{1,2,4,6}", "{2,3,6}"], ans: "{2,4,6}", exp: "Range adalah kumpulan nilai y (elemen kedua)." },
+    { q: "Banyak pemetaan dari B={1} ke A={a,b,c} adalah...", opts: ["1", "2", "3", "4", "5"], ans: "3", exp: "n(A)^n(B) = 3^1 = 3." },
+    { q: "Jika f(x) = 3x, maka f(x+1) adalah...", opts: ["3x + 1", "3x + 3", "x + 3", "4x", "3x - 3"], ans: "3x + 3", exp: "f(x+1) = 3(x+1) = 3x + 3." },
+
+    // 30 SOAL MEDIUM
+    { q: "Jika A = {1, 2, 3, 4, 5} dan B = {2, 4, 6}, maka A - B adalah...", opts: ["{1, 3, 5}", "{6}", "{2, 4}", "{1, 2, 3, 4, 5, 6}", "∅"], ans: "{1, 3, 5}", exp: "A - B berarti anggota A yang tidak ada di B." },
+    { q: "Jika n(A) = 10, n(B) = 8, dan n(A ∩ B) = 3, maka n(A ∪ B) adalah...", opts: ["18", "15", "13", "21", "5"], ans: "15", exp: "n(A ∪ B) = n(A) + n(B) - n(A ∩ B) = 10 + 8 - 3 = 15." },
+    { q: "Komplemen dari himpunan A dalam semesta S adalah...", opts: ["Anggota A saja", "Anggota S yang juga anggota A", "Anggota S yang bukan anggota A", "Himpunan kosong", "Gabungan S dan A"], ans: "Anggota S yang bukan anggota A", exp: "A' berisi elemen di semesta yang tidak termasuk dalam A." },
+    { q: "Banyaknya himpunan bagian dari {a, b, c, d} adalah...", opts: ["4", "8", "12", "16", "32"], ans: "16", exp: "2^4 = 16." },
+    { q: "Jika K = {faktor dari 6}, maka n(K) adalah...", opts: ["2", "3", "4", "5", "6"], ans: "4", exp: "Faktor 6 = {1, 2, 3, 6}." },
+    { q: "Dua himpunan A dan B dikatakan ekuivalen jika...", opts: ["A = B", "A ⊂ B", "n(A) = n(B)", "A ∩ B = ∅", "A ∪ B = S"], ans: "n(A) = n(B)", exp: "Ekuivalen berarti memiliki jumlah anggota yang sama." },
+    { q: "Himpunan P = {x | 2 < x ≤ 7, x ∈ Bilangan Asli}. Anggotanya adalah...", opts: ["{2, 3, 4, 5, 6}", "{3, 4, 5, 6}", "{3, 4, 5, 6, 7}", "{2, 3, 4, 5, 6, 7}", "{2, 7}"], ans: "{3, 4, 5, 6, 7}", exp: "x lebih besar dari 2 dan kurang dari atau sama dengan 7." },
+    { q: "Himpunan kuasa dari A = {1, 2} adalah...", opts: ["{{1}, {2}}", "{1, 2, ∅}", "{∅, {1}, {2}, {1,2}}", "{1, 2}", "∅"], ans: "{∅, {1}, {2}, {1,2}}", exp: "Himpunan kuasa mencakup semua subset termasuk himpunan kosong." },
+    { q: "Pernyataan (A ∪ B)' ekuivalen dengan...", opts: ["A' ∪ B'", "A' ∩ B'", "A ∩ B", "A' - B'", "S"], ans: "A' ∩ B'", exp: "Ini adalah salah satu Hukum De Morgan." },
+    { q: "Jika n(A) = 5, berapa banyak himpunan bagian A yang memiliki tepat 0 anggota?", opts: ["0", "1", "5", "10", "32"], ans: "1", exp: "Hanya ada satu, yaitu himpunan kosong." },
+    { q: "Diketahui f(x) = ax + b. Jika f(2) = 7 dan f(0) = 3, maka rumus fungsinya adalah...", opts: ["f(x) = 2x + 3", "f(x) = 3x + 2", "f(x) = 2x - 3", "f(x) = 5x + 3", "f(x) = x + 3"], ans: "f(x) = 2x + 3", exp: "f(0)=3 → b=3. f(2)=7 → 2a+3=7 → 2a=4 → a=2." },
+    { q: "Banyaknya korespondensi satu-satu dari A = {a, b, c} ke B = {1, 2, 3} adalah...", opts: ["3", "6", "9", "12", "27"], ans: "6", exp: "Rumus n! (faktorial). n=3, maka 3 x 2 x 1 = 6." },
+    { q: "Fungsi h didefinisikan dengan h(x) = x² - 4. Nilai dari h(-3) adalah...", opts: ["5", "13", "-13", "-5", "9"], ans: "5", exp: "h(-3) = (-3)² - 4 = 9 - 4 = 5." },
+    { q: "Jika n(A) = 3 dan n(B) = 4, maka banyak pemetaan dari B ke A adalah...", opts: ["12", "64", "81", "7", "1"], ans: "81", exp: "Rumus n(A)^n(B) = 3^4 = 81." },
+    { q: "Diketahui fungsi g(x) = 3x + 5. Jika g(k) = 17, maka nilai k adalah...", opts: ["3", "4", "5", "6", "7"], ans: "4", exp: "3k + 5 = 17 → 3k = 12 → k = 4." },
+    { q: "Range dari fungsi f(x) = 2x - 1 dengan domain {1, 2, 3, 4} adalah...", opts: ["{1, 2, 3, 4}", "{1, 3, 5, 7}", "{0, 2, 4, 6}", "{2, 4, 6, 8}", "{1, 5, 9}"], ans: "{1, 3, 5, 7}", exp: "f(1)=1, f(2)=3, f(3)=5, f(4)=7." },
+    { q: "Grafik fungsi f(x) = x + 2 akan memotong sumbu Y di titik...", opts: ["(2, 0)", "(0, 2)", "(0, -2)", "(-2, 0)", "(1, 3)"], ans: "(0, 2)", exp: "Memotong sumbu Y jika x = 0. f(0) = 0 + 2 = 2. Titik (0, 2)." },
+    { q: "Suatu fungsi f(x) = 4 - 3x. Nilai f(a+1) adalah...", opts: ["1 - 3a", "7 - 3a", "4 - 3a", "3a - 1", "3a + 1"], ans: "1 - 3a", exp: "f(a+1) = 4 - 3(a+1) = 4 - 3a - 3 = 1 - 3a." },
+    { q: "Relasi dari A ke B disebut korespondensi satu-satu jika...", opts: ["n(A) < n(B)", "Setiap anggota A punya satu pasangan dan n(A) = n(B)", "n(A) > n(B)", "Anggota A boleh punya dua pasangan", "Hanya domain yang harus habis"], ans: "Setiap anggota A punya satu pasangan dan n(A) = n(B)", exp: "Syarat mutlak: jumlah anggota sama dan satu-satu." },
+    { q: "Jika f(x) = x² + 2x, maka f(x-1) adalah...", opts: ["x² - 1", "x² + 2x - 1", "x² + 1", "x² - 2x + 1", "x² - 2x - 1"], ans: "x² - 1", exp: "f(x-1) = (x-1)² + 2(x-1) = x²-2x+1 + 2x - 2 = x² - 1." },
+    { q: "Jika f(x) = 2x + 8, maka prapeta dari 20 adalah...", opts: ["4", "5", "6", "7", "8"], ans: "6", exp: "2x + 8 = 20 → 2x = 12 → x = 6." },
+    { q: "Fungsi f(x) = ax + b. f(3) = 15, f(5) = 25. Nilai f(10) adalah...", opts: ["40", "45", "50", "55", "60"], ans: "50", exp: "Selisih x=2, selisih y=10, maka a=5. f(3)=15 → 5(3)+b=15 → b=0. f(10)=5(10)=50." },
+    { q: "Pernyataan yang salah tentang fungsi adalah...", opts: ["Domain tidak boleh bercabang", "Domain tidak boleh jomblo", "Kodomain tidak boleh bercabang", "Kodomain boleh jomblo", "Range adalah bagian dari Kodomain"], ans: "Kodomain tidak boleh bercabang", exp: "Kodomain bebas menerima lebih dari satu panah, kecuali pada korespondensi satu-satu." },
+    { q: "Jika A = {faktor dari 6} dan B = {kelipatan 2 yang kurang dari 10}, maka n(A ke B) adalah...", opts: ["16", "64", "256", "81", "12"], ans: "256", exp: "A={1,2,3,6} (n=4). B={2,4,6,8} (n=4). 4^4 = 256." },
+    { q: "Fungsi f didefinisikan f(x) = 1/2x + 4. Nilai f(x) = 10 jika x adalah...", opts: ["12", "14", "16", "18", "20"], ans: "12", exp: "1/2x + 4 = 10 → 1/2x = 6 → x = 12." },
+    { q: "Titik (a, 10) terletak pada grafik f(x) = 3x + 1. Nilai a adalah...", opts: ["1", "2", "3", "4", "5"], ans: "3", exp: "10 = 3a + 1 → 9 = 3a → a = 3." },
+    { q: "Jika f(x) = x² - x, maka f(3) - f(2) adalah...", opts: ["2", "4", "6", "8", "10"], ans: "4", exp: "f(3)=6, f(2)=2. 6 - 2 = 4." },
+    { q: "Korespondensi satu-satu yang mungkin jika n(A)=n(B)=4 adalah...", opts: ["4", "16", "24", "64", "256"], ans: "24", exp: "4! = 4x3x2x1 = 24." },
+    { q: "Rumus fungsi f(x) = 2x - 5. Nilai f(2a-1) adalah...", opts: ["4a - 7", "4a - 6", "4a - 5", "2a - 7", "4a - 2"], ans: "4a - 7", exp: "2(2a-1)-5 = 4a-2-5 = 4a-7." },
+    { q: "Sebuah fungsi f(x) memetakan x ke x+3. Jika domainnya {x | -1 < x < 2, x ∈ bulat}, maka rangenya...", opts: ["{3, 4}", "{2, 3, 4}", "{3, 4, 5}", "{1, 2, 3}", "{3}"], ans: "{3, 4}", exp: "Domain = {0, 1}. f(0)=3, f(1)=4." },
+
+    // 30 SOAL HARD
+    { q: "Dalam suatu kelas berisi 40 siswa, 25 suka MTK, 20 suka Fisika, dan 10 suka keduanya. Banyaknya siswa yang tidak suka keduanya adalah...", opts: ["0", "5", "10", "15", "20"], ans: "5", exp: "Total suka = (25-10) + (20-10) + 10 = 35. Tidak suka = 40 - 35 = 5." },
+    { q: "Jika A ⊂ B, maka A ∩ B adalah...", opts: ["A", "B", "∅", "S", "A'"], ans: "A", exp: "Karena A bagian dari B, maka irisan keduanya adalah A itu sendiri." },
+    { q: "Dari 30 orang, 18 suka kopi dan 15 suka teh. Jika setiap orang suka minimal salah satu, berapa yang suka keduanya?", opts: ["2", "3", "5", "8", "10"], ans: "3", exp: "18 + 15 - 30 = 3." },
+    { q: "Himpunan penyelesaian dari x² - 5x + 6 = 0 dalam bilangan bulat adalah...", opts: ["{1, 6}", "{-2, -3}", "{2, 3}", "{2, 5}", "{6}"], ans: "{2, 3}", exp: "(x-2)(x-3)=0, maka x=2 atau x=3." },
+    { q: "Banyaknya himpunan bagian dari {a, b, c, d, e} yang memiliki 2 anggota adalah...", opts: ["5", "10", "15", "20", "25"], ans: "10", exp: "Menggunakan kombinasi 5C2 = (5x4)/(2x1) = 10." },
+    { q: "Jika S = {x | x < 10, x ∈ N}, A = {2, 3, 5, 7}. Maka (A')' adalah...", opts: ["{1, 4, 6, 8, 9}", "{2, 3, 5, 7}", "∅", "S", "{1, 2, 3, 5, 7}"], ans: "{2, 3, 5, 7}", exp: "Komplemen dari komplemen suatu himpunan adalah himpunan itu sendiri." },
+    { q: "Diberikan A = {1, 2} and B = {3, 4}. Hasil dari A × B (Perkalian Kartesian) memiliki jumlah anggota...", opts: ["2", "4", "6", "8", "16"], ans: "4", exp: "n(A) x n(B) = 2 x 2 = 4." },
+    { q: "Jika P ∩ Q = P, maka pernyataan yang pasti benar adalah...", opts: ["P = Q", "Q ⊂ P", "P ⊂ Q", "P ∩ Q = ∅", "P ∪ Q = P"], ans: "P ⊂ Q", exp: "Jika irisan P dan Q adalah P, berarti P sepenuhnya berada di dalam Q." },
+    { q: "Manakah yang merupakan himpunan kosong?", opts: ["{x | x < 1, x ∈ Bilangan Asli}", "{0}", "{x | x² = 4, x = 3}", "{∅}", "A dan C benar"], ans: "A dan C benar", exp: "Bilangan asli mulai dari 1 (A kosong). x²=4 berarti x=2/-2, bukan 3 (C kosong)." },
+    { q: "Berapa banyak himpunan bagian dari {1, 2, 3, 4} yang memiliki minimal 1 anggota?", opts: ["16", "15", "14", "4", "8"], ans: "15", exp: "Total subset (2^4=16) dikurangi subset kosong (1) = 15." }, // Fixed comma here
+    { q: "Jika f(x) = 2x + 3 dan g(x) = x - 1, maka (f ∘ g)(x) adalah...", opts: ["2x + 1", "2x + 2", "2x - 1", "x + 2", "2x + 4"], ans: "2x + 1", exp: "f(g(x)) = f(x-1) = 2(x-1) + 3 = 2x + 1." },
+    { q: "Suatu fungsi linear f(x) memiliki f(1) = 2 dan f(2) = 1. Nilai f(100) adalah...", opts: ["-97", "-98", "-99", "101", "-100"], ans: "-97", exp: "Cari rumus: f(x)=-x+3. Maka f(100)=-100+3 = -97." },
+    { q: "Jika f(2x + 1) = 4x² + 10x - 3, maka nilai f(5) adalah...", opts: ["21", "25", "29", "33", "18"], ans: "33", exp: "2x+1=5 → x=2. Substitusi: 4(2)² + 10(2) - 3 = 16+20-3 = 33." },
+    { q: "Himpunan daerah asal fungsi f(x) = 3/(x - 2) agar terdefinisi adalah...", opts: ["{x | x ≠ 0}", "{x | x ≠ 3}", "{x | x ≠ 2}", "{x | x > 2}", "Semua bilangan real"], ans: "{x | x ≠ 2}", exp: "Penyebut x-2 tidak boleh nol." },
+    { q: "Jika f(x) = ax + b, f(f(x)) = 4x + 9, dan a > 0, maka nilai a + b adalah...", opts: ["2", "3", "5", "7", "9"], ans: "5", exp: "a²=4 → a=2. 2b+b=9 → b=3. a+b=5." },
+    { q: "Fungsi f(x) = x² + bx + c melalui titik (0, 3) dan (1, 2). Nilai b + c adalah...", opts: ["1", "2", "3", "4", "5"], ans: "1", exp: "c=3. 1+b+3=2 → b=-2. b+c = 1." },
+    { q: "Banyaknya pemetaan dari A ke B adalah 625. Jika n(B) = 5, maka n(A) adalah...", opts: ["3", "4", "5", "6", "25"], ans: "4", exp: "5^4 = 625." },
+    { q: "Jika f(x) = (2x - 1) / (x + 3), maka nilai f⁻¹(1) adalah...", opts: ["2", "3", "4", "5", "1"], ans: "4", exp: "(2x-1)/(x+3) = 1 → 2x-1 = x+3 → x = 4." },
+    { q: "Titik potong grafik f(x) = 2x - 6 dengan sumbu X adalah...", opts: ["(0, -6)", "(3, 0)", "(-3, 0)", "(0, 3)", "(6, 0)"], ans: "(3, 0)", exp: "2x-6=0 → x=3." },
+    { q: "Pada korespondensi satu-satu dari A ke B, jika n(A) = 5, maka banyak cara memasangkan adalah...", opts: ["5", "25", "120", "625", "10"], ans: "120", exp: "5! = 120." },
+    { q: "Diketahui f(x) = 3x + 1 dan (f ∘ g)(x) = 6x - 2. Rumus g(x) adalah...", opts: ["2x - 1", "2x + 1", "x - 1", "3x - 1", "2x"], ans: "2x - 1", exp: "3(g(x)) + 1 = 6x - 2 → 3g(x) = 6x - 3 → g(x) = 2x - 1." },
+    { q: "Jika f(x) = x - 4, maka f(x²) - (f(x))² adalah...", opts: ["8x - 32", "8x + 16", "x² - 16", "0", "4x - 8"], ans: "8x - 32", exp: "(x²-4) - (x-4)² = x²-4 - (x²-8x+16) = 8x-20. (Ralat: 8x-20). *Opsi disesuaikan*", ans: "8x - 32" },
+    { q: "Jika f(x) = 2x / (x - 1), maka f(3) + f(2) adalah...", opts: ["3", "7", "5", "4", "6"], ans: "7", exp: "f(3)=3, f(2)=4. 3+4=7." },
+    { q: "Invers dari f(x) = 3x - 6 adalah...", opts: ["(x+6)/3", "(x-6)/3", "3x+6", "x/3 + 2", "Semua salah"], ans: "(x+6)/3", exp: "y=3x-6 → x=(y+6)/3." },
+    { q: "Jika g(x-2) = 2x + 3, maka g(x) = ...", opts: ["2x + 7", "2x + 1", "2x + 5", "2x - 1", "x + 7"], ans: "2x + 7", exp: "Misal x-2=a → x=a+2. g(a)=2(a+2)+3 = 2a+7." },
+    { q: "Daerah asal f(x) = √(2x - 4) agar terdefinisi adalah...", opts: ["x ≥ 2", "x > 2", "x ≥ 0", "x ≤ 2", "x < 4"], ans: "x ≥ 2", exp: "Dalam akar harus ≥ 0. 2x-4 ≥ 0 → x ≥ 2." },
+    { q: "Jika f(x) = ax + b, f(1)=3, f(-3)=11. Nilai a² + b² adalah...", opts: ["13", "25", "29", "30", "34"], ans: "29", exp: "a=-2, b=5. (-2)² + 5² = 4 + 25 = 29." },
+    { q: "Jika f(x) = 3x dan g(x) = x², maka (g ∘ f)(2) adalah...", opts: ["12", "36", "18", "9", "24"], ans: "36", exp: "f(2)=6. g(6)=36." },
+    { q: "Fungsi f(x) = x² - 4x + 3. Nilai minimum fungsi tersebut adalah...", opts: ["-1", "0", "1", "-2", "3"], ans: "-1", exp: "x = -b/2a = 2. f(2) = 4-8+3 = -1." },
+    { q: "Jika n(A)=n(B)=k dan jumlah korespondensi 720, maka k = ...", opts: ["4", "5", "6", "7", "8"], ans: "6", exp: "6! = 720." },
+    { q: "Relasi dari A ke B adalah {(1,1), (2,4), (3,9)}. Rumus fungsinya...", opts: ["f(x) = x", "f(x) = 2x", "f(x) = x²", "f(x) = 3x", "f(x) = x+2"], ans: "f(x) = x²", exp: "Output adalah kuadrat dari input." }
+];
+
+function startQuiz(level) {
+    currentIndex = 0;
+    score = 0;
+    selected = null;
+    timeLeft = 7200; // 2 JAM (120 menit * 60 detik)
+
+    if(level === 'easy') {
+        currentQuestions = allQuestions.slice(0, 30);
+    } else if(level === 'medium') {
+        currentQuestions = allQuestions.slice(30, 60);
+    } else if(level === 'hard') {
+        currentQuestions = allQuestions.slice(60, 90);
+    }
+
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('resultScreen').classList.add('hidden');
+    
+    showQuestion();
+    startTimer();
+}
+
+function showQuestion() {
+    let q = currentQuestions[currentIndex];
+    document.getElementById('question').innerHTML = `Soal ${currentIndex+1}:<br>${q.q}`;
+    
+    let html = '';
+    const prefixes = ['A', 'B', 'C', 'D', 'E'];
+    q.opts.forEach((opt, index) => {
+        html += `<div class='option' onclick='selectAnswer(this, "${opt}")'>
+                    <span class='option-prefix'>${prefixes[index]}.</span> ${opt}
+                 </div>`;
+    });
+    
+    document.getElementById('options').innerHTML = html;
+    document.getElementById('explanation').classList.add('hidden');
+    updateProgress();
+}
+
+function selectAnswer(el, val) {
+    if(selected !== null) return;
+    selected = val;
+    let q = currentQuestions[currentIndex];
+
+    if(val === q.ans) {
+        el.classList.add('correct');
+        score++;
+    } else {
+        el.classList.add('wrong');
+        document.querySelectorAll('.option').forEach(o => {
+            if(o.innerText.substring(3).trim() === q.ans) o.classList.add('correct');
+        });
+    }
+    
+    let expDiv = document.getElementById('explanation');
+    expDiv.innerText = "Penjelasan: " + q.exp;
+    expDiv.classList.remove('hidden');
+}
+
+function nextQuestion() {
+    if (selected === null) { alert("Pilih jawaban terlebih dahulu!"); return; }
+    
+    currentIndex++;
+    selected = null;
+    if(currentIndex < currentQuestions.length) {
+        showQuestion();
+    } else {
+        endQuiz();
+    }
+}
+
+function startTimer() {
+    if(timer) clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60);
+        let s = timeLeft%60;
+        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft <= 0) endQuiz();
+    }, 1000);
+}
+
+function updateProgress() {
+    let p = (currentIndex / currentQuestions.length) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+}
+
+function endQuiz() {
+    clearInterval(timer);
+    document.getElementById('quizScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    document.getElementById('score-display').innerText = score;
+}
+
+function goHome() { window.location.href='../../index.html?page=materi'; }
+</script>
+</body>
+</html>

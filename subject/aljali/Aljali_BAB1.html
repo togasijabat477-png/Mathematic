@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Sistem Persamaan Linear</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: "Times New Roman", Times, serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .step-list {
+            background: #eef2f3;
+            padding: 20px 20px 20px 40px;
+            border-left: 5px solid var(--secondary-color);
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .example-box {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .example-box::before {
+            content: "CONTOH";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 2px 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+
+        .math-block {
+            font-family: "Courier New", Courier, monospace;
+            background: #f9f9f9;
+            padding: 15px;
+            display: block;
+            margin: 10px 0;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .matrix-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .matrix {
+            font-family: serif;
+            font-size: 1.2em;
+            padding: 10px;
+            border-left: 2px solid #000;
+            border-right: 2px solid #000;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #ddd;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+         <div class="wrap">
+     <div class="card">
+
+    <h1>Pengertian Sistem Persamaan Linear</h1>
+    <p>Sistem Persamaan Linear (SPL) adalah sekumpulan persamaan matematika yang masing-masing berbentuk persamaan linear (derajat satu) dan memiliki variabel yang sama. 
+        Karena variabelnya saling berkaitan, maka penyelesaiannya harus dilakukan secara bersama-sama sehingga diperoleh satu nilai yang memenuhi semua persamaan dalam sistem tersebut.
+        Persamaan linear sendiri adalah persamaan yang pangkat tertinggi variabelnya adalah satu dan tidak mengandung perkalian antar variabel.</p>
+
+      <h2>1. Persamaan Linear</h2>
+      <p>
+
+    <h1>PERSAMAAN LINEAR</h1>
+
+    <p>
+        Persamaan linear adalah persamaan yang mengandung satu atau lebih variabel,
+        atau dengan kata lain persamaan yang terdiri dari 1 sampai dengan n variabel
+        x₁, x₂, x₃, ..., xₙ yang dapat dituliskan secara aljabar sebagai berikut:
+    </p>
+
+    <div class="rumus">
+        a₁x₁ + a₂x₂ = 0 &nbsp; atau &nbsp; ax + by = 0 &nbsp; ...(1.1)
+    </div>
+
+    <div class="rumus">
+        a₁x₁ + a₂x₂ + a₃x₃ + ... + aₙxₙ = 0 
+        &nbsp; atau &nbsp; ax + by + cz = 0 &nbsp; ...(1.2)
+    </div>
+
+    <p>
+        a₁ = a; a₂ = b; a₃ = c adalah konstanta<br>
+        x₁ = x; x₂ = y; x₃ = z adalah variabel
+    </p>
+
+    <h2>Contoh Soal</h2>
+
+    <div class="soal">
+        <p><strong>1.</strong> Harga 1 kg cabai dan 1 kg tomat adalah Rp27.000,00.
+        Sedangkan harga 2 kg cabai dan 3 kg tomat adalah Rp33.000,00.
+        Tentukan harga 1 kg cabai dan 1 kg tomat masing-masing.</p>
+
+        <p><strong>2.</strong> Harga 5 kg gula pasir dan 30 kg beras adalah Rp410.000,00,
+        sedangkan harga 2 kg gula pasir dan 60 kg beras adalah Rp740.000,00.
+        Tentukan harga 2 kg gula pasir dan 5 kg beras.</p>
+    </div>
+
+    <div class="soal">
+        <p><strong>3.</strong> Sebuah toko alat tulis menyediakan spidol aneka warna.
+        Perbandingan antara banyak spidol biru dan spidol merah adalah 3 : 4.
+        Perbandingan antara banyak spidol merah dan spidol hitam adalah 4 : 5.
+        Jumlah ketiga jenis spidol tersebut adalah 430 buah.
+        Jika x, y, z berturut-turut menyatakan banyak spidol biru, merah, dan hitam,
+        maka buatlah sistem persamaan linear yang menyatakan hubungan ketiga jenis spidol tersebut.</p>
+
+        <p><strong>4.</strong> Anggiat dan Uli membeli buku tulis dan pulpen di toko koperasi.
+        Anggiat membeli 10 buku tulis dan 4 pulpen dengan harga Rp36.000,00.
+        Uli membeli 5 buku tulis dan 8 pulpen dengan harga Rp27.000,00.
+        Tentukan harga 1 buku tulis dan 1 pulpen masing-masing.</p>
+    </div>
+
+    <h2>Penjelasan</h2>
+
+    <p>
+        Persamaan (1.1) adalah persamaan linear pada dua dimensi karena hanya
+        mengandung dua variabel (x₁ dan x₂ atau x dan y).
+    </p>
+
+    <p>
+        Persamaan (1.2) adalah persamaan linear pada tiga dimensi karena
+        mengandung tiga variabel (x₁, x₂, dan x₃ atau x, y, dan z).
+    </p>
+    </div>
+         </div>
+    </div>
+</body>
+    </div>
+ 
+<body>
+<div class="container">
+
+    <div class="cards">
+
+        <div class="card">
+            <h1>
+                Unsur Penyusun Persamaan Linear
+            </h1>
+
+            <h2>1. Variabel</h2>
+            <p>
+                Variabel adalah peubah atau pengganti suatu bilangan yang biasanya 
+                dilambangkan dengan huruf seperti x, y, dan z.
+            </p>
+
+            <div class="example">
+                Durian = x <br>
+                Rambutan = y <br>
+                Mangga Samosir = z <br><br>
+                Bentuk matematika:<br>
+                7x + 3y + 10z
+            </div>
+
+            <br>
+
+            <h2>2. Koefisien</h2>
+            <p>
+                Koefisien adalah bilangan yang berada di depan variabel 
+                dan menyatakan banyaknya variabel tersebut.
+            </p>
+
+            <div class="example">
+                Pada persamaan:<br>
+                7x + 3y + 10z <br><br>
+                Koefisiennya adalah: 7, 3, dan 10
+            </div>
+
+            <br>
+
+            <h2>3. Konstanta</h2>
+            <p>
+                Konstanta adalah bilangan yang tidak diikuti variabel 
+                sehingga nilainya tetap.
+            </p>
+
+            <div class="example">
+                7x + 3y + 10z + 23 = 0 <br><br>
+                23 adalah konstanta
+            </div>
+
+            <br>
+
+            <h2>Pengertian Persamaan Linear</h2>
+            <p>
+                Persamaan linear adalah persamaan yang memiliki pangkat satu 
+                pada variabelnya, tidak mengandung hasil kali dua variabel, 
+                tidak memiliki akar variabel, serta tidak mengandung fungsi 
+                trigonometri, eksponensial, dan logaritma.
+            </p>
+
+            <br>
+
+            <h2>Bukan Contoh Persamaan Linear</h2>
+
+            <div class="example danger">
+                x² + 4x + 4 = 0 <br>
+                tan x + cos y = 0 <br>
+                16x + √y = 25 <br>
+                2 log x + yx + z = 10
+            </div>
+
+        </div>
+
+    </div>
+    <div class="card">
+
+        <h1>Sistem Persamaan Linear</h1>
+
+        <p>
+            Sistem persamaan linear (SPL) adalah system persamaan
+            yang terdiri dari 2 atau lebih persamaan linear yang bekerja
+            membentuk sebuah solusi dari persamaan linear.
+        </p>
+
+        <p>
+            Jika: L1 adalah persaman linear 1<br>
+            L2 adalah persamaan linear 2<br>
+            L3 adalah persamaan linear 3
+        </p>
+
+        <p>
+            Maka secara Aljabar dapat dituliskan SPL sebagai berikut:
+        </p>
+
+        <div class="example">
+            <br>
+            {a11x1 + a12x2 + a13x3 + . . . + a1nxn = k1 atau a1x + b1y + c1z = k1 <br>
+            a21x1 + a22x2 + a23x3 + . . . + a2nxn = k2 atau a2x + b2y + c2z = k2 <br>
+            a31x1 + a32x2 + a33x3 + . . . + a3nxn = k3 atau a3x + b3y + c3z = k3 <br>
+            … … … … … … … … … … … … … … … … … … … … … … … … … … … <br>
+            am1x1 + am2x2 + am3x3 + . . . + amnxn = k atau amx + bmy + cmz = k
+            }
+        </div>
+
+        <p>
+            Kita dapat mempersingkat sistem tersebut dengan hanya
+            menuliskan larik persegi angka-angka saja.
+        </p>
+
+         <div class="matrix-container">
+            <div class="matrix">
+                a11 a12 ... a1n k1<br>
+                a21 a22 ... a2n k2<br>
+                . . . . <br>
+                am1 am2 ... amn km 
+            </div>
+         </div>
+
+        <p>
+            Bentuk matriks diatas disebut matriks yang diperbanyak.
+            Didalam suatu sistem persamaan, matriks yang diperbanyak dapat
+            dituliskan untuk membantu mempermudah penyelesaian suatu
+            sistem persamaan. Sistem ini dapat dinyatakan dalam bentuk
+            persamaan matriks: Ax = b
+        </p>
+
+        <p>
+            Persamaan linear dapat juga digambar pada sebuah bidang
+            kartesius xy jika persamaan linear ada pada 2 dimensi dan di bidang
+            xyz jika ada pada 3 dimensi. Sistem persamaan linear dikatakan
+            homogen jika k1; k2; k3 memiliki nilai sama, namun jika berbeda
+            makan persamaan linear dikatakan nonhomogen.
+        </p>
+
+        <div class="example">
+            <h2>Homogen</h2> 
+            <table>
+            <tr><th>2x</th><th>+</th><th>3y</th><th>=</th><th>0</th></tr>
+            <tr><th>6x</th><th>+<th>9y<th>=</th><th>0</th></tr>
+          </table>
+          <h2>Non Homogen</h2>
+            <table>
+            <tr><th>10x</th><th>+</th><th>4y</th><th>=</th><th>6</th></tr>
+            <tr><th>5x</th><th>+</th><th>3y</th><th>=<th>12</th></tr>
+           </table>
+        </div>
+
+    </div>
+</div>
+<body>
+
+<div class="container">
+    <div class="section">
+        <h2>A. Penyelesaian Sistem Persamaan Linear dengan Metode Substitusi</h2>
+        <p>Metode substitusi adalah salah satu metode yang digunakan untuk menyelesaikan sistem persamaan linear dengan mengubah satu variabel dengan variabel lainnya.</p>
+        
+        <div class="step-list">
+            <strong>Langkah-langkah metode substitusi:</strong>
+            <ol>
+                <li>Temukan satu variabel yang berdiri sendiri dengan membentuk satu persamaan linear.</li>
+                <li>Substitusi persamaan linear yang didapat pada langkah 1 kepada persamaan linear lain.</li>
+                <li>Selesaikan persamaan sebelumnya.</li>
+                <li>Substitusi nilai variabel yang didapat dari langkah 3 kepada persamaan 1 sebelumnya untuk mendapatkan nilai variabel lainnya.</li>
+                <li>Selesaikan persamaan dari kedua persamaan linear dan tuliskan jawabannya secara berpasangan.</li>
+            </ol>
+        </div>
+
+        <div class="example-box">
+            <p>Selesaikanlah sistem persamaan linear berikut dengan metode substitusi:</p>
+            <div class="math-block">
+                -3x + 4y = 9 <br>
+                x = -1/3y + 2
+            </div>
+            <p><strong>Penyelesaian:</strong></p>
+            <ul>
+                <li><strong>Langkah 1:</strong> Pada persamaan 2, nilai variabel x sudah ada.</li>
+                <li><strong>Langkah 2:</strong> Substitusi nilai -1/3y + 2 pada x di persamaan 1: <br>
+                    <code class="math-block">-3(-1/3y + 2) + 4y = 9</code>
+                </li>
+                <li><strong>Langkah 3:</strong> Hitung nilai y: <br>
+                    <code class="math-block">y - 6 + 4y = 9 <br> 5y = 15; y = 3</code>
+                </li>
+                <li><strong>Langkah 4:</strong> Substitusi nilai y = 3 untuk mencari x: <br>
+                    <code class="math-block">x = -1/3(3) + 2 <br> x = -1 + 2 = 1</code>
+                </li>
+                <li><strong>Langkah 5:</strong> Cek kembali nilai (1, 3) pada kedua persamaan.</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2>B. Penyelesaian Sistem Persamaan Linear dengan Metode Eliminasi</h2>
+        <p>Metode eliminasi pada sistem persamaan linear adalah metode dengan menghapus/menghilangkan salah satu variabel dalam persamaan linear.</p>
+
+        <div class="step-list">
+            <strong>Langkah-langkah metode Eliminasi:</strong>
+            <ol>
+                <li>Menuliskan kedua persamaan linear.</li>
+                <li>Menghilangkan bentuk pecahan atau desimal (jika ada).</li>
+                <li>Mengalikan satu atau dua persamaan yang ada dengan bilangan konstanta untuk menghasilkan koefisien yang berlainan dari salah satu variabel.</li>
+                <li>Melakukan operasi penjumlahan dari langkah 3 untuk eliminasi salah satu variabel.</li>
+                <li>Menyelesaikan persamaan linear yang ada.</li>
+                <li>Mensubstitusi nilai variabel yang didapat pada langkah 4 dan 5 untuk mendapatkan nilai variabel lainnya.</li>
+                <li>Mengecek kembali nilai variabel yang berpasangan.</li>
+            </ol>
+        </div>
+
+        <div class="example-box">
+            <p>Selesaikan SPL berikut: 4x + 5y = 2 dan 3x = 1 - 4y</p>
+            <p><strong>Penyelesaian:</strong></p>
+            <div class="math-block">
+                4x + 5y = 2 <br>
+                3x + 4y = 1
+            </div>
+            <p>Eliminasi x (ubah konstanta menjadi 12 dan -12):</p>
+            <div class="math-block">
+                (4x + 5y = 2) x 3  &rarr; 12x + 15y = 6 <br>
+                (3x + 4y = 1) x -4 &rarr; -12x - 16y = -4 <br>
+                -------------------------- (+) <br>
+                -y = 2 &rarr; y = -2
+            </div>
+            <p>Substitusi y = -2 ke persamaan 1: 4x + 5(-2) = 2 &rarr; 4x = 12 &rarr; x = 3. <br> Hasil: <strong>(3, -2)</strong></p>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2>C. Sistem Persamaan yang tidak Memiliki Solusi dan Sama</h2>
+        <p>Terjadi ketika dua atau lebih persamaan linear tidak memiliki solusi yang memenuhi semua persamaan (inkonsisten) atau merupakan salinan satu sama lain (dependen).</p>
+
+        <div class="example-box">
+            <p>Contoh Kasus 0 = 0 (Solusi Tak Terhingga):</p>
+            <div class="math-block">
+                1/5x - 1/2y = 1 <br>
+                -4x + 10y = -20
+            </div>
+            <p>Setelah disamakan, diperoleh hasil <strong>0 = 0</strong>. Sistem ini identik.</p>
+        </div>
+
+        <div class="example-box">
+            <p>Contoh Kasus Kontradiksi (Tidak Ada Solusi):</p>
+            <div class="math-block">
+                3x + 2y = 4 <br>
+                120x + 80y = 40
+            </div>
+            <p>Hasil akhir menunjukkan <strong>0 = 120</strong> (Kontradiksi). Sistem bersifat inkonsisten.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2>D. Aplikasi SPL dalam Kehidupan Sehari-hari</h2>
+        
+        <h3>1. SPL pada Pembiayaan</h3>
+        <p>Irfan: 5 kacang + 1 jus = 16 <br> Hadi: 2 kacang + 3 jus = 9</p>
+        <p>Hasil perhitungan: Harga kacang (k) = <strong>Rp 3.00</strong>, Harga jus (t) = <strong>Rp 1.00</strong></p>
+
+        <h3>2. SPL pada Geometri</h3>
+        <p>Dua sudut lancip berjumlah 90°. Sudut x adalah 6° kurang dari 2 kali sudut y.</p>
+        <div class="math-block">x + y = 90 <br> x = 2y - 6</div>
+        <p>Hasil: Sudut pertama <strong>58°</strong> dan sudut kedua <strong>32°</strong>.</p>
+
+        <h3>3. SPL pada Nutrisi (3 Variabel)</h3>
+        <table>
+            <tr>
+                <th>Orang</th>
+                <th>Menu</th>
+                <th>Total Sodium</th>
+            </tr>
+            <tr>
+                <td>Anggiat</td>
+                <td>1 Pizza (x) + 1 Arsik (y) + 1 Kopi (z)</td>
+                <td>1030 mg</td>
+            </tr>
+            <tr>
+                <td>Horas</td>
+                <td>3 Pizza (x) + 2 Kopi (z)</td>
+                <td>2420 mg</td>
+            </tr>
+            <tr>
+                <td>Ronauli</td>
+                <td>2 Pizza (x) + 1 Arsik (y) + 2 Kopi (z)</td>
+                <td>1910 mg</td>
+            </tr>
+        </table>
+        <p>Hasil: Pizza = 660mg, Ikan Arsik = 150mg, Kopi = 220mg.</p>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2>E. Operasi Baris Elementer (OBE)</h2>
+        <p>OBE digunakan untuk menyelesaikan SPL dengan variabel banyak menggunakan matriks eselon baris tereduksi.</p>
+
+        <div class="step-list">
+            <strong>Langkah-langkah OBE:</strong>
+            <ol>
+                <li>Mengalikan persamaan pada matriks dengan konstanta bukan nol.</li>
+                <li>Menukar posisi persamaan.</li>
+                <li>Menambahkan kelipatan satu persamaan ke persamaan lainnya.</li>
+            </ol>
+        </div>
+
+        <h3>Bentuk Eselon Baris</h3>
+        <div class="matrix-container">
+            <div class="matrix">
+                1 2 7 -2<br>
+                0 1 3 6<br>
+                0 0 1 9
+            </div>
+            <div class="matrix">
+                1 0 0 0 1<br>
+                0 1 0 0 2<br>
+                0 0 1 0 3
+            </div>
+        </div>
+
+        <blockquote>
+            <strong>Catatan:</strong> Eselon baris memiliki nol di bawah setiap 1 utama, sedangkan eselon baris tereduksi memiliki nol di bawah dan di atas 1 utama.
+        </blockquote>
+    </div>
+</div>
+
+</body>
+</html>

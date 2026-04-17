@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truth Table Challenge</title>
+    <style>
+        :root {
+            --background: hsl(222, 47%, 6%);
+            --foreground: hsl(210, 40%, 98%);
+            --card: hsl(222, 47%, 9%);
+            --primary: hsl(180, 100%, 50%);
+            --secondary: hsl(300, 100%, 60%);
+            --secondary-dark: hsl(300, 80%, 45%);
+            --muted: hsl(222, 30%, 15%);
+            --muted-foreground: hsl(215, 20%, 65%);
+            --accent: hsl(120, 100%, 50%);
+            --destructive: hsl(0, 84%, 60%);
+            --border: hsl(222, 30%, 20%);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            color: var(--foreground);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--muted-foreground);
+            margin-bottom: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .expression {
+            font-size: 2.5rem;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .values {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .value-box {
+            background: var(--muted);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            color: var(--muted-foreground);
+        }
+
+        .value-box span {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-true {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+            color: var(--foreground-on-primary, #fff);
+        }
+
+        .btn-true:hover:not(:disabled) {
+            filter: brightness(0.95);
+        }
+
+        .btn-false {
+            background: transparent;
+            color: var(--destructive);
+            border: 1px solid rgba(239,68,68,0.15);
+        }
+
+        .btn-false:hover:not(:disabled) {
+            background: rgba(239,68,68,0.06);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feedback.wrong {
+            background: rgba(239, 68, 68, 0.04);
+            border: 1px solid rgba(239, 68, 68, 0.12);
+            color: var(--destructive);
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: var(--accent);
+            color: white;
+        }
+
+        .toast.error {
+            background: var(--destructive);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '../../index.html?page=game';
+  }
+}
+</script>
+</head>
+<body>
+    <div class="container">
+        <a href="#" class="back-btn" onclick="goBack(); return false;">Kembali</a>
+
+        <div class="card">
+            <h1 class="title">Truth Table Challenge</h1>
+            <p class="description">Tentukan hasil dari ekspresi logika berikut</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Benar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">Akurasi</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="expression" id="expression"></div>
+            <div class="values" id="values"></div>
+            <div class="buttons">
+                <button class="btn btn-true" id="btnTrue" onclick="handleAnswer(true)">
+                    ✓ TRUE
+                </button>
+                <button class="btn btn-false" id="btnFalse" onclick="handleAnswer(false)">
+                    ✗ FALSE
+                </button>
+            </div>
+            <div id="feedback"></div>
+        </div>
+    </div>
+
+    </body>
+</html>

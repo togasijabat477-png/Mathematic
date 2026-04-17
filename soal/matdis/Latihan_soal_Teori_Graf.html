@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Latihan Soal & Jawaban Teori Graf</title>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Times New Roman", Times, serif;
+            background: var(--bg-gradient);
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(15px, 5vw, 30px);
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: 100%;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #4c1d95;
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+        }
+
+        p {
+            color: #475569;
+            line-height: 1.6;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+
+         button {
+            display: block;
+            width: 100%; 
+            padding: 14px 20px;
+            margin: 10px 0; 
+            font-family: inherit;
+            font-size: clamp(16px, 4vw, 18px); 
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            word-wrap: break-word;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -5px rgba(139, 92, 246, 0.4);
+        }
+
+        #timer {
+            font-weight: bold;
+            font-family: monospace;
+            background: #1e293b;
+            color: #fff;
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .progress {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+
+        #question {
+            font-size: clamp(1rem, 4.5vw, 1.15rem);
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .option {
+            text-align: left;
+            margin: 8px 0;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: #f5f3ff;
+        }
+
+        .option-prefix {
+            font-weight: bold;
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .correct { background: var(--success) !important; color: white; border-color: var(--success) !important; }
+        .wrong { background: var(--danger) !important; color: white; border-color: var(--danger) !important; }
+        .correct .option-prefix, .wrong .option-prefix { color: white; }
+
+        .explanation {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 14px;
+            background: #f0fdf4;
+            padding: 15px;
+            border-left: 4px solid var(--success);
+            border-radius: 8px;
+            color: #166534;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
+            Kembali ke Materi
+    </button>
+
+    <div id="startScreen" class="card">
+        <h2>Soal & Jawaban Teori Graf</h2>
+        <p>Selamat datang di simulasi Teori Graf! Di sini kita nggak cuma ngomongin titik dan garis biasa. 
+            Kamu bakal diuji seberapa dalam pemahamanmu tentang Vertex, Edge, Path, sampai Cycle. Ingat, Graf itu seni menghubungkan yang terputus, tapi kalau salah algoritma, ya wassalam.
+            Pilih tingkat kesulitan yang sesuai dengan kapasitas otakmu hari ini. Mau pemanasan di Easy, simulasi tugas di Medium, atau mau ngerasain tekanan mental sekelas UTS di Hard? Pilihan ada di tanganmu!</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="startQuiz('easy')">Easy</button>
+            <button onclick="startQuiz('medium')" style="background:#6366f1">Medium</button>
+            <button onclick="startQuiz('hard')" style="background:#4338ca">Hard</button>
+        </div>
+
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; text-align: left; font-size: 13px;">
+            <strong>Struktur Latihan:</strong>
+            <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+                <li>30 Soal Teori Graf</li>
+                <li>Waktu: 1 Jam 50 Menit</li>
+                <li>Pembahasan Lelngkap setiap nomor</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="quizScreen" class="card hidden">
+        <div id="timer">Waktu: 110:00</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div id="question"></div>
+        <div id="options"></div>
+        
+        <div class="explanation hidden" id="explanation"></div>
+        
+        <div class="nav-buttons" style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="nextQuestion()" style="flex: 2;">Berikutnya</button>
+            <button onclick="goHome()" style="flex: 1; background: #94a3b8;">Kembali</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="card hidden">
+        <h2>Skor Akhir</h2>
+        <div id="score-display" style="font-size: 70px; font-weight: 800; color: var(--primary);">0</div>
+        <p id="result-message"></p>
+        <button onclick="goHome()">Kembali ke Menu</button>
+    </div>
+</div>
+
+<script>
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let selected = null;
+let timer;
+let timeLeft = 6600;
+
+const questionsData = {
+    easy: [
+        { q: "Apa nama komponen 'titik' dalam sebuah Graf?", opts: ["Edge", "Vertex (Simpul)", "Path", "Cycle", "Degree"], ans: "Vertex (Simpul)", exp: "Dalam teori graf, objek dasar terdiri dari Vertex (titik) dan Edge (garis penghubung)." },
+        { q: "Garis yang menghubungkan dua simpul disebut...", opts: ["Node", "Loop", "Edge (Sisi)", "Bridge", "Weight"], ans: "Edge (Sisi)", exp: "Edge atau sisi adalah garis yang menghubungkan simpul satu dengan lainnya." },
+        { q: "Sisi yang menghubungkan simpul dengan dirinya sendiri disebut...", opts: ["Isolasi", "Loop", "Parallel", "Bridge", "Path"], ans: "Loop", exp: "Loop (gelang) adalah sisi yang berawal dan berakhir pada simpul yang sama." },
+        { q: "Jumlah sisi yang bertumpu pada sebuah simpul disebut...", opts: ["Panjang", "Derajat (Degree)", "Order", "Size", "Diameter"], ans: "Derajat (Degree)", exp: "Degree adalah jumlah sisi yang terhubung ke suatu simpul." },
+        { q: "Graf yang tidak memiliki arah pada sisinya disebut...", opts: ["Directed Graph", "Undirected Graph", "Simple Graph", "Multigraph", "Weighted Graph"], ans: "Undirected Graph", exp: "Undirected graph (graf tak berarah) tidak memiliki urutan pasangan simpul pada sisinya." },
+        { q: "Berapa derajat simpul terpencil (isolated vertex)?", opts: ["0", "1", "2", "3", "Tak terhingga"], ans: "0", exp: "Simpul terpencil adalah simpul yang tidak memiliki sisi yang terhubung dengannya (derajat = 0)." },
+        { q: "Graf sederhana yang setiap pasang simpulnya dihubungkan oleh sebuah sisi disebut...", opts: ["Graf Kosong", "Graf Lengkap", "Graf Bipartit", "Graf Siklus", "Graf Pohon"], ans: "Graf Lengkap", exp: "Graf lengkap (Complete Graph) Kn adalah graf di mana setiap simpul bertetangga dengan semua simpul lainnya." },
+        { q: "Berapa jumlah sisi pada Graf Lengkap dengan 4 simpul (K4)?", opts: ["3", "4", "5", "6", "8"], ans: "6", exp: "Rumus jumlah sisi Kn: n(n-1)/2. Untuk n=4: 4(3)/2 = 6." },
+        { q: "Lintasan yang berawal dan berakhir pada simpul yang sama disebut...", opts: ["Path", "Bridge", "Siklus (Cycle)", "Walk", "Trail"], ans: "Siklus (Cycle)", exp: "Siklus adalah lintasan tertutup yang tidak mengulang simpul kecuali simpul awal dan akhir." },
+        { q: "Graf yang tidak memiliki loop maupun sisi ganda disebut...", opts: ["Graf Sederhana", "Multigraf", "Pseudograf", "Graf Berarah", "Graf Berbobot"], ans: "Graf Sederhana", exp: "Simple Graph adalah graf tanpa loop dan tanpa sisi paralel." }
+    ],
+    medium: [
+        { q: "Berapa total derajat pada graf dengan 10 sisi?", opts: ["10", "15", "20", "25", "30"], ans: "20", exp: "Menurut Lemma Jabat Tangan: Total derajat = 2 x jumlah sisi. Jadi, 2 x 10 = 20." },
+        { q: "Graf G disebut Bipartit jika simpul-simpulnya dapat dibagi menjadi dua himpunan V1 dan V2 sedemikian sehingga...", opts: ["Setiap sisi menghubungkan V1 ke V2", "V1 dan V2 memiliki jumlah simpul sama", "Setiap simpul di V1 punya loop", "V1 tidak memiliki sisi", "Semua simpul di V2 terhubung ke dirinya sendiri"], ans: "Setiap sisi menghubungkan V1 ke V2", exp: "Graf Bipartit tidak memiliki sisi yang menghubungkan antar simpul dalam himpunan yang sama." },
+        { q: "Matriks yang merepresentasikan hubungan simpul dengan simpul disebut...", opts: ["Matriks Insidensi", "Matriks Adjasensi", "Matriks Identitas", "Matriks Eselon", "Matriks Transpose"], ans: "Matriks Adjasensi", exp: "Matriks Adjasensi (Ketetanggaan) menunjukkan apakah simpul i dan j terhubung." },
+        { q: "Manakah yang merupakan syarat graf bersifat 'Euler' (memiliki sirkuit Euler)?", opts: ["Semua simpul derajat ganjil", "Semua simpul derajat genap", "Minimal ada 2 simpul derajat ganjil", "Graf harus tidak terhubung", "Memiliki loop"], ans: "Semua simpul derajat genap", exp: "Graf terhubung memiliki sirkuit Euler jika dan hanya jika setiap simpul berderajat genap." },
+        { q: "Berapa jumlah simpul pada graf lengkap K5?", opts: ["5", "10", "15", "20", "25"], ans: "5", exp: "Indeks n pada Kn menunjukkan jumlah simpulnya." },
+        { q: "Dalam graf berarah, derajat keluar disebut...", opts: ["In-degree", "Out-degree", "Total degree", "Source", "Sink"], ans: "Out-degree", exp: "Out-degree adalah jumlah panah yang keluar dari suatu simpul." },
+        { q: "Jika sebuah graf memiliki 6 simpul dan setiap simpul berderajat 3, berapa jumlah sisinya?", opts: ["6", "9", "12", "18", "3"], ans: "9", exp: "Total derajat = 6 x 3 = 18. Jumlah sisi = Total derajat / 2 = 18 / 2 = 9." },
+        { q: "Lintasan yang melalui setiap *sisi* tepat satu kali disebut...", opts: ["Lintasan Hamilton", "Lintasan Euler", "Siklus Hamilton", "Sirkuit Euler", "Shortest Path"], ans: "Lintasan Euler", exp: "Euler fokus pada sisi (edge), sedangkan Hamilton fokus pada simpul (vertex)." },
+        { q: "Graf yang dapat digambarkan pada bidang datar tanpa ada sisi yang berpotongan disebut...", opts: ["Graf Lengkap", "Graf Planar", "Graf Bipartit", "Graf Pohon", "Graf Isomorfik"], ans: "Graf Planar", exp: "Graf planar adalah graf yang dapat direpresentasikan tanpa perpotongan sisi." },
+        { q: "Rumus Euler untuk graf planar (n = simpul, e = sisi, f = muka) adalah...", opts: ["n - e + f = 2", "n + e - f = 2", "e - n + f = 2", "n + e + f = 2", "n - e - f = 0"], ans: "n - e + f = 2", exp: "Ini adalah rumus karakteristik Euler untuk polyhedra atau graf planar terhubung." }
+    ],
+    hard: [
+        { q: "Dua graf disebut Isomorfik jika...", opts: ["Memiliki jumlah simpul yang berbeda", "Memiliki struktur hubungan simpul yang sama", "Salah satunya adalah graf lengkap", "Tidak memiliki sisi ganda", "Keduanya graf planar"], ans: "Memiliki struktur hubungan simpul yang sama", exp: "Isomorfisme berarti ada pemetaan satu-satu antar simpul yang menjaga ketetanggaan." },
+        { q: "Algoritma Dijkstra digunakan untuk mencari...", opts: ["Minimum Spanning Tree", "Lintasan terpendek (Shortest Path)", "Max Flow", "Coloring", "Sirkuit Euler"], ans: "Lintasan terpendek (Shortest Path)", exp: "Dijkstra bekerja pada weighted graph untuk mencari rute termurah dari satu titik ke titik lain." },
+        { q: "Teorema Kuratowski menyatakan graf tidak planar jika mengandung 'minor' yang isomorfik dengan...", opts: ["K3 atau K4", "K5 atau K3,3", "K6 atau K4,4", "Semua graf lengkap", "Graf siklus"], ans: "K5 atau K3,3", exp: "Graf K5 (lengkap 5 simpul) dan K3,3 (bipartit lengkap) adalah graf non-planar dasar." },
+        { q: "Berapa jumlah wilayah (muka) jika graf planar memiliki 8 simpul dan 12 sisi?", opts: ["4", "5", "6", "7", "8"], ans: "6", exp: "n-e+f=2 → 8-12+f=2 → -4+f=2 → f=6." },
+        { q: "Algoritma Kruskal dan Prim digunakan untuk mencari...", opts: ["Shortest Path", "Minimum Spanning Tree (MST)", "Maximal Clique", "Topological Sort", "Hamiltonian Path"], ans: "Minimum Spanning Tree (MST)", exp: "MST adalah pohon merentang dengan total bobot sisi terkecil." },
+        { q: "Sebuah graf terhubung dengan n simpul disebut Pohon (Tree) jika jumlah sisinya adalah...", opts: ["n", "n + 1", "n - 1", "2n", "n/2"], ans: "n - 1", exp: "Pohon adalah graf terhubung minimalis; kurang satu sisi menjadi tidak terhubung, tambah satu sisi menjadi siklus." },
+        { q: "Traveling Salesman Problem (TSP) berkaitan erat dengan pencarian...", opts: ["Sirkuit Euler", "Siklus Hamilton Minimum", "MST", "Bipartite Matching", "Planarity"], ans: "Siklus Hamilton Minimum", exp: "TSP mencari rute yang mengunjungi setiap simpul tepat satu kali dan kembali ke awal dengan biaya minimal." },
+        { q: "Bilangan kromatik (χ) dari graf lengkap K4 adalah...", opts: ["2", "3", "4", "5", "1"], ans: "4", exp: "Pada Kn, setiap simpul harus memiliki warna berbeda. Jadi butuh n warna." },
+        { q: "Berapa banyak korespondensi satu-satu yang mungkin diuji untuk membuktikan isomorfisme graf dengan 5 simpul?", opts: ["5", "25", "120", "625", "10"], ans: "120", exp: "Permutasi dari 5 simpul adalah 5! = 5x4x3x2x1 = 120." },
+        { q: "Dalam graf berbobot, jika semua bobot sisi sama, algoritma Dijkstra akan berperilaku seperti...", opts: ["Prim", "Kruskal", "BFS (Breadth-First Search)", "DFS", "Bellman-Ford"], ans: "BFS (Breadth-First Search)", exp: "Tanpa bobot (bobot seragam), pencarian jalur terpendek adalah eksplorasi level-by-level seperti BFS." }
+    ]
+};
+
+function startQuiz(level) {
+    currentIndex = 0;
+    score = 0;
+    selected = null;
+    timeLeft = 6600; 
+    currentQuestions = [...questionsData[level]];
+
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('resultScreen').classList.add('hidden');
+    
+    showQuestion();
+    startTimer();
+}
+
+function showQuestion() {
+    let q = currentQuestions[currentIndex];
+    document.getElementById('question').innerHTML = `Pertanyaan ${currentIndex+1}:<br>${q.q}`;
+    
+    let html = '';
+    const prefixes = ['A', 'B', 'C', 'D', 'E'];
+    q.opts.forEach((opt, index) => {
+        html += `<div class='option' onclick='selectAnswer(this, "${opt}")'>
+                    <span class='option-prefix'>${prefixes[index]}.</span> ${opt}
+                 </div>`;
+    });
+    
+    document.getElementById('options').innerHTML = html;
+    document.getElementById('explanation').classList.add('hidden');
+    updateProgress();
+}
+
+function selectAnswer(el, val) {
+    if(selected !== null) return;
+    selected = val;
+    let q = currentQuestions[currentIndex];
+
+    if(val === q.ans) {
+        el.classList.add('correct');
+        score++;
+    } else {
+        el.classList.add('wrong');
+        document.querySelectorAll('.option').forEach(o => {
+            // Mencari teks jawaban di dalam elemen option
+            if(o.innerText.includes(q.ans)) o.classList.add('correct');
+        });
+    }
+    
+    let expDiv = document.getElementById('explanation');
+    expDiv.innerText = "Penjelasan: " + q.exp;
+    expDiv.classList.remove('hidden');
+}
+
+function nextQuestion() {
+    if (selected === null) { alert("Pilih jawaban dulu!"); return; }
+    
+    currentIndex++;
+    selected = null;
+    if(currentIndex < currentQuestions.length) {
+        showQuestion();
+    } else {
+        endQuiz();
+    }
+}
+
+function startTimer() {
+    if(timer) clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60);
+        let s = timeLeft%60;
+        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft <= 0) endQuiz();
+    }, 1000);
+}
+
+function updateProgress() {
+    let p = (currentIndex / currentQuestions.length) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+}
+
+function endQuiz() {
+    clearInterval(timer);
+    document.getElementById('quizScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    document.getElementById('score-display').innerText = score;
+    
+    let msg = score >= (currentQuestions.length * 0.7) ? "Luar biasa! Kamu menguasai materi Graf." : "Terus belajar! Teori Graf butuh ketelitian.";
+    document.getElementById('result-message').innerText = msg;
+}
+
+function goHome() { window.location.href='../../index.html?page=materi'; }
+</script>
+</body>
+</html>

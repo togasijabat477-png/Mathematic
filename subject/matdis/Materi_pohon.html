@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Lengkap: Pohon (Tree), Terminologi & Ekspresi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .slide-wrapper {
+            margin-bottom: 40px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            scroll-margin-top: 20px;
+        }
+        /* Bagian Visual Slide */
+        .slide-content {
+            padding: 40px;
+            border-bottom: 5px solid #6a1b9a;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .slide-number {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 0.8em;
+            color: #888;
+        }
+        .slide-footer {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            font-size: 0.8em;
+            color: #6a1b9a;
+            font-weight: bold;
+        }
+        
+        /* Typography Slide */
+        h1 { color: #4a148c; margin-bottom: 10px; text-align: center; }
+        h2 { color: #7b1fa2; margin-top: 0; }
+        h3 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        ul, ol { line-height: 1.6; }
+        .center-text { text-align: center; }
+        .box-diagram {
+            border: 1px dashed #aaa;
+            padding: 15px;
+            margin: 10px;
+            display: inline-block;
+            background: #fafafa;
+            vertical-align: top;
+        }
+        .section-separator {
+            background-color: #6a1b9a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: 40px 0;
+            border-radius: 8px;
+        }
+
+        /* Bagian Penjelasan */
+        .explanation {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-top: 1px solid #bbdefb;
+        }
+        .explanation h4 {
+            margin-top: 0;
+            color: #0d47a1;
+            display: flex;
+            align-items: center;
+        }
+        .explanation h4::before {
+            content: "💡";
+            margin-right: 10px;
+        }
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+    <div class="slide-wrapper">
+        <div class="slide-content center-text">
+            <span class="slide-number">Slide 1</span>
+            <h3>MATEMATIKA DISKRIT</h3>
+            <p>Kode: 1031102</p>
+            <br>
+            <div style="font-size: 1.2em; font-weight: bold; color: #4a148c;">INSTITUT TEKNOLOGI DEL</div>
+            <br>
+            <p><strong>Dosen Pengampu:</strong><br>Sari Muthia Silalahi, M.Ed</p>
+            <hr style="width: 50%;">
+            <h2>7.1 Definisi Pohon</h2>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 1</h4>
+            <p>Halaman sampul modul. Bagian ini membahas dasar-dasar Pohon (Tree) sebagai struktur data non-linear yang hierarkis.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 2</span>
+            <h2>1. DEFINISI POHON</h2>
+            <div style="background-color: #fffde7; padding: 15px; border-left: 5px solid #fbc02d;">
+                <p><strong>Pohon (Tree)</strong> adalah graf tak-berarah terhubung yang <u>tidak mengandung sirkuit</u>.</p>
+            </div>
+            <ul>
+                <li>Jika graf tersebut tidak mengandung sirkuit namun <strong>tidak terhubung</strong>, maka disebut <strong>Hutan (Forest)</strong>.</li>
+            </ul>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 2</h4>
+            <p>Definisi kunci: 
+            <br>1. <strong>Pohon:</strong> Harus nyambung semua (terhubung) & tidak ada jalan memutar (sirkuit).
+            <br>2. <strong>Hutan:</strong> Kumpulan dari beberapa pohon yang terpisah.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 3</span>
+            <h2>1.2 Sifat-Sifat Pohon</h2>
+            <p>Jika graf G memiliki <em>n</em> simpul, maka pernyataan berikut ekivalen:</p>
+            <ol>
+                <li>Setiap pasang simpul terhubung dengan <strong>lintasan tunggal</strong> (unik).</li>
+                <li>G memiliki <strong>m = n - 1</strong> buah sisi.</li>
+                <li>Jika satu sisi dihapus, graf menjadi terputus (semua sisi adalah jembatan).</li>
+                <li>Penambahan satu sisi baru akan menciptakan sirkuit.</li>
+            </ol>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 3</h4>
+            <p>Rumus penting: Jumlah sisi pada pohon selalu <code>Jumlah Simpul - 1</code>.
+            <br>Contoh: Jika ada 10 titik, pasti ada 9 garis penghubung. Jika lebih, berarti ada sirkuit. Jika kurang, berarti tidak terhubung.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 4</span>
+            <h2>1.3 Pohon Merentang (Spanning Tree)</h2>
+            <p>Upagraf (subgraph) dari graf terhubung yang memuat <strong>semua simpul</strong> tetapi hanya sebagian sisi sehingga membentuk pohon.</p>
+            <p><em>Cara membuat:</em> Putus/hapus sisi-sisi yang menyebabkan sirkuit sampai sirkuit hilang.</p>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 4</h4>
+            <p>Pohon merentang adalah "kerangka" dari sebuah graf. Kita mengambil semua titiknya, tapi membuang garis-garis "boros" yang menyebabkan perputaran, menyisakan jalur minimal agar semua titik tetap terhubung.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 5</span>
+            <h2>1.4 Pohon Berakar (Rooted Tree)</h2>
+            <p>Pohon yang satu simpulnya ditetapkan sebagai <strong>Akar (Root)</strong>. Sisi-sisinya kemudian diberi arah menjauh dari akar (ke bawah).</p>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 5</h4>
+            <p>Pohon biasa tidak punya "atas" atau "bawah". Pohon berakar punya hierarki: ada bos (akar), bawahan, dst. Ini struktur standar dalam ilmu komputer (seperti folder/direktori).</p>
+        </div>
+    </div>
+
+    <div class="section-separator">
+        <h2>BAGIAN 2: TERMINOLOGI POHON BERAKAR</h2>
+        <p>(Materi Tambahan dari File 2)</p>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 6</span>
+            <h2>1.5 Terminologi: Anak & Orangtua</h2>
+            <div style="display: flex; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <p><strong>Anak (Child):</strong> Simpul y adalah anak dari x jika ada sisi dari x ke y.</p>
+                    <p><strong>Orangtua (Parent):</strong> Simpul x adalah orangtua dari y.</p>
+                    <br>
+                    <p><em>Contoh pada gambar:</em><br>Anak dari <strong>a</strong> adalah <strong>b, c, d</strong>.</p>
+                </div>
+                <div class="box-diagram" style="width: 150px;">
+                    <strong>a (Root)</strong><br>
+                    / | \<br>
+                    b c d
+                </div>
+            </div>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 6</h4>
+            <p>Hubungan langsung satu tingkat.
+            <br>• <strong>Parent:</strong> Yang di atas.
+            <br>• <strong>Child:</strong> Yang di bawahnya langsung.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 7</span>
+            <h2>Lintasan (Path)</h2>
+            <p><strong>Lintasan</strong> adalah urutan sisi yang dilalui dari satu simpul ke simpul lain.</p>
+            <p><strong>Panjang Lintasan:</strong> Jumlah sisi yang dilalui.</p>
+            <div style="background-color: #f5f5f5; padding: 10px; border-radius: 5px;">
+                <p>Contoh: Lintasan dari <strong>a</strong> ke <strong>h</strong>:<br>
+                <code>a -> b -> e -> h</code><br>
+                Panjangnya = 3 sisi.</p>
+            </div>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 7</h4>
+            <p>Bayangkan peta. Lintasan adalah rute perjalanan. Panjangnya dihitung dari berapa banyak "jalan" (garis) yang dilewati, bukan jumlah kotanya.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 8</span>
+            <h2>Keturunan & Leluhur</h2>
+            <ul>
+                <li><strong>Leluhur (Ancestor):</strong> Orangtua, kakek, buyut, dst dari sebuah simpul (semua simpul di atasnya dalam satu jalur).</li>
+                <li><strong>Keturunan (Descendant):</strong> Anak, cucu, cicit, dst (semua simpul di bawahnya dalam satu jalur).</li>
+            </ul>
+            <p><em>Contoh:</em> <strong>b</strong> adalah leluhur dari <strong>h</strong>. Sebaliknya, <strong>h</strong> adalah keturunan dari <strong>b</strong>.</p>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 8</h4>
+            <p>Perluasan dari konsep Orangtua/Anak. Jika Orangtua/Anak hanya beda 1 level, Leluhur/Keturunan bisa beda banyak level asalkan satu garis keturunan.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 9</span>
+            <h2>Saudara Kandung (Sibling)</h2>
+            <p><strong>Saudara Kandung</strong> adalah simpul-simpul yang memiliki <strong>orangtua yang sama</strong>.</p>
+            <br>
+            <div class="box-diagram">
+                Contoh:<br>
+                <strong>f</strong> adalah saudara kandung <strong>e</strong> (karena orangtuanya sama-sama b).<br>
+                Tetapi <strong>g</strong> BUKAN saudara kandung <strong>e</strong>.
+            </div>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 9</h4>
+            <p>Sama seperti di keluarga. Kakak/adik adalah sibling. Syaratnya harus satu ayah/ibu (parent).</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 10</span>
+            <h2>Upapohon (Subtree)</h2>
+            <p><strong>Upapohon</strong> terdiri dari satu simpul (sebagai akar lokal) beserta <strong>seluruh keturunannya</strong>.</p>
+            <p><em>Contoh:</em> Upapohon dengan akar <strong>b</strong> mencakup simpul: {b, e, f, h, i, j}.</p>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 10</h4>
+            <p>Jika Anda memotong satu cabang pohon, potongan itu sendiri terlihat seperti pohon kecil. Itulah upapohon (subtree).</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 11</span>
+            <h2>Derajat (Degree)</h2>
+            <p><strong>Derajat</strong> sebuah simpul pada pohon berakar adalah <strong>jumlah anak</strong> yang dimilikinya (derajat-keluar).</p>
+            <ul>
+                <li>Derajat <strong>a</strong> = 3 (punya anak b, c, d)</li>
+                <li>Derajat <strong>b</strong> = 2 (punya anak e, f)</li>
+                <li>Derajat <strong>c</strong> = 0 (tidak punya anak)</li>
+            </ul>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 11</h4>
+            <p>Cukup hitung berapa garis yang keluar ke bawah dari simpul tersebut.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 12</span>
+            <h2>Daun (Leaf) & Simpul Dalam</h2>
+            <div style="display: flex; gap: 20px;">
+                <div style="flex:1; background:#e8f5e9; padding:10px; border-radius:5px;">
+                    <h3>Daun (Leaf)</h3>
+                    <p>Simpul yang <strong>berderajat nol</strong> (tidak punya anak).</p>
+                    <p><em>Contoh:</em> h, i, j, f, c, l, m.</p>
+                </div>
+                <div style="flex:1; background:#fff3e0; padding:10px; border-radius:5px;">
+                    <h3>Simpul Dalam</h3>
+                    <p>Simpul yang <strong>mempunyai anak</strong> (bukan daun).</p>
+                    <p><em>Contoh:</em> a, b, e, d, g, k.</p>
+                </div>
+            </div>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 12</h4>
+            <p>• <strong>Daun:</strong> Ujung-ujung ranting pohon. Tidak ada lagi cabang di bawahnya.
+            <br>• <strong>Simpul Dalam:</strong> Bagian batang/cabang yang meneruskan ke simpul lain.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 13</span>
+            <h2>Aras (Level)</h2>
+            <p>Penomoran tingkat kedalaman simpul, dimulai dari <strong>0</strong>.</p>
+            <ul>
+                <li><strong>Aras 0:</strong> Akar (a)</li>
+                <li><strong>Aras 1:</strong> Anak-anak akar (b, c, d)</li>
+                <li><strong>Aras 2:</strong> Cucu akar (e, f, g)</li>
+                <li>dst...</li>
+            </ul>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 13</h4>
+            <p>Level menunjukkan jarak dari akar. Akar selalu level 0. Semakin ke bawah, level semakin besar.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 14</span>
+            <h2>1.6 Pohon Berakar Terurut</h2>
+            <p>Pohon berakar dikatakan <strong>terurut (ordered tree)</strong> jika urutan anak-anaknya <strong>penting</strong>.</p>
+            <ul>
+                <li>Urutan dispesifikasikan dari <strong>kiri ke kanan</strong>.</li>
+                <li>Pada pohon terurut, (Anak Kiri, Anak Kanan) berbeda dengan (Anak Kanan, Anak Kiri).</li>
+            </ul>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 14</h4>
+            <p>Dalam pohon umum, urutan anak mungkin tidak masalah. Tapi dalam pohon terurut (seperti struktur HTML atau ekspresi matematika), urutan kiri/kanan sangat vital. <code>3 - 5</code> berbeda dengan <code>5 - 3</code>.</p>
+        </div>
+    </div>
+
+    <div class="section-separator">
+        <h2>BAGIAN 3: POHON EKSPRESI & TRAVERSAL</h2>
+        <p>(Materi Tambahan dari File 3)</p>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 15</span>
+            <h2>1.7 Pohon Ekspresi</h2>
+            <p>Pohon biner yang digunakan untuk menyimpan ekspresi matematika.</p>
+            <ul>
+                <li><strong>Daun (Leaf):</strong> Menyatakan <strong>Operand</strong> (angka/variabel, misal: a, b, 5).</li>
+                <li><strong>Simpul Dalam:</strong> Menyatakan <strong>Operator</strong> (+, -, *, /).</li>
+            </ul>
+            <div class="box-diagram center-text" style="display:block; margin: 10px auto; width: 50%;">
+                Contoh: (a + b) * c<br>
+                Root: *<br>
+                Kiri: Subtree (a+b)<br>
+                Kanan: c
+            </div>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 15</h4>
+            <p>Komputer menghitung rumus matematika dengan mengubahnya menjadi pohon ini. Operator terakhir yang dihitung (paling luar kurung) diletakkan di paling atas (akar).</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 16</span>
+            <h2>Pohon Pencarian Biner (BST)</h2>
+            <p>Struktur data khusus untuk penyimpanan data yang efisien.</p>
+            <p><strong>Aturan Kunci:</strong></p>
+            <ul>
+                <li>Kunci di Subtree <strong>Kiri</strong>  Kunci Akar.</li>
+                <li>Kunci di Subtree <strong>Kanan</strong> > Kunci Akar.</li>
+            </ul>
+            <p><em>Contoh Data:</em> 50, 32, 18, 40, 60, 52, 70</p>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 16</h4>
+            <p>BST memungkinkan pencarian data sangat cepat. Jika Anda mencari angka X, cukup bandingkan dengan akar. Jika X lebih kecil, belok kiri. Jika lebih besar, belok kanan. Tidak perlu cek semua data.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 17</span>
+            <h2>Penelusuran (Traversal) Pohon Biner</h2>
+            <p>Metode mengunjungi setiap simpul dalam pohon tepat satu kali.</p>
+            <div style="background: #f0f4c3; padding: 15px; margin-bottom: 10px;">
+                <strong>1. Preorder (R - T1 - T2)</strong><br>
+                Kunjungi Akar (R) &rarr; Kiri &rarr; Kanan.
+            </div>
+            <div style="background: #b2dfdb; padding: 15px; margin-bottom: 10px;">
+                <strong>2. Inorder (T1 - R - T2)</strong><br>
+                Kunjungi Kiri &rarr; Akar (R) &rarr; Kanan.
+            </div>
+            <div style="background: #ffccbc; padding: 15px;">
+                <strong>3. Postorder (T1 - T2 - R)</strong><br>
+                Kunjungi Kiri &rarr; Kanan &rarr; Akar (R).
+            </div>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 17</h4>
+            <p>Urutan "Root" menentukan nama traversal:
+            <br>• <strong>Pre</strong> (Awal): Root duluan.
+            <br>• <strong>In</strong> (Tengah): Root di tengah.
+            <br>• <strong>Post</strong> (Akhir): Root belakangan.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content">
+            <span class="slide-number">Slide 18</span>
+            <h2>Hubungan Traversal & Notasi</h2>
+            <p>Jika diaplikasikan pada <strong>Pohon Ekspresi</strong>, hasil traversal menghasilkan notasi matematika yang berbeda:</p>
+            <table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%; text-align: center;">
+                <tr style="background: #eee;">
+                    <th>Jenis Traversal</th>
+                    <th>Notasi</th>
+                    <th>Contoh Posisi Operator</th>
+                </tr>
+                <tr>
+                    <td>Preorder</td>
+                    <td><strong>Prefix</strong> (Polish)</td>
+                    <td><code>+ A B</code></td>
+                </tr>
+                <tr>
+                    <td>Inorder</td>
+                    <td><strong>Infix</strong> (Umum)</td>
+                    <td><code>A + B</code></td>
+                </tr>
+                <tr>
+                    <td>Postorder</td>
+                    <td><strong>Postfix</strong> (Reverse Polish)</td>
+                    <td><code>A B +</code></td>
+                </tr>
+            </table>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 18</h4>
+            <p>• <strong>Infix:</strong> Yang biasa kita pakai (manusia). Butuh tanda kurung.
+            <br>• <strong>Postfix/Prefix:</strong> Dipakai komputer/kalkulator karena tidak butuh tanda kurung untuk tahu mana yang dihitung duluan.</p>
+        </div>
+    </div>
+
+    <div class="slide-wrapper">
+        <div class="slide-content center-text">
+            <span class="slide-number">Slide 19</span>
+            <br><br>
+            <h1 style="color: #2e7d32;">TERIMAKASIH</h1>
+            <br>
+            <p>Materi Selesai</p>
+            <br>
+            <p><strong>Referensi Utama:</strong><br>Rinaldi Munir & Rosen</p>
+            <div class="slide-footer">SML Matematika Diskrit</div>
+        </div>
+        <div class="explanation">
+            <h4>Penjelasan Slide 19</h4>
+            <p>Akhir dari seluruh materi modul pohon.</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

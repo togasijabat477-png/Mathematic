@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cipher Quest – Kriptografi</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #020f0c;
+  --surf:   #051a14;
+  --surf2:  #082418;
+  --border: #0f3828;
+  --g1:     #00ff88;
+  --g2:     #00cc6a;
+  --g-dim:  rgba(0,255,136,0.12);
+  --g-glow: rgba(0,255,136,0.06);
+  --amber:  #ffcc00;
+  --a-dim:  rgba(255,204,0,0.12);
+  --red:    #ff4455;
+  --r-dim:  rgba(255,68,85,0.12);
+  --fg:     #d4ffe8;
+  --fg2:    #5a9a78;
+  --font-h: 'Exo 2', sans-serif;
+  --font-m: 'Share Tech Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-m);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Scanlines effect */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0,255,136,0.015) 0px, rgba(0,255,136,0.015) 1px, transparent 1px, transparent 3px);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,255,136,0.07) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Header */
+.header {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(2,15,12,0.97);
+}
+.back-btn {
+  color: var(--g1); text-decoration: none;
+  font-size: 0.72rem;
+  border: 1px solid rgba(0,255,136,0.25);
+  padding: 0.35rem 0.8rem; border-radius: 0.3rem;
+  transition: all 0.2s;
+}
+.back-btn:hover { background: var(--g-dim); }
+.gtitle {
+  font-family: var(--font-h);
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  font-weight: 900; letter-spacing: 0.12em;
+  color: var(--g1);
+  text-shadow: 0 0 20px rgba(0,255,136,0.6), 0 0 40px rgba(0,255,136,0.3);
+}
+.hud { display: flex; gap: 1.5rem; }
+.hud-item { text-align: center; }
+.hud-val { font-family: var(--font-h); font-size: 1.2rem; font-weight: 800; color: var(--amber); line-height: 1; }
+.hud-lbl { font-size: 0.58rem; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* Main */
+.main {
+  position: relative; z-index: 1;
+  flex: 1; max-width: 860px; width: 100%;
+  margin: 0 auto; padding: 1rem 1.5rem 2rem;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+
+/* Mission */
+.mission {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--g1);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1.1rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.mission-tag {
+  background: var(--g-dim); border: 1px solid var(--g2);
+  color: var(--g1); font-size: 0.6rem; padding: 0.2rem 0.65rem;
+  border-radius: 2rem; white-space: nowrap; letter-spacing: 0.08em;
+}
+.mission-text { flex:1; font-size: 0.85rem; line-height: 1.5; }
+.mission-text .hi { color: var(--amber); font-weight: 700; }
+
+/* Cipher Display */
+.cipher-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1.25rem;
+}
+.card-title {
+  font-family: var(--font-h); font-size: 0.75rem; font-weight: 700;
+  color: var(--g1); letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;
+}
+.cipher-text {
+  background: var(--surf2); border: 1px solid var(--border);
+  border-radius: 0.5rem; padding: 1rem;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  letter-spacing: 0.25em; color: var(--amber);
+  text-align: center; line-height: 1.6;
+  text-shadow: 0 0 10px rgba(255,204,0,0.4);
+  min-height: 4rem; display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 0.25rem;
+}
+.char-box {
+  display: inline-block; padding: 0.1rem 0.05rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.char-box.space { width: 1.2rem; }
+.char-box.hinted { border-bottom-color: var(--g1); color: var(--g1); }
+
+/* Alphabet Reference */
+.alpha-ref {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1rem;
+  overflow-x: auto;
+}
+.alpha-row {
+  display: flex; gap: 0.25rem; min-width: max-content;
+}
+.alpha-cell {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--surf2); border: 1px solid var(--border);
+  border-radius: 0.3rem; padding: 0.3rem 0.4rem;
+  min-width: 32px;
+  transition: all 0.2s;
+}
+.alpha-cell.highlight { border-color: var(--g1); background: var(--g-dim); }
+.alpha-plain { font-size: 0.65rem; color: var(--fg2); }
+.alpha-cipher { font-size: 0.75rem; font-weight: 700; color: var(--amber); }
+
+/* Input Area */
+.input-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; padding: 1.25rem;
+}
+.letter-inputs { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+.letter-slot {
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+}
+.letter-slot-cipher { font-size: 0.65rem; color: var(--amber); letter-spacing: 0.05em; }
+.letter-slot-input {
+  width: 38px; height: 42px;
+  background: var(--surf2); border: 2px solid var(--border);
+  border-radius: 0.4rem; text-align: center;
+  font-family: var(--font-m); font-size: 1.1rem; font-weight: 700;
+  color: var(--g1); text-transform: uppercase;
+  outline: none; transition: all 0.2s;
+}
+.letter-slot-input:focus { border-color: var(--g1); box-shadow: 0 0 12px rgba(0,255,136,0.3); }
+.letter-slot-input.correct { border-color: var(--g1); background: var(--g-dim); }
+.letter-slot-input.wrong { border-color: var(--red); background: var(--r-dim); animation: shake 0.3s; }
+.letter-slot-input.space { visibility: hidden; width: 20px; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
+
+/* Key display */
+.key-display {
+  display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.key-badge {
+  background: var(--g-dim); border: 1px solid var(--g2);
+  color: var(--g1); font-size: 0.7rem; padding: 0.25rem 0.75rem;
+  border-radius: 0.35rem;
+}
+.key-val { font-family: var(--font-h); font-size: 1.1rem; font-weight: 900; color: var(--amber); }
+
+/* Buttons */
+.btns { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+.btn {
+  background: transparent; border: 1px solid var(--g2);
+  color: var(--g1); font-family: var(--font-h); font-size: 0.8rem;
+  font-weight: 700; letter-spacing: 0.08em;
+  padding: 0.55rem 1.1rem; border-radius: 0.4rem;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.btn:hover { background: var(--g-dim); box-shadow: 0 0 16px rgba(0,255,136,0.2); }
+.btn-check { border-color: var(--amber); color: var(--amber); }
+.btn-check:hover { background: var(--a-dim); }
+.btn-hint { border-color: var(--fg2); color: var(--fg2); }
+.btn-hint:hover { background: rgba(90,154,120,0.12); }
+
+/* Progress */
+.prog-bar { height: 3px; background: var(--surf2); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--g2), var(--g1)); border-radius: 2px; transition: width 0.4s; }
+
+/* Score flash */
+.score-flash {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  font-family: var(--font-h); font-size: 3rem; font-weight: 900;
+  color: var(--g1); text-shadow: 0 0 30px rgba(0,255,136,0.8);
+  z-index: 200; pointer-events: none;
+  transition: transform 0.15s, opacity 0.4s;
+  opacity: 0;
+}
+.score-flash.show { transform: translate(-50%,-60%) scale(1); opacity: 1; }
+
+/* Hint panel */
+.hint-panel {
+  background: var(--surf2); border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 0.5rem; padding: 0.75rem 1rem;
+  font-size: 0.8rem; color: var(--fg2); line-height: 1.6;
+  display: none;
+}
+.hint-panel.show { display: block; }
+.hint-panel strong { color: var(--amber); }
+
+/* Modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(2,15,12,0.92);
+  backdrop-filter: blur(8px); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-bg.show { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surf); border: 1px solid var(--g2);
+  border-radius: 1rem; padding: 2.5rem 2rem; text-align: center;
+  max-width: 380px; width: 90%;
+  box-shadow: 0 0 60px rgba(0,255,136,0.2);
+  transform: scale(0.85); transition: transform 0.3s;
+}
+.modal-bg.show .modal { transform: scale(1); }
+.modal-emoji { font-size: 3.5rem; margin-bottom: 0.75rem; }
+.modal-title { font-family: var(--font-h); font-size: 1.8rem; font-weight: 900; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+.modal-sub { color: var(--fg2); font-size: 0.85rem; margin-bottom: 1.5rem; line-height: 1.6; }
+.modal-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+
+/* Cipher trail */
+.trail { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+.trail-item {
+  background: var(--surf2); border: 1px solid var(--border);
+  border-radius: 0.35rem; padding: 0.25rem 0.5rem;
+  font-size: 0.7rem; color: var(--fg2); font-family: var(--font-m);
+}
+.trail-item.solved { border-color: var(--g2); color: var(--g1); }
+</style>
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '../../index.html?page=game';
+  }
+}
+</script>
+</head>
+<body>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-emoji" id="mEmoji">🔓</div>
+    <div class="modal-title" id="mTitle" style="color:var(--g1)">Dekripsi!</div>
+    <div class="modal-sub" id="mSub"></div>
+    <div class="modal-btns" id="mBtns">
+      <button class="btn btn-check" onclick="nextQ()">Lanjut →</button>
+      <button class="btn" onclick="closeModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div class="score-flash" id="sf">+100!</div>
+
+<header class="header">
+  <a class="back-btn" href="#" onclick="goBack();return false;">← Kembali</a>
+  <div class="gtitle">⚿ CIPHER QUEST</div>
+  <div class="hud">
+    <div class="hud-item"><div class="hud-val" id="hScore">0</div><div class="hud-lbl">Skor</div></div>
+    <div class="hud-item"><div class="hud-val" id="hQ">1/10</div><div class="hud-lbl">Level</div></div>
+    <div class="hud-item"><div class="hud-val" id="hHints">3</div><div class="hud-lbl">Hint</div></div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+
+  <div class="mission">
+    <div class="mission-tag" id="mTag">CAESAR CIPHER</div>
+    <div class="mission-text" id="mText">Dekripsi pesan berikut!</div>
+  </div>
+
+  <div class="cipher-card">
+    <div class="card-title">
+      Pesan Tersandi
+      <div class="key-display">
+        <span class="key-badge" id="keyBadge">KUNCI</span>
+        <span class="key-val" id="keyVal">–</span>
+      </div>
+    </div>
+    <div class="cipher-text" id="cipherText"></div>
+  </div>
+
+  <div class="alpha-ref">
+    <div class="card-title" style="margin-bottom:0.6rem">Tabel Referensi Alfabet</div>
+    <div class="alpha-row" id="alphaRow"></div>
+  </div>
+
+  <div class="input-card">
+    <div class="card-title">Masukkan Pesan Asli</div>
+    <div class="letter-inputs" id="letterInputs"></div>
+    <div class="hint-panel" id="hintPanel"></div>
+    <div class="btns" style="margin-top:0.85rem">
+      <button class="btn btn-check" onclick="checkAnswer()">🔓 Cek Jawaban</button>
+      <button class="btn btn-hint" onclick="useHint()">💡 Hint (sisa: <span id="hintCount">3</span>)</button>
+      <button class="btn" onclick="skipQ()">⏭ Lewati</button>
+    </div>
+  </div>
+
+  <div class="cipher-card" style="padding:1rem">
+    <div class="card-title">Level Selesai</div>
+    <div class="trail" id="trail"></div>
+  </div>
+</main>
+
+<script>
+// ─── Data ─────────────────────────────────────────────────────
+const WORDS = [
+  'MATEMATIKA','KRIPTOGRAFI','ALGORITMA','KOMPUTER','JARINGAN',
+  'ENKRIPSI','KEAMANAN','HIMPUNAN','MATRIKS','VEKTOR',
+  'LOGIKA','KOMBINASI','PERMUTASI','BILANGAN','PRIMA',
+  'MODULAR','SIMETRIS','PUBLIK','PRIVAT','DIGITAL',
+  'PANGKAT','KUNCI','SANDI','DEKRIPSI','CIPHER',
+];
+
+const LEVELS = [
+  // Caesar cipher dekripsi
+  { type:'caesar', mode:'decrypt', shift:3,  words:['KUNCI','PRIMA'],        label:'Caesar (geser 3)' },
+  { type:'caesar', mode:'decrypt', shift:5,  words:['LOGIKA','ENKRIPSI'],    label:'Caesar (geser 5)' },
+  { type:'caesar', mode:'decrypt', shift:13, words:['MATRIKS','VEKTOR'],     label:'ROT13' },
+  // Caesar cipher enkripsi
+  { type:'caesar', mode:'encrypt', shift:7,  words:['HIMPUNAN','BILANGAN'],  label:'Caesar Enkripsi (7)' },
+  { type:'caesar', mode:'encrypt', shift:10, words:['PUBLIK','PRIVAT'],      label:'Caesar Enkripsi (10)' },
+  // Atbash
+  { type:'atbash', mode:'decrypt', words:['SIMETRIS','KEAMANAN'],            label:'Atbash Cipher' },
+  { type:'atbash', mode:'encrypt', words:['DIGITAL','MODULAR'],              label:'Atbash Enkripsi' },
+  // Vigenere (simple)
+  { type:'vigenere', mode:'decrypt', key:'AB', words:['KOMPUTER','JARINGAN'], label:'Vigenère (kunci AB)' },
+  { type:'vigenere', mode:'decrypt', key:'BC', words:['ALGORITMA','PANGKAT'], label:'Vigenère (kunci BC)' },
+  // Mix challenge
+  { type:'caesar', mode:'decrypt', shift:21, words:['KRIPTOGRAFI','KOMBINASI'], label:'Caesar (geser 21)' },
+];
+
+let score = 0, qIdx = 0, wIdx = 0, hints = 3, totalSolved = 0;
+let curWord = '', curCipher = '', curLevel = null;
+const trailStatus = [];
+
+// ─── Cipher Functions ─────────────────────────────────────────
+function caesarChar(c, shift, encrypt) {
+  if (!/[A-Z]/.test(c)) return c;
+  const base = 65;
+  const s = encrypt ? shift : (26 - shift);
+  return String.fromCharCode(((c.charCodeAt(0) - base + s) % 26 + 26) % 26 + base);
+}
+function atbashChar(c) {
+  if (!/[A-Z]/.test(c)) return c;
+  return String.fromCharCode(90 - (c.charCodeAt(0) - 65));
+}
+function vigenereChar(c, k, encrypt) {
+  if (!/[A-Z]/.test(c)) return c;
+  const shift = k.charCodeAt(0) - 65;
+  return caesarChar(c, shift, encrypt);
+}
+
+function encode(word, lvl) {
+  if (lvl.type === 'caesar') {
+    return word.split('').map(c => caesarChar(c, lvl.shift, lvl.mode === 'encrypt')).join('');
+  } else if (lvl.type === 'atbash') {
+    return word.split('').map(atbashChar).join('');
+  } else if (lvl.type === 'vigenere') {
+    return word.split('').map((c,i) => vigenereChar(c, lvl.key[i % lvl.key.length], lvl.mode === 'encrypt')).join('');
+  }
+}
+
+function decode(word, lvl) {
+  // The correct answer is the original word
+  return lvl.mode === 'decrypt' ? word : encode(word, lvl); // if encrypting, ans = encoded
+}
+
+// ─── Build Alphabet Reference ──────────────────────────────────
+function buildAlphaRef(lvl) {
+  const row = document.getElementById('alphaRow');
+  row.innerHTML = '';
+  for (let i = 0; i < 26; i++) {
+    const plain = String.fromCharCode(65 + i);
+    let cipherChar;
+    if (lvl.type === 'caesar') {
+      cipherChar = caesarChar(plain, lvl.shift, lvl.mode === 'encrypt');
+    } else if (lvl.type === 'atbash') {
+      cipherChar = atbashChar(plain);
+    } else {
+      const k = lvl.key[0]; // show first key char mapping
+      cipherChar = vigenereChar(plain, k, lvl.mode === 'encrypt');
+    }
+    const cell = document.createElement('div');
+    cell.className = 'alpha-cell';
+    cell.id = 'ac-' + plain;
+    cell.innerHTML = `<div class="alpha-plain">${plain}</div><div class="alpha-cipher">${cipherChar}</div>`;
+    row.appendChild(cell);
+  }
+}
+
+function highlightAlpha(chars) {
+  document.querySelectorAll('.alpha-cell').forEach(c => c.classList.remove('highlight'));
+  chars.forEach(c => {
+    const el = document.getElementById('ac-' + c);
+    if (el) el.classList.add('highlight');
+  });
+}
+
+// ─── Load Question ─────────────────────────────────────────────
+function loadQ() {
+  const hp = document.getElementById('hintPanel');
+  hp.classList.remove('show'); hp.innerHTML = '';
+
+  curLevel = LEVELS[qIdx];
+  curWord = curLevel.words[wIdx % curLevel.words.length];
+  curCipher = encode(curWord, curLevel); // what player sees
+
+  const isEncrypt = curLevel.mode === 'encrypt';
+  const displayCipher = curCipher;
+  const answer = isEncrypt ? curCipher : curWord; // what they need to type
+
+  // The cipher shown to user
+  document.getElementById('cipherText').innerHTML =
+    displayCipher.split('').map(c =>
+      c === ' ' ? '<span class="char-box space"> </span>' :
+      `<span class="char-box">${isEncrypt ? curWord : curCipher}`.split('')[0] + '</span>'
+    ).join('');
+
+  // Rebuild cipher text display
+  const shown = isEncrypt ? curWord : curCipher;
+  document.getElementById('cipherText').innerHTML = shown.split('').map(c =>
+    `<span class="char-box">${c}</span>`
+  ).join('');
+
+  // Key badge
+  const keyBadge = document.getElementById('keyBadge');
+  const keyVal = document.getElementById('keyVal');
+  if (curLevel.type === 'caesar') {
+    keyBadge.textContent = 'GESER';
+    keyVal.textContent = curLevel.shift;
+  } else if (curLevel.type === 'atbash') {
+    keyBadge.textContent = 'METODE';
+    keyVal.textContent = 'A↔Z';
+  } else {
+    keyBadge.textContent = 'KUNCI';
+    keyVal.textContent = curLevel.key;
+  }
+
+  // Mission text
+  const action = isEncrypt ? 'ENKRIPSI' : 'DEKRIPSI';
+  document.getElementById('mTag').textContent = curLevel.label.toUpperCase();
+  document.getElementById('mText').innerHTML = isEncrypt
+    ? `<span class="hi">Enkripsi</span> kata di atas menggunakan metode <span class="hi">${curLevel.label}</span>`
+    : `<span class="hi">Dekripsi</span> pesan tersandi di atas! Temukan kata aslinya.`;
+
+  // Letter inputs — answer is what they need to type
+  const targetWord = isEncrypt ? curCipher : curWord;
+  buildInputs(targetWord);
+  buildAlphaRef(curLevel);
+
+  document.getElementById('hQ').textContent = (qIdx + 1) + '/' + LEVELS.length;
+  document.getElementById('prog').style.width = (qIdx / LEVELS.length * 100) + '%';
+  buildTrail();
+}
+
+function buildInputs(target) {
+  const el = document.getElementById('letterInputs');
+  el.innerHTML = '';
+  const shown = curLevel.mode === 'encrypt' ? curWord : curCipher;
+  target.split('').forEach((ch, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'letter-slot';
+    slot.innerHTML = `
+      <div class="letter-slot-cipher">${shown[i] || ''}</div>
+      <input class="letter-slot-input" maxlength="1" data-i="${i}" data-ans="${ch}"
+        type="text" autocomplete="off" spellcheck="false">
+    `;
+    el.appendChild(slot);
+  });
+
+  // Focus & key behavior
+  el.querySelectorAll('input').forEach((inp, idx, all) => {
+    inp.addEventListener('input', e => {
+      let v = e.target.value.toUpperCase().replace(/[^A-Z]/g,'');
+      e.target.value = v;
+      // highlight alpha
+      if (v) {
+        const cipherCh = curLevel.mode === 'encrypt' ? curWord[idx] : curCipher[idx];
+        highlightAlpha([v, cipherCh].filter(Boolean));
+        if (idx < all.length - 1) all[idx+1].focus();
+      }
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !inp.value && idx > 0) all[idx-1].focus();
+      if (e.key === 'Enter') checkAnswer();
+    });
+  });
+
+  setTimeout(() => { const f = el.querySelector('input'); if(f) f.focus(); }, 100);
+}
+
+// ─── Check Answer ──────────────────────────────────────────────
+function checkAnswer() {
+  const inputs = document.querySelectorAll('.letter-slot-input');
+  let allCorrect = true;
+  inputs.forEach(inp => {
+    const correct = inp.dataset.ans;
+    if (inp.value.toUpperCase() === correct) {
+      inp.className = 'letter-slot-input correct';
+    } else {
+      inp.className = 'letter-slot-input wrong';
+      allCorrect = false;
+    }
+  });
+
+  if (allCorrect) {
+    const pts = 100 + (hints > 0 ? hints * 10 : 0);
+    score += pts;
+    document.getElementById('hScore').textContent = score;
+    totalSolved++;
+    trailStatus[qIdx] = true;
+    buildTrail();
+    flashScore('+' + pts);
+    setTimeout(() => showModal(true, pts), 600);
+  } else {
+    // Shake wrong ones
+    setTimeout(() => {
+      inputs.forEach(inp => { if (inp.classList.contains('wrong')) inp.className = 'letter-slot-input'; });
+    }, 700);
+  }
+}
+
+// ─── Hint ──────────────────────────────────────────────────────
+function useHint() {
+  if (hints <= 0) { showHintPanel('Hint sudah habis!'); return; }
+  hints--;
+  document.getElementById('hHints').textContent = hints;
+  document.getElementById('hintCount').textContent = hints;
+
+  // Reveal one random unfilled correct letter
+  const inputs = Array.from(document.querySelectorAll('.letter-slot-input'));
+  const unfilled = inputs.filter(i => i.value !== i.dataset.ans);
+  if (unfilled.length === 0) return;
+  const pick = unfilled[Math.floor(Math.random() * unfilled.length)];
+  pick.value = pick.dataset.ans;
+  pick.className = 'letter-slot-input correct';
+
+  // Show explanation
+  const target = curLevel.mode === 'encrypt' ? curCipher : curWord;
+  const idx = +pick.dataset.i;
+  const from = (curLevel.mode === 'encrypt' ? curWord : curCipher)[idx];
+  showHintPanel(buildHintText(from, pick.dataset.ans, idx));
+}
+
+function buildHintText(from, to, idx) {
+  if (curLevel.type === 'caesar') {
+    const action = curLevel.mode === 'decrypt' ? 'mundur' : 'maju';
+    return `<strong>Hint:</strong> Huruf <strong style="color:var(--amber)">${from}</strong> digeser <strong>${action} ${curLevel.shift}</strong> langkah menjadi <strong style="color:var(--g1)">${to}</strong>.<br>
+    ${from} → (${from.charCodeAt(0)-65} ${curLevel.mode==='decrypt'?'-':'+'} ${curLevel.shift}) mod 26 = ${to.charCodeAt(0)-65} → ${to}`;
+  } else if (curLevel.type === 'atbash') {
+    return `<strong>Hint:</strong> Atbash membalik alfabet. <strong style="color:var(--amber)">${from}</strong> (posisi ${from.charCodeAt(0)-64}) ↔ <strong style="color:var(--g1)">${to}</strong> (posisi ${to.charCodeAt(0)-64}). Jumlah keduanya = 27.`;
+  } else {
+    const ki = idx % curLevel.key.length;
+    const kc = curLevel.key[ki];
+    const ks = kc.charCodeAt(0) - 65;
+    return `<strong>Hint:</strong> Kunci posisi ${ki+1} = <strong style="color:var(--amber)">${kc}</strong> (geser ${ks}). ${from} → <strong style="color:var(--g1)">${to}</strong>.`;
+  }
+}
+
+function showHintPanel(text) {
+  const p = document.getElementById('hintPanel');
+  p.innerHTML = text;
+  p.classList.add('show');
+}
+
+// ─── Trail ────────────────────────────────────────────────────
+function buildTrail() {
+  const t = document.getElementById('trail');
+  t.innerHTML = '';
+  LEVELS.forEach((lvl, i) => {
+    const el = document.createElement('div');
+    el.className = 'trail-item' + (trailStatus[i] ? ' solved' : '');
+    el.textContent = (i+1) + '. ' + lvl.label;
+    t.appendChild(el);
+  });
+}
+
+// ─── Navigation ───────────────────────────────────────────────
+function nextQ() {
+  closeModal();
+  qIdx++;
+  if (qIdx >= LEVELS.length) {
+    gameOver();
+    return;
+  }
+  loadQ();
+}
+
+function skipQ() {
+  trailStatus[qIdx] = false;
+  qIdx++;
+  if (qIdx >= LEVELS.length) { gameOver(); return; }
+  loadQ();
+}
+
+function gameOver() {
+  const pct = Math.round(totalSolved / LEVELS.length * 100);
+  document.getElementById('mEmoji').textContent = pct >= 70 ? '🏆' : '🔐';
+  document.getElementById('mTitle').textContent = 'Selesai!';
+  document.getElementById('mTitle').style.color = 'var(--amber)';
+  document.getElementById('mSub').textContent =
+    `Skor akhir: ${score}\nBerhasil: ${totalSolved}/${LEVELS.length} level (${pct}%)\n${pct>=80?'Luar biasa! Kamu calon kriptografer! 🎉':'Terus berlatih, kamu sudah hebat! 💪'}`;
+  document.getElementById('mBtns').innerHTML =
+    `<button class="btn btn-check" onclick="restartGame()">Main Lagi 🔄</button>
+     <a class="btn" href="../index.html">Beranda</a>`;
+  document.getElementById('modalBg').classList.add('show');
+}
+
+function restartGame() {
+  score = 0; qIdx = 0; hints = 3; totalSolved = 0;
+  trailStatus.length = 0;
+  document.getElementById('hScore').textContent = 0;
+  document.getElementById('hHints').textContent = 3;
+  document.getElementById('hintCount').textContent = 3;
+  closeModal(); loadQ();
+}
+
+function showModal(win, pts) {
+  const sub = win
+    ? `+${pts} poin! ${curLevel.mode === 'decrypt' ? 'Dekripsi' : 'Enkripsi'} berhasil!\n${getExplanation()}`
+    : 'Coba lagi!';
+  document.getElementById('mEmoji').textContent = win ? '🔓' : '❌';
+  document.getElementById('mTitle').textContent = win ? 'Terpecahkan!' : 'Salah!';
+  document.getElementById('mTitle').style.color = win ? 'var(--g1)' : 'var(--red)';
+  document.getElementById('mSub').textContent = sub;
+  document.getElementById('mBtns').innerHTML =
+    `<button class="btn btn-check" onclick="nextQ()">Lanjut →</button>
+     <button class="btn" onclick="closeModal()">Tutup</button>`;
+  document.getElementById('modalBg').classList.add('show');
+}
+
+function getExplanation() {
+  if (curLevel.type === 'caesar') return `Geser setiap huruf ${curLevel.mode==='decrypt'?'mundur':'maju'} ${curLevel.shift} posisi dalam alfabet.`;
+  if (curLevel.type === 'atbash') return `Atbash: A↔Z, B↔Y, C↔X, dst. Balik urutan alfabet!`;
+  return `Vigenère: tiap huruf digeser berdasarkan huruf kunci "${curLevel.key}" secara bergilir.`;
+}
+
+function closeModal() { document.getElementById('modalBg').classList.remove('show'); }
+
+function flashScore(text) {
+  const sf = document.getElementById('sf');
+  sf.textContent = text;
+  sf.classList.add('show');
+  setTimeout(() => sf.classList.remove('show'), 1000);
+}
+
+loadQ();
+buildTrail();
+</script>
+</body>
+</html>

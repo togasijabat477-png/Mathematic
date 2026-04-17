@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Soal & Jawaban Matriks</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            --text-main: #1e293b;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Times New Roman", Times, serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        h2 { color: #1e3a8a; margin-top: 0; font-size: 22px; }
+
+         button {
+            display: block;
+            width: 100%; 
+            padding: 16px 25px;
+            margin: 12px 0; 
+            font-family: "Times New Roman", Times, serif;
+            font-size: 18px; 
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+
+        button:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        button:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            background: #1d4ed8;
+        }
+
+        .matrix-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .matrix {
+            display: inline-grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 10px 20px;
+            padding: 10px 15px;
+            position: relative;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .matrix::before, .matrix::after {
+            content: "";
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 8px;
+            border: 2px solid #1e3a8a;
+        }
+
+        .matrix::before { left: 0; border-right: none; border-radius: 6px 0 0 6px; }
+        .matrix::after { right: 0; border-left: none; border-radius: 0 6px 6px 0; }
+        #timer {
+            background: #1e293b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-family: monospace;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .progress {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: 0.4s ease;
+        }
+
+        .option {
+            text-align: left;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
+
+        .explanation {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 14px;
+            padding: 15px;
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            color: #92400e;
+            line-height: 1.5;
+        }
+
+        .hidden { display: none; }
+
+        .info-box {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
+            Kembali ke Materi
+        </button>
+      
+
+<div class="container">
+    <div id="startScreen" class="card">
+        <h2>Soal & Jawaban Matriks</h2>
+        <p style="color: #64748b; font-size: 14px;">
+            Ketika determinan hidupmu menyentuh angka nol, 
+            janganlah berkecil hati; itu hanyalah sebuah pengingat bahwa sistemmu sedang berada dalam titik singular, 
+            sebuah jeda untuk merenung sebelum menyusun elemen baru yang lebih bermakna. 
+            Uji ketajamanmu dalam menghitung determinan matriks 2x2.</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="startQuiz('Mudah')">Easy</button>
+            <button onclick="startQuiz('Normal')" style="background:#6366f1">Medium</button>
+            <button onclick="startQuiz('Susah')" style="background:#4338ca">Hard</button>
+        </div>
+
+        <div class="info-box">
+            <strong>Detail Ujian:</strong>
+            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
+                <li>30 Soal Matriks</li>
+                <li>Waktu: 2 Jam</li>
+                <li>Pembahasan lengkap setiap nomor</li>
+            </ul>
+        </div>
+        <div id="lastScore" style="margin-top:20px; font-weight:bold; font-size: 14px;"></div>
+    </div>
+
+    <div id="quizScreen" class="card hidden">
+        <div id="timer">Waktu: 120:00</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div id="question-text" style="font-weight: 600; margin-bottom: 10px;"></div>
+        <div class="matrix-container" id="matrix-display"></div>
+        
+        <div id="options"></div>
+        <div class="explanation hidden" id="explanation"></div>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick="nextQuestion()" style="flex: 2;">Lanjut</button>
+            <button onclick="goHome()" style="flex: 1; background: #8d8d8d; font-size: 14px;">Kembali</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="card hidden">
+        <h2>Hasil Akhir</h2>
+        <div id="score" style="font-size: 64px; font-weight: 800; color: var(--primary); margin: 10px 0;">0</div>
+        <p>Benar dari 30 Soal</p>
+        <button onclick="goHome()">Main Lagi</button>
+    </div>
+</div>
+
+<script>
+let questions=[];
+let index=0;
+let score=0;
+let selected=null;
+let timer;
+let timeLeft=7200; // 2 Jam dalam detik
+
+window.onload=function(){
+    let last=localStorage.getItem('scoreM');
+    if(last){document.getElementById('lastScore').innerText="Skor terakhir: "+last+"/30";}
+}
+
+function startQuiz(level){
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    generateQuestions(level);
+    showQuestion();
+    startTimer();
+}
+
+function generateQuestions(level){
+    questions=[];
+    for(let i=1;i<=30;i++){
+        let a, b, c, d;
+        
+        if(level === 'Mudah') {
+            // Angka positif kecil (1-10)
+            a = Math.floor(Math.random() * 10) + 1;
+            b = Math.floor(Math.random() * 5) + 1;
+            c = Math.floor(Math.random() * 5) + 1;
+            d = Math.floor(Math.random() * 10) + 1;
+        } else if(level === 'Normal') {
+            // Kombinasi angka positif & negatif (-15 sampai 15)
+            a = Math.floor(Math.random() * 31) - 15;
+            b = Math.floor(Math.random() * 21) - 10;
+            c = Math.floor(Math.random() * 21) - 10;
+            d = Math.floor(Math.random() * 31) - 15;
+        } else {
+            // Angka lebih besar dan lebih kompleks (-50 sampai 50)
+            a = Math.floor(Math.random() * 101) - 50;
+            b = Math.floor(Math.random() * 81) - 40;
+            c = Math.floor(Math.random() * 81) - 40;
+            d = Math.floor(Math.random() * 101) - 50;
+        }
+
+        let det = (a * d) - (b * c);
+        let opts = new Set();
+        opts.add(det);
+        
+        while(opts.size < 5) {
+            // Membuat jebakan jawaban yang mirip (selisih kecil)
+            let offset = (Math.floor(Math.random() * 10) + 1) * (Math.random() < 0.5 ? 1 : -1);
+            let salah = det + offset;
+            if(salah !== det) opts.add(salah);
+        }
+        let finalOpts = Array.from(opts).sort(() => Math.random() - 0.5);
+
+        questions.push({
+            a, b, c, d,
+            options: finalOpts,
+            answer: det,
+            explanation: `Penyelesaian:\nDet = (a × d) - (b × c)\nDet = (${a} × ${d}) - (${b} × ${c})\nDet = ${a*d} - (${b*c})\nDet = ${det}`
+        });
+    }
+}
+
+function showQuestion(){
+    let q=questions[index];
+    document.getElementById('question-text').innerText = `Soal ${index+1} dari 30: Determinan dari`;
+    document.getElementById('matrix-display').innerHTML = `
+        <div class="matrix">
+            <div>${q.a}</div><div>${q.b}</div>
+            <div>${q.c}</div><div>${q.d}</div>
+        </div>`;
+    
+    let letters=['A','B','C','D','E'];
+    let html='';
+    q.options.forEach((o,i)=>{
+        html+=`<div class='option' onclick='selectAnswer(this,${o})'><b>${letters[i]}.</b> ${o}</div>`;
+    });
+    document.getElementById('options').innerHTML=html;
+    document.getElementById('explanation').classList.add('hidden');
+    updateProgress();
+}
+
+function selectAnswer(el,val){
+    if(selected!==null)return;
+    selected=val;
+    let q=questions[index];
+    let options=document.querySelectorAll('.option');
+    
+    options.forEach(opt=>{
+        let valOpsi = parseInt(opt.innerText.split('. ')[1]);
+        if(valOpsi === q.answer){opt.classList.add('correct');}
+    });
+
+    if(val===q.answer){
+        score++;
+    } else {
+        el.classList.add('wrong');
+    }
+    
+    let expEl = document.getElementById('explanation');
+    expEl.innerText = q.explanation;
+    expEl.classList.remove('hidden');
+}
+
+function nextQuestion(){
+    if(selected === null) { alert("Pilih jawaban dulu!"); return; }
+    index++;
+    selected=null;
+    if(index<questions.length){showQuestion();} else endQuiz();
+}
+
+function updateProgress(){
+    let percent=(index/30)*100;
+    document.getElementById('progressBar').style.width=percent+'%';
+}
+
+function startTimer(){
+    if(timer) clearInterval(timer);
+    timer=setInterval(()=>{
+        timeLeft--;
+        let h=Math.floor(timeLeft/3600);
+        let m=Math.floor((timeLeft%3600)/60);
+        let s=timeLeft%60;
+        
+        // Format tampilan HH:MM:SS atau MM:SS jika < 1 jam
+        let display = (h > 0 ? h + ":" : "") + (m < 10 ? '0'+m : m) + ":" + (s < 10 ? '0' + s : s);
+        document.getElementById('timer').innerText=`Waktu: ${display}`;
+        
+        if(timeLeft<=0)endQuiz();
+    },1000);
+}
+
+function endQuiz(){
+    clearInterval(timer);
+    document.getElementById('quizScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    document.getElementById('score').innerText = score;
+    localStorage.setItem('scoreM', score);
+}
+
+function goHome(){location.reload();}
+</script>
+
+</body>
+</html>

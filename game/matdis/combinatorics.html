@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hitung Peluang!</title>
+    <style>
+        :root {
+            --background: hsl(222, 47%, 6%);
+            --foreground: hsl(210, 40%, 98%);
+            --card: hsl(222, 47%, 9%);
+            --primary: hsl(180, 100%, 50%);
+            --secondary: hsl(300, 100%, 60%);
+            --secondary-dark: hsl(300, 80%, 45%);
+            --muted: hsl(222, 30%, 15%);
+            --muted-foreground: hsl(215, 20%, 65%);
+            --accent: hsl(120, 100%, 50%);
+            --destructive: hsl(0, 84%, 60%);
+            --border: hsl(222, 30%, 20%);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            color: var(--foreground);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--muted-foreground);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.06), rgba(16,185,129,0.03));
+            border: 1px solid rgba(59,130,246,0.12);
+            color: var(--secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 0 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .options {
+            display: grid;
+            gap: 1rem;
+        }
+
+
+        .option-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            padding: 1.25rem;
+            font-size: 1.25rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary);
+            background: rgba(59, 130, 246, 0.035);
+            transform: scale(1.02);
+        }
+
+        .tip-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: var(--accent);
+            color: white;
+        }
+
+        .toast.error {
+            background: var(--destructive);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '../../index.html?page=game';
+  }
+}
+</script>
+</head>
+<body>
+    <div class="container">
+        <a href="#" onclick="goBack();return false;" class="back-btn">← Kembali</a>
+
+        <div class="card">
+            <h1 class="title">Hitung Peluang!</h1>
+            <p class="description">Latih kemampuan permutasi dan kombinasi</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Skor</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">Akurasi</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="text-align: center;">
+                <div class="badge" id="badge"></div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+        </div>
+
+        <div class="options" id="options"></div>
+
+        <div class="card tip-card">
+            💡 <strong>Tip:</strong> Permutasi memperhatikan urutan, sedangkan Kombinasi tidak
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let total = 0;
+        let currentQuestion = null;
+
+        function factorial(n) {
+            if (n <= 1) return 1;
+            return n * factorial(n - 1);
+        }
+
+        function permutation(n, r) {
+            return factorial(n) / factorial(n - r);
+        }
+
+        function combination(n, r) {
+            return factorial(n) / (factorial(r) * factorial(n - r));
+        }
+
+        function generateQuestion() {
+            const questionTypes = [
+                {
+                    type: 'permutation',
+                    templates: [
+                        { n: 5, r: 3, text: "Berapa banyak cara menyusun 3 huruf dari kata 'LOGIC'?" },
+                        { n: 6, r: 2, text: "Berapa banyak cara memilih ketua dan wakil dari 6 orang?" },
+                        { n: 4, r: 4, text: "Berapa banyak cara menyusun 4 angka berbeda?" },
+                        { n: 7, r: 3, text: "Berapa banyak cara menyusun 3 orang dari 7 peserta untuk podium?" },
+                    ],
+                },
+                {
+                    type: 'combination',
+                    templates: [
+                        { n: 5, r: 3, text: "Berapa banyak cara memilih 3 buku dari 5 buku?" },
+                        { n: 6, r: 2, text: "Berapa banyak cara membentuk tim 2 orang dari 6 siswa?" },
+                        { n: 8, r: 3, text: "Berapa banyak cara memilih 3 warna dari 8 warna yang tersedia?" },
+                        { n: 7, r: 4, text: "Berapa banyak cara memilih 4 mahasiswa dari 7 mahasiswa?" },
+                    ],
+                },
+            ];
+
+            const selectedType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+            const template = selectedType.templates[Math.floor(Math.random() * selectedType.templates.length)];
+
+            const answer = selectedType.type === 'permutation'
+                ? permutation(template.n, template.r)
+                : combination(template.n, template.r);
+
+            const wrongOptions = [
+                Math.floor(answer * 0.5),
+                Math.floor(answer * 1.5),
+                Math.floor(answer * 2),
+            ].filter(x => x !== answer && x > 0);
+
+            const options = [answer, ...wrongOptions.slice(0, 2)].sort((a, b) => a - b);
+
+            return {
+                text: template.text,
+                type: selectedType.type,
+                answer,
+                options,
+            };
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        function updateUI() {
+            document.getElementById('badge').textContent = currentQuestion.type === 'permutation' ? 'Permutasi' : 'Kombinasi';
+            document.getElementById('questionText').textContent = currentQuestion.text;
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            currentQuestion.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => handleAnswer(option);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('accuracy').textContent = total > 0 ? Math.round((score / total) * 100) + '%' : '0%';
+        }
+
+        function handleAnswer(selected) {
+            total++;
+            if (selected === currentQuestion.answer) {
+                score++;
+                showToast('Benar! 🎉', 'success');
+            } else {
+                showToast(`Salah! Jawaban yang benar: ${currentQuestion.answer}`, 'error');
+            }
+
+            setTimeout(() => {
+                currentQuestion = generateQuestion();
+                updateUI();
+            }, 1500);
+
+            updateUI();
+        }
+
+        // Initialize
+        currentQuestion = generateQuestion();
+        updateUI();
+    </script>
+</body>
+</html>

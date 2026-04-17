@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logika Matematika</title>
+
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --bg-color: #f4f7f6;
+      --text-color: #333;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: "Times New Roman", Times, serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: var(--white);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      background: var(--secondary-color);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary-color);
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--primary-color);
+    }
+
+    h1.title {
+      text-align: center;
+      border-bottom: 4px solid var(--secondary-color);
+      padding-bottom: 15px;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      text-align: center;
+      color: #666;
+      margin-bottom: 35px;
+      font-size: 1.05em;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .card::before {
+      content: "MATERI";
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: var(--secondary-color);
+      color: white;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+    h2 {
+      border-bottom: 2px solid var(--secondary-color);
+      padding-bottom: 8px;
+      margin-top: 0;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    .answer-box {
+      background: #eef5fb;
+      border-left: 6px solid var(--secondary-color);
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+
+    .formula {
+      background: #f4f8fc;
+      border-left: 4px solid var(--accent-color);
+      padding: 12px 16px;
+      margin: 15px 0;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      body {
+        padding: 10px;
+      }
+
+      h1.title {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+    <h1 class="title">Logika Matematika</h1>
+    <p class="description">
+      Ringkasan materi dasar logika matematika yang digunakan dalam proposisi dan penalaran logis.
+    </p>
+
+    <div class="card">
+      <h2>1. Pengertian Logika Matematika</h2>
+      <p>
+        Logika matematika adalah cabang ilmu yang mempelajari penalaran secara sistematis dan ilmiah menggunakan metode formal.
+      </p>
+
+      <ul>
+        <li>Digunakan dalam ilmu komputer, matematika, dan pemrograman</li>
+        <li>Berfokus pada kebenaran pernyataan</li>
+      </ul>
+
+      <h3>Apa itu Proposisi?</h3>
+      <p>
+        Proposisi adalah kalimat deklaratif yang memiliki nilai Benar (True) atau Salah (False), tetapi tidak keduanya.
+      </p>
+
+      <div class="answer-box">
+        <strong>Contoh Proposisi:</strong>
+        <ul>
+          <li>13 adalah bilangan ganjil → Benar</li>
+          <li>1 + 1 = 2 → Benar</li>
+          <li>Bumi berbentuk segitiga → Salah</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. Mengkombinasikan Proposisi (Operator Logika)</h2>
+      <p>Proposisi majemuk dibentuk dengan mengombinasikan satu atau lebih proposisi atomik menggunakan <strong>kata hubung logika</strong>. Nilai kebenarannya ditentukan oleh nilai proposisi penyusunnya.</p>
+
+      <h3>A. Jenis-Jenis Operator & Definisi</h3>
+      <ul>
+        <li><strong>Negasi (¬p):</strong> Operasi unari yang membalikkan nilai kebenaran. Jika <code>p</code> True, maka <code>¬p</code> False.</li>
+        <li><strong>Konjungsi (p ∧ q):</strong> Operator "Dan". Hanya bernilai <strong>Benar</strong> jika kedua proposisi penyusunnya bernilai Benar.</li>
+        <li><strong>Disjungsi (p ∨ q):</strong> Operator "Atau" (Inklusif). Bernilai <strong>Benar</strong> jika minimal salah satu proposisi bernilai Benar.</li>
+        <li><strong>XOR (p ⊕ q):</strong> <em>Exclusive Or</em>. Bernilai <strong>Benar</strong> jika kedua proposisi memiliki nilai kebenaran yang berbeda.</li>
+        <li><strong>Implikasi (p → q):</strong> Hubungan sebab-akibat. Bernilai <span class="highlight">Salah hanya jika</span> anteseden (p) Benar namun konsekuen (q) Salah.</li>
+        <li><strong>Biimplikasi (p ↔ q):</strong> Syarat perlu dan cukup. Bernilai <strong>Benar</strong> jika kedua proposisi memiliki nilai kebenaran yang identik (sama-sama T atau sama-sama F).</li>
+      </ul>
+
+      <h3>B. Tabel Kebenaran Master</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>p</th>
+            <th>q</th>
+            <th>¬p</th>
+            <th>p ∧ q</th>
+            <th>p ∨ q</th>
+            <th>p ⊕ q</th>
+            <th>p → q</th>
+            <th>p ↔ q</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>T</td>
+            <td>T</td>
+            <td>F</td>
+            <td><strong>T</strong></td>
+            <td>T</td>
+            <td>F</td>
+            <td>T</td>
+            <td><strong>T</strong></td>
+          </tr>
+          <tr>
+            <td>T</td>
+            <td>F</td>
+            <td>F</td>
+            <td>F</td>
+            <td>T</td>
+            <td><strong>T</strong></td>
+            <td><span class="highlight">F</span></td>
+            <td>F</td>
+          </tr>
+          <tr>
+            <td>F</td>
+            <td>T</td>
+            <td>T</td>
+            <td>F</td>
+            <td>T</td>
+            <td><strong>T</strong></td>
+            <td>T</td>
+            <td>F</td>
+          </tr>
+          <tr>
+            <td>F</td>
+            <td>F</td>
+            <td>T</td>
+            <td>F</td>
+            <td>F</td>
+            <td>F</td>
+            <td>T</td>
+            <td><strong>T</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>Presedensi Operator:</strong> Jika terdapat beberapa operator dalam satu ekspresi tanpa kurung, urutan pengerjaannya adalah:
+        Negasi (¬) &rarr; Konjungsi (∧) &rarr; Disjungsi (∨) &rarr; Implikasi (→) &rarr; Biimplikasi (↔).
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. Operator Logika & Tabel Kebenaran</h2>
+
+      <h3>A. Negasi (¬p)</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>¬p</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+      </table>
+
+      <h3>B. Konjungsi (p ∧ q)</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>q</th>
+          <th>p ∧ q</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+          <td>F</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+          <td>F</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>F</td>
+          <td>F</td>
+        </tr>
+      </table>
+
+      <h3>C. Disjungsi (p ∨ q)</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>q</th>
+          <th>p ∨ q</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>F</td>
+          <td>F</td>
+        </tr>
+      </table>
+
+      <h3>D. XOR (p ⊕ q)</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>q</th>
+          <th>p ⊕ q</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>T</td>
+          <td>F</td>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>F</td>
+          <td>F</td>
+        </tr>
+      </table>
+
+      <h3>E. Implikasi (p → q)</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>q</th>
+          <th>p → q</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+          <td>F</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>4. Bentuk Rumus dalam Logika</h2>
+      <p>Dalam logika proposisi, ekspresi logika (proposisi majemuk) diklasifikasikan berdasarkan hasil akhir pada tabel kebenarannya tanpa mempedulikan nilai kebenaran dari proposisi penyusunnya.</p>
+
+      <ul>
+        <li>
+          <strong>Tautologi</strong><br>
+          Sebuah proposisi majemuk yang selalu bernilai <strong>Benar (True)</strong> dalam kondisi apa pun (untuk semua interpretasi nilai kebenaran atom-atomnya).
+          <br><em>Contoh Klasik:</em> <code>p ∨ ¬p</code> (Hukum Eksklusi Tengah)
+          <br><em>Contoh Kompleks:</em> <code>((p → q) ∧ p) → q</code> (Modus Ponens)
+        </li>
+
+        <li>
+          <strong>Kontradiksi</strong><br>
+          Sebuah proposisi majemuk yang selalu bernilai <strong>Salah (False)</strong> dalam kondisi apa pun. Kontradiksi adalah negasi dari sebuah tautologi.
+          <br><em>Contoh Klasik:</em> <code>p ∧ ¬p</code> (Sesuatu tidak bisa benar dan salah secara bersamaan)
+          <br><em>Contoh Kompleks:</em> <code>(p ∧ q) ∧ ¬(p ∨ q)</code>
+        </li>
+
+        <li>
+          <strong>Kontingen (Satisfiable)</strong><br>
+          Sebuah proposisi majemuk yang nilai kebenarannya <strong>bisa Benar atau Salah</strong>, tergantung pada nilai kebenaran proposisi atomik yang membentuknya. Sebagian besar pernyataan logika sehari-hari bersifat kontingen.
+          <br><em>Contoh:</em> <code>(p ∨ q) → r</code> atau sekadar <code>p ∧ q</code>
+        </li>
+      </ul>
+
+      <h3>Tabel Pembuktian (Analisis Nilai)</h3>
+      <table border="1" style="width:100%; border-collapse: collapse; text-align: center;">
+        <thead>
+          <tr style="background-color: #f2f2f2;">
+            <th>p</th>
+            <th>¬p</th>
+            <th>p ∨ ¬p (Tautologi)</th>
+            <th>p ∧ ¬p (Kontradiksi)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>T</td>
+            <td>F</td>
+            <td><strong>T</strong></td>
+            <td><strong>F</strong></td>
+          </tr>
+          <tr>
+            <td>F</td>
+            <td>T</td>
+            <td><strong>T</strong></td>
+            <td><strong>F</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="formula">
+        <strong>Penting:</strong> Untuk membuktikan apakah sebuah rumus kompleks termasuk tautologi atau kontradiksi, kita menggunakan <strong>Tabel Kebenaran</strong> atau <strong>Hukum-Hukum Logika</strong> (seperti Hukum De Morgan, Distributif, dll).
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>5. Hukum-Hukum Logika</h2>
+      <ul>
+        <li>Hukum Identitas : p ∧ T = p, p ∨ F = p</li>
+        <li>Hukum Negasi : p ∨ ¬p = T, p ∧ ¬p = F</li>
+        <li>Hukum Komutatif : p ∨ q = q ∨ p</li>
+        <li>Hukum Asosiatif : (p ∨ q) ∨ r = p ∨ (q ∨ r)</li>
+        <li>Hukum Distributif : p ∧ (q ∨ r) = (p ∧ q) ∨ (p ∧ r)</li>
+        <li>Hukum De Morgan : ¬(p ∧ q) = ¬p ∨ ¬q</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6. Latihan Soal</h2>
+
+      <h3>A. Tentukan apakah berikut proposisi atau bukan:</h3>
+      <ul>
+        <li>Buka pintu itu!</li>
+        <li>5 + 2 = 7</li>
+        <li>Siapa nama kamu?</li>
+        <li>Jakarta adalah ibu kota Indonesia</li>
+      </ul>
+
+      <div class="answer-box">
+        <strong>Jawaban:</strong>
+        <ul>
+          <li>Bukan proposisi – kalimat perintah.</li>
+          <li>Proposisi – bernilai benar.</li>
+          <li>Bukan proposisi – kalimat tanya.</li>
+          <li>Proposisi – dapat bernilai benar.</li>
+        </ul>
+      </div>
+
+      <h3>B. Tentukan nilai kebenaran:</h3>
+      <ul>
+        <li>Bumi berbentuk bulat</li>
+        <li>2 × 3 = 10</li>
+        <li>5 adalah bilangan ganjil</li>
+      </ul>
+
+      <div class="answer-box">
+        <ul>
+          <li>Benar</li>
+          <li>Salah</li>
+          <li>Benar</li>
+        </ul>
+      </div>
+
+      <h3>C. Jika diketahui:</h3>
+      <p>p : Saya belajar<br>q : Saya lulus</p>
+
+      <div class="answer-box">
+        <ul>
+          <li>Jika saya belajar maka saya lulus → p → q</li>
+          <li>Saya belajar dan saya lulus → p ∧ q</li>
+          <li>Saya tidak belajar → ¬p</li>
+        </ul>
+      </div>
+
+      <h3>D. Buat tabel kebenaran untuk p ∨ ¬q</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>q</th>
+          <th>¬q</th>
+          <th>p ∨ ¬q</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>T</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+          <td>F</td>
+          <td>F</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>F</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+      </table>
+
+      <h3>(p ∧ q) → p</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>q</th>
+          <th>p ∧ q</th>
+          <th>(p ∧ q) → p</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>T</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>F</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+      </table>
+
+      <h3>(¬p) ∨ q</h3>
+      <table>
+        <tr>
+          <th>p</th>
+          <th>q</th>
+          <th>¬p</th>
+          <th>(¬p) ∨ q</th>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>T</td>
+          <td>F</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>T</td>
+          <td>F</td>
+          <td>F</td>
+          <td>F</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>T</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+        <tr>
+          <td>F</td>
+          <td>F</td>
+          <td>T</td>
+          <td>T</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>7. Proposisi Bersyarat (Implikasi)</h2>
+
+      <div class="formula">Bentuk umum: p → q</div>
+
+      <p>
+        Proposisi p disebut hipotesis, anteseden, premis, atau kondisi.
+        Proposisi q disebut konklusi atau konsekuen.
+      </p>
+
+      <h3>Cara Menyatakan p → q</h3>
+      <ul>
+        <li>Jika p, maka q</li>
+        <li>Jika p, q</li>
+        <li>p mengakibatkan q</li>
+        <li>q jika p</li>
+        <li>p hanya jika q</li>
+        <li>p syarat cukup untuk q</li>
+        <li>q syarat perlu untuk p</li>
+        <li>q bilamana p</li>
+      </ul>
+
+      <h3>Contoh Implikasi</h3>
+      <ol>
+        <li>Jika hari hujan, maka tanaman akan tumbuh subur.</li>
+        <li>Jika tekanan gas diperbesar, mobil melaju kencang.</li>
+        <li>Es yang mencair di kutub mengakibatkan permukaan air laut naik.</li>
+        <li>Orang itu mau berangkat jika ia diberi ongkos jalan.</li>
+        <li>Ahmad bisa mengambil matakuliah Teori Bahasa Formal hanya jika ia sudah lulus Matematika Diskrit.</li>
+        <li>Syarat cukup agar pom bensin meledak adalah percikan api dari rokok.</li>
+        <li>Syarat perlu bagi Indonesia agar ikut Piala Dunia adalah dengan mengontrak pemain asing kenamaan.</li>
+        <li>Banjir bandang terjadi bilamana hutan ditebangi.</li>
+      </ol>
+
+      <div class="answer-box">
+        <strong>Tambahan:</strong><br><br>
+        Dalam implikasi, yang diperhatikan adalah nilai kebenaran premis dan konsekuen, bukan hubungan sebab-akibatnya.
+        Oleh karena itu kalimat berikut tetap dianggap implikasi yang valid:
+        <ul>
+          <li>Jika 1 + 1 = 2 maka Paris ibu kota Perancis.</li>
+          <li>Jika n bilangan bulat maka hari ini hujan.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>

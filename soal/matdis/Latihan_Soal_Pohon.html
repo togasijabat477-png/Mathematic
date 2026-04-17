@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz Pohon - Matematika Diskrit</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Times New Roman", Times, serif; /* Font disesuaikan contoh */
+            background: var(--bg-gradient);
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(15px, 5vw, 30px);
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: 100%;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1e3a8a; /* Warna teks judul contoh 1 */
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+        }
+
+        p {
+            color: #475569;
+            line-height: 1.6;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+
+        button {
+            display: block;
+            width: 100%; 
+            padding: 14px 20px;
+            margin: 10px 0; 
+            font-family: inherit;
+            font-size: clamp(16px, 4vw, 18px); 
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb); /* Gradasi biru contoh 1 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            word-wrap: break-word;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        #timer {
+            font-weight: bold;
+            font-family: monospace;
+            background: #1e293b;
+            color: #fff;
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .progress {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        #question {
+            font-size: clamp(1rem, 4.5vw, 1.2rem);
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .option {
+            text-align: left;
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: clamp(14px, 4vw, 16px);
+            line-height: 1.3;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .correct { 
+            background: var(--success) !important; 
+            border-color: var(--success) !important; 
+            color: white; 
+        }
+        
+        .wrong { 
+            background: var(--danger) !important; 
+            border-color: var(--danger) !important; 
+            color: white; 
+        }
+
+        .explanation {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 14px;
+            background: #fffbeb;
+            padding: 15px;
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            color: #92400e;
+            white-space: pre-line;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .hidden { display: none; }
+        
+        #score-display { 
+            font-size: clamp(60px, 15vw, 80px); 
+            font-weight: 800; 
+            color: var(--primary); 
+            margin: 10px 0;
+        }
+        
+        .nav-buttons { 
+            margin-top: 20px; 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: nowrap;
+        }
+        
+        .nav-buttons button { margin: 0; }
+
+        @media (max-width: 360px) {
+            .card { padding: 15px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="startScreen" class="card">
+        <h2>Soal & Jawaban Pohon (Tree)</h2>
+        <p>Pohon dalam teori graf adalah konsep yang penting dan menarik untuk dipahami. 
+        Secara sederhana, pohon merupakan graf yang saling terhubung tetapi tidak memiliki sirkuit, sehingga setiap simpul terhubung melalui jalur yang unik tanpa adanya perputaran.</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="startQuiz('easy')">Easy</button>
+            <button onclick="startQuiz('medium')" style="background: linear-gradient(135deg, #4f46e5, #4338ca);">Medium</button>
+            <button onclick="startQuiz('hard')" style="background: linear-gradient(135deg, #3730a3, #1e1b4b);">Hard</button>
+        </div>
+
+        <div style="background: #f1f5f9; padding: 12px; border-radius: 12px; text-align: left; font-size: 12px;">
+            <strong>Detail Ujian:</strong>
+            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
+                <li>Total 90 Soal Materi Pohon</li>
+                <li>Waktu total: 1 Jam 50 Menit</li>
+                <li>Pembahasan lengkap setiap nomor</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="quizScreen" class="card hidden">
+        <div id="timer">Waktu: 110:00</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div id="question"></div>
+        <div id="options"></div>
+        
+        <div class="explanation hidden" id="explanation"></div>
+        
+        <div class="nav-buttons">
+            <button onclick="nextQuestion()" style="flex: 2;">Berikutnya</button>
+            <button onclick="goHome()" style="flex: 1; background: #94a3b8; font-size: 12px;">Kembali</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="card hidden">
+        <h2>Hasil Akhir</h2>
+        <div id="score-display">0</div>
+        <p id="resultMsg">Jawaban benar.</p>
+        <button onclick="goHome()">Ulangi Latihan</button>
+    </div>
+</div>
+
+<script>
+let quizData = [];
+let currentIndex = 0;
+let score = 0;
+let selected = null;
+let timer;
+let timeLeft = 6600; // 110 menit
+
+// BANK SOAL TERUKUR (30 Easy, 30 Medium, 30 Hard)
+const questionsBank = {
+    easy: [
+        { q: "Apa definisi graf yang disebut pohon tak berakar?", opts: ["Graf terhubung", "Graf bersirkuit", "Graf terhubung tanpa sirkuit", "Graf lengkap"], ans: "Graf terhubung tanpa sirkuit", exp: "Pohon tak berarah didefinisikan sebagai graf tak berarah terhubung tanpa sirkuit sederhana." },
+        { q: "Simpul pada pohon berakar yang derajat masuknya nol disebut...", opts: ["Leaf", "Parent", "Akar", "Ancestor"], ans: "Akar", exp: "Akar (Root) adalah simpul di level 0, tidak memiliki orang tua." },
+        { q: "Simpul terminal adalah nama lain untuk...", opts: ["Internal Node", "Akar", "Daun (Leaf)", "Descendant"], ans: "Daun (Leaf)", exp: "Daun adalah simpul yang tidak memiliki anak (derajat keluar 0)." },
+        { q: "Jika n adalah jumlah simpul pohon, berapa jumlah sisinya?", opts: ["n", "n+1", "n-1", "2n"], ans: "n-1", exp: "Teorema dasar pohon menyatakan e = n-1 sisi." },
+        { q: "Simpul yang memiliki parent yang sama disebut...", opts: ["Ancestor", "Child", "Sibling", "Grandparent"], ans: "Sibling", exp: "Sibling berarti saudara kandung." },
+        { q: "Maksimal anak pada pohon biner di setiap simpul internal adalah...", opts: ["1", "2", "3", "Tak terbatas"], ans: "2", exp: "Binary tree membatasi derajat anak maksimal 2." },
+        { q: "Notasi T = (V, E) mewakili...", opts: ["Tautologi", "Tree (Pohon)", "Total Derajat", "Trace"], ans: "Tree (Pohon)", exp: "T untuk Tree, V untuk Vertex, E untuk Edge." },
+        { q: "Kumpulan pohon yang tidak saling terhubung disebut...", opts: ["Kebun", "Hutan (Forest)", "Sirkuit", "Semak"], ans: "Hutan (Forest)", exp: "Hutan terdiri dari beberapa komponen pohon." },
+        { q: "Level tertinggi simpul dalam pohon disebut...", opts: ["Tinggi pohon", "Kedalaman total", "Derajat total", "Hutan"], ans: "Tinggi pohon", exp: "Tinggi adalah level maksimum dari daun ter dalam." },
+        { q: "Berapa jumlah sisi pohon jika simpulnya 1?", opts: ["1", "0", "2", "3"], ans: "0", exp: "e = 1 - 1 = 0." },
+        { q: "Lintasan antar dua simpul pada pohon bersifat...", opts: ["Banyak", "Tidak ada", "Unik", "Sirkuler"], ans: "Unik", exp: "Hanya ada 1 jalan sederhana antara tiap pasang titik." },
+        { q: "Simpul internal adalah simpul yang...", opts: ["Tidak punya anak", "Bukan daun", "Bukan akar", "Hanya satu anak"], ans: "Bukan daun", exp: "Simpul internal memiliki minimal satu anak." },
+        { q: "Tingkat level akar biasanya dimulai dari...", opts: ["1", "2", "0", "-1"], ans: "0", exp: "Secara konvensional dimulai dari level 0." },
+        { q: "Derajat pohon n-ary adalah...", opts: ["n simpul", "n anak maksimal", "n total sisi", "n daun"], ans: "n anak maksimal", exp: "Definisi n-ary tree." },
+        { q: "Pohon biner miring (skewed) memiliki bentuk...", opts: ["Seimbang", "Seperti garis lurus", "Penuh", "Lengkap"], ans: "Like a straight line", exp: "Cenderung memanjang ke satu sisi." },
+        { q: "Graf dengan n simpul dan n-1 sisi yang terhubung adalah...", opts: ["Sirkuit", "Bukan pohon", "Pohon tak berakar", "Graf lengkap"], ans: "Pohon tak berakar", exp: "Teorema kesetaraan pohon tak berakar." },
+        { q: "Jumlah simpul pada level h dalam pohon biner lengkap adalah...", opts: ["2h", "2^h", "h^2", "h+1"], ans: "2^h", exp: "Pertumbuhan eksponensial di setiap level." },
+        { q: "Subpohon yang akarnya adalah anak dari simpul v disebut...", opts: ["Akar utama", "Anak subpohon", "Subpohon dari v", "Leluhur v"], ans: "Subpohon dari v", exp: "Struktur rekursif sub-struktur." },
+        { q: "Pohon ekspresi biner menggunakan internal node untuk...", opts: ["Operan", "Angka", "Operator", "Daun"], ans: "Operator", exp: "Akar subpohon menyimpan operasi." },
+        { q: "Akar dari subpohon disebut...", opts: ["Descendant", "Ancestor", "Anak lokasinya", "Parent"], ans: "Anak lokasinya", exp: "Relasi hierarkis." },
+        { q: "Total derajat pohon tak berakar adalah...", opts: ["n", "e", "2e", "e-1"], ans: "2e", exp: "Handshaking lemma berlaku untuk semua graf tak berarah." },
+        { q: "Parent dari akar adalah...", opts: ["Akar", "Descendant", "Tidak ada", "Child"], ans: "Tidak ada", exp: "Puncak hierarki." },
+        { q: "Anak dari daun adalah...", opts: ["Akar", "Internal node", "Tidak ada", "Sibling"], ans: "Tidak ada", exp: "Terminal simpul." },
+        { q: "Kedalaman simpul dalah lintasan ke...", opts: ["Akar", "Daun terkecil", "Sibling", "Hutan"], ans: "Akar", exp: "Jarak ke puncak." },
+        { q: "Manakah yang bukan sifat pohon tak berakar?", opts: ["Punya loop", "Terhubung", "Sisi = n-1", "Tidak punya sirkuit"], ans: "Punya loop", exp: "Pohon anti loop." },
+        { q: "Setiap simpul internal pohon biner penuh punya tepat...", opts: ["1 anak", "2 anak", "0 anak", "3 anak"], ans: "2 anak", exp: "Definisi 'Full'." },
+        { q: "Berapa banyak sisi pada pohon dengan 5 simpul?", opts: ["4", "5", "6", "10"], ans: "4", exp: "5-1 = 4." },
+        { q: "Ancestor dalah leluhur, descendant dalah...", opts: ["Cucu saja", "Anak saja", "Keturunan", "Orang tua"], ans: "Keturunan", exp: "Descendant mencakup seluruh level di bawahnya." },
+        { q: "BST (Binary Search Tree) meletakkan data lebih besar di...", opts: ["Kiri", "Atas", "Kanan", "Bawah"], ans: "Kanan", exp: "Kiri < Akar < Kanan." },
+        { q: "Hutan dengan 3 pohon dan 10 simpul total punya...", opts: ["7 sisi", "13 sisi", "10 sisi", "9 sisi"], ans: "7 sisi", exp: "10 simpul - 3 pohon = 7 sisi." }
+    ],
+    medium: [
+        { q: "Berapa jumlah daun (L) pada pohon m-ary penuh dengan 10 simpul internal (i=10)? (m=3)", opts: ["31", "30", "20", "21"], ans: "21", exp: "Rumus: L = (m-1)i + 1 = (3-1)*10 + 1 = 2*10+1 = 21." },
+        { q: "Total simpul (n) pada pohon biner penuh (m=2) dengan i=15 adalah...", opts: ["30", "31", "29", "16"], ans: "31", exp: "n = 2i+1 = 2*15+1 = 31." },
+        { q: "Aplikasi Spanning Tree dalah untuk mencari...", opts: ["Sirkuit terpendek", "Subgraf terhubung minimal", "Graf lengkap", "Derajat total"], ans: "Subgraf terhubung minimal", exp: "Menghubungkan semua titik tanpa loop dengan sisi minimal." },
+        { q: "Tinggi maksimum pohon biner dengan n=7 adalah...", opts: ["2", "3", "6", "7"], ans: "6", exp: "Bentuk skewed: level 0 ke level 6." },
+        { q: "Jumlah maksimal simpul pohon biner tinggi h adalah...", opts: ["2h", "2^(h+1)-1", "h^2", "h+1"], ans: "2^(h+1)-1", exp: "Setiap level penuh." },
+        { q: "Pohon biner penuh n=15, berapa daunnya?", opts: ["7", "8", "9", "10"], ans: "8", exp: "L = (15+1)/2 = 8." },
+        { q: "Traversal yang menghasilkan notasi postfix dalah...", opts: ["Preorder", "Inorder", "Postorder", "Levelorder"], ans: "Postorder", exp: "Postorder mengunjungi akar terakhir." },
+        { q: "Traversal (Kiri-Akar-Kanan) dalah urutan...", opts: ["Inorder", "Preorder", "Postorder", "Depth-first"], ans: "Inorder", exp: "Akar di tengah." },
+        { q: "Jumlah sisi hutan dengan n=50 dan e=40. Berapa pohon (k)?", opts: ["10", "11", "9", "5"], ans: "10", exp: "k = 50 - 40 = 10." },
+        { q: "Akar subpohon (A+B) dalam ekspresi (A+B)*C adalah simpul...", opts: ["A", "B", "+", "*"], ans: "+", exp: "Akar lokal sub-operasi." },
+        { q: "Pohon seimbang (balanced) jika perbedaan tinggi subpohon kiri dan kanan maks...", opts: ["0", "1", "2", "3"], ans: "1", exp: "Standar keseimbangan AVL." },
+        { q: "Jumlah simpul n pada pohon m-ary penuh dengan L=16 dan m=4 dalah...", opts: ["21", "20", "16", "17"], ans: "21", exp: "i=(16-1)/(4-1)=15/3=5. n=mi+1=4(5)+1=21." },
+        { q: "Binary Search Tree input: 10, 5, 15. Simpul 15 terletak di...", opts: ["Kiri 10", "Kanan 10", "Atas 10", "Bawah 5"], ans: "Kanan 10", exp: "15 > 10." },
+        { q: "Pohon ekspresi biner dari prefix '* + A B C' adalah...", opts: ["(A*B)+C", "A*(B+C)", "(A+B)*C", "A+B*C"], ans: "(A+B)*C", exp: "* (akar utama) mendahului + (akar subpohon)." },
+        { q: "Berapa internal node pada pohon biner penuh n=63?", opts: ["31", "32", "62", "30"], ans: "31", exp: "i = (63-1)/2 = 31." },
+        { q: "Tinggi minimum pohon biner lengkap n=31 dalah...", opts: ["3", "4", "5", "6"], ans: "4", exp: "Level penuh hingga h=4 (total 31 simpul)." },
+        { q: "Spanning Tree Minimum mencari pohon rentang dengan bobot total...", opts: ["Maksimum", "Minimum", "Rata-rata", "Nol"], ans: "Minimum", exp: "Efisiensi biaya lintasan." },
+        { q: "Rumus n=mi+1 berlaku untuk pohon m-ary yang...", opts: ["Seimbang", "Penuh (Full)", "Lengkap (Complete)", "Berderajat total genap"], ans: "Penuh (Full)", exp: "Syarat rumus." },
+        { q: "Tinggi minimal pohon biner lengkap dengan n=10 dalah...", opts: ["2", "3", "4", "10"], ans: "3", exp: "2^3=8 < 10+1 <= 2^4=16." },
+        { q: "Pohon rentang dari graf lengkap K3 adalah pohon dengan berapa sisi?", opts: ["3", "2", "1", "0"], ans: "2", exp: "n=3 -> e=2." },
+        { q: "BST input: 8, 3, 1. Posisi 1 ada di...", opts: ["Kiri 8", "Kanan 3", "Kiri 3", "Atas 8"], ans: "Kiri 3", exp: "1 < 3 < 8." },
+        { q: "Jumlah daun pohon m-ary penuh h=2, m=3 dalah...", opts: ["6", "9", "8", "3"], ans: "9", exp: "L = 3^2 = 9 (asumsi balanced penuh)." },
+        { q: "Pohon terurut (ordered tree) memperhatikan...", opts: ["Nomor simpul", "Warna sisi", "Urutan anak", "Bentuk graf"], ans: "Urutan anak", exp: "Hierarki kiri ke kanan diperhitungkan." },
+        { q: "Berapa internal node biner penuh L=100?", opts: ["99", "100", "101", "50"], ans: "99", exp: "i = 100-1 = 99." },
+        { q: "Postfix dari (A+B) dalah...", opts: ["+AB", "AB+", "A+B", "BA+"], ans: "AB+", exp: "Kiri-Kanan-Akar." },
+        { q: "Prefix dari (A+B) dalah...", opts: ["+AB", "AB+", "A+B", "BA+"], ans: "+AB", exp: "Akar-Kiri-Kanan." },
+        { q: "Jika m=5, i=2. Berapa total derajat pohon m-ary penuh n?", opts: ["11", "22", "10", "20"], ans: "20", exp: "n=5*2+1=11. Total derajat = 2e = 2*10=20." },
+        { q: "Sifat (m-1)i + 1 dalah untuk mencari...", opts: ["Total simpul n", "Total internal node i", "Total daun L", "Total sisi e"], ans: "Total daun L", exp: "Rumus L dari i." },
+        { q: "BST input: 2, 5, 1. Akar dalah simpul...", opts: ["2", "5", "1", "Tidak ada"], ans: "2", exp: "Input pertama dalah akar." },
+        { q: "Inorder traversal (Akar di tengah) dari pohon biner BST menghasilkan data yang...", opts: ["Teracak", "Urut menaik", "Urut menurun", "Sirkuler"], ans: "Urut menaik", exp: "Kiri < Akar < Kanan." }
+    ],
+    hard: [
+        { q: "Berapa banyak pohon rentang yang berbeda dari graf lengkap K5?", opts: ["5", "25", "125", "625"], ans: "125", exp: "Rumus Cayley: n^(n-2) = 5^(5-2) = 5^3 = 125." },
+        { q: "Hasil traversal Inorder: 4-2-5-1-3 dan Preorder: 1-2-4-5-3. Manakah akarnya?", opts: ["4", "2", "1", "3"], ans: "1", exp: "Preorder selalu memulai kunjungan dari akar utama." },
+        { q: "Jika urutan preorder sebuah pohon dalah A-B-C, manakah kemungkinan Postordernya?", opts: ["C-B-A", "A-B-C", "B-A-C", "C-A-B"], ans: "C-B-A", exp: "Salah satu kemungkinan Postorder: subpohon kiri C, kanan kosong -> C-B-A." },
+        { q: "Algoritma Huffman digunakan untuk...", opts: ["Mencari lintasan terpendek", "Kompresi data", "Enkripsi", "Penyortiran"], ans: "Kompresi data", exp: "Menciptakan kode biner variabel berdasarkan frekuensi kemunculan." },
+        { q: "Pohon m-ary penuh (m=3) i=10. Jika pohon tersebut seimbang, berapa tinggi minimalnya?", opts: ["2", "3", "4", "10"], ans: "3", exp: "L=21. log3(21) approx 2.7 -> tinggi 3." },
+        { q: "Algoritma Prim membangun MST dengan dasar...", opts: ["Memilih simpul acak", "Memilih sisi bobot terkecil di seluruh graf", "Memilih simpul yang sudah terhubung", "Memilih lintasan terpendek"], ans: "Memilih simpul yang sudah terhubung", exp: "Prim mengembang dari satu simpul dengan memilih sisi terkecil ke simpul baru." },
+        { q: "Algoritma Kruskal membangun MST dengan dasar...", opts: ["Memilih simpul acak", "Memilih sisi bobot terkecil di seluruh graf selama tidak loop", "Memilih simpul terhubung", "Memilih derajat total"], ans: "Memilih sisi bobot terkecil di seluruh graf selama tidak loop", exp: "Kruskal menggabungkan hutan komponen menjadi satu pohon." },
+        { q: "Huffman Coding frekuensi: A=10, B=5, C=15, D=80. Karakter mana yang kodenya paling pendek?", opts: ["A", "B", "C", "D"], ans: "D", exp: "Frekuensi tertinggi D (80/110) akan dekat dengan akar." },
+        { q: "Tinggi minimal pohon biner seimbang dengan L=100 daun dalah...", opts: ["6", "7", "100", "10"], ans: "7", exp: "log2(100) approx 6.64. ceil(6.64)=7." },
+        { q: "Internal node biner penuh i=20. Berapa L?", opts: ["20", "21", "19", "40"], ans: "21", exp: "20+1 = 21." },
+        { q: "Prefix dari expression pohon: * / A + B C D dalah notasi...", opts: ["(A/B+C)*D", "(A/(B+C))*D", "A/B+C*D", "A/(B+C)*D"], ans: "(A/(B+C))*D", exp: "* utama, / kiri, + kanan di bawah /." },
+        { q: "Postfix pohon: AB+C*D- dalah notasi...", opts: ["((A+B)*C)-D", "(A+B)*C-D", "A+B*(C-D)", "A+(B*C)-D"], ans: "((A+B)*C)-D", exp: "A+B dikali C, lalu dikurangi D." },
+        { q: "Spanning Tree dari K10 memiliki berapa sisi?", opts: ["9", "10", "45", "90"], ans: "9", exp: "n=10 -> e=9." },
+        { q: "Berapa banyak pohon rentang K4?", opts: ["4", "16", "12", "64"], ans: "16", exp: "4^(4-2) = 16." },
+        { q: "Pohon 4-ary penuh h=3. Berapa daun maksimal?", opts: ["64", "256", "12", "81"], ans: "64", exp: "4^3 = 64." },
+        { q: "Traversal Preorder + Inorder dapat digunakan untuk merekonstruksi pohon...", opts: ["Tidak bisa", "Sangat bisa", "Hanya jika biner penuh", "Hanya jika seimbang"], ans: "Sangat bisa", exp: "Preorder untuk akar, inorder untuk pemisahan kiri/kanan." },
+        { q: "Matrix Tree Theorem menggunakan determinan dari...", opts: ["Laplacian Matrix minor", "Adjacency Matrix", "Incedence Matrix", "Identity"], ans: "Laplacian Matrix minor", exp: "Sisi teorema matriks pohon." },
+        { q: "Tinggi pohon biner lengkap n=1000 dalah...", opts: ["9", "10", "11", "100"], ans: "9", exp: "ceil(log2(1001)-1) = ceil(9.96-1)=9." },
+        { q: "internal node biner h=5, i=10. Jika pohon tersebut seimbang penuh, berapa i sebenarnya?", opts: ["31", "15", "63", "16"], ans: "15", exp: "i maks = 2^h-1 = 2^4-1 = 15." },
+        { q: "Berapa n jika m=3, L=21 pada pohon m-ary penuh?", opts: ["31", "30", "21", "22"], ans: "31", exp: "i=(21-1)/(3-1)=10. n=3(10)+1=31." },
+        { q: "Kode Huffman untuk A, B, C dengan frekuensi 1, 1, 2. Salah satu kodenya dalah...", opts: ["00, 01, 1", "0, 10, 11", "0, 1, 10", "0, 1, 2"], ans: "00, 01, 1", exp: "A(1)+B(1)->Node(2), Node(2)+C(2)->Root(4). Kode: A=10, B=11, C=0 (terbalik pos kiri/kanan bebas)." },
+        { q: "BST input: 5, 2, 8, 1, 3. Inorder dalah...", opts: ["5-2-8-1-3", "1-2-3-5-8", "8-5-3-2-1", "1-3-2-8-5"], ans: "1-2-3-5-8", exp: "Sorting input." },
+        { q: "Preorder BST input 5,2,8 dalah...", opts: ["5-2-8", "2-5-8", "8-5-2", "5-8-2"], ans: "5-2-8", exp: "Root-Left-Right." },
+        { q: "Jumlah sisi hutan k pohon total simpul n dalah...", opts: ["n-1", "n-k", "n+k", "k(n-1)"], ans: "n-k", exp: "e = Sum (ni-1) = Sum ni - Sum 1 = n - k." },
+        { q: "Pohon keputusan biner untuk memilah 8 hasil butuh tinggi minimal...", opts: ["3", "4", "2", "8"], ans: "3", exp: "log2(8) = 3." },
+        { q: "Dalam pohon ekspresi prefix * + A B + C D dalah notasi...", opts: ["A+B * C+D", "(A+B)*(C+D)", "A+(B*(C+D))", "(A+(B*C))+D"], ans: "(A+B)*(C+D)", exp: "* dalah akar utama." },
+        { q: " internal node pohon biner penuh i maks tinggi h=4 dalah...", opts: ["7", "15", "8", "31"], ans: "15", exp: "2^4-1 = 15." },
+        { q: "Is Isomorfisme berlaku pada pohon?", opts: ["Tidak", "Iya", "Tergantung akar", "Tergantung daun"], ans: "Iya", exp: "Pohon dalah graf, sifat isomorfisme berlaku." },
+        { q: "Berapa n biner penuh L=10?", opts: ["19", "20", "21", "11"], ans: "19", exp: "2(10)-1=19." },
+        { q: "BST input 2,1,3. Postorder dalah...", opts: ["1-2-3", "1-3-2", "3-1-2", "2-1-3"], ans: "1-3-2", exp: "1(kiri)-3(kanan)-2(akar)." }
+    ]
+};
+
+// JAVASCRIPT LOGIC DISAMAKAN PERSIS
+function startQuiz(level) {
+    currentIndex = 0;
+    score = 0;
+    selected = null;
+    timeLeft = 6600; 
+    quizData = questionsBank[level]; 
+
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('resultScreen').classList.add('hidden');
+    
+    showQuestion();
+    startTimer();
+}
+
+function showQuestion() {
+    let q = quizData[currentIndex];
+    document.getElementById('question').innerHTML = `Soal ${currentIndex+1}:<br>${q.q}`;
+    
+    let html = '';
+    // Acak opsi agar tidak hafal posisi
+    let shuffledOpts = [...q.opts].sort(() => Math.random() - 0.5);
+    shuffledOpts.forEach(opt => {
+        html += `<div class='option' onclick='selectAnswer(this, "${opt}")'>${opt}</div>`;
+    });
+    
+    document.getElementById('options').innerHTML = html;
+    document.getElementById('explanation').classList.add('hidden');
+    updateProgress();
+}
+
+function selectAnswer(el, val) {
+    if(selected !== null) return;
+    selected = val;
+    let q = quizData[currentIndex];
+
+    if(val === q.ans) {
+        el.classList.add('correct');
+        score++;
+    } else {
+        el.classList.add('wrong');
+        document.querySelectorAll('.option').forEach(o => {
+            if(o.innerText === q.ans) o.classList.add('correct');
+        });
+    }
+    
+    let expDiv = document.getElementById('explanation');
+    expDiv.innerText = "Penjelasan: " + q.exp;
+    expDiv.classList.remove('hidden');
+}
+
+function nextQuestion() {
+    if (selected === null) { alert("Pilih jawaban terlebih dahulu!"); return; }
+    
+    currentIndex++;
+    selected = null;
+    if(currentIndex < quizData.length) {
+        showQuestion();
+    } else {
+        endQuiz();
+    }
+}
+
+function startTimer() {
+    if(timer) clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60);
+        let s = timeLeft%60;
+        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft <= 0) endQuiz();
+    }, 1000);
+}
+
+function updateProgress() {
+    let p = (currentIndex / quizData.length) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+}
+
+function endQuiz() {
+    clearInterval(timer);
+    document.getElementById('quizScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    document.getElementById('score-display').innerText = score;
+    document.getElementById('resultMsg').innerText = `Latihan selesai. Anda menjawab benar ${score} dari ${quizData.length} soal.`;
+}
+
+function goHome() { location.reload(); }
+</script>
+</body>
+</html>

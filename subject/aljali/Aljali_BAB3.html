@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAB 3: DETERMINAN - Digital Learning</title>
+    <style>
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --bg-color: #f4f7f6;
+    --text-color: #333;
+    --white: #ffffff;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+header {
+    text-align: center;
+    border-bottom: 4px solid var(--secondary-color);
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 8px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.step-list,
+.learning-box,
+.theorem-box {
+    background: #eef2f3;
+    padding: 20px;
+    border-left: 5px solid var(--secondary-color);
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.example-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.example-box::before {
+    content: "CONTOH";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--secondary-color);
+    color: white;
+    padding: 2px 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+.math-block {
+    font-family: "Courier New", Courier, monospace;
+    background: #f9f9f9;
+    padding: 15px;
+    display: block;
+    margin: 15px 0;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.matrix-container {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.matrix {
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    padding: 10px;
+    margin-left: 8px;
+    font-family: serif;
+    font-size: 1.2em;
+    padding: 10px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+/* Calculator Area */
+.calculator-area {
+    background: var(--primary-color);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 40px 0;
+}
+
+.calc-grid {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.m-input {
+    width: 60px;
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.btn-action {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: block;
+    margin: 20px auto;
+    transition: 0.3s;
+}
+
+.btn-action:hover {
+    opacity: 0.85;
+}
+
+.result-display {
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+@media (max-width: 600px) {
+    .container { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+    <header>
+        <h1>DETERMINAN</h1>
+    </header>
+
+    <h2>1. Konsep Dasar</h2>
+    <p>
+        Determinan adalah suatu nilai skalar (bilangan tunggal) yang diperoleh dari sebuah matriks persegi.
+        Matriks persegi adalah matriks yang memiliki jumlah baris dan kolom yang sama,
+        misalnya 2x2, 3x3, dan seterusnya.
+    </p>
+
+    <h2>A. Pengertian Determinan</h2>
+    <p>
+        Determinan biasanya ditulis dengan notasi det(A) atau |A|.
+        Nilai determinan memiliki peranan penting dalam aljabar linear,
+        terutama untuk menentukan apakah suatu matriks memiliki invers
+        serta untuk menyelesaikan sistem persamaan linear.
+    </p>
+
+    <p>
+        Jika det(A) ≠ 0, maka matriks memiliki invers (non-singular).
+        Jika det(A) = 0, maka matriks tidak memiliki invers (singular).
+    </p>
+
+    <h2>B. Determinan Matriks Ordo 2x2</h2>
+    <p>
+        Untuk matriks:
+    </p>
+<div class="matrix-container">
+    <div class="label">O =</div>
+    <div class="matrix">
+        a b<br>
+        c d
+    </div>
+</div>
+
+    <p>
+        Rumus determinannya adalah:
+    </p>
+
+    <pre>
+det(A) = ad - bc
+    </pre>
+
+    <p>
+        Contoh:
+    </p>
+
+        <div class="matrix-container">
+            <div class="label">A =</div>
+    <div class="matrix">
+        3 2<br>
+        1 4
+        
+    </div>
+</div>
+
+det(A) = (3)(4) - (2)(1) = 12 - 2 = 10
+    </pre>
+
+    <h2>C. Determinan Matriks Ordo 3x3</h2>
+    <p>
+        Untuk matriks 3x3, determinan dapat dihitung menggunakan metode Sarrus
+        atau ekspansi kofaktor.
+    </p>
+
+    <pre>
+     <div class="matrix-container">
+    <div class="label">A =</div>
+    <div class="matrix">
+        a &nbsp; b &nbsp; c<br>
+        d &nbsp; e &nbsp; f<br>
+        g &nbsp; h &nbsp; i
+    </div>
+</div>
+
+
+det(A) = a(ei - fh) - b(di - fg) + c(dh - eg)
+    </pre>
+
+    <h2>D. Minor dan Kofaktor</h2>
+    
+    <p>
+       Pengertian Minor
+Minor dari elemen 𝑎𝑖𝑗 adalah determinan matriks yang diperoleh dengan menghapus baris ke-i dan kolom ke-j dari matriks asal.
+Minor dilambangkan dengan:𝑀𝑖𝑗
+<div class="matrix-container">
+    <div class="matrix">
+       𝑀𝑖𝑗 
+    </div>
+</div>
+    </p>
+
+    <p>
+        Kofaktor adalah minor yang dikalikan dengan tanda (-1)^(i+j),
+        di mana i adalah nomor baris dan j adalah nomor kolom.
+    </p>
+
+    <h2>E. Sifat-Sifat Determinan</h2>
+    <ul>
+        <li>Jika dua baris atau dua kolom sama, maka determinan bernilai 0.</li>
+        <li>Jika satu baris atau kolom semuanya nol, maka determinan bernilai 0.</li>
+        <li>Jika dua baris ditukar, tanda determinan berubah.</li>
+        <li>Jika satu baris dikalikan k, maka determinan ikut dikalikan k.</li>
+        <li>det(AB) = det(A) × det(B).</li>
+        <li>Determinan matriks identitas adalah 1.</li>
+    </ul>
+
+    <h2>F. Makna Geometris Determinan</h2>
+    <p>
+        Pada matriks 2x2, nilai absolut determinan menunjukkan luas jajargenjang
+        yang dibentuk oleh dua vektor.
+    </p>
+
+    <p>
+        Pada matriks 3x3, nilai absolut determinan menunjukkan volume bangun ruang
+        yang dibentuk oleh tiga vektor.
+    </p>
+
+    <h2>G . Peranan Determinan dalam Sistem Persamaan Linear</h2>
+    <p>
+        Determinan digunakan dalam Metode Cramer untuk menentukan solusi
+        sistem persamaan linear.
+    </p>
+
+    <p>
+        Jika determinan matriks koefisien tidak sama dengan nol,
+        maka sistem memiliki satu solusi unik.
+        Jika determinan sama dengan nol,
+        maka sistem tidak memiliki solusi atau memiliki banyak solusi.
+    </p>
+
+    <h2>Kesimpulan</h2>
+    <p>
+        Determinan adalah konsep dasar dalam aljabar linear yang digunakan
+        untuk menentukan invers matriks, menyelesaikan sistem persamaan linear,
+        serta memahami transformasi geometri seperti perubahan luas dan volume.
+    </p>
+</body>
+    <p>Fungsi determinan dinotasikan sebagai <b>det(A)</b> atau <b>|A|</b>. Untuk matriks 2x2:</p>
+    <div class="math-block">
+        det(A) = ad - bc
+    </div>
+    
+
+    <h2>2. Teorema Penting</h2>
+     <h1>Teorema-Teorema Penting Determinan</h1>
+
+    <p>
+        Determinan memiliki peranan penting dalam aljabar linear karena
+        berhubungan langsung dengan sifat matriks, sistem persamaan linear,
+        serta transformasi linear. Berikut adalah teorema-teorema penting
+        yang berkaitan dengan determinan beserta penjelasan singkatnya.
+    </p>
+
+   <h2>A. Teorema Keberadaan Invers</h2>
+<p>
+    Suatu matriks persegi A memiliki invers jika dan hanya jika
+    determinannya tidak sama dengan nol. Determinan nol menunjukkan
+    bahwa matriks tersebut singular dan tidak dapat dibalik.
+</p>
+
+<p>
+    Secara matematis, hubungan ini ditulis sebagai:
+</p>
+
+<pre>
+det(A) ≠ 0  ⇔  A memiliki invers (non-singular)
+det(A) = 0  ⇔  A tidak memiliki invers (singular)
+</pre>
+
+<p>
+    Teorema ini sangat penting karena menentukan apakah suatu matriks
+    dapat digunakan untuk menyelesaikan sistem persamaan linear secara unik.
+    Jika determinan tidak sama dengan nol, maka matriks memiliki invers A⁻¹
+    sehingga sistem persamaan Ax = b dapat diselesaikan dengan:
+</p>
+
+<pre>
+x = A⁻¹b
+</pre>
+
+<p>
+    Sebaliknya, jika determinan sama dengan nol, maka matriks tidak memiliki
+    invers karena terdapat ketergantungan linear antar baris atau kolomnya.
+    Dalam kondisi ini, sistem persamaan linear bisa tidak memiliki solusi
+    atau memiliki banyak solusi.
+</p>
+
+<p>
+    Secara geometris, determinan yang bernilai nol menunjukkan bahwa
+    transformasi linear yang diwakili matriks tersebut meratakan ruang
+    ke dimensi yang lebih rendah, misalnya dari bidang menjadi garis,
+    sehingga tidak dapat dikembalikan ke bentuk semula.
+</p>
+
+    <h2>B. Teorema Perkalian Matriks</h2>
+<p>
+    Determinan dari hasil perkalian dua matriks persegi A dan B
+    sama dengan hasil kali determinan masing-masing matriks tersebut.
+    Teorema ini berlaku untuk semua matriks persegi yang berordo sama.
+</p>
+
+<pre>
+det(AB) = det(A) × det(B)
+</pre>
+
+<p>
+    Sifat ini disebut sebagai sifat multiplikatif determinan.
+    Artinya, nilai determinan berperilaku seperti perkalian bilangan biasa
+    ketika matriks dikalikan. Teorema ini sangat penting dalam
+    pembahasan transformasi linear dan teori matriks.
+</p>
+
+<p>
+    Jika det(A) ≠ 0 dan det(B) ≠ 0, maka det(AB) juga ≠ 0,
+    sehingga matriks AB pasti memiliki invers.
+    Sebaliknya, jika salah satu determinan bernilai nol,
+    maka det(AB) = 0 dan hasil perkalian menjadi matriks singular.
+</p>
+
+<p>
+    Teorema ini juga mendukung sifat invers matriks, karena
+    jika A memiliki invers A⁻¹, maka berlaku:
+</p>
+
+<pre>
+det(A⁻¹) = 1 / det(A)
+</pre>
+
+<p>
+    Selain itu, dalam konteks geometri, jika suatu matriks
+    merepresentasikan transformasi linear, maka determinan
+    menyatakan faktor skala perubahan luas atau volume.
+    Oleh karena itu, perkalian dua matriks berarti
+    menggabungkan dua transformasi, dan faktor skalanya
+    akan dikalikan sesuai dengan teorema ini.
+</p>
+
+    <h2>C. Teorema Determinan Matriks Transpose</h2>
+
+<p>
+    Teorema Determinan Matriks Transpose menyatakan bahwa
+    determinan suatu matriks persegi A sama dengan determinan
+    dari matriks transposenya. Transpose matriks A,
+    yang dilambangkan dengan Aᵀ, diperoleh dengan cara
+    menukar setiap baris menjadi kolom dan setiap kolom menjadi baris.
+</p>
+
+<pre>
+det(Aᵀ) = det(A)
+</pre>
+
+<p>
+    Teorema ini berlaku untuk semua matriks persegi berordo n × n.
+    Meskipun posisi elemen-elemen dalam matriks berubah,
+    nilai determinannya tetap sama. Hal ini menunjukkan bahwa
+    determinan tidak bergantung pada apakah perhitungan dilakukan
+    berdasarkan baris atau berdasarkan kolom.
+</p>
+
+<p>
+    Secara perhitungan, determinan dapat dihitung menggunakan
+    ekspansi kofaktor pada sembarang baris atau kolom.
+    Karena proses ekspansi tersebut memberikan hasil yang sama,
+    maka ketika baris dan kolom dipertukarkan melalui operasi transpose,
+    nilai determinannya tidak mengalami perubahan.
+</p>
+
+<p>
+    Secara konseptual, teorema ini menegaskan bahwa dalam matriks persegi,
+    baris dan kolom memiliki kedudukan yang setara.
+    Semua sifat determinan yang berlaku untuk baris
+    juga berlaku untuk kolom, termasuk sifat pertukaran,
+    kombinasi linear, dan faktor skalar.
+</p>
+
+<p>
+    Dalam konteks geometri dan transformasi linear,
+    transpose matriks sering muncul dalam pembahasan
+    tentang transformasi ortogonal dan matriks simetris.
+    Teorema ini memastikan bahwa perubahan orientasi baris ke kolom
+    tidak mengubah faktor skala luas atau volume
+    yang diwakili oleh nilai determinan.
+</p>
+
+<p>
+    Oleh karena itu, Teorema Determinan Matriks Transpose
+    menjadi dasar penting dalam berbagai pembuktian
+    dan manipulasi aljabar matriks,
+    karena memberikan fleksibilitas dalam memilih bentuk matriks
+    tanpa memengaruhi nilai determinannya.
+</p>
+    <p>
+        Determinan suatu matriks sama dengan determinan dari matriks transposenya.
+    
+    </p>
+    <pre>
+det(Aᵀ) = det(A)
+    </pre>
+
+    <h2>D. Teorema Pertukaran Dua Baris</h2>
+
+<p>
+    Teorema Pertukaran Dua Baris menyatakan bahwa jika dua baris
+    dalam suatu matriks persegi ditukar posisinya,
+    maka nilai determinan matriks tersebut akan berubah tanda.
+    Artinya, jika determinan semula bernilai k,
+    maka setelah pertukaran dua baris menjadi -k.
+</p>
+
+<pre>
+Jika dua baris ditukar → det baru = - det lama
+</pre>
+
+<p>
+    Sifat ini menunjukkan bahwa determinan sangat sensitif
+    terhadap urutan baris dalam matriks. Perubahan posisi baris
+    memengaruhi orientasi sistem koordinat yang direpresentasikan
+    oleh matriks tersebut.
+</p>
+
+<p>
+    Jika pertukaran dilakukan sebanyak dua kali,
+    maka tanda determinan akan kembali seperti semula,
+    karena (-1) × (-1) = 1. Secara umum,
+    setiap satu kali pertukaran dua baris akan mengalikan
+    determinan dengan -1.
+</p>
+
+<p>
+    Teorema ini memiliki konsekuensi penting.
+    Jika suatu matriks memiliki dua baris yang identik,
+    maka dengan menukar kedua baris tersebut,
+    matriks tetap sama, tetapi berdasarkan teorema ini
+    determinannya harus berubah tanda.
+    Satu-satunya kemungkinan agar kondisi ini terpenuhi adalah
+    determinan tersebut bernilai nol.
+</p>
+
+<p>
+    Dalam metode eliminasi Gauss,
+    pertukaran baris sering dilakukan untuk menyederhanakan matriks.
+    Oleh karena itu, teorema ini penting untuk memastikan
+    bahwa setiap pertukaran baris dicatat
+    karena akan memengaruhi hasil akhir determinan.
+</p>
+
+<p>
+    Secara geometris, pertukaran dua baris dapat diartikan
+    sebagai perubahan orientasi ruang.
+    Jika sebelumnya transformasi mempertahankan orientasi,
+    maka setelah pertukaran orientasinya terbalik,
+    yang ditunjukkan oleh perubahan tanda determinan.
+</p>
+
+<p>
+    Dengan demikian, Teorema Pertukaran Dua Baris
+    menegaskan bahwa determinan tidak hanya mencerminkan
+    besar skala transformasi, tetapi juga arah atau orientasi
+    dari transformasi tersebut.
+</p>
+
+    <h2>E. Teorema Perkalian Skalar pada Baris</h2>
+
+<p>
+    Teorema Perkalian Skalar pada Baris menyatakan bahwa
+    jika satu baris dalam suatu matriks persegi dikalikan
+    dengan suatu bilangan skalar k, maka nilai determinan
+    matriks tersebut juga akan dikalikan dengan k.
+</p>
+
+<pre>
+Jika satu baris dikali k → det baru = k × det lama
+</pre>
+
+<p>
+    Sifat ini menunjukkan bahwa determinan bersifat linear
+    terhadap setiap baris secara terpisah.
+    Artinya, perubahan skala pada satu baris
+    secara langsung memengaruhi nilai determinan
+    dengan faktor yang sama.
+</p>
+
+<p>
+    Jika lebih dari satu baris dikalikan dengan skalar,
+    maka faktor pengali determinan adalah hasil kali
+    dari semua skalar tersebut.
+    Secara umum, jika seluruh elemen matriks berordo n × n
+    dikalikan dengan bilangan k,
+    maka determinannya menjadi:
+</p>
+
+<pre>
+det(kA) = kⁿ × det(A)
+</pre>
+
+<p>
+    Hal ini terjadi karena setiap baris menyumbang
+    satu faktor k terhadap determinan.
+    Oleh karena itu, pada matriks berordo n,
+    akan muncul faktor k sebanyak n kali.
+</p>
+
+<p>
+    Teorema ini sangat penting dalam proses perhitungan determinan,
+    khususnya saat menggunakan metode eliminasi baris.
+    Jika suatu baris dibagi atau dikalikan dengan suatu bilangan
+    untuk menyederhanakan perhitungan,
+    maka perubahan tersebut harus diperhitungkan
+    dalam nilai akhir determinan.
+</p>
+
+<p>
+    Secara geometris, jika matriks merepresentasikan
+    suatu transformasi linear,
+    maka mengalikan satu baris dengan k
+    berarti mengubah skala pada satu arah vektor,
+    sehingga luas atau volume yang dihasilkan
+    ikut berubah sebesar faktor k.
+</p>
+
+<p>
+    Dengan demikian, Teorema Perkalian Skalar pada Baris
+    menegaskan bahwa determinan tidak hanya bergantung
+    pada susunan angka dalam matriks,
+    tetapi juga sangat dipengaruhi oleh faktor skala
+    pada setiap barisnya.
+</p>
+
+    <h2>F. Teorema Baris atau Kolom Nol</h2>
+    <p>
+    Teorema Baris atau Kolom Nol menyatakan bahwa
+    jika suatu matriks persegi memiliki satu baris
+    atau satu kolom yang seluruh elemennya bernilai nol,
+    maka determinan matriks tersebut sama dengan nol.
+</p>
+
+<pre>
+Jika terdapat satu baris/kolom nol → det(A) = 0
+</pre>
+
+<p>
+    Hal ini terjadi karena dalam proses perhitungan determinan,
+    baik menggunakan metode ekspansi kofaktor maupun metode lainnya,
+    setiap suku dalam perhitungan akan melibatkan elemen
+    dari baris atau kolom tersebut.
+    Jika seluruh elemennya nol, maka semua hasil perkalian
+    dalam ekspansi determinan juga bernilai nol.
+</p>
+
+<p>
+    Secara aljabar, baris atau kolom nol menunjukkan bahwa
+    terdapat ketergantungan linear yang sangat jelas,
+    karena baris tersebut tidak memberikan kontribusi
+    terhadap pembentukan ruang vektor.
+</p>
+
+<p>
+    Dalam konteks sistem persamaan linear,
+    keberadaan baris nol pada matriks koefisien
+    dapat menyebabkan sistem tidak memiliki solusi unik.
+    Hal ini karena determinan nol menandakan
+    bahwa matriks tersebut tidak memiliki invers.
+</p>
+
+<p>
+    Secara geometris, jika matriks merepresentasikan
+    suatu transformasi linear,
+    maka adanya baris atau kolom nol berarti
+    transformasi tersebut meratakan ruang
+    ke dimensi yang lebih rendah,
+    sehingga luas atau volume hasil transformasi menjadi nol.
+</p>
+
+<p>
+    Dengan demikian, Teorema Baris atau Kolom Nol
+    menegaskan bahwa keberadaan satu baris atau kolom
+    yang seluruhnya nol langsung menyebabkan
+    determinan matriks bernilai nol,
+    tanpa perlu dilakukan perhitungan lebih lanjut.
+</p>
+    <p>
+        Jika terdapat satu baris atau satu kolom yang seluruh elemennya nol,
+        maka determinan matriks tersebut bernilai nol.
+    </p>
+
+    <h2>G. Teorema Dua Baris atau Kolom Identik</h2>
+    <p>
+    Teorema Dua Baris atau Kolom Identik menyatakan bahwa
+    jika suatu matriks persegi memiliki dua baris
+    atau dua kolom yang sama persis,
+    maka determinan matriks tersebut bernilai nol.
+</p>
+
+<pre>
+Jika terdapat dua baris/kolom identik → det(A) = 0
+</pre>
+
+<p>
+    Hal ini terjadi karena adanya ketergantungan linear
+    antara baris atau kolom tersebut.
+    Jika dua baris identik, maka salah satunya
+    dapat dianggap sebagai kombinasi linear
+    dari yang lainnya dengan faktor pengali 1.
+    Kondisi ini langsung menyebabkan determinan bernilai nol.
+</p>
+
+<p>
+    Teorema ini juga dapat dijelaskan melalui
+    Teorema Pertukaran Dua Baris.
+    Jika dua baris identik ditukar,
+    matriks tetap tidak berubah.
+    Namun menurut teorema pertukaran,
+    determinan harus berubah tanda.
+    Satu-satunya nilai yang memenuhi kondisi ini
+    adalah nol.
+</p>
+
+<p>
+    Dalam konteks sistem persamaan linear,
+    keberadaan dua baris identik pada matriks koefisien
+    menunjukkan bahwa terdapat dua persamaan
+    yang sebenarnya sama.
+    Akibatnya, sistem tidak memiliki solusi unik
+    karena matriks tidak memiliki invers.
+</p>
+
+<p>
+    Secara geometris, dua baris atau kolom identik
+    berarti dua vektor berada pada arah yang sama.
+    Hal ini menyebabkan ruang yang dibentuk
+    menjadi berdimensi lebih rendah,
+    sehingga luas atau volume yang dihasilkan
+    oleh transformasi tersebut menjadi nol.
+</p>
+
+<p>
+    Dengan demikian, Teorema Dua Baris atau Kolom Identik
+    menegaskan bahwa kebebasan linear antar baris atau kolom
+    merupakan syarat mutlak agar determinan
+    bernilai tidak nol.
+</p>
+    <p>
+        Jika suatu matriks memiliki dua baris atau dua kolom yang sama,
+        maka determinannya bernilai nol karena terjadi ketergantungan linear.
+    </p>
+
+    <h2>H. Teorema Kombinasi Linear</h2>
+    <p>
+    Teorema Kombinasi Linear menyatakan bahwa jika satu baris
+    (atau satu kolom) dalam suatu matriks persegi
+    dapat dinyatakan sebagai kombinasi linear
+    dari baris-baris (atau kolom-kolom) lainnya,
+    maka determinan matriks tersebut bernilai nol.
+</p>
+
+<pre>
+Jika salah satu baris = k1(B1) + k2(B2) + ... + kn(Bn)
+maka det(A) = 0
+</pre>
+
+<p>
+    Kombinasi linear berarti suatu baris dapat dituliskan
+    sebagai penjumlahan beberapa baris lain
+    yang masing-masing dikalikan dengan konstanta tertentu.
+    Kondisi ini menunjukkan adanya ketergantungan linear
+    antar baris dalam matriks tersebut.
+</p>
+
+<p>
+    Secara aljabar, determinan mengukur apakah
+    baris-baris matriks saling bebas secara linear.
+    Jika terdapat ketergantungan linear,
+    maka matriks tidak memiliki rank penuh,
+    sehingga determinannya pasti bernilai nol.
+</p>
+
+<p>
+    Teorema ini merupakan bentuk umum
+    dari Teorema Dua Baris Identik.
+    Jika dua baris sama persis,
+    maka salah satunya merupakan kombinasi linear
+    dari yang lain dengan faktor 1,
+    sehingga determinannya juga nol.
+</p>
+
+<p>
+    Dalam perhitungan menggunakan eliminasi Gauss,
+    jika suatu baris dapat diubah menjadi baris nol
+    melalui operasi kombinasi linear,
+    maka hal tersebut menunjukkan bahwa
+    determinan matriks sama dengan nol.
+</p>
+
+<p>
+    Dalam konteks sistem persamaan linear,
+    kondisi ini menunjukkan bahwa sistem
+    tidak memiliki solusi tunggal.
+    Sistem bisa memiliki tak hingga solusi
+    atau tidak memiliki solusi sama sekali,
+    karena matriks koefisiennya tidak dapat dibalik.
+</p>
+
+<p>
+    Secara geometris, jika matriks merepresentasikan
+    transformasi linear,
+    maka ketergantungan linear antar baris
+    berarti vektor-vektor tersebut
+    berada dalam satu bidang atau garis yang sama.
+    Akibatnya, luas atau volume yang dibentuk
+    oleh vektor-vektor tersebut menjadi nol.
+</p>
+
+<p>
+    Dengan demikian, Teorema Kombinasi Linear
+    menegaskan bahwa kebebasan linear antar baris atau kolom
+    merupakan syarat utama agar determinan
+    bernilai tidak nol dan matriks memiliki invers.
+</p>
+    <p>
+        Jika satu baris merupakan kombinasi linear dari baris lainnya,
+        maka determinan matriks tersebut sama dengan nol.
+    </p>
+
+    <h2>I. Teorema Matriks Segitiga</h2>
+    <p>
+    Teorema Kombinasi Linear menyatakan bahwa
+    jika satu baris (atau satu kolom) dalam suatu matriks persegi
+    dapat dinyatakan sebagai kombinasi linear dari baris-baris
+    (atau kolom-kolom) lainnya, maka determinan matriks tersebut
+    bernilai nol.
+</p>
+
+<pre>
+Jika salah satu baris = kombinasi linear baris lain → det(A) = 0
+</pre>
+
+<p>
+    Kombinasi linear berarti suatu baris dapat dituliskan
+    sebagai penjumlahan dari baris lain yang masing-masing
+    dikalikan dengan suatu konstanta.
+    Kondisi ini menunjukkan adanya ketergantungan linear
+    di antara baris-baris matriks tersebut.
+</p>
+
+<p>
+    Secara aljabar, determinan bernilai nol karena
+    baris-baris matriks tidak lagi bebas secara linear.
+    Ketergantungan linear menyebabkan ruang yang dibentuk
+    oleh vektor-vektor baris menjadi berdimensi lebih rendah
+    dari yang seharusnya.
+</p>
+
+<p>
+    Teorema ini merupakan perluasan dari teorema
+    dua baris identik. Jika dua baris sama,
+    maka jelas salah satunya merupakan kombinasi linear
+    dari yang lain dengan faktor 1,
+    sehingga determinannya juga nol.
+</p>
+
+<p>
+    Dalam konteks sistem persamaan linear,
+    kondisi ini menunjukkan bahwa sistem tidak memiliki
+    solusi tunggal. Sistem bisa memiliki banyak solusi
+    atau bahkan tidak memiliki solusi,
+    karena matriks koefisiennya tidak memiliki invers.
+</p>
+
+<p>
+    Secara geometris, jika matriks merepresentasikan
+    suatu transformasi linear,
+    maka ketergantungan linear antar baris
+    berarti transformasi tersebut meratakan ruang
+    ke dimensi yang lebih rendah,
+    sehingga luas atau volume hasil transformasi menjadi nol.
+</p>
+
+<p>
+    Dengan demikian, Teorema Kombinasi Linear
+    menegaskan bahwa kebebasan linear antar baris atau kolom
+    merupakan syarat utama agar determinan bernilai tidak nol.
+</p>
+    <p>
+        Jika matriks berbentuk segitiga atas atau segitiga bawah,
+        maka determinannya adalah hasil kali elemen-elemen diagonal utama.
+    </p>
+    <pre>
+det(A) = a11 × a22 × a33 × ... × ann
+    </pre>
+
+    <h2>J. Teorema Ekspansi Kofaktor</h2>
+    <p>
+    Teorema Ekspansi Kofaktor menyatakan bahwa determinan
+    suatu matriks persegi dapat dihitung dengan melakukan
+    ekspansi terhadap sembarang baris atau sembarang kolom.
+    Hasil perhitungan akan tetap sama,
+    tidak bergantung pada baris atau kolom yang dipilih.
+</p>
+
+<pre>
+det(A) = a11C11 + a12C12 + ... + a1nC1n
+</pre>
+
+<p>
+    Di dalam rumus tersebut, Cij adalah kofaktor
+    dari elemen aij yang didefinisikan sebagai:
+</p>
+
+<pre>
+Cij = (-1)^(i+j) × Mij
+</pre>
+
+<p>
+    Mij adalah minor, yaitu determinan dari matriks
+    yang diperoleh dengan menghapus baris ke-i
+    dan kolom ke-j dari matriks A.
+</p>
+
+<p>
+    Teorema ini sangat penting karena memberikan
+    metode umum untuk menghitung determinan
+    matriks berordo lebih besar dari 2 × 2.
+    Dengan cara ini, determinan matriks berordo n
+    dapat direduksi menjadi determinan
+    matriks berordo (n - 1).
+</p>
+
+<p>
+    Salah satu keunggulan ekspansi kofaktor adalah
+    kita bebas memilih baris atau kolom
+    yang memiliki banyak elemen nol,
+    sehingga perhitungan menjadi lebih sederhana.
+</p>
+
+<p>
+    Teorema ini juga menjadi dasar dalam
+    pembentukan matriks adjoin (adj(A))
+    yang digunakan untuk mencari invers matriks,
+    dengan rumus:
+</p>
+
+<pre>
+A⁻¹ = (1 / det(A)) × adj(A)
+</pre>
+
+<p>
+    Secara konseptual, ekspansi kofaktor menunjukkan
+    bahwa determinan dibangun dari kombinasi
+    hasil perkalian elemen-elemen matriks
+    yang disusun secara sistematis
+    dengan pola tanda positif dan negatif.
+</p>
+
+<p>
+    Dengan demikian, Teorema Ekspansi Kofaktor
+    merupakan salah satu teorema fundamental
+    dalam teori determinan,
+    karena menyediakan prosedur umum,
+    sistematis, dan konsisten
+    untuk menghitung determinan matriks
+    berordo berapa pun.
+</p>
+    <p>
+        Determinan dapat dihitung dengan ekspansi kofaktor
+        pada sembarang baris atau kolom dan hasilnya tetap sama.
+    </p>
+
+    <h2>K. Teorema Cramer</h2>
+    <p>
+    Teorema Cramer menyatakan bahwa suatu sistem persamaan linear
+    dengan jumlah persamaan sama dengan jumlah variabel
+    memiliki solusi tunggal jika dan hanya jika
+    determinan matriks koefisiennya tidak sama dengan nol.
+</p>
+
+<pre>
+Jika det(A) ≠ 0 → sistem memiliki solusi unik
+Jika det(A) = 0 → sistem tidak memiliki solusi unik
+</pre>
+
+<p>
+    Misalkan diberikan sistem persamaan linear dalam bentuk matriks:
+</p>
+
+<pre>
+Ax = b
+</pre>
+
+<p>
+    dengan A adalah matriks koefisien berordo n × n,
+    x adalah vektor variabel, dan b adalah vektor konstanta.
+    Jika det(A) ≠ 0, maka setiap variabel xi
+    dapat dihitung menggunakan rumus:
+</p>
+
+<pre>
+xi = det(Ai) / det(A)
+</pre>
+
+<p>
+    Di mana Ai adalah matriks yang diperoleh
+    dengan mengganti kolom ke-i pada matriks A
+    dengan vektor konstanta b.
+</p>
+
+<p>
+    Teorema ini menunjukkan bahwa determinan
+    berperan langsung dalam menentukan keberadaan
+    dan keunikan solusi suatu sistem persamaan linear.
+    Jika determinan bernilai nol,
+    maka matriks tidak memiliki invers,
+    sehingga sistem bisa memiliki banyak solusi
+    atau bahkan tidak memiliki solusi sama sekali.
+</p>
+
+<p>
+    Secara geometris, determinan yang tidak nol
+    menunjukkan bahwa vektor-vektor koefisien
+    membentuk ruang berdimensi penuh,
+    sehingga titik potong antar persamaan
+    hanya terjadi di satu titik.
+</p>
+
+<p>
+    Meskipun metode Cramer kurang efisien
+    untuk sistem berukuran besar,
+    teorema ini sangat penting secara teoritis
+    karena menegaskan hubungan langsung
+    antara determinan dan solusi sistem linear.
+</p>
+    <p>
+        Jika determinan matriks koefisien dalam sistem persamaan linear
+        tidak sama dengan nol, maka sistem memiliki solusi tunggal
+        yang dapat dicari menggunakan aturan Cramer.
+    </p>
+
+    <h2>Kesimpulan</h2>
+    <p>
+        Teorema-teorema determinan menunjukkan bahwa determinan tidak hanya
+        bernilai numerik, tetapi juga mencerminkan sifat penting matriks
+        seperti keberadaan invers, ketergantungan linear,
+        serta perubahan luas dan volume dalam transformasi linear.
+    </p>
+    <div class="theorem-box">
+        <ul>
+            <li>Jika satu baris/kolom berisi nol, maka <b>det(A) = 0</b>.</li>
+            <li><b>det(A) = det(Aᵀ)</b>.</li>
+            <li>Matriks Segitiga/Diagonal: Det adalah hasil kali elemen diagonal utama.</li>
+            <li><b>det(AB) = det(A)det(B)</b>.</li>
+            <li>A memiliki invers (invertible) jika dan hanya jika <b>det(A) ≠ 0</b>.</li>
+        </ul>
+    </div>
+
+    <h2>3. Teknik Perhitungan</h2>
+    <h3>A. Metode Sarrus (3x3)</h3>
+    <p>Menambahkan dua kolom pertama di sebelah kanan matriks dan menghitung jumlah perkalian diagonal.</p>
+    
+
+    <div class="calculator-area">
+        <h2 style="color: white; border: none; text-align: center;">🧮 Kalkulator Determinan 3x3</h2>
+        <div style="text-align: center;">
+            <div class="calc-grid">
+                <input type="number" id="m11" class="m-input" value="0">
+                <input type="number" id="m12" class="m-input" value="0">
+                <input type="number" id="m13" class="m-input" value="0">
+            </div>
+            <div class="calc-grid">
+                <input type="number" id="m21" class="m-input" value="0">
+                <input type="number" id="m22" class="m-input" value="0">
+                <input type="number" id="m23" class="m-input" value="0">
+            </div>
+            <div class="calc-grid">
+                <input type="number" id="m31" class="m-input" value="0">
+                <input type="number" id="m32" class="m-input" value="0">
+                <input type="number" id="m33" class="m-input" value="0">
+            </div>
+            <button class="btn-action" onclick="calculateDet3x3()">Hitung Determinan</button>
+            <div id="detResult" class="result-display">Hasil akan muncul di sini...</div>
+        </div>
+    </div>
+
+    <h3>B. Reduksi Baris (OBE)</h3>
+    <p>Mengubah matriks menjadi bentuk segitiga atas. Aturannya:</p>
+    <ul>
+        <li>Tukar dua baris: Det menjadi <b>-det</b>.</li>
+        <li>Kalikan satu baris dengan skalar k: Det menjadi <b>k det</b>.</li>
+        <li>Tambah kelipatan baris lain: Det <b>tetap sama</b>.</li>
+    </ul>
+
+    <h2>4. Ekspansi Kofaktor</h2>
+    <p>
+Ekspansi kofaktor adalah metode untuk menghitung determinan suatu matriks dengan
+cara mengembangkan determinan berdasarkan baris atau kolom tertentu. Setiap elemen
+pada baris atau kolom tersebut dikalikan dengan kofaktornya kemudian hasilnya dijumlahkan.
+Metode ini sering digunakan dalam aljabar linear untuk menentukan determinan matriks
+berordo lebih besar seperti matriks 3×3, 4×4, atau yang lebih besar.
+</p>
+
+<h2>Determinan Matriks</h2>
+<p>
+Determinan adalah suatu nilai skalar yang diperoleh dari matriks persegi.
+Determinan biasanya ditulis dengan notasi:
+</p>
+
+<p><b>det(A)</b> atau <b>|A|</b></p>
+
+<p>Contoh matriks:</p>
+
+<div class="matrix-container">
+     <div class="label">A =</div>
+<div class="matrix">
+a11  a12  a13<br>
+a21  a22  a23<br>
+a31  a32  a33
+</div>
+</div>
+
+<h2>Minor Matriks</h2>
+<p>
+Minor dari suatu elemen matriks diperoleh dengan cara menghapus baris dan kolom
+tempat elemen tersebut berada. Minor biasanya dilambangkan dengan Mij.
+</p>
+
+<p>Contoh matriks:</p>
+
+<div class="matrix-container">
+     <div class="label">A =</div>
+<div class="matrix">
+2  3  1<br>
+4  5  6<br>
+7  8  9
+</div>
+</div>
+
+<p>
+Untuk mencari minor dari elemen a11, maka baris pertama dan kolom pertama dihapus.
+</p>
+
+<div class="matrix-container">
+     <div class="label">M 11=</div>
+<div class="matrix">
+5  6<br>
+8  9
+</div>
+</div>
+
+<p>
+Perhitungan minor:
+</p>
+
+<p>
+M11 = (5 × 9) − (6 × 8)
+</p>
+
+<p>
+M11 = 45 − 48
+</p>
+
+<p>
+M11 = −3
+</p>
+
+<h2>Kofaktor Matriks</h2>
+
+<p>
+Kofaktor adalah minor yang telah dikalikan dengan tanda positif atau negatif
+sesuai dengan posisinya di dalam matriks.
+</p>
+
+<p>Rumus kofaktor:</p>
+
+<p>
+Cij = (-1)<sup>i+j</sup> × Mij
+</p>
+
+<p>Pola tanda kofaktor:</p>
+
+<div class="matrix-container">
+<div class="matrix">
++  −  +<br>
+−  +  −<br>
++  −  +
+</div>
+</div>
+
+<h2>Ekspansi Kofaktor</h2>
+
+<p>
+Ekspansi kofaktor dilakukan dengan cara mengalikan setiap elemen pada baris
+atau kolom tertentu dengan kofaktornya kemudian menjumlahkan semua hasilnya.
+</p>
+
+<p>Rumus ekspansi pada baris pertama:</p>
+
+<p>
+|A| = a11C11 + a12C12 + a13C13
+</p>
+
+ <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Perhitungan</strong> <p>Matriks A:</p>
+
+<div class="matrix-container">
+     <div class="label">A =</div>
+<div class="matrix">
+2  3  1<br>
+4  5  6<br>
+7  8  9
+</div>
+</div>
+
+<p>Langkah pertama menghitung minor:</p>
+
+<p>
+M11 = (5 × 9) − (6 × 8) = −3
+</p>
+
+<p>
+M12 = (4 × 9) − (6 × 7) = −6
+</p>
+
+<p>
+M13 = (4 × 8) − (5 × 7) = −3
+</p>
+
+<p>Langkah berikutnya menghitung kofaktor:</p>
+
+<p>
+C11 = +M11 = −3
+</p>
+
+<p>
+C12 = −M12 = 6
+</p>
+
+<p>
+C13 = +M13 = −3
+</p>
+
+<p>Perhitungan determinan:</p>
+
+<p>
+|A| = (2 × −3) + (3 × 6) + (1 × −3)
+</p>
+
+<p>
+|A| = −6 + 18 − 3
+</p>
+
+<p>
+|A| = 9
+</p>
+
+    </div>
+
+<h2>Keuntungan Ekspansi Kofaktor</h2>
+
+<p>
+Metode ekspansi kofaktor memiliki beberapa keuntungan dalam perhitungan determinan
+matriks. Metode ini dapat digunakan untuk berbagai ukuran matriks, dapat dilakukan
+pada baris atau kolom mana saja, dan sangat memudahkan perhitungan apabila terdapat
+banyak elemen bernilai nol dalam suatu baris atau kolom.
+</p>
+
+<h2>Kesimpulan</h2>
+
+<p>
+Ekspansi kofaktor merupakan metode penting dalam perhitungan determinan matriks
+dalam aljabar linear. Metode ini dilakukan dengan cara mengalikan setiap elemen
+matriks dengan kofaktornya kemudian menjumlahkan hasilnya. Dengan memahami konsep
+minor, kofaktor, dan pola tanda, perhitungan determinan matriks dapat dilakukan
+dengan lebih sistematis dan terstruktur.
+</p>
+    <p>Minor (Mᵢⱼ) adalah determinan submatriks setelah baris i dan kolom j dihilangkan. Kofaktor (Cᵢⱼ) didefinisikan sebagai:</p>
+    <div class="math-block">
+        Cᵢⱼ = (-1)ⁱ⁺ʲ Mᵢⱼ
+    </div>
+    
+    <h2>5. Aturan Cramer (Cramer's Rule)</h2>
+    <p>Digunakan untuk mencari solusi SPL Ax = B. Nilai variabel ke-i ditemukan dengan:</p>
+    <div class="math-block">
+        xᵢ = det(Aᵢ) / det(A)
+    </div>
+    <p>Di mana Aᵢ adalah matriks A dengan kolom ke-i diganti oleh matriks B.</p>
+    
+
+</div>
+
+<script>
+    function calculateDet3x3() {
+        const a = parseFloat(document.getElementById('m11').value);
+        const b = parseFloat(document.getElementById('m12').value);
+        const c = parseFloat(document.getElementById('m13').value);
+        const d = parseFloat(document.getElementById('m21').value);
+        const e = parseFloat(document.getElementById('m22').value);
+        const f = parseFloat(document.getElementById('m23').value);
+        const g = parseFloat(document.getElementById('m31').value);
+        const h = parseFloat(document.getElementById('m32').value);
+        const i = parseFloat(document.getElementById('m33').value);
+
+        const part1 = (a * e * i) + (b * f * g) + (c * d * h);
+        const part2 = (c * e * g) + (a * f * h) + (b * d * i);
+        const det = part1 - part2;
+
+        const resultDiv = document.getElementById('detResult');
+        resultDiv.innerHTML = `
+            <strong>Determinan (A) = ${det}</strong><br>
+            <small>Penyelesaian: (${part1}) - (${part2})</small>
+        `;
+
+        if (det === 0) {
+            resultDiv.style.color = "#ff7675";
+            resultDiv.innerHTML += "<br>Matriks Singular (Tidak memiliki invers)";
+        } else {
+            resultDiv.style.color = "#55efc4";
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAB 2: MATRIKS - Digital Learning</title>
+   <style>
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --bg-color: #f4f7f6;
+    --text-color: #333;
+    --white: #ffffff;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+header {
+    text-align: center;
+    border-bottom: 4px solid var(--secondary-color);
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 8px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.learning-box,
+.step-list {
+    background: #eef2f3;
+    padding: 20px;
+    border-left: 5px solid var(--secondary-color);
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.example-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.example-box::before {
+    content: "CONTOH";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--secondary-color);
+    color: white;
+    padding: 2px 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+.math-block {
+    font-family: "Courier New", Courier, monospace;
+    background: #f9f9f9;
+    padding: 15px;
+    display: block;
+    margin: 10px 0;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.matrix-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    background: #fff;
+}
+
+.matrix-container {
+    align-items: center; 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.matrix {
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    padding: 10px;
+    margin-left: 8px;
+    font-family: serif;
+    font-size: 1.2em;
+    padding: 10px;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    border-radius: 10px;
+    background: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+/* Calculator Area */
+.calculator-area {
+    background: var(--primary-color);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 40px 0;
+}
+
+.calc-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.calc-box {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.m-input {
+    width: 50px;
+    padding: 8px;
+    margin: 4px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.btn-action {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+
+.btn-action:hover {
+    opacity: 0.85;
+}
+
+.res-display {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 5px;
+    min-height: 30px;
+    font-family: monospace;
+    color: #00cec9;
+}
+
+@media (max-width: 600px) {
+    .container { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+    <header>
+        <h1>MATRIKS</h1>
+    </header>
+
+    <h2>1. Definisi & Notasi</h2>
+    <p>Matriks adalah susunan bilangan real berbentuk persegi panjang (m baris, n kolom). Dimensi matriks disebut <b>Ordo (m x n)</b>.</p>
+    Himpunan adalah kumpulan objek yang didefinisikan dengan jelas. Objek dalam himpunan disebut elemen atau anggota.
+    <h4>Notasi Dasar:</h4>
+    <li>Huruf Kapital (A, B, S): Digunakan untuk nama himpunan.</li>
+    <li>Kurung Kurawal ({}): Digunakan untuk membungkus anggota himpunan.</li>
+    <li>Simbol Keanggotaan: Artinya "elemen dari" atau "anggota dari".</li>
+    <li>Simbol Bukan Anggota: Artinya "bukan anggota dari".</li>
+    <h4>Cara Menyatakan Himpunan:</h4>
+    <li>Deskripsi: A adalah himpunan bilangan prima kurang dari 10.</li>
+    <li>Tabulasi (Listing): A = {2, 3, 5, 7\}.</li>
+    <li>Notasi Pembentuk Himpunan: A = \{x \mid x < 10, x \in \text{bilangan prima}\}.</li>
+    <div class="math-block">
+        A = [ a<sub>ij</sub> ] <br>
+        i = baris, j = kolom
+    </div>
+    
+ <hr>
+    <h2>2. Jenis-Jenis Matriks</h2>
+    <div class="matrix-grid">
+        <div class="matrix-card">
+            <strong>Identitas (I)</strong><br>
+            Diagonal utama bernilai 1, lainnya 0.
+        </div>
+        <div class="matrix-card">
+            <strong>Segitiga Atas</strong><br>
+            Elemen di bawah diagonal utama adalah 0.
+        </div>
+        <div class="matrix-card">
+            <strong>Matriks Diagonal</strong><br>
+            Elemen di luar diagonal utama adalah 0.
+        </div>
+        <div class="matrix-card">
+            <strong>Simetris</strong><br>
+            A = A<sup>T</sup> (a<sub>ij</sub> = a<sub>ji</sub>)
+        </div>
+    </div>
+
+     <h1>MATRIKS</h1>
+
+    <p><h2>A. Pengertian Matriks</h2></p>
+     <p>
+        Matriks adalah suatu susunan atau kumpulan bilangan, simbol, atau ekspresi 
+        matematika yang disusun dalam bentuk baris dan kolom sehingga membentuk 
+        sebuah tabel berbentuk persegi panjang. Setiap bilangan yang terdapat 
+        di dalam matriks disebut sebagai elemen atau anggota matriks. 
+        Posisi setiap elemen dalam matriks ditentukan oleh letak baris dan kolomnya.
+    </p>
+
+    <p>
+        Dalam matematika, khususnya pada cabang ilmu Aljabar Linear, matriks 
+        digunakan sebagai alat untuk menyederhanakan dan menyelesaikan berbagai 
+        permasalahan yang berkaitan dengan sistem persamaan linear, transformasi 
+        geometri, operasi vektor, serta berbagai perhitungan dalam bidang teknik 
+        dan ilmu komputer. Matriks memungkinkan penyajian data dalam bentuk yang 
+        lebih terstruktur dan sistematis sehingga lebih mudah dianalisis.
+    </p>
+
+    <p>
+        Secara umum, suatu matriks dilambangkan dengan huruf kapital seperti 
+        A, B, C, dan seterusnya. Ukuran sebuah matriks disebut ordo matriks, 
+        yang menyatakan jumlah baris dan jumlah kolom dalam matriks tersebut. 
+        Ordo ditulis dalam bentuk m x n, di mana m menyatakan banyaknya baris 
+        dan n menyatakan banyaknya kolom.
+    </p>
+
+    <p>
+        Sebagai contoh, jika suatu matriks memiliki 2 baris dan 3 kolom, maka 
+        matriks tersebut berordo 2 x 3. Setiap elemen dalam matriks biasanya 
+        ditulis dalam bentuk a(i,j), yang berarti elemen tersebut terletak 
+        pada baris ke-i dan kolom ke-j.
+    </p>
+
+    <p>
+        Matriks memiliki peranan yang sangat penting dalam berbagai bidang. 
+        Dalam bidang pendidikan, matriks digunakan untuk menyelesaikan sistem 
+        persamaan linear. Dalam bidang komputer, matriks digunakan dalam 
+        pemrograman grafis, pengolahan citra digital, kecerdasan buatan, 
+        dan analisis data. Dalam bidang teknik, matriks membantu dalam 
+        perhitungan struktur, rangkaian listrik, serta analisis sistem.
+    </p>
+
+    <p>
+        Dengan demikian, dapat disimpulkan bahwa matriks merupakan konsep 
+        dasar yang sangat penting dalam matematika modern karena kemampuannya 
+        dalam menyajikan data secara ringkas, teratur, dan efisien, serta 
+        mempermudah berbagai proses perhitungan yang kompleks.
+    </p>
+
+
+    <hr>
+
+    <h2>B. Matriks Kolom</h2>
+    <p>Matriks yang hanya memiliki satu kolom. Matriks kolom adalah matriks yang hanya memiliki satu kolom dan 
+        terdiri dari satu atau lebih baris. Karena hanya memiliki satu kolom, 
+        maka ordonya ditulis dalam bentuk m x 1, di mana m menyatakan jumlah baris.</p>
+         <p>
+        Bentuk umum matriks kolom:
+    </p>
+            <div class="matrix-container">
+                 <div class="label">A =</div>
+    <div class="matrix">
+        <div>a₁<br>a₂<br>a₃<br>...<br>aₘ</div>
+    </div>
+</div>
+    <p>
+        Matriks kolom sering digunakan untuk merepresentasikan vektor 
+        dalam aljabar linear serta digunakan dalam penyelesaian 
+        sistem persamaan linear.
+    </p>
+  <div class="matrix-container">
+      <div class="label">B =</div>
+    <div class="matrix">
+      
+        3<br>
+        5<br>
+        7
+    </div>
+</div>
+
+    <p>
+        Setiap elemen dalam matriks kolom memiliki posisi yang ditentukan oleh 
+        nomor barisnya, karena hanya terdapat satu kolom. Misalnya elemen a1 
+        berada pada baris pertama, elemen a2 berada pada baris kedua, dan 
+        seterusnya hingga baris ke-m.
+    </p>
+
+    <p>
+        Matriks kolom sering digunakan dalam berbagai bidang matematika, 
+        khususnya dalam pembahasan vektor. Bahkan, dalam aljabar linear, 
+        vektor sering direpresentasikan dalam bentuk matriks kolom. Hal ini 
+        memudahkan dalam melakukan operasi seperti penjumlahan vektor, 
+        perkalian dengan skalar, maupun transformasi matriks.
+    </p>
+
+    <p>
+        Dalam penerapan di dunia nyata, matriks kolom digunakan dalam 
+        pengolahan data, statistika, sistem persamaan linear, serta 
+        pemrograman komputer. Misalnya, dalam sistem persamaan linear, 
+        kumpulan konstanta dapat dituliskan dalam bentuk matriks kolom 
+        untuk mempermudah proses perhitungan menggunakan metode matriks.
+    </p>
+
+    <h2>Contoh Matriks Kolom</h2>
+
+    <div class="example-box">
+    <div class="math-block">
+
+        <p>Contoh 1:</p>
+
+        <div class="matrix-container">
+            <div class="label">B =</div>
+            <div class="matrix">
+                3<br>
+                5<br>
+                7
+            </div>
+        </div>
+
+        <p>
+            Matriks di atas memiliki 3 baris dan 1 kolom, sehingga ordonya adalah 3 x 1.
+        </p>
+
+        <p>Contoh 2:</p>
+
+        <div class="matrix-container">
+            <div class="label">C =</div>
+            <div class="matrix">
+                10<br>
+                -4<br>
+                8<br>
+                2
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+    <p>
+        Matriks tersebut memiliki 4 baris dan 1 kolom, sehingga ordonya adalah 4 x 1.
+    </p>
+
+      <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Soal dan Jawaban:</strong>    <p>
+        Soal:
+        Tentukan apakah matriks berikut termasuk matriks kolom dan tentukan ordonya.
+    </p>
+<div class="matrix-container">
+      <div class="label">D =</div>
+    <div class="matrix">
+        6<br>9<br>12<br>15
+    </div>
+</div>
+
+    <p>
+        Jawab:
+        Matriks tersebut hanya memiliki satu kolom dan terdiri dari 4 baris.
+        Jadi matriks tersebut adalah matriks kolom dengan ordo 4 x 1.
+    </p>
+
+    <p>
+        Kesimpulannya, matriks kolom adalah matriks yang memiliki tepat satu kolom 
+        dan dapat memiliki satu atau lebih baris. Matriks ini sangat penting dalam 
+        aljabar linear karena sering digunakan untuk merepresentasikan vektor dan 
+        mempermudah berbagai operasi matematika.
+    </p>
+    
+    <hr>
+    </div>
+
+    <h2>C. Matriks Persegi</h2>
+     <p>
+        Matriks persegi adalah matriks yang memiliki jumlah baris dan jumlah kolom yang sama. 
+        Jika suatu matriks memiliki n baris dan n kolom, maka matriks tersebut disebut 
+        matriks persegi berordo n x n. Karena memiliki ukuran yang sama antara baris dan kolom, 
+        matriks persegi memiliki beberapa sifat khusus yang tidak dimiliki oleh matriks lainnya.
+    </p>
+
+    <p>
+        Secara umum, bentuk matriks persegi dapat dituliskan sebagai berikut:
+    </p>
+
+  <div class="matrix-container">
+      <div class="label">A =</div>
+    <div class="matrix">
+        a11 a12 a13 ... a1n<br>
+        a21 a22 a23 ... a2n<br>
+        a31 a32 a33 ... a3n<br>
+        ...  ...  ...  ...<br>
+        an1 an2 an3 ... ann
+    </div>
+</div>
+
+    <p>
+        Pada matriks persegi terdapat bagian yang disebut diagonal utama, yaitu elemen-elemen 
+        yang terletak dari sudut kiri atas hingga sudut kanan bawah. Elemen diagonal utama 
+        memiliki peranan penting dalam berbagai operasi matriks seperti determinan, invers, 
+        dan transformasi linear.
+    </p>
+
+    <p>
+        Matriks persegi sangat penting dalam aljabar linear karena hanya matriks persegi 
+        yang dapat memiliki determinan dan invers. Determinan digunakan untuk menentukan 
+        apakah suatu matriks memiliki invers atau tidak. Jika determinannya tidak sama dengan nol, 
+        maka matriks tersebut memiliki invers.
+    </p>
+
+    <p>
+        Selain itu, banyak jenis matriks khusus yang merupakan bagian dari matriks persegi, 
+        seperti matriks identitas, matriks diagonal, matriks segitiga atas, dan matriks segitiga bawah. 
+        Semua jenis matriks tersebut hanya dapat terbentuk jika jumlah baris dan kolomnya sama.
+    </p>
+
+     <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Matriks Persegi:</strong>
+    <p>
+        Contoh 1 (Ordo 2 x 2):
+    </p>
+
+  <div class="matrix-container">
+      <div class="label">B =</div>
+    <div class="matrix">
+        1 2<br>
+        3 4
+    </div>
+</div>
+
+    <p>
+        Matriks tersebut memiliki 2 baris dan 2 kolom, sehingga termasuk matriks persegi ordo 2 x 2.
+    </p>
+
+    <p>
+        Contoh 2 (Ordo 3 x 3):
+    </p>
+
+    
+    <p>
+        Matriks di atas memiliki 3 baris dan 3 kolom, sehingga termasuk matriks persegi ordo 3 x 3.
+    </p>
+
+   <div class="matrix-container">
+      <div class="label">C =</div>
+    <div class="matrix">
+        2 0 1<br>
+        4 5 6<br>
+        7 8 9
+    </div>
+      </div>
+     </div>
+
+     <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Soal dan Jawaba:</strong>
+    <p>
+        Soal:
+        Tentukan apakah matriks berikut merupakan matriks persegi dan tentukan ordonya.
+    </p>
+
+  <div class="matrix-container">
+      <div class="label">C =</div>
+    <div class="matrix">
+        2 0 1<br>
+        4 5 6<br>
+        7 8 9
+    </div>
+</div>y
+    <p>
+        Jawab:
+        Matriks tersebut memiliki 3 baris dan 3 kolom. Karena jumlah baris dan kolom sama, 
+        maka matriks tersebut adalah matriks persegi dengan ordo 3 x 3.
+    </p>
+
+    <p>
+        Kesimpulannya, matriks persegi adalah matriks yang memiliki jumlah baris dan kolom yang sama 
+        serta memiliki peranan penting dalam berbagai operasi matematika seperti determinan, invers, 
+        dan transformasi linear.
+    </p>
+     </div>
+
+    <hr>
+
+    <h2>D. Matriks Nol</h2>
+     <p>
+        Matriks nol adalah matriks yang semua elemennya bernilai nol. Artinya, 
+        setiap bilangan yang terdapat di dalam matriks tersebut adalah angka 0, 
+        tanpa ada satu pun elemen yang bernilai selain nol. Matriks nol biasanya 
+        dilambangkan dengan huruf O.
+    </p>
+
+    <p>
+        Matriks nol dapat memiliki berbagai ukuran atau ordo, baik berbentuk 
+        matriks persegi maupun matriks tidak persegi. Selama seluruh elemennya 
+        bernilai nol, maka matriks tersebut tetap disebut sebagai matriks nol. 
+        Jika suatu matriks memiliki m baris dan n kolom, maka ordonya adalah m x n.
+    </p>
+
+    <p>
+        Secara umum, bentuk matriks nol dapat dituliskan sebagai berikut:
+    </p>
+
+   <div class="matrix-container">
+      <div class="label">0 =</div>
+    <div class="matrix">
+        0 0 0 ... 0<br>
+        0 0 0 ... 0<br>
+        ... ... ... ...<br>
+        0 0 0 ... 0
+    </div>
+</div>
+    <p>
+        Dalam operasi matriks, matriks nol memiliki peranan yang sangat penting. 
+        Pada operasi penjumlahan matriks, matriks nol berfungsi sebagai elemen 
+        identitas penjumlahan. Artinya, jika suatu matriks dijumlahkan dengan 
+        matriks nol yang berordo sama, maka hasilnya adalah matriks itu sendiri.
+    </p>
+
+    <p>
+        Misalnya, jika A adalah suatu matriks, maka berlaku:
+        A + O = A.
+        Hal ini menunjukkan bahwa matriks nol tidak mengubah nilai matriks 
+        ketika dilakukan penjumlahan.
+    </p>
+
+    <p>
+        Selain itu, dalam perkalian matriks dengan skalar, jika suatu matriks 
+        dikalikan dengan angka 0, maka hasilnya adalah matriks nol. Sifat ini 
+        menunjukkan bahwa matriks nol sering muncul dalam berbagai perhitungan 
+        aljabar linear.
+    </p>
+
+     <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Matriks Nol:</strong>
+    <p>
+        Contoh 1 (Ordo 2 x 2):
+    </p>
+
+    <div class="matrix-container">
+          <div class="label">O =</div>
+    <div class="matrix">
+        0 0<br>
+        0 0
+    </div>
+</div>
+
+    <p>
+        Contoh 2 (Ordo 3 x 2):
+    </p>
+
+    <div class="matrix-container">
+          <div class="label">O =</div>
+    <div class="matrix">
+        0 0<br>
+        0 0<br>
+        0 0
+    </div>
+</div>
+
+<p>
+    Contoh soal dan Jawaban:
+</p>
+    <p>
+        Soal:
+        Diketahui matriks A sebagai berikut:
+    </p>
+
+    <div class="matrix-container">
+             <div class="label">A =</div>
+    <div class="matrix">
+        2 4<br>
+        6 8<br>
+        0 0
+    </div>
+</div>
+
+    <p>
+        Jika A dijumlahkan dengan matriks nol berordo sama, tentukan hasilnya.
+    </p>
+
+    <p>
+        Jawab:
+        Karena matriks nol tidak mengubah nilai matriks dalam penjumlahan, 
+        maka hasilnya adalah:
+    </p>
+
+    <div class="matrix-container">
+             <div class="label">A + O</div>
+    <div class="matrix">
+        2 4<br>
+        6 8
+    </div>
+</div>
+
+    <p>
+        Kesimpulannya, matriks nol adalah matriks yang seluruh elemennya 
+        bernilai nol dan memiliki sifat sebagai identitas dalam operasi 
+        penjumlahan matriks.
+    </p>
+     </div>
+
+    <hr>
+
+    <h2>E. Matriks Identitas</h2>
+     <p>
+        Matriks identitas adalah matriks persegi yang elemen-elemen pada diagonal 
+        utamanya bernilai 1, sedangkan semua elemen lainnya bernilai 0. Matriks 
+        identitas biasanya dilambangkan dengan huruf I dan selalu memiliki ordo 
+        n x n, karena termasuk ke dalam matriks persegi.
+    </p>
+
+    <p>
+        Disebut sebagai matriks identitas karena memiliki sifat yang mirip dengan 
+        angka 1 dalam perkalian bilangan. Jika suatu matriks dikalikan dengan 
+        matriks identitas yang berordo sama, maka hasilnya adalah matriks itu 
+        sendiri. Dengan kata lain, matriks identitas tidak mengubah nilai matriks 
+        dalam operasi perkalian.
+    </p>
+
+    <p>
+        Secara umum, bentuk matriks identitas ordo n x n dapat dituliskan sebagai berikut:
+    </p>
+
+    <div class="matrix-container">
+            <div class="label">I =</div>
+    <div class="matrix">
+        1 0 0 ... 0<br>
+        0 1 0 ... 0<br>
+        0 0 1 ... 0<br>
+        ... ... ... ...<br>
+        0 0 0 ... 1
+    </div>
+</div>
+
+    <p>
+        Elemen yang berada pada diagonal utama (dari kiri atas ke kanan bawah) 
+        semuanya bernilai 1. Sedangkan elemen yang berada di luar diagonal utama 
+        semuanya bernilai 0. Karena itu, matriks identitas termasuk jenis khusus 
+        dari matriks diagonal.
+    </p>
+
+    <p>
+        Dalam aljabar linear, matriks identitas memiliki peranan yang sangat penting, 
+        terutama dalam pembahasan invers matriks. Jika suatu matriks A memiliki 
+        invers A⁻¹, maka berlaku:
+    </p>
+
+    <p>
+        A x A⁻¹ = I <br>
+        A⁻¹ x A = I
+    </p>
+
+    <p>
+        Hal ini menunjukkan bahwa matriks identitas merupakan hasil dari perkalian 
+        suatu matriks dengan inversnya.
+    </p>
+
+    <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Matriks Identitas:</strong>
+    <p>
+        Contoh 1 (Ordo 2 x 2):
+    </p>
+
+    <div class="matrix-container">
+                <div class="label">I2 =</div>
+    <div class="matrix">
+        1 0<br>
+        0 1
+    </div>
+</div>
+
+    <p>
+        Contoh 2 (Ordo 3 x 3):
+    </p>
+
+    <div class="matrix-container">
+                 <div class="label">I3 =</div>
+    <div class="matrix">
+        1 0 0<br>
+        0 1 0<br>
+        0 0 1
+    </div>
+</div>
+
+    <p>Contoh Soal dan Jawaban</p>
+
+    <p>
+        Soal:
+        Diketahui matriks A sebagai berikut:
+    </p>
+    <div class="matrix-container">
+                 <div class="label">A =</div>
+    <div class="matrix">
+        2 1<br>
+        3 4
+    </div>
+</div>
+
+    <p>
+        Jika A dikalikan dengan matriks identitas I2, tentukan hasilnya.
+    </p>
+
+    <p>
+        Jawab:
+        Karena matriks identitas tidak mengubah nilai matriks dalam perkalian, 
+        maka hasilnya adalah:
+    </p>
+
+    <div class="matrix-container">
+                 <div class="label">A x I2 =</div>
+    <div class="matrix">
+        2 1<br>
+        3 4
+    </div>
+</div>
+    <p>
+        Kesimpulannya, matriks identitas adalah matriks persegi dengan elemen 
+        diagonal utama bernilai 1 dan elemen lainnya bernilai 0, serta memiliki 
+        sifat sebagai identitas dalam operasi perkalian matriks.
+    </p>
+    </div>
+    <hr>
+
+    <h2>F. Matriks Diagonal</h2>
+     <p>
+        Matriks diagonal adalah matriks persegi yang semua elemen di luar diagonal
+        utamanya bernilai nol. Artinya, hanya elemen-elemen yang berada pada
+        diagonal utama saja yang boleh bernilai selain nol, sedangkan elemen
+        lainnya harus bernilai 0. Karena termasuk matriks persegi, maka matriks
+        diagonal selalu memiliki jumlah baris dan kolom yang sama atau berordo n x n.
+    </p>
+
+    <p>
+        Diagonal utama adalah elemen-elemen yang terletak dari sudut kiri atas
+        hingga sudut kanan bawah suatu matriks. Elemen diagonal utama biasanya
+        ditulis dalam bentuk a11, a22, a33, dan seterusnya hingga ann.
+        Jika seluruh elemen selain diagonal utama bernilai nol, maka matriks
+        tersebut disebut matriks diagonal.
+    </p>
+
+    <p>
+        Secara umum, bentuk matriks diagonal dapat dituliskan sebagai berikut:
+    </p>
+    <div class="matrix-container">
+                 <div class="label">D =</div>
+    <div class="matrix">
+        d1 0 0 ... 0<br>
+        0 d2 0 ... 0<br>
+        0 0 d3 ... 0 <br>
+        ... ... ... ... <br>
+        0 0 0 ... dn 
+    </div>
+</div>
+
+    <p>
+        Nilai d1, d2, d3, hingga dn adalah elemen-elemen pada diagonal utama
+        yang dapat bernilai sembarang bilangan, baik positif, negatif, maupun nol.
+        Jika semua elemen diagonal utama bernilai 1, maka matriks diagonal tersebut
+        disebut matriks identitas.
+    </p>
+
+    <p>
+        Matriks diagonal memiliki sifat-sifat khusus yang memudahkan dalam
+        perhitungan matematika. Salah satu sifatnya adalah proses perkalian
+        matriks diagonal dengan matriks lain menjadi lebih sederhana, terutama
+        jika dikalikan dengan matriks yang sesuai ordonya. Selain itu,
+        determinan dari matriks diagonal dapat dihitung dengan mudah,
+        yaitu dengan mengalikan semua elemen pada diagonal utamanya.
+    </p>
+
+    <p>
+        Dalam aljabar linear, matriks diagonal sering digunakan dalam pembahasan
+        transformasi linear, nilai eigen, dan vektor eigen. Matriks diagonal
+        juga banyak digunakan dalam bidang teknik, fisika, statistika,
+        dan komputasi karena strukturnya yang sederhana dan efisien
+        untuk perhitungan.
+    </p>
+
+     <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Matriks Diagonal:</strong>
+    <p>
+        Contoh 1 (Ordo 2 x 2):
+    </p>
+    <div class="matrix-container">
+                 <div class="label">D =</div>
+    <div class="matrix">
+        3 0<br>
+        0 5
+    </div>
+</div>
+    <p>
+        Contoh 2 (Ordo 3 x 3):
+    </p>
+
+    <div class="matrix-container">
+                 <div class="label">D =</div>
+    <div class="matrix">
+        2 0 0<br>
+        0 4 0<br>
+        0 0 6
+    </div>
+</div>
+
+    <h2>Contoh Soal dan Jawaban</h2>
+
+    <p>
+        Soal:
+        Tentukan apakah matriks berikut termasuk matriks diagonal.
+    </p>
+
+    <div class="matrix-container">
+                 <div class="label">A =</div>
+    <div class="matrix">
+        7 0 0<br>
+        0 9 0<br>
+        0 0  1
+    </div>
+</div>
+
+    <p>
+        Jawab:
+        Matriks tersebut merupakan matriks persegi berordo 3 x 3 dan
+        semua elemen di luar diagonal utama bernilai nol.
+        Oleh karena itu, matriks tersebut adalah matriks diagonal.
+    </p>
+
+    <p>
+        Kesimpulannya, matriks diagonal adalah matriks persegi yang
+        hanya memiliki elemen bukan nol pada diagonal utama, sedangkan
+        elemen lainnya bernilai nol. Matriks ini memiliki peranan penting
+        dalam berbagai perhitungan matematika karena sifatnya yang sederhana
+        dan mudah dioperasikan.
+    </p>
+     </div>
+
+    <hr>
+
+    <h2>G. Matriks Segitiga Atas</h2>
+    <p>
+        Matriks segitiga atas adalah matriks persegi yang semua elemen
+        di bawah diagonal utamanya bernilai nol. Artinya, elemen-elemen
+        yang berada di bawah diagonal utama harus bernilai 0, sedangkan
+        elemen pada diagonal utama dan di atasnya boleh bernilai sembarang bilangan.
+        Karena termasuk matriks persegi, maka jumlah baris dan kolomnya harus sama.
+    </p>
+
+    <p>
+        Diagonal utama adalah elemen yang terletak dari sudut kiri atas
+        sampai sudut kanan bawah matriks. Pada matriks segitiga atas,
+        bagian bawah diagonal utama akan membentuk pola seperti segitiga
+        yang seluruh elemennya bernilai nol, sehingga disebut sebagai
+        matriks segitiga atas.
+    </p>
+
+    <p>
+        Secara umum, bentuk matriks segitiga atas ordo n x n dapat
+        dituliskan sebagai berikut:
+    </p>
+
+    <div class="matrix-container">
+                 <div class="label">A =</div>
+    <div class="matrix">
+        a11 a12 a13 ... a1n<br>
+        0 a22 a23 ... a2n<br>
+        0 0 a33 ... a3n<br>
+        ... ... ... ... ...<br>
+        0 0 0 ... ann
+    </div>
+</div>
+
+    <p>
+        Elemen a11, a22, a33, hingga ann merupakan elemen diagonal utama.
+        Elemen di atas diagonal utama dapat bernilai bebas, sedangkan
+        elemen di bawah diagonal utama semuanya harus bernilai nol.
+    </p>
+
+    <p>
+        Matriks segitiga atas memiliki beberapa sifat penting dalam
+        aljabar linear. Salah satunya adalah determinan matriks segitiga atas
+        dapat dihitung dengan cara mengalikan semua elemen pada diagonal utama.
+        Sifat ini mempermudah proses perhitungan dibandingkan dengan matriks umum.
+    </p>
+
+    <p>
+        Selain itu, matriks segitiga atas sering muncul dalam metode
+        eliminasi Gauss pada penyelesaian sistem persamaan linear.
+        Dalam proses tersebut, suatu matriks dapat diubah menjadi bentuk
+        segitiga atas agar lebih mudah diselesaikan.
+    </p>
+
+     <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Matriks Segitiga Atas:</strong>
+    <p>
+        Contoh 1 (Ordo 3 x 3):
+    </p>
+    <div class="matrix-container">
+                 <div class="label">B =</div>
+    <div class="matrix">
+        2 4 6<br>
+        0 3 5<br>
+        0 0 1
+    </div>
+</div>
+    <p>
+        Matriks tersebut merupakan matriks segitiga atas karena semua
+        elemen di bawah diagonal utama bernilai nol.
+    </p>
+
+    <p>Contoh Soal dan Jawaban</p>
+
+    <p>
+        Soal:
+        Tentukan apakah matriks berikut termasuk matriks segitiga atas.
+    </p>
+<div class="matrix-container">
+             <div class="label">C =</div>
+    <div class="matrix">
+        1 2 3<br>
+        0 4 5<br>
+        0 6 7
+    </div>
+</div>
+
+    <p>
+        Jawab:
+        Matriks tersebut bukan matriks segitiga atas karena terdapat
+        elemen 6 yang berada di bawah diagonal utama dan tidak bernilai nol.
+    </p>
+
+    <p>
+        Kesimpulannya, matriks segitiga atas adalah matriks persegi
+        yang semua elemen di bawah diagonal utamanya bernilai nol.
+        Matriks ini sangat penting dalam penyelesaian sistem persamaan linear
+        dan perhitungan determinan karena strukturnya yang sederhana.
+    </p>
+     </div>
+
+    <hr>
+
+    <h2>H. Matriks Segitiga Bawah</h2>
+     <p>
+        Matriks segitiga bawah adalah matriks persegi yang semua elemen
+        di atas diagonal utamanya bernilai nol. Artinya, elemen-elemen
+        yang berada di atas diagonal utama harus bernilai 0, sedangkan
+        elemen pada diagonal utama dan di bawahnya boleh bernilai sembarang bilangan.
+        Karena termasuk matriks persegi, maka jumlah baris dan kolomnya harus sama.
+    </p>
+
+    <p>
+        Diagonal utama adalah elemen yang terletak dari sudut kiri atas
+        sampai sudut kanan bawah suatu matriks. Pada matriks segitiga bawah,
+        bagian atas diagonal utama akan membentuk pola seperti segitiga
+        yang seluruh elemennya bernilai nol, sehingga disebut sebagai
+        matriks segitiga bawah.
+    </p>
+
+    <p>
+        Secara umum, bentuk matriks segitiga bawah ordo n x n dapat
+        dituliskan sebagai berikut:
+    </p>
+    <div class="matrix-container">
+                 <div class="label">A =</div>
+    <div class="matrix">
+        a11 0 0 ... 0<br>
+        a21 a22 0 ... 0<br>
+        a31 a32 a33 ... 0<br>
+        ... ... ... ... ... <br>
+        an1 an2 an3 ... ann
+    </div>
+</div>
+    <p>
+        Elemen a11, a22, a33, hingga ann merupakan elemen diagonal utama.
+        Elemen di bawah diagonal utama dapat bernilai bebas, sedangkan
+        elemen di atas diagonal utama semuanya harus bernilai nol.
+    </p>
+
+    <p>
+        Matriks segitiga bawah memiliki sifat yang hampir sama dengan
+        matriks segitiga atas. Salah satu sifat pentingnya adalah determinan
+        matriks segitiga bawah dapat dihitung dengan cara mengalikan
+        semua elemen pada diagonal utama. Hal ini membuat perhitungan
+        menjadi lebih sederhana dibandingkan matriks umum.
+    </p>
+
+    <p>
+        Dalam penyelesaian sistem persamaan linear, matriks segitiga bawah
+        juga sering muncul sebagai hasil transformasi baris elementer.
+        Bentuk ini mempermudah proses substitusi maju dalam mencari solusi.
+    </p>
+
+     <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh Matriks Segitiga Bawah:</strong>
+    <p>
+        Contoh 1 (Ordo 3 x 3):
+    </p>
+
+    <div class="matrix-container">
+                 <div class="label">B =</div>
+    <div class="matrix">
+        4 0 0<br>
+        2 5 0<br>
+        1 3 6
+    </div>
+</div>
+
+    <p>
+        Matriks tersebut termasuk matriks segitiga bawah karena semua
+        elemen di atas diagonal utama bernilai nol.
+    </p>
+
+    <p>Contoh Soal dan Jawaban</p>
+
+    <p>
+        Soal:
+        Tentukan apakah matriks berikut termasuk matriks segitiga bawah.
+    </p>
+<div class="matrix-container">
+             <div class="label">C =</div>
+    <div class="matrix">
+        7 0 0<br>
+        8 9 0<br>
+        1 2 3
+    </div>
+</div>
+
+    <p>
+        Jawab:
+        Matriks tersebut merupakan matriks segitiga bawah karena
+        semua elemen di atas diagonal utama bernilai nol.
+    </p>
+
+    <p>
+        Kesimpulannya, matriks segitiga bawah adalah matriks persegi
+        yang semua elemen di atas diagonal utamanya bernilai nol.
+        Matriks ini sangat penting dalam aljabar linear karena
+        mempermudah perhitungan determinan dan penyelesaian
+        sistem persamaan linear.
+    </p>
+
+    <hr>
+
+    <p>CONTOH SOAL DAN JAWABAN</p>
+
+    <h3>Soal 1</h3>
+    <p>Tentukan jenis matriks berikut:</p>
+    <div class="matrix-container">
+    <div class="matrix">
+        0 0<br>
+        0 0
+    </div>
+</div>
+    <p><b>Jawab:</b> Matriks Nol karena semua elemennya bernilai 0.</p>
+
+    <h3>Soal 2</h3>
+    <p>Tentukan ordo matriks berikut:</p>
+    <div class="matrix-container">
+    <div class="matrix">
+        2 4 6 <br>
+        8 10 12
+    </div>
+</div>
+
+    <p><b>Jawab:</b> Baris = 2, Kolom = 3, jadi ordo = 2 x 3.</p>
+
+    <h3>Soal 3</h3>
+    <p>Apakah matriks berikut termasuk matriks segitiga atas?</p>
+    <div class="matrix-container">
+    <div class="matrix">
+        3 5 7<br>
+        0 2 6<br>
+        0 0 4
+    </div>
+</div>
+    <p><b>Jawab:</b> Ya, karena semua elemen di bawah diagonal utama bernilai 0.</p>
+
+    <hr>
+
+    <p><b>Kesimpulan:</b></p>
+    <p>Jenis matriks dibedakan berdasarkan bentuk, jumlah baris dan kolom, serta letak angka nol pada matriks tersebut.</p>
+     </div>
+
+</body>
+
+    <h2>3. Operasi Matriks</h2>
+    <p><b>Penjumlahan:</b> A + B berlaku jika ordo sama.<br>
+    <b>Perkalian Skalar:</b> kA mengalikan semua elemen dengan k.<br>
+    <b>Perkalian Matriks:</b> Kolom A harus sama dengan Baris B.</p>
+    
+
+    <div class="calculator-area">
+        <h2 style="color: white; border: none; margin-top: 0;">🧮 Interactive Matrix Tools (2x2)</h2>
+        <div class="calc-wrapper">
+            
+            <div class="calc-box">
+                <h3>Perkalian (A × B)</h3>
+                <small>Matriks A</small><br>
+                <input type="number" id="a11" class="m-input" value="1"> <input type="number" id="a12" class="m-input" value="2"><br>
+                <input type="number" id="a21" class="m-input" value="3"> <input type="number" id="a22" class="m-input" value="4"><br>
+                <small>Matriks B</small><br>
+                <input type="number" id="b11" class="m-input" value="5"> <input type="number" id="b12" class="m-input" value="6"><br>
+                <input type="number" id="b21" class="m-input" value="7"> <input type="number" id="b22" class="m-input" value="8">
+                <br><button class="btn-action" onclick="calcMul()">Hitung AB</button>
+                <div id="resMul" class="res-display">Hasil...</div>
+            </div>
+
+            <div class="calc-box">
+                <h3>Transpose (A<sup>T</sup>)</h3>
+                <input type="number" id="t11" class="m-input" value="1"> <input type="number" id="t12" class="m-input" value="2"><br>
+                <input type="number" id="t21" class="m-input" value="3"> <input type="number" id="t22" class="m-input" value="4">
+                <br><button class="btn-action" onclick="calcTrans()">Transpose</button>
+                <div id="resTrans" class="res-display">Hasil...</div>
+            </div>
+
+            <div class="calc-box">
+                <h3>Invers (A<sup>-1</sup>)</h3>
+                <input type="number" id="i11" class="m-input" value="1"> <input type="number" id="i12" class="m-input" value="2"><br>
+                <input type="number" id="i21" class="m-input" value="3"> <input type="number" id="i22" class="m-input" value="4">
+                <br><button class="btn-action" onclick="calcInv()">Cari Invers</button>
+                <div id="resInv" class="res-display">Hasil...</div>
+            </div>
+
+        </div>
+    </div>
+
+    <h2>4. Sifat & Teorema</h2>
+    <ul>
+        <li><b>Trace:</b> Jumlah elemen diagonal utama (hanya matriks persegi).</li>
+        <li><b>Transpose:</b> (AB)<sup>T</sup> = B<sup>T</sup>A<sup>T</sup>.</li>
+        <li><b>Invers:</b> (AB)<sup>-1</sup> = B<sup>-1</sup>A<sup>-1</sup>.</li>
+    </ul>
+<p>
+Dalam aljabar linear, matriks memiliki beberapa sifat dan teorema penting yang sering digunakan
+dalam perhitungan matematika. Beberapa di antaranya adalah trace, transpose, dan invers matriks.
+</p>
+
+<h3>Trace Matriks</h3>
+
+<p>
+Trace adalah jumlah semua elemen yang berada pada diagonal utama suatu matriks.
+Diagonal utama adalah elemen yang posisinya dari kiri atas ke kanan bawah.
+Trace hanya dapat dihitung pada matriks persegi (jumlah baris sama dengan jumlah kolom).
+</p>
+
+<p>Rumus:</p>
+
+<p>
+Tr(A) = a11 + a22 + a33 + ... + ann
+<div class="example-box">
+    <div class="math-block">
+        <div class="matrix-container">
+            <div class="label">A =</div>
+            <div class="matrix">
+                2  4  1<br>
+                3  5  7<br>
+                6  8  9
+            </div>
+        </div>
+    </div>
+
+</div>
+            
+<p>
+Elemen diagonal utama adalah 2, 5, dan 9.
+</p>
+
+<p>
+Tr(A) = 2 + 5 + 9 = 16
+</p>
+
+<h3>Transpose Matriks</h3>
+
+<p>
+Transpose matriks adalah operasi yang menukar baris menjadi kolom dan kolom menjadi baris.
+Transpose dari matriks A ditulis dengan A<sup>T</sup>.
+</p>
+
+<div class="example-box">
+    <div class="math-block">
+        <div class="matrix-container">
+            <div class="label">A =</div>
+            <div class="matrix">
+                1 2 3<br>
+                4 5 6
+            </div>
+        </div>
+    </div>
+
+</div>
+<p>
+Transpose dari A adalah:
+</p>
+
+<div class="matrix-container">
+    <div class="label">
+        A<sup>T</sup> =
+    </div>
+
+    <div class="matrix">
+        1 4<br>
+        2 5<br>
+        3 6
+    </div>
+</div>
+
+<p>
+Baris pertama matriks A menjadi kolom pertama pada matriks transpose.
+</p>
+
+<p>Teorema Transpose Perkalian Matriks:</p>
+
+<p>
+(AB)<sup>T</sup> = B<sup>T</sup>A<sup>T</sup>
+</p>
+
+<p>
+Artinya transpose dari hasil perkalian dua matriks sama dengan perkalian transpose
+masing-masing matriks dengan urutan yang dibalik.
+</p>
+
+<h3>Invers Matriks</h3>
+
+<p>
+Invers matriks adalah matriks yang jika dikalikan dengan matriks asalnya
+akan menghasilkan matriks identitas.
+Jika A memiliki invers maka ditulis A<sup>-1</sup>.
+</p>
+
+<p>Syarat matriks memiliki invers:</p>
+
+<p>
+1. Matriks harus berbentuk persegi.<br>
+2. Determinan matriks tidak boleh sama dengan nol.
+</p>
+
+<p>Sifat invers perkalian matriks:</p>
+
+<p>
+(AB)<sup>-1</sup> = B<sup>-1</sup>A<sup>-1</sup>
+</p>
+
+<p>
+Artinya invers dari hasil perkalian dua matriks sama dengan perkalian invers
+masing-masing matriks tetapi dengan urutan yang dibalik.
+</p>
+
+<p>
+Hal ini terjadi karena perkalian matriks tidak bersifat komutatif
+(AB tidak selalu sama dengan BA).
+</p>
+    
+
+    <h2>5. Matriks Polinomial</h2>
+
+<p>
+Matriks polinomial adalah matriks yang elemen-elemennya berupa polinomial 
+atau suku banyak dari suatu variabel, biasanya dilambangkan dengan x.
+Setiap elemen matriks dapat berupa konstanta, suku linear, kuadrat,
+atau bentuk polinomial lainnya.
+</p>
+
+<p>
+Secara umum, matriks polinomial dapat dituliskan sebagai berikut:
+</p>
+
+<div class="matrix-container">
+    <div class="label">A(x) =</div>
+    <div class="matrix">
+        p<sub>11</sub>(x)  p<sub>12</sub>(x)  ...  p<sub>1n</sub>(x)<br>
+        p<sub>21</sub>(x)  p<sub>22</sub>(x)  ...  p<sub>2n</sub>(x)<br>
+        ... ... ...<br>
+        p<sub>m1</sub>(x)  p<sub>m2</sub>(x)  ...  p<sub>mn</sub>(x)
+    </div>
+</div>
+
+<p>
+Di mana setiap elemen p<sub>ij</sub>(x) merupakan polinomial terhadap variabel x.
+</p>
+
+<h3>Contoh Matriks Polinomial</h3>
+
+<p>Misalkan diberikan matriks berikut:</p>
+
+<div class="matrix-container">
+    <div class="label">B(x) =</div>
+    <div class="matrix">
+        x+1 &nbsp;&nbsp; 2x<br>
+        3 &nbsp;&nbsp; x²+4
+    </div>
+</div>
+
+<p>
+Pada matriks tersebut, setiap elemen merupakan polinomial dalam variabel x.
+</p>
+
+<h3>Operasi pada Matriks Polinomial</h3>
+
+<p>
+Matriks polinomial dapat dilakukan operasi yang sama seperti matriks biasa,
+seperti penjumlahan, pengurangan, dan perkalian matriks. Perbedaannya hanya
+terletak pada elemen-elemen yang berupa polinomial.
+</p>
+
+<h4>Contoh Penjumlahan Matriks Polinomial</h4>
+
+<div class="matrix-container">
+    <div class="label">A(x) =</div>
+    <div class="matrix">
+        x &nbsp; 2<br>
+        3 &nbsp; x+1
+    </div>
+</div>
+
+<div class="matrix-container">
+    <div class="label">B(x) =</div>
+    <div class="matrix">
+        2x &nbsp; 1<br>
+        4 &nbsp; x
+    </div>
+</div>
+
+<p>Hasil penjumlahan:</p>
+
+<div class="matrix-container">
+    <div class="label">A(x) + B(x) =</div>
+    <div class="matrix">
+        3x &nbsp; 3<br>
+        7 &nbsp; 2x+1
+    </div>
+</div>
+
+<p>
+Penjumlahan dilakukan dengan menjumlahkan elemen yang posisinya sama,
+kemudian menyederhanakan polinomial yang dihasilkan.
+</p>
+    <p>Jika p(x) = a₀ + a₁x + a₂x², maka p(A) = a₀I + a₁A + a₂A².</p>
+    <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
+        <strong>Contoh:</strong> Jika A = [1 2; -3 -4], buktikan A² + 3A + 2I = 0.
+    </div>
+
+</div>
+
+<script>
+    function calcMul() {
+        const a11 = parseFloat(document.getElementById('a11').value), a12 = parseFloat(document.getElementById('a12').value);
+        const a21 = parseFloat(document.getElementById('a21').value), a22 = parseFloat(document.getElementById('a22').value);
+        const b11 = parseFloat(document.getElementById('b11').value), b12 = parseFloat(document.getElementById('b12').value);
+        const b21 = parseFloat(document.getElementById('b21').value), b22 = parseFloat(document.getElementById('b22').value);
+
+        const r11 = (a11*b11) + (a12*b21), r12 = (a11*b12) + (a12*b22);
+        const r21 = (a21*b11) + (a22*b21), r22 = (a21*b12) + (a22*b22);
+        document.getElementById('resMul').innerHTML = `[${r11} ${r12}; ${r21} ${r22}]`;
+    }
+
+    function calcTrans() {
+        const t11 = document.getElementById('t11').value, t12 = document.getElementById('t12').value;
+        const t21 = document.getElementById('t21').value, t22 = document.getElementById('t22').value;
+        document.getElementById('resTrans').innerHTML = `[${t11} ${t21}; ${t12} ${t22}]`;
+    }
+
+    function calcInv() {
+        const a = parseFloat(document.getElementById('i11').value), b = parseFloat(document.getElementById('i12').value);
+        const c = parseFloat(document.getElementById('i21').value), d = parseFloat(document.getElementById('i22').value);
+        const det = (a*d) - (b*c);
+        if(det === 0) {
+            document.getElementById('resInv').innerHTML = "Matriks Singular (Det=0)";
+        } else {
+            const r11 = (d/det).toFixed(2), r12 = (-b/det).toFixed(2);
+            const r21 = (-c/det).toFixed(2), r22 = (a/det).toFixed(2);
+            document.getElementById('resInv').innerHTML = `[${r11} ${r12}; ${r21} ${r22}]`;
+        }
+    }
+</script>
+
+</body>
+</html>

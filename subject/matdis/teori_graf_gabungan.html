@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematika Diskrit - Teori Graf Lengkap</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        /* ===== VARIABEL & RESET GLOBAL ===== */
+        :root {
+            /* Graf 1 - Euler & Hamilton */
+            --primary-color: #2c3e50;
+            --euler-color: #3498db;
+            --hamilton-color: #27ae60;
+            --accent-color: #e74c3c;
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #333;
+            --border-color: #e0e0e0;
+            --light-blue: #eef2f7;
+
+            /* Graf 2 - Dijkstra & Pewarnaan */
+            --primary-dijkstra: #2c3e50;
+            --path-color: #e67e22;
+            --primary-coloring: #6c5ce7;
+            --secondary-coloring: #a29bfe;
+            --accent-coloring: #fd79a8;
+            --dark: #2d3436;
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* ===== NAVIGASI DAFTAR ISI ===== */
+        .toc {
+            max-width: 1000px;
+            margin: 0 auto 30px auto;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 25px 35px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .toc li {
+            margin: 6px 0;
+        }
+
+        .toc a {
+            color: var(--euler-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== WRAPPER BAGIAN 1 (EULER & HAMILTON) ===== */
+        .wrapper {
+            max-width: 1000px;
+            margin: 0 auto 40px auto;
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        /* ===== HEADER ===== */
+        .main-header-1 {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--euler-color), var(--hamilton-color));
+            color: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .main-header-1 h1 { margin: 0; font-size: 2.5em; }
+        .main-header-1 p { margin-top: 10px; opacity: 0.9; }
+
+        /* ===== TIPOGRAFI BAGIAN 1 ===== */
+        h2 { 
+            color: var(--primary-color); 
+            margin-top: 40px; 
+            border-bottom: 3px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h3 { 
+            color: var(--euler-color); 
+            border-left: 5px solid currentColor; 
+            padding-left: 15px; 
+            margin-top: 30px;
+        }
+
+        .hamilton-h3 { color: var(--hamilton-color); }
+
+        /* ===== BOX & CARD BAGIAN 1 ===== */
+        .note-box {
+            background-color: #e8f4fd;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 6px solid var(--euler-color);
+            margin: 20px 0;
+        }
+
+        .highlight {
+            background-color: #e8f6ef;
+            padding: 15px;
+            border-left: 5px solid var(--hamilton-color);
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .theorem {
+            background-color: var(--light-blue);
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .theorem-title {
+            display: block;
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+        }
+
+        .example-section, .example-box {
+            background-color: #fffaf0;
+            border: 1px solid #ffe0b2;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* ===== TABEL ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+
+        table th, table td {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        table th { background-color: var(--primary-color); color: white; }
+        table tr:nth-child(even) { background-color: #f9f9f9; }
+
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+
+        /* ===== WRAPPER BAGIAN 2 (DIJKSTRA & PEWARNAAN) ===== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto 40px auto;
+            padding: 0;
+        }
+
+        .main-header-2 {
+            background: linear-gradient(135deg, var(--primary-dijkstra), var(--primary-coloring));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .section-card h2 {
+            margin-top: 0;
+            border-bottom: none;
+            padding-bottom: 10px;
+        }
+
+        .dijkstra-h2 {
+            color: var(--primary-dijkstra);
+            border-bottom: 2px solid var(--path-color) !important;
+        }
+
+        .coloring-h2 {
+            color: var(--primary-coloring);
+            border-left: 5px solid var(--accent-coloring);
+            padding-left: 15px;
+            border-bottom: none !important;
+        }
+
+        .algo-step {
+            background: #f8f9fa;
+            border-left: 4px solid var(--path-color);
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .concept-box {
+            background-color: #f1f2f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-right: 2px solid var(--secondary-coloring);
+        }
+
+        .chromatic-number {
+            font-size: 2em;
+            color: var(--accent-coloring);
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #fff0f5;
+            border-radius: 10px;
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .coloring-table th {
+            background-color: var(--primary-coloring);
+        }
+
+        .section-card table td {
+            text-align: center;
+        }
+
+        .example-card {
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .dijkstra-solusi {
+            background: #eef7fd;
+            border: 1px solid #c3e3f7;
+        }
+
+        .coloring-solusi {
+            background: #fffafb;
+            border: 2px solid var(--secondary-coloring);
+        }
+
+        .node-demo {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            border-top: 1px solid #eee;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .wrapper { padding: 20px; }
+            .main-header-1 h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== DAFTAR ISI / NAVIGASI ===== -->
+    <nav class="toc">
+        <h2>📚 Daftar Isi - Materi Teori Graf</h2>
+        <ol>
+            <li><a href="#euler">Lintasan & Sirkuit Euler</a></li>
+            <li><a href="#hamilton">Lintasan & Sirkuit Hamilton</a></li>
+            <li><a href="#dijkstra-section">Lintasan Terpendek (Algoritma Dijkstra)</a></li>
+            <li><a href="#coloring-section">Pewarnaan Simpul (Graph Coloring)</a></li>
+        </ol>
+    </nav>
+
+    <!-- ============================================================ -->
+    <!-- BAGIAN 1: EULER & HAMILTON                                    -->
+    <!-- ============================================================ -->
+    <div class="wrapper">
+        <header class="main-header-1">
+            <h1>Teori Graf: Euler & Hamilton</h1>
+            <p>Lintasan dan Sirkuit dalam Matematika Diskrit</p>
+        </header>
+
+        <section id="euler">
+            <h2>Bagian I: Lintasan & Sirkuit Euler</h2>
+            
+            <h3>1. Konsep Dasar</h3>
+            <p>Dalam teori graf, konsep Euler berkaitan dengan efisiensi penelusuran sisi.</p>
+            <ul>
+                <li><strong>Lintasan Euler:</strong> Melalui setiap sisi (edge) tepat satu kali.</li>
+                <li><strong>Sirkuit Euler:</strong> Melalui setiap sisi tepat satu kali dan <strong>kembali ke titik awal</strong>.</li>
+            </ul>
+
+            <div class="note-box">
+                <strong>Aturan Emas:</strong> Fokus pada <code>Sisi</code>. Simpul (vertex) boleh dikunjungi berulang kali, namun setiap garis hanya boleh dilewati sekali saja.
+            </div>
+
+            <h3>2. Syarat Keberadaan</h3>
+            <p>Gunakan derajat simpul untuk menentukan jenis graf:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jenis</th>
+                        <th>Syarat Derajat Simpul</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Sirkuit Euler</strong></td>
+                        <td>Semua simpul harus berderajat <strong>Genap</strong>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lintasan Euler</strong></td>
+                        <td>Tepat <strong>Dua Simpul</strong> berderajat <strong>Ganjil</strong>.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3. Contoh Latihan Soal</h3>
+            <div class="example-section">
+                <span class="badge">Analisis Derajat</span>
+                <p><strong>Soal:</strong> Sebuah graf memiliki derajat simpul: <br>
+                $$d(v_1)=3, d(v_2)=2, d(v_3)=4, d(v_4)=3, d(v_5)=2$$ 
+                Apakah terdapat lintasan Euler?</p>
+                
+                <p><strong>Jawaban:</strong><br>
+                1. Identifikasi simpul ganjil: $$d(v_1) (3) dan d(v_4) (3)$$.<br>
+                2. Karena terdapat <strong>tepat dua simpul ganjil</strong>, maka graf ini memiliki <strong>Lintasan Euler</strong>.<br>
+                3. Lintasan harus dimulai dari $$d(v_1) dan berakhir di d(v_4)$$ (atau sebaliknya).</p>
+            </div>
+
+            <h3>4. Algoritma Fleury</h3>
+            <p>Untuk menemukan rute secara praktis, ikuti langkah berikut:</p>
+            <ol>
+                <li>Pastikan graf terhubung.</li>
+                <li>Pilih simpul awal (utamakan simpul berderajat ganjil).</li>
+                <li>Hapus sisi yang telah dilalui.</li>
+                <li><strong>Jangan</strong> memotong "jembatan" (bridge) kecuali tidak ada pilihan sisi lain yang tersisa.</li>
+            </ol>
+        </section>
+
+        <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #ddd;">
+
+        <section id="hamilton">
+            <h2>Bagian II: Lintasan & Sirkuit Hamilton</h2>
+            
+            <h3 class="hamilton-h3">1. Definisi Dasar</h3>
+            <p>Dalam teori graf, konsep Hamilton berfokus pada kunjungan ke <strong>titik (vertex)</strong>, bukan sisi.</p>
+            
+            <ul>
+                <li><strong>Lintasan Hamilton:</strong> Lintasan yang melalui setiap titik di dalam graf tepat satu kali.</li>
+                <li><strong>Sirkuit Hamilton:</strong> Sirkuit yang melalui setiap titik di dalam graf tepat satu kali (kecuali titik awal dan akhir yang sama).</li>
+            </ul>
+            <div class="highlight">
+                Graf yang memiliki sirkuit Hamilton disebut <strong>Graf Hamilton</strong>, sedangkan yang hanya memiliki lintasan Hamilton disebut <strong>Graf Semi-Hamilton</strong>.
+            </div>
+
+            <h3 class="hamilton-h3">2. Perbedaan Euler vs Hamilton</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Karakteristik</th>
+                        <th>Euler (Sisi)</th>
+                        <th>Hamilton (Titik)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Fokus Utama</strong></td>
+                        <td>Melewati setiap <strong>sisi</strong> tepat satu kali.</td>
+                        <td>Melewati setiap <strong>titik</strong> tepat satu kali.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Syarat Titik</strong></td>
+                        <td>Boleh melewati titik yang sama berkali-kali.</td>
+                        <td>Tidak boleh melewati titik yang sama (kecuali awal/akhir).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kemudahan</strong></td>
+                        <td>Mudah dideteksi (cek derajat titik).</td>
+                        <td>Sangat sulit (NP-Complete).</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="hamilton-h3">3. Teorema Penting</h3>
+            <p>Terdapat beberapa teorema untuk mengecek apakah sebuah graf memiliki kemungkinan menjadi <strong>Graf Hamilton</strong>:</p>
+
+            <div class="theorem">
+                <span class="theorem-title">Teorema Dirac:</span>
+                Jika $G$ adalah graf sederhana dengan $n$ titik ($n \ge 3$) sedemikian sehingga derajat setiap titik $d(v) \ge n/2$, maka $G$ adalah graf Hamilton.
+            </div>
+
+            <div class="theorem">
+                <span class="theorem-title">Teorema Ore:</span>
+                Jika $G$ adalah graf sederhana dengan $n$ titik ($n \ge 3$) sedemikian sehingga untuk setiap pasang titik yang tidak bertetangga $u$ dan $v$, berlaku $d(u) + d(v) \ge n$, maka $G$ adalah graf Hamilton.
+            </div>
+
+            <h3 class="hamilton-h3">4. Contoh Soal & Pembahasan</h3>
+            
+            <div class="example-box">
+                <span class="badge">Soal 1</span>
+                <p>Diberikan sebuah graf dengan titik {A, B, C, D}. Sisi-sisinya adalah (A-B), (B-C), (C-D), (D-A), dan (A-C). Tentukan apakah graf ini memiliki sirkuit Hamilton!</p>
+                <hr style="border: 0; border-top: 1px solid #eee;">
+                <p><strong>Jawaban:</strong></p>
+                <p>Mari kita coba urutkan kunjungannya: <strong>A &rarr; B &rarr; C &rarr; D &rarr; A</strong>.</p>
+                <ul>
+                    <li>Apakah semua titik terlewati? <strong>Ya</strong> (A, B, C, D).</li>
+                    <li>Apakah ada titik yang diulang? <strong>Tidak</strong> (kecuali awal/akhir).</li>
+                </ul>
+                <p><strong>Kesimpulan:</strong> Graf tersebut memiliki sirkuit Hamilton: <strong>A-B-C-D-A</strong>.</p>
+            </div>
+
+            <div class="example-box">
+                <span class="badge">Soal 2</span>
+                <p>Sebuah graf memiliki 5 titik. Berdasarkan Teorema Dirac, berapa derajat minimum agar graf tersebut dipastikan memiliki sirkuit Hamilton?</p>
+                <hr style="border: 0; border-top: 1px solid #eee;">
+                <p><strong>Jawaban:</strong></p>
+                <p>Diketahui $n = 5$. Syarat Dirac: $d(v) \ge n/2$.</p>
+                <p>$$d(v) \ge 5/2 = 2.5$$</p>
+                <p>Karena derajat harus bilangan bulat, maka derajat minimum adalah <strong>3</strong>.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>Materi Gabungan Teori Graf &copy; 2026 - Tujuan Edukasi</p>
+        </footer>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- BAGIAN 2: DIJKSTRA & PEWARNAAN                               -->
+    <!-- ============================================================ -->
+    <div class="container">
+        <header class="main-header-2">
+            <h1>Optimasi Teori Graf</h1>
+            <p>Lintasan Terpendek & Pewarnaan Simpul</p>
+        </header>
+
+        <div id="dijkstra-section">
+            <section class="section-card">
+                <h2 class="dijkstra-h2">1. Konsep Dasar Lintasan Terpendek</h2>
+                <p>Persoalan lintasan terpendek adalah mencari rute antara dua simpul (titik) pada graf berbobot sedemikian sehingga jumlah bobot dari sisi-sisi yang membentuk lintasan tersebut memiliki nilai <strong>minimum</strong>.</p>
+                <p>Aplikasi dalam dunia nyata:</p>
+                <ul>
+                    <li>Google Maps (mencari rute tercepat).</li>
+                    <li>Routing protokol pada jaringan komputer.</li>
+                    <li>Logistik dan pengiriman barang.</li>
+                </ul>
+            </section>
+
+            <section class="section-card">
+                <h2 class="dijkstra-h2">2. Algoritma Dijkstra</h2>
+                <p>Algoritma ini bekerja dengan strategi <em>greedy</em>. Langkah-langkah utamanya:</p>
+                <div class="algo-step">
+                    <strong>Langkah 1:</strong> Berikan nilai jarak $\infty$ (tak hingga) ke semua simpul, kecuali simpul asal yang diberi nilai 0.
+                </div>
+                <div class="algo-step">
+                    <strong>Langkah 2:</strong> Tandai semua simpul sebagai "belum dikunjungi".
+                </div>
+                <div class="algo-step">
+                    <strong>Langkah 3:</strong> Untuk simpul saat ini, periksa tetangganya yang belum dikunjungi dan hitung jarak sementaranya.
+                </div>
+                <div class="algo-step">
+                    <strong>Langkah 4:</strong> Jika jarak yang baru dihitung lebih kecil dari jarak sebelumnya, perbarui datanya.
+                </div>
+                <div class="algo-step">
+                    <strong>Langkah 5:</strong> Setelah memeriksa semua tetangga, tandai simpul saat ini sebagai "dikunjungi" (tidak akan diproses lagi).
+                </div>
+            </section>
+
+            <section class="section-card">
+                <h2 class="dijkstra-h2">3. Contoh Soal & Pembahasan Dijkstra</h2>
+                <p>Perhatikan graf berikut:</p>
+                <p>Titik: <strong>A, B, C, D</strong><br>
+                Sisi & Bobot: (A-B) = 4, (A-C) = 2, (B-C) = 1, (B-D) = 5, (C-D) = 8</p>
+                
+                <p><strong>Pertanyaan:</strong> Tentukan lintasan terpendek dari titik <strong>A</strong> ke titik <strong>D</strong>!</p>
+
+                <div class="example-card dijkstra-solusi">
+                    <h3>Pembahasan Langkah demi Langkah:</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Langkah</th>
+                                <th>Simpul Aktif</th>
+                                <th>Jarak ke B</th>
+                                <th>Jarak ke C</th>
+                                <th>Jarak ke D</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>A (Mulai)</td>
+                                <td>4 (via A)</td>
+                                <td>2 (via A)</td>
+                                <td>&infin;</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>C (Jarak terkecil)</td>
+                                <td>3 (via C)*</td>
+                                <td>2</td>
+                                <td>10 (via C)</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>B (Jarak 3 &lt; 10)</td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td><strong>8 (via B)**</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><em>*Catatan: Jarak ke B diperbarui karena (A&rarr;C&rarr;B) = 2+1 = 3, lebih pendek dari (A&rarr;B) = 4.</em></p>
+                    <p><em>**Catatan: Jarak ke D melalui B adalah 3+5 = 8.</em></p>
+                    
+                    <p style="font-size: 1.2em; color: var(--path-color);">
+                        <strong>Kesimpulan:</strong> Lintasan terpendek adalah <strong>A &rarr; C &rarr; B &rarr; D</strong> dengan total bobot <strong>8</strong>.
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <div id="coloring-section">
+            <section class="section-card">
+                <h2 class="coloring-h2">4. Apa itu Pewarnaan Graf?</h2>
+                <p>Pewarnaan graf adalah pemberian warna pada elemen-elemen graf (biasanya simpul/vertex) sedemikian sehingga tidak ada dua elemen bertetangga yang memiliki warna yang sama.</p>
+                
+                <div class="concept-box">
+                    <strong>Aturan Utama:</strong> Jika dua simpul $u$ dan $v$ terhubung oleh sebuah sisi (edge), maka warna simpul $u$ tidak boleh sama dengan warna simpul $v$.
+                </div>
+            </section>
+
+            <section class="section-card">
+                <h2 class="coloring-h2">5. Bilangan Kromatik</h2>
+                <p>Jumlah minimum warna yang dibutuhkan untuk mewarnai graf $G$ disebut <strong>Bilangan Kromatik</strong>, yang dilambangkan dengan:</p>
+                <div class="chromatic-number">$\chi(G)$</div>
+                
+                <h3>Bilangan Kromatik pada Graf Khusus:</h3>
+                <table class="coloring-table">
+                    <thead>
+                        <tr>
+                            <th>Jenis Graf</th>
+                            <th>Bilangan Kromatik $\chi(G)$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Graf Lengkap ($K_n$)</td>
+                            <td>$n$</td>
+                        </tr>
+                        <tr>
+                            <td>Graf Lingkaran ($C_n$), $n$ genap</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Graf Lingkaran ($C_n$), $n$ ganjil</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>Graf Bipartit</td>
+                            <td>2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section-card">
+                <h2 class="coloring-h2">6. Algoritma Welch-Powell</h2>
+                <p>Algoritma ini digunakan untuk mewarnai graf secara efisien dengan langkah-langkah berikut:</p>
+                <ol>
+                    <li>Urutkan simpul-simpul graf berdasarkan derajatnya (dari tinggi ke rendah).</li>
+                    <li>Ambil warna pertama, warnai simpul pertama yang belum diwarnai dan semua simpul lainnya yang <strong>tidak bertetangga</strong> dengannya.</li>
+                    <li>Ulangi proses dengan warna berikutnya untuk simpul-simpul yang masih tersisa.</li>
+                </ol>
+            </section>
+
+            <section class="section-card">
+                <h2 class="coloring-h2">7. Contoh Soal & Pembahasan Pewarnaan</h2>
+                
+                <div class="example-card coloring-solusi">
+                    <strong>Soal 1:</strong> Berapakah bilangan kromatik untuk graf $C_5$ (Graf lingkaran dengan 5 titik)?
+                    <hr>
+                    <p><strong>Pembahasan:</strong></p>
+                    <ul>
+                        <li>Misalkan titiknya adalah A, B, C, D, E dalam posisi melingkar. </li>
+                        <li>Warnai A dengan <strong>Merah</strong>.</li>
+                        <li>B (tetangga A) harus <strong>Biru</strong>.</li>
+                        <li>C (tetangga B) bisa kembali ke <strong>Merah</strong>.</li>
+                        <li>D (tetangga C) harus <strong>Biru</strong>.</li>
+                        <li>E (tetangga D dan A) tidak bisa Merah (karena A merah) dan tidak bisa Biru (karena D biru).</li>
+                    </ul>
+                    <p><strong>Jawaban:</strong> Karena butuh warna tambahan, maka $\chi(C_5) = 3$.</p>
+                </div>
+
+                <div class="example-card coloring-solusi">
+                    <strong>Soal 2:</strong> Berapa warna minimal untuk graf lengkap $K_4$?
+                    <hr>
+                    <p>Setiap titik terhubung dengan semua titik lainnya, sehingga setiap titik harus memiliki warna yang berbeda.</p>
+                    <div class="node-demo">
+                        <div class="circle" style="background-color: #ff7675;">1</div>
+                        <div class="circle" style="background-color: #74b9ff;">2</div>
+                        <div class="circle" style="background-color: #55efc4;">3</div>
+                        <div class="circle" style="background-color: #ffeaa7; color: black;">4</div>
+                    </div>
+                    <p><strong>Jawaban:</strong> $\chi(K_4) = 4$.</p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Materi Teori Graf - Gabungan Dijkstra & Pewarnaan &copy; 2026</p>
+        </footer>
+    </div>
+
+</body>
+</html>

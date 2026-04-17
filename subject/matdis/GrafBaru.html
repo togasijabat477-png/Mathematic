@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graf</title>
+      <style>
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --bg-color: #f4f7f6;
+    --text-color: #333;
+    --white: #ffffff;
+    --matrix-border: #d1d8e0;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+header {
+    text-align: center;
+    border-bottom: 4px solid var(--secondary-color);
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 8px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.learning-box,
+.step-list {
+    background: #eef2f3;
+    padding: 20px;
+    border-left: 5px solid var(--secondary-color);
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.example-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.example-box::before {
+    content: "CONTOH";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--secondary-color);
+    color: white;
+    padding: 2px 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+.math-block {
+    font-family: "Courier New", Courier, monospace;
+    background: #f9f9f9;
+    padding: 15px;
+    display: block;
+    margin: 10px 0;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+/* Updated Matrix Styles */
+.matrix-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin: 30px 0;
+    align-items: flex-start;
+}
+
+.matrix-container > div {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #edf2f7;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.matrix-container > div:hover {
+    transform: translateY(-5px);
+}
+
+.matrix {
+    position: relative;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.3em;
+    line-height: 1.8;
+    letter-spacing: 12px;
+    padding: 15px 25px;
+    margin: 15px auto;
+    background: #f8fafc;
+    border-left: 3px solid var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+    border-radius: 15px;
+    display: inline-block;
+    color: var(--primary-color);
+}
+
+.matrix::before, .matrix::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 100%;
+    top: 0;
+}
+
+.matrix::before {
+    left: 0;
+    border-top: 3px solid var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    border-radius: 8px 0 0 8px;
+}
+
+.matrix::after {
+    right: 0;
+    border-top: 3px solid var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    border-radius: 0 8px 8px 0;
+}
+
+small {
+    display: block;
+    margin-top: 10px;
+    color: #64748b;
+    font-style: italic;
+    max-width: 250px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.calculator-area {
+    background: var(--primary-color);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 40px 0;
+}
+
+.calc-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}    
+
+.calc-box {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.m-input {
+    width: 50px;
+    padding: 8px;
+    margin: 4px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.btn-action {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+
+.btn-action:hover {
+    opacity: 0.85;
+}
+
+.res-display {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 5px;
+    min-height: 30px;
+    font-family: monospace;
+    color: #00cec9;
+}
+
+@media (max-width: 600px) {
+    .container { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+    <div class="section">
+        <h1>Teori Graf</h1>
+        <p>Graf G = (V, E) adalah struktur yang memetakan hubungan antar objek. Objek direpresentasikan sebagai simpul (V) dan hubungannya sebagai sisi (E).</p>
+        
+        <h2>1. Terminologi Kritis</h2>
+        <ul>
+            <li><strong>Adjacent (Bertetangga):</strong> Dua simpul u, v dikatakan bertetangga jika ada sisi e = (u, v).</li>
+            <li><strong>Incidency (Bersisian):</strong> Sisi e = (u, v)$ dikatakan bersisian dengan simpul u dan v.</li>
+            <li><strong>Isolated Vertex:</strong> Simpul dengan derajat nol (d(v) = 0).</li>
+            <li><strong>Pendant Vertex:</strong> Simpul dengan derajat satu (d(v) = 1).</li>
+        </ul>
+        <h3>Pengertian Graf</h3>
+        <p>
+            Graf merupakan salah satu konsep penting dalam matematika diskrit yang digunakan untuk 
+            merepresentasikan hubungan atau keterkaitan antara sejumlah objek. Dalam banyak bidang, 
+            seperti ilmu komputer, teknik, dan ilmu sosial, graf digunakan sebagai model untuk 
+            menggambarkan bagaimana suatu entitas berhubungan dengan entitas lainnya.
+        </p>
+
+        <p>
+            Secara matematis, graf dinyatakan sebagai pasangan terurut G = (V, E), di mana V adalah 
+            himpunan simpul (vertex) dan E adalah himpunan sisi (edge). Simpul merepresentasikan objek 
+            atau entitas, sedangkan sisi merepresentasikan hubungan antara dua simpul. Dengan 
+            representasi ini, graf mampu menggambarkan sistem yang kompleks menjadi lebih sederhana 
+            dan mudah dianalisis.
+        </p>
+
+        <p>
+            Konsep graf pertama kali diperkenalkan oleh matematikawan Swiss bernama Leonhard Euler 
+            pada abad ke-18 melalui permasalahan jembatan Königsberg. Permasalahan tersebut menjadi 
+            dasar lahirnya teori graf modern yang kini berkembang pesat dan digunakan dalam berbagai 
+            aplikasi komputasi.
+        </p>
+    </section>
+
+    <section>
+        <h3>A. Komponen Utama Graf</h3>
+
+        <p>
+            Setiap graf terdiri dari dua komponen utama, yaitu simpul dan sisi. Simpul merupakan titik 
+            dalam graf yang mewakili suatu objek, sedangkan sisi adalah garis yang menghubungkan dua 
+            simpul yang menunjukkan adanya relasi di antara keduanya. Jumlah simpul dalam graf dapat 
+            terbatas maupun tidak terbatas, tergantung pada sistem yang dimodelkan.
+        </p>
+
+        <p>
+            Sisi dalam graf dapat bersifat tidak berarah maupun berarah. Pada graf tidak berarah, 
+            hubungan antara dua simpul bersifat dua arah. Sebaliknya, pada graf berarah, sisi memiliki 
+            arah tertentu sehingga hubungan hanya berlaku dari satu simpul ke simpul lainnya sesuai 
+            arah panah yang ditentukan.
+        </p>
+    </section>
+
+    <section>
+        <h3>B. Peran Graf dalam Ilmu Komputer</h3>
+
+        <p>
+            Dalam ilmu komputer, graf digunakan sebagai struktur data untuk memodelkan berbagai jenis 
+            jaringan, seperti jaringan komputer, jaringan transportasi, serta jaringan sosial. Dengan 
+            menggunakan graf, pengembang dapat merancang algoritma yang mampu mencari jalur terpendek, 
+            mendeteksi siklus, atau menentukan keterhubungan antar simpul.
+        </p>
+
+        <p>
+            Banyak algoritma penting yang dikembangkan berdasarkan konsep graf, seperti algoritma 
+            pencarian Breadth First Search (BFS) dan Depth First Search (DFS), serta algoritma 
+            pencarian jalur terpendek seperti Dijkstra dan Bellman-Ford. Algoritma-algoritma ini 
+            menjadi fondasi dalam pengembangan aplikasi modern, termasuk sistem navigasi dan 
+            rekomendasi.
+        </p>
+    </section>
+
+    <section>
+        <h3>C. Aplikasi Graf dalam Kehidupan Nyata</h3>
+
+        <p>
+            Graf tidak hanya digunakan dalam bidang akademik, tetapi juga dalam berbagai aspek 
+            kehidupan sehari-hari. Sebagai contoh, dalam peta digital, lokasi direpresentasikan 
+            sebagai simpul, sedangkan jalan direpresentasikan sebagai sisi. Hal ini memungkinkan 
+            sistem navigasi untuk menghitung rute tercepat atau rute dengan jarak terpendek.
+        </p>
+
+        <p>
+            Dalam media sosial, pengguna dapat dianggap sebagai simpul, dan hubungan pertemanan atau 
+            pengikut sebagai sisi. Dengan analisis graf, perusahaan dapat memahami pola interaksi 
+            pengguna, mendeteksi komunitas, dan memberikan rekomendasi pertemanan atau konten yang 
+            relevan.
+        </p>
+    </section>
+
+    <section>
+        <h3>Kesimpulan</h3>
+
+        <p>
+            Graf merupakan struktur matematis yang sangat penting dalam merepresentasikan hubungan 
+            antar objek dalam berbagai sistem. Dengan memanfaatkan graf, hubungan yang kompleks dapat 
+            disederhanakan menjadi model yang terstruktur sehingga memudahkan proses analisis dan 
+            pemecahan masalah.
+        </p>
+
+        <p>
+            Oleh karena itu, pemahaman terhadap konsep graf menjadi sangat penting, terutama bagi 
+            mahasiswa dan praktisi di bidang teknologi informasi dan ilmu komputer, karena graf 
+            menjadi dasar bagi banyak algoritma dan aplikasi yang digunakan dalam kehidupan modern.
+        </p>
+        <div class="example-box">
+            <strong>Handshaking Lemma (Theorema Jabat Tangan):</strong>
+            <p>Jumlah derajat semua simpul dalam graf adalah genap, yaitu dua kali jumlah sisi.</p>
+            <div class="math-block">
+                \sum_{v \in V} d(v) = 2|E|
+            </div>
+            <p>Konsekuensi: Jumlah simpul berderajat ganjil pada setiap graf adalah genap.</p>
+        </div>
+    </div>
+
+<div class="section">
+    <h2>2. Representasi Matriks & Komputasi</h2>
+
+    <p>
+        Dalam ilmu komputer dan matematika diskrit, graf tidak hanya digambarkan secara visual,
+        tetapi juga direpresentasikan dalam bentuk struktur data agar dapat diproses oleh komputer.
+        Representasi ini sangat penting karena mempengaruhi efisiensi algoritma yang digunakan untuk
+        melakukan pencarian, penelusuran, maupun analisis terhadap graf tersebut.
+    </p>
+
+    <p>
+        Dua bentuk representasi graf yang paling umum digunakan adalah matriks ketetanggaan
+        (adjacency matrix) dan matriks bersisian (incidence matrix). Kedua metode ini memiliki
+        kelebihan dan kekurangan masing-masing, tergantung pada jumlah simpul dan jumlah sisi
+        dalam graf yang akan direpresentasikan.
+    </p>
+
+    <h3>A. Matriks Ketetanggaan (Adjacency Matrix)</h3>
+
+    <p>
+        Matriks ketetanggaan adalah representasi graf dalam bentuk matriks berukuran n × n,
+        di mana n adalah jumlah simpul dalam graf. Baris dan kolom pada matriks masing-masing
+        merepresentasikan simpul. Jika terdapat sisi yang menghubungkan simpul i dan simpul j,
+        maka elemen matriks pada posisi (i, j) bernilai 1. Jika tidak terdapat sisi, maka
+        elemen tersebut bernilai 0.
+    </p>
+
+    <p>
+        Representasi ini sangat efektif untuk graf yang memiliki banyak sisi (graf padat),
+        karena memungkinkan pengecekan hubungan antar simpul dilakukan secara langsung dalam
+        waktu konstan O(1). Namun, untuk graf yang memiliki sedikit sisi (graf jarang),
+        penggunaan matriks ketetanggaan dapat menjadi tidak efisien dalam penggunaan memori
+        karena tetap membutuhkan ruang sebesar n².
+    </p>
+
+    <div class="matrix-container">
+        <div>
+            <p><strong>Matriks Ketetanggaan (Adjacency)</strong></p>
+            <div class="matrix">
+                0 1 0 1<br>
+                1 0 1 0<br>
+                0 1 0 1<br>
+                1 0 1 0
+            </div>
+            <small>
+                Setiap baris dan kolom merepresentasikan simpul. Nilai 1 menunjukkan adanya
+                sisi antara dua simpul.
+            </small>
+        </div>
+
+        <div>
+            <p><strong>Matriks Bersisian (Incidence)</strong></p>
+            <div class="matrix">
+                1 1 0 0<br>
+                1 0 1 0<br>
+                0 0 1 1<br>
+                0 1 0 1
+            </div>
+            <small>
+                Setiap baris merepresentasikan simpul, dan setiap kolom merepresentasikan sisi.
+            </small>
+        </div>
+    </div>
+
+    <h3>B. Matriks Bersisian (Incidence Matrix)</h3>
+
+    <p>
+        Matriks bersisian merupakan cara lain untuk merepresentasikan graf, di mana matriks
+        berukuran n × m, dengan n adalah jumlah simpul dan m adalah jumlah sisi. Pada matriks ini,
+        setiap baris mewakili simpul dan setiap kolom mewakili sisi. Nilai pada matriks menunjukkan
+        apakah suatu simpul berhubungan dengan sisi tertentu.
+    </p>
+
+    <p>
+        Untuk graf tak berarah, jika simpul i terhubung dengan sisi e, maka elemen matriks
+        bernilai 1. Pada graf berarah, biasanya digunakan nilai -1 dan 1 untuk menunjukkan
+        arah masuk dan keluar dari suatu sisi. Representasi ini sering digunakan dalam analisis
+        jaringan dan teori rangkaian listrik karena mampu menunjukkan keterkaitan langsung
+        antara simpul dan sisi.
+    </p>
+
+    <h3>C. Perbandingan Efisiensi</h3>
+
+    <p>
+        Pemilihan antara matriks ketetanggaan dan matriks bersisian bergantung pada kebutuhan
+        komputasi. Matriks ketetanggaan lebih cepat untuk mengecek apakah dua simpul bertetangga,
+        sedangkan matriks bersisian lebih fleksibel dalam analisis struktur graf, terutama ketika
+        diperlukan informasi detail mengenai sisi.
+    </p>
+
+    <p>
+        Selain kedua metode tersebut, dalam praktik pemrograman sering digunakan pula representasi
+        adjacency list karena lebih hemat memori pada graf yang memiliki sedikit sisi. Namun,
+        dalam analisis matematis dan implementasi algoritma tertentu, representasi berbasis
+        matriks tetap menjadi pilihan utama.
+    </p>
+
+    <h3>D. Penerapan dalam Algoritma</h3>
+
+    <p>
+        Representasi matriks sangat berperan dalam berbagai algoritma graf, seperti algoritma
+        Floyd–Warshall untuk mencari semua pasangan jalur terpendek, serta algoritma pencarian
+        lintasan dan deteksi siklus. Dengan bentuk matriks, operasi komputasi dapat dilakukan
+        menggunakan teknik aljabar matriks, yang memudahkan implementasi dalam bahasa pemrograman.
+    </p>
+
+    <p>
+        Oleh karena itu, pemahaman mengenai representasi graf dalam bentuk matriks menjadi sangat
+        penting bagi mahasiswa informatika, karena tidak hanya berkaitan dengan teori graf,
+        tetapi juga berpengaruh langsung terhadap performa program dan efisiensi penggunaan
+        memori dalam aplikasi yang memproses data jaringan atau relasi kompleks.
+    </p>
+</div>
+
+    <div class="section">
+        <h2>3. Graf Khusus & Planaritas</h2>
+        <table>
+            <tr>
+                <th>Nama Graf</th>
+                <th>Notasi</th>
+                <th>Karakteristik</th>
+            </tr>
+            <tr>
+                <td>Graf Lengkap</td>
+                <td>K_n</td>
+                <td>Setiap simpul terhubung ke semua simpul lain.</td>
+            </tr>
+            <tr>
+                <td>Graf Lingkaran</td>
+                <td>C_n</td>
+                <td>Simpul membentuk sirkuit tunggal.</td>
+            </tr>
+            <tr>
+                <td>Graf Bipartit</td>
+                <td>K_{m,n}</td>
+                <td>V dipisah menjadi dua himpunan independen.</td>
+            </tr>
+        </table>
+
+        <div class="example-box">
+            <strong>Formula Euler (Graf Planar):</strong>
+            <p>Jika graf terhubung adalah planar (dapat digambar tanpa sisi berpotongan), maka:</p>
+            <div class="math-block">
+                n - e + f = 2
+            </div>
+            <p>Dimana: n = simpul, e = sisi, f = wilayah (faces).</p>
+        </div>
+ <p>
+        Dalam teori graf, terdapat beberapa jenis graf khusus yang sering digunakan
+        dalam analisis struktur jaringan, algoritma, dan pemodelan sistem.
+        Graf-graf ini memiliki sifat matematis yang unik dan sering muncul dalam
+        berbagai permasalahan komputasi.
+    </p>
+
+    <table>
+        <tr>
+            <th>Nama Graf</th>
+            <th>Notasi</th>
+            <th>Karakteristik</th>
+        </tr>
+        <tr>
+            <td>Graf Lengkap</td>
+            <td>K<sub>n</sub></td>
+            <td>Setiap simpul terhubung ke semua simpul lain.</td>
+        </tr>
+        <tr>
+            <td>Graf Lingkaran</td>
+            <td>C<sub>n</sub></td>
+            <td>Simpul membentuk sirkuit tunggal.</td>
+        </tr>
+        <tr>
+            <td>Graf Bipartit</td>
+            <td>K<sub>m,n</sub></td>
+            <td>V dipisah menjadi dua himpunan independen.</td>
+        </tr>
+    </table>
+
+    <h3>Penjelasan Setiap Graf</h3>
+
+    <p><strong>A. Graf Lengkap (Complete Graph)</strong></p>
+    <p>
+        Graf lengkap adalah graf di mana setiap pasangan simpul saling terhubung
+        dengan tepat satu sisi. Jumlah sisi pada graf lengkap adalah:
+    </p>
+    <div class="math-block">
+        e = n(n - 1) / 2
+    </div>
+
+    <p><strong>B. Graf Lingkaran (Cycle Graph)</strong></p>
+    <p>
+        Graf lingkaran adalah graf yang membentuk satu siklus tertutup. Setiap
+        simpul memiliki derajat 2, dan graf ini selalu planar.
+    </p>
+
+    <p><strong>C. Graf Bipartit</strong></p>
+    <p>
+        Graf bipartit adalah graf yang simpul-simpulnya dapat dibagi menjadi dua
+        kelompok sehingga tidak ada sisi yang menghubungkan simpul dalam kelompok
+        yang sama.
+    </p>
+
+    <div class="example-box">
+        <strong>Graf Bipartit Lengkap</strong>
+        <p>
+            Graf bipartit lengkap K<sub>m,n</sub> menghubungkan setiap simpul di
+            himpunan pertama ke semua simpul di himpunan kedua.
+        </p>
+    </div>
+
+    <h3>Graf Planar</h3>
+    <p>
+        Graf planar adalah graf yang dapat digambar pada bidang datar tanpa ada
+        sisi yang saling berpotongan. Konsep ini penting dalam desain rangkaian
+        elektronik, peta, dan jaringan transportasi.
+    </p>
+
+    <div class="example-box">
+        <strong>Formula Euler (Graf Planar):</strong>
+        <p>
+            Jika graf terhubung adalah planar (dapat digambar tanpa sisi berpotongan),
+            maka berlaku:
+        </p>
+
+        <div class="math-block">
+            n - e + f = 2
+        </div>
+
+        <p>Dimana:</p>
+        <ul>
+            <li>n = jumlah simpul (vertices)</li>
+            <li>e = jumlah sisi (edges)</li>
+            <li>f = jumlah wilayah (faces)</li>
+        </ul>
+    </div>
+
+    <h3>Contoh Graf Tidak Planar</h3>
+    <p>
+        Dua graf yang terkenal sebagai graf tidak planar adalah:
+    </p>
+    <ul>
+        <li>K<sub>5</sub> (graf lengkap dengan 5 simpul)</li>
+        <li>K<sub>3,3</sub> (graf bipartit lengkap 3–3)</li>
+    </ul>
+
+    <p>
+        Kedua graf ini tidak dapat digambar tanpa perpotongan sisi, sehingga
+        melanggar syarat graf planar.
+    </p>
+
+    </div>
+
+    <div class="section">
+    <h2>4. Algoritma Graf Terkenal</h2>
+
+    <p>
+        Penyelesaian berbagai masalah pada graf seperti pencarian jalur,
+        konektivitas, dan optimasi jaringan dilakukan menggunakan algoritma graf.
+        Beberapa algoritma berikut adalah yang paling sering digunakan dalam
+        ilmu komputer dan rekayasa perangkat lunak.
+    </p>
+
+    <div class="step-list">
+        <ol>
+            <li>
+                <strong>Algoritma Dijkstra</strong><br>
+                Digunakan untuk mencari lintasan terpendek dari satu simpul sumber
+                ke semua simpul lainnya pada graf berbobot dengan bobot positif.
+            </li>
+
+            <li>
+                <strong>Algoritma Kruskal & Prim</strong><br>
+                Kedua algoritma ini digunakan untuk mencari 
+                <i>Minimum Spanning Tree (MST)</i>, yaitu himpunan sisi yang
+                menghubungkan semua simpul dengan total bobot minimum.
+            </li>
+
+            <li>
+                <strong>Breadth First Search (BFS) & Depth First Search (DFS)</strong><br>
+                Digunakan untuk menelusuri graf, baik untuk pencarian, deteksi
+                siklus, maupun analisis konektivitas.
+            </li>
+        </ol>
+    </div>
+
+    <h3>A. Algoritma Dijkstra</h3>
+    <p>
+        Algoritma Dijkstra bekerja dengan memperluas jalur terpendek secara
+        bertahap dari simpul sumber menggunakan prinsip greedy.
+    </p>
+
+    <div class="example-box">
+        <strong>Langkah-langkah umum:</strong>
+        <ol>
+            <li>Inisialisasi jarak semua simpul = tak hingga, kecuali sumber = 0</li>
+            <li>Pilih simpul dengan jarak terkecil yang belum dikunjungi</li>
+            <li>Perbarui jarak tetangganya jika ditemukan jalur lebih pendek</li>
+            <li>Ulangi hingga semua simpul dikunjungi</li>
+        </ol>
+    </div>
+
+    <p><strong>Kompleksitas waktu:</strong> O((V + E) log V) menggunakan priority queue.</p>
+
+    <h3>B. Algoritma Kruskal</h3>
+    <p>
+        Kruskal membangun MST dengan memilih sisi dengan bobot terkecil secara
+        bertahap tanpa membentuk siklus.
+    </p>
+
+    <div class="example-box">
+        <strong>Langkah-langkah:</strong>
+        <ol>
+            <li>Urutkan semua sisi berdasarkan bobot</li>
+            <li>Pilih sisi terkecil yang tidak membentuk siklus</li>
+            <li>Gunakan struktur data Disjoint Set untuk mengecek siklus</li>
+        </ol>
+    </div>
+
+    <p><strong>Kompleksitas waktu:</strong> O(E log E)</p>
+
+    <h3>C. Algoritma Prim</h3>
+    <p>
+        Prim membangun MST dengan menambahkan satu simpul baru setiap langkah
+        yang memiliki sisi dengan bobot minimum terhadap pohon yang sudah terbentuk.
+    </p>
+
+    <p><strong>Kompleksitas waktu:</strong> O(E log V)</p>
+
+    <h3>D. Breadth First Search (BFS)</h3>
+    <p>
+        BFS menelusuri graf secara melebar dengan menggunakan struktur data
+        antrian (queue). Algoritma ini sering digunakan untuk mencari jarak
+        terpendek pada graf tak berbobot.
+    </p>
+
+    <div class="math-block">
+        Struktur data utama: Queue (FIFO)
+    </div>
+
+    <h3>E. Depth First Search (DFS)</h3>
+    <p>
+        DFS menelusuri graf secara mendalam menggunakan rekursi atau stack.
+        DFS sering digunakan untuk:
+    </p>
+
+    <ul>
+        <li>Deteksi siklus</li>
+        <li>Topological sorting</li>
+        <li>Menentukan komponen terhubung</li>
+    </ul>
+
+    <div class="example-box">
+        <strong>Kompleksitas BFS & DFS:</strong>
+        <p>O(V + E)</p>
+    </div>
+
+    <h3>Contoh Penerapan di Dunia Nyata</h3>
+    <ul>
+        <li>Dijkstra → Navigasi GPS dan peta digital</li>
+        <li>MST → Perancangan jaringan listrik dan jaringan komputer</li>
+        <li>BFS/DFS → Web crawler dan mesin pencari</li>
+    </ul>
+</div>
+
+    <div class="section">
+    <h2>5. Studi Kasus: Pewarnaan Graf (Graph Coloring)</h2>
+    <p>
+        Pewarnaan graf adalah salah satu masalah klasik dalam teori graf yang bertujuan untuk
+        memberikan warna pada setiap simpul (vertex) sehingga tidak ada dua simpul yang bertetangga
+        memiliki warna yang sama. Jumlah minimum warna yang diperlukan untuk mewarnai suatu graf
+        disebut sebagai <strong>bilangan kromatik</strong> dan dilambangkan dengan χ(G).
+    </p>
+
+    <h3>A. Definisi Dasar</h3>
+    <ul>
+        <li><strong>Graf (G)</strong>: Struktur yang terdiri dari simpul (V) dan sisi (E).</li>
+        <li><strong>Pewarnaan Simpul</strong>: Proses memberikan warna pada setiap simpul graf.</li>
+        <li><strong>Bilangan Kromatik χ(G)</strong>: Jumlah minimum warna yang diperlukan agar graf dapat diwarnai tanpa konflik.</li>
+    </ul>
+
+    <h3>B. Aturan Pewarnaan</h3>
+    <ol>
+        <li>Dua simpul yang dihubungkan oleh satu sisi tidak boleh memiliki warna yang sama.</li>
+        <li>Setiap simpul harus memiliki tepat satu warna.</li>
+        <li>Jumlah warna yang digunakan harus seminimal mungkin.</li>
+    </ol>
+
+    <div class="example-box">
+        <strong>Contoh Sederhana</strong>
+        <p>
+            Misalkan terdapat graf dengan 4 simpul yang saling terhubung membentuk persegi.
+            Graf tersebut dapat diwarnai hanya dengan 2 warna karena simpul yang berseberangan
+            tidak saling bertetangga.
+        </p>
+    </div>
+
+    <h3>C. Aplikasi Pewarnaan Graf</h3>
+    <div class="example-box">
+        <strong>Aplikasi: Penjadwalan Ujian</strong>
+        <p>
+            Dalam sistem penjadwalan ujian:
+        </p>
+        <ul>
+            <li><strong>Simpul</strong> = Mata Kuliah</li>
+            <li><strong>Sisi</strong> = Ada mahasiswa yang mengambil kedua mata kuliah tersebut</li>
+            <li><strong>Warna</strong> = Slot waktu ujian</li>
+        </ul>
+        <p>
+            Jika dua mata kuliah memiliki mahasiswa yang sama, maka keduanya tidak boleh dijadwalkan
+            pada waktu yang sama. Oleh karena itu, graf harus diwarnai dengan warna yang berbeda
+            untuk menghindari bentrok ujian.
+        </p>
+    </div>
+
+    <h3>D. Contoh Representasi Matriks Ketetanggaan</h3>
+    <pre>
+        A   B   C   D
+    A   0   1   1   0
+    B   1   0   1   1
+    C   1   1   0   0
+    D   0   1   0   0
+    </pre>
+
+    <p>
+        Matriks di atas menunjukkan hubungan antar mata kuliah. Nilai 1 berarti terdapat konflik
+        (mahasiswa yang sama), sehingga kedua mata kuliah harus memiliki warna berbeda.
+    </p>
+
+    <h3>E. Algoritma Pewarnaan Graf</h3>
+    <p>Beberapa algoritma yang sering digunakan untuk menyelesaikan masalah pewarnaan graf antara lain:</p>
+    <ul>
+        <li><strong>Greedy Coloring Algorithm</strong></li>
+        <li><strong>Backtracking</strong></li>
+        <li><strong>Welsh-Powell Algorithm</strong></li>
+    </ul>
+
+    <h4>Algoritma Greedy (Langkah-langkah)</h4>
+    <ol>
+        <li>Urutkan simpul berdasarkan derajatnya (opsional).</li>
+        <li>Warnai simpul pertama dengan warna pertama.</li>
+        <li>Untuk setiap simpul berikutnya, berikan warna terkecil yang tidak digunakan oleh simpul tetangganya.</li>
+    </ol>
+
+    <h3>F. Kompleksitas Masalah</h3>
+    <p>
+        Masalah pewarnaan graf termasuk dalam kategori <strong>NP-Complete</strong>, yang berarti tidak
+        ada algoritma yang diketahui dapat menyelesaikan semua kasus secara efisien dalam waktu polinomial.
+        Oleh karena itu, banyak pendekatan menggunakan heuristik atau pendekatan aproksimasi.
+    </p>
+
+    <h3>G. Aplikasi Lain Pewarnaan Graf</h3>
+    <ul>
+        <li>Penjadwalan penggunaan ruang kelas</li>
+        <li>Penjadwalan proses pada sistem operasi</li>
+        <li>Frekuensi radio dan jaringan nirkabel</li>
+        <li>Penyusunan peta (map coloring)</li>
+    </ul>
+
+    <h3>H. Contoh Kasus Nyata</h3>
+    <p>
+        Misalnya terdapat 5 mata kuliah: A, B, C, D, dan E. Mahasiswa yang sama mengambil pasangan
+        mata kuliah tertentu, sehingga terbentuk graf konflik. Dengan menggunakan algoritma greedy,
+        diperoleh bahwa diperlukan minimal 3 warna untuk menjadwalkan semua ujian tanpa bentrok.
+    </p>
+
+    <h3>Kesimpulan</h3>
+    <p>
+        Pewarnaan graf merupakan teknik penting dalam teori graf yang memiliki banyak aplikasi nyata,
+        terutama dalam penjadwalan dan alokasi sumber daya. Dengan memahami konsep bilangan kromatik
+        dan algoritma pewarnaan, kita dapat menyelesaikan berbagai masalah optimasi secara sistematis.
+    </p>
+</div>
+</div>
+</body>
+</html>

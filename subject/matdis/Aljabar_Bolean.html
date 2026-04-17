@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materi Aljabar Boolean - Modern</title>
+<style>
+    :root {
+        --bg: #f5f6fa;
+        --card: #ffffff;
+        --text: #222;
+        --muted: #666;
+        --primary: #000;
+        --radius: 14px;
+        --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    *{
+        box-sizing:border-box;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text);
+    }
+    header {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e5e5;
+        padding: 20px 30px;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+        box-shadow: var(--shadow);
+    }
+    .container {
+        max-width: 950px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    .card {
+        background: var(--card);
+        color: var(--text);
+        border-radius: var(--radius);
+        padding: 20px 25px;
+        margin-bottom: 25px;
+        box-shadow: var(--shadow);
+    }
+    h2 {
+        color: var(--primary);
+        margin-top: 0;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+    h3 {
+        color: var(--primary);
+        font-weight: 600;
+        margin-top: 18px;
+    }
+    ul {
+        margin-left: 18px;
+        line-height: 1.6;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+    th {
+        background: #efefef;
+        font-weight: 600;
+    }
+    th, td {
+        padding: 9px;
+        text-align: center;
+    }
+
+    /* QUIZ SECTION */
+    .wrap {
+        max-width: 950px;
+        margin: 40px auto 80px;
+        padding: 20px;
+    }
+
+    .wrap header {
+        background: none;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+
+    .grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 2fr 1fr;
+    }
+
+    .quiz h2 {
+        margin-bottom: 12px;
+        color: var(--primary);
+    }
+
+    button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #000;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        opacity: .85;
+    }
+
+    .explain {
+        margin-top: 8px;
+        padding: 12px;
+        border-radius: 8px;
+        display: none;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    .ok {
+        background: #e0ffe6;
+        border-left: 4px solid #27ae60;
+    }
+    .bad {
+        background: #ffe5e5;
+        border-left: 4px solid #e74c3c;
+    }
+
+</style>
+</head>
+<body>
+
+<header>Aljabar Boolean – Matematika Diskrit</header>
+
+<div class="container">
+  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
+    
+
+    <!-- 1 -->
+    <div class="card">
+        <h2>1. Pengertian Aljabar Boolean</h2>
+        <p>Aljabar Boolean adalah sistem matematika yang bekerja hanya menggunakan dua nilai logika yaitu 0 (False) dan 1 (True). Dikembangkan oleh George Boole, konsep ini menjadi dasar dari semua sistem digital dan komputer modern.</p>
+        <p>Aljabar Boolean digunakan dalam:</p>
+        <ul>
+            <li>Perancangan rangkaian digital</li>
+            <li>Pemrograman logika (struktur IF, AND, OR)</li>
+            <li>Sistem komputer dan prosesor</li>
+            <li>Sistem kecerdasan buatan</li>
+        </ul>
+    </div>
+
+    <!-- 2 -->
+    <div class="card">
+        <h2>2. Nilai Logika dan Variabel Boolean</h2>
+        <p>Dalam Boolean, setiap variabel hanya memiliki dua kemungkinan nilai:</p>
+        <table>
+            <tr><th>Nilai</th><th>Makna</th></tr>
+            <tr><td>1</td><td>Benar / True</td></tr>
+            <tr><td>0</td><td>Salah / False</td></tr>
+        </table>
+        <p>Variabel Boolean dilambangkan dengan huruf kapital seperti A, B, C.</p>
+    </div>
+
+    <!-- 3 -->
+    <div class="card">
+        <h2>3. Operator Dasar Aljabar Boolean</h2>
+
+        <h3>NOT (Komplemen)</h3>
+        <table>
+            <tr><th>A</th><th>A'</th></tr>
+            <tr><td>0</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td></tr>
+        </table>
+
+        <h3>AND (Konjungsi)</h3>
+        <table>
+            <tr><th>A</th><th>B</th><th>A AND B</th></tr>
+            <tr><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0</td><td>1</td><td>0</td></tr>
+            <tr><td>1</td><td>0</td><td>0</td></tr>
+            <tr><td>1</td><td>1</td><td>1</td></tr>
+        </table>
+
+        <h3>OR (Disjungsi)</h3>
+        <table>
+            <tr><th>A</th><th>B</th><th>A OR B</th></tr>
+            <tr><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td></tr>
+            <tr><td>1</td><td>1</td><td>1</td></tr>
+        </table>
+    </div>
+
+    <!-- 4 -->
+    <div class="card">
+        <h2>4. Operator Turunan</h2>
+        <h3>NAND (NOT AND)</h3>
+        <p>Merupakan kebalikan dari operasi AND.</p>
+
+        <h3>NOR (NOT OR)</h3>
+        <p>Merupakan kebalikan dari OR.</p>
+
+        <h3>XOR (Exclusive OR)</h3>
+        <p>Hasilnya benar jika kedua nilai berbeda.</p>
+    </div>
+
+    <!-- 5 -->
+    <div class="card">
+        <h2>5. Hukum-Hukum Dasar Aljabar Boolean</h2>
+        <ul>
+            <li><b>Identitas:</b> A + 0 = A, A · 1 = A</li>
+            <li><b>Dominasi:</b> A + 1 = 1, A · 0 = 0</li>
+            <li><b>Komutatif:</b> A + B = B + A</li>
+            <li><b>Asosiatif:</b> (A + B) + C = A + (B + C)</li>
+            <li><b>Distributif:</b> A · (B + C) = A·B + A·C</li>
+            <li><b>Komplemen:</b> A + A' = 1, A · A' = 0</li>
+        </ul>
+    </div>
+
+    <!-- 6 -->
+    <div class="card">
+        <h2>6. Hukum De Morgan</h2>
+        <p>(A + B)' = A' · B'</p>
+        <p>(A · B)' = A' + B'</p>
+    </div>
+
+    <!-- 7 -->
+    <div class="card">
+        <h2>7. Penyederhanaan Ekspresi Boolean</h2>
+        <ul>
+            <li>Hukum Aljabar Boolean</li>
+            <li>Tabel Kebenaran</li>
+            <li>Peta Karnaugh (K-Map)</li>
+        </ul>
+    </div>
+
+    <!-- 8 -->
+    <div class="card">
+        <h2>8. Penerapan Aljabar Boolean</h2>
+        <ul>
+            <li>Pemrograman komputasi</li>
+            <li>Perancangan rangkaian digital komputer</li>
+            <li>Sistem logika dalam prosesor</li>
+            <li>Database query (AND, OR, NOT)</li>
+            <li>Kecerdasan buatan</li>
+        </ul>
+    </div>
+
+</div>
+
+
+
+
+<!-- ==========================================
+            QUIZ SECTION
+=========================================== -->
+<div class="wrap">
+  <header>
+    <h2 style="color:#000;">Latihan Soal Aljabar Boolean — Matematika Diskrit</h2>
+    <div style="color:var(--muted);font-size:13px">Interaktif • Jawaban & Pembahasan</div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <div class="quiz">
+        <h2>Soal (12)</h2>
+        <div id="quiz"></div>
+        <button id="checkBtn">Periksa Jawaban</button>
+        <div id="score"></div>
+      </div>
+    </div>
+
+    <aside class="card">
+      <h2>Petunjuk</h2>
+      <ol style="color:var(--muted);line-height:1.6">
+        <li>Pilih satu jawaban untuk setiap soal.</li>
+        <li>Klik <strong>Periksa Jawaban</strong> untuk melihat kunci dan pembahasan.</li>
+        <li>Setiap pembahasan muncul per soal.</li>
+      </ol>
+    </aside>
+  </div>
+
+</div>
+
+
+<script>
+const questions = [
+  {
+    q: "1) Hukum De Morgan menyatakan bahwa (A · B)' = ...",
+    options: ["A' · B'","A' + B'","(A' + B')'","A + B"],
+    answer: "A' + B'",
+    explain: "De Morgan: komplemen dari AND menjadi OR dari komplemen."
+  },
+  {
+    q: "2) Sederhanakan A + A·B",
+    options: ["A·B","A + B","A","B"],
+    answer: "A",
+    explain: "Gunakan hukum absorpsi: A + A·B = A."
+  },
+  {
+    q: "3) Nilai dari ekspresi (A + B)·(A + B') ketika A=0 dan B=1 adalah ...",
+    options: ["0","1","A","B"],
+    answer: "0",
+    explain: "(0+1)·(0+0) = 1·0 = 0."
+  },
+  {
+    q: "4) Bentuk SOP dibangun dari ...",
+    options: ["maxterm","minterm","penjumlahan literal","tidak valid"],
+    answer: "minterm",
+    explain: "SOP adalah OR dari minterm."
+  },
+  {
+    q: "5) A XOR B bernilai 1 ketika ...",
+    options: ["A = B","A ≠ B","A = 1","B = 1"],
+    answer: "A ≠ B",
+    explain: "XOR = 1 jika input berbeda."
+  },
+  {
+    q: "6) Sederhanakan A·B + A·B' ",
+    options: ["A·(B + B')","A","B","0"],
+    answer: "A",
+    explain: "A(B+B')=A(1)=A."
+  },
+  {
+    q: "7) Hukum idempoten menyatakan ...",
+    options: ["A + A = 1","A + A = A dan A·A = A","A = A'","Tidak ada"],
+    answer: "A + A = A dan A·A = A",
+    explain: "Mengulang variabel tidak mengubah nilai."
+  },
+  {
+    q: "8) Jika F = Σm(1,3,5,7), bentuk ringkas = ...",
+    options: ["C","A·C + B·C","A + B + C","A·B·C"],
+    answer: "A·C + B·C",
+    explain: "Keempat minterm identik menghasilkan F = C(A+B)."
+  },
+  {
+    q: "9) Manakah identitas yang benar?",
+    options: ["A + 1 = A","A·0 = A","A + 0 = A","A·1 = 0"],
+    answer: "A + 0 = A",
+    explain: "Identitas penjumlahan."
+  },
+  {
+    q: "10) Sederhanakan (A + B)(A' + C)",
+    options: ["A·A' + A·C + B·A' + B·C","A·C + A'·B","(A + B·C)","A + B + C"],
+    answer: "A·C + A'·B",
+    explain: "Ekspresi minimum dua term."
+  },
+  {
+    q: "11) Komplemen dari (A + B') adalah ...",
+    options: ["A' + B","A'·B","A'·B'","A + B"],
+    answer: "A'·B",
+    explain: "De Morgan: (A + B')' = A'B."
+  },
+  {
+    q: "12) Pada K-Map, sel dapat digabung jika ...",
+    options: ["nilai output sama","nilai input sama","harus 1 dan 0","tidak bisa"],
+    answer: "nilai output sama",
+    explain: "Sel bersebelahan bernilai 1 dapat disederhanakan."
+  }
+];
+
+
+const quizDiv = document.getElementById('quiz');
+
+questions.forEach((item, idx) => {
+  const box = document.createElement('div');
+  box.className = 'question';
+  box.id = 'q' + idx;
+
+  const opts = item.options.map((o,i) =>
+    `<li><label><input type="radio" name="q${idx}" value="${escapeHtml(o)}"> <strong>${String.fromCharCode(65+i)}.</strong> ${escapeHtml(o)}</label></li>`
+  ).join('');
+
+  box.innerHTML = `
+    <div style="font-weight:600;margin-bottom:8px">${escapeHtml(item.q)}</div>
+    <ul class="options">${opts}</ul>
+    <div class="explain" id="exp${idx}"></div>
+  `;
+  quizDiv.appendChild(box);
+});
+
+function escapeHtml(s){
+  return String(s)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'","&#39;");
+}
+
+document.getElementById('checkBtn').addEventListener('click', () => {
+  let score = 0;
+
+  questions.forEach((item, idx) => {
+    const sel = document.querySelector(`input[name=q${idx}]:checked`);
+    const exp = document.getElementById('exp' + idx);
+
+    if (sel && sel.value === item.answer) {
+      score++;
+      exp.className = 'explain ok';
+      exp.style.display = 'block';
+      exp.innerHTML = `<strong>Benar.</strong> ${escapeHtml(item.explain)}`;
+    } else {
+      const given = sel ? sel.value : '<i>tidak menjawab</i>';
+      exp.className = 'explain bad';
+      exp.style.display = 'block';
+      exp.innerHTML =
+        `<strong>Salah.</strong> Jawaban benar: <b>${escapeHtml(item.answer)}</b>. 
+         Pembahasan: ${escapeHtml(item.explain)}
+         <div style="margin-top:6px;color:var(--muted)">Jawaban Anda: ${given}</div>`;
+    }
+  });
+
+  document.getElementById('score').innerHTML = `
+    <div style="
+      margin-top:12px;
+      padding:12px;
+      border-radius:8px;
+      background:#000;
+      color:#fff;
+      font-weight:700;
+    ">
+      Skor Anda: ${score} / ${questions.length}
+    </div>
+  `;
+});
+</script>
+
+</body>
+</html>

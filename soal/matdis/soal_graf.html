@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kuis Matematika Diskrit: Teori Graf</title>
+    <style>
+        :root {
+            --primary: #6366f1; 
+            --primary-dark: #4338ca;
+            --secondary: #a855f7; 
+            --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #1e1b4b; 
+            --card-bg: #ffffff;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .container { width: 100%; max-width: 500px; padding: 15px; }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px; border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
+            text-align: center;
+            border: 1px solid #e0e7ff;
+        }
+
+        h2 { color: var(--primary-dark); margin-top: 0; font-size: 24px; font-weight: 800; }
+
+        button {
+            font-family: inherit;
+            display: block; width: 100%; padding: 16px;
+            margin: 12px 0; font-size: 16px; font-weight: bold;
+            color: white; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            filter: brightness(1.1);
+        }
+
+        #timer { 
+            background: var(--text-main); 
+            color: white; 
+            padding: 6px 16px; 
+            border-radius: 50px; 
+            font-size: 14px; 
+            margin-bottom: 20px; 
+            display: inline-block; 
+        }
+
+        .progress { height: 10px; background: #eef2ff; border-radius: 10px; overflow: hidden; margin-bottom: 25px; }
+        .progress-bar { height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); width: 0%; transition: 0.4s ease; }
+
+        .option {
+            text-align: left; margin: 12px 0; padding: 16px;
+            border-radius: 12px; background: #ffffff; border: 2px solid #e2e8f0;
+            cursor: pointer; transition: 0.2s; font-weight: 500;
+        }
+        
+        .option:hover { border-color: var(--primary); background: #f8faff; }
+        .correct { background: var(--success) !important; color: white; border-color: var(--success) !important; }
+        .wrong { background: var(--danger) !important; color: white; border-color: var(--danger) !important; }
+        
+        .explanation {
+            margin-top: 15px; text-align: left; font-size: 14px; padding: 15px;
+            background: #f5f3ff; border-left: 4px solid var(--secondary); border-radius: 8px;
+            color: #4338ca; white-space: pre-line;
+        }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
+            Kembali ke Materi
+        </button>
+
+<div class="container">
+    <div id="startScreen" class="card">
+        <h2>Graf (Graph) Quiz</h2>
+        <p style="color: #64748b; font-size: 15px; line-height: 1.6;">
+            Uji pemahamanmu tentang Teori Graf dalam Matematika Diskrit. 
+            Mencakup Derajat, Graf Sederhana, Sirkuit Euler, dan Teorema Jabat Tangan.
+        </p>
+        
+        <button onclick="startQuiz('easy')">Easy</button>
+        <button onclick="startQuiz('normal')" style="background: var(--primary)">Medium</button>
+        <button onclick="startQuiz('hard')" style="background: var(--primary-dark)">Hard</button>
+
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; text-align: left; font-size: 13px; border: 1px dashed #cbd5e1; margin-top: 10px;">
+            <strong>Informasi Sesi:</strong>
+            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
+                <li>30 Pertanyaan Variatif</li>
+                <li>Durasi: 110 Menit</li>
+                <li>Materi: Definisi, Derajat, Isomorfik, & Lintasan</li>
+            </ul>
+        </div>
+        <div id="lastScore" style="margin-top:20px; font-weight:bold; font-size: 14px; color: var(--secondary);"></div>
+    </div>
+
+    <div id="quizScreen" class="card hidden">
+        <div id="timer">110:00</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <h3 id="questionTitle" style="font-size: 18px; line-height: 1.4; margin-bottom: 20px;"></h3>
+        
+        <div id="options"></div>
+        <div class="explanation hidden" id="explanation"></div>
+        
+        <div style="margin-top: 25px; display: flex; gap: 12px;">
+            <button id="nextBtn" onclick="nextQuestion()" style="flex: 2; margin: 0;">Lanjutkan</button>
+            <button onclick="goHome()" style="flex: 1; background: #f1f5f9; color: #64748b; margin: 0; font-size: 14px;">Batal</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="card hidden">
+        <h2>Skor Akhir</h2>
+        <div id="scoreDisplay" style="font-size: 80px; font-weight: 900; color: var(--primary); margin: 10px 0;">0</div>
+        <p id="resultText" style="color: #64748b;"></p>
+        <button onclick="goHome()">Kembali ke Menu</button>
+    </div>
+</div>
+
+<script>
+let current = 0;
+let score = 0;
+let questions = [];
+let selected = null;
+let timer;
+let timeLeft = 6600;
+
+function generateQuestions(level) {
+    let qArr = [];
+    for (let i = 0; i < 30; i++) {
+        if (level === 'easy') {
+            const pool = [
+                {
+                    q: "Apa yang dimaksud dengan Graf Sederhana (Simple Graph)?",
+                    o: ["Graf yang tidak memiliki gelung atau sisi ganda", "Graf yang memiliki minimal satu sirkuit", "Graf yang semua simpulnya terhubung ke satu titik", "Graf yang memiliki sisi berarah"],
+                    a: "Graf yang tidak memiliki gelung atau sisi ganda",
+                    e: "Graf sederhana adalah graf yang tidak mengandung gelang (loop) maupun sisi ganda (multiple edges)."
+                },
+                {
+                    q: "Berapakah jumlah simpul pada graf lengkap K4?",
+                    o: ["4", "6", "3", "8"],
+                    a: "4",
+                    e: "Graf lengkap Kn adalah graf sederhana yang setiap simpulnya terhubung ke n-1 simpul lainnya. Jadi K4 memiliki 4 simpul."
+                },
+                {
+                    q: "Simpul yang tidak memiliki sisi yang bersisian dengannya disebut...",
+                    o: ["Simpul Terpencil (Isolated Vertex)", "Simpul Anting (Pendant Vertex)", "Akar", "Daun"],
+                    a: "Simpul Terpencil (Isolated Vertex)",
+                    e: "Simpul terpencil adalah simpul dengan derajat nol."
+                }
+            ];
+            qArr.push(pool[Math.floor(Math.random() * pool.length)]);
+        } else if (level === 'normal') {
+            let n = Math.floor(Math.random() * 6) + 5; // 5-10
+            let sumDeg = n * 2;
+            qArr.push({
+                q: `Jika sebuah graf memiliki total jumlah derajat seluruh simpul sebesar ${sumDeg}, berapakah jumlah sisinya?`,
+                o: [n, sumDeg, n * 2, Math.floor(n/2)],
+                a: n,
+                e: `Berdasarkan Lemma Jabat Tangan: Jumlah derajat = 2 x Jumlah Sisi (E). \nJadi, E = ${sumDeg} / 2 = ${n}.`
+            });
+        } else {
+            let v = Math.floor(Math.random() * 5) + 4; // 4-8
+            let maxEdges = (v * (v - 1)) / 2;
+            qArr.push({
+                q: `Berapakah jumlah sisi maksimal pada graf sederhana (graf lengkap) dengan ${v} buah simpul?`,
+                o: [maxEdges, v, v-1, maxEdges + 2],
+                a: maxEdges,
+                e: `Rumus sisi pada graf lengkap Kn adalah n(n-1)/2. \nUntuk n=${v}, maka ${v}(${v}-1)/2 = ${maxEdges}.`
+            });
+        }
+    }
+    return qArr;
+}
+
+function startQuiz(level){
+    questions = generateQuestions(level);
+    current = 0; score = 0; selected = null;
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+    showQuestion();
+    startTimer();
+}
+
+function showQuestion(){
+    let q = questions[current];
+    document.getElementById("questionTitle").innerText = `${current + 1}. ${q.q}`;
+    
+    let optHTML = "";
+    let shuffledOptions = [...q.o].sort(() => Math.random() - 0.5);
+    shuffledOptions.forEach(opt => {
+        optHTML += `<div class='option' onclick='check("${opt}", this)'>${opt}</div>`;
+    });
+    
+    document.getElementById("options").innerHTML = optHTML;
+    document.getElementById("explanation").classList.add("hidden");
+    updateProgress();
+}
+
+function check(valChosen, el){
+    if(selected !== null) return;
+    selected = valChosen;
+    let q = questions[current];
+
+    if(valChosen == q.a) {
+        score++;
+        el.classList.add('correct');
+    } else {
+        el.classList.add('wrong');
+        document.querySelectorAll('.option').forEach(opt => {
+            if(opt.innerText == q.a) opt.classList.add('correct');
+        });
+    }
+    document.getElementById("explanation").innerText = "Penjelasan:\n" + q.e;
+    document.getElementById("explanation").classList.remove("hidden");
+}
+
+function nextQuestion(){
+    if(selected === null) { alert("Silakan pilih jawaban!"); return; }
+    current++;
+    selected = null;
+    if(current < questions.length) showQuestion();
+    else endQuiz();
+}
+
+function updateProgress(){
+    document.getElementById('progressBar').style.width = (current / 30 * 100) + '%';
+}
+
+function startTimer(){
+    if(timer) clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60);
+        let s = timeLeft % 60;
+        document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft <= 0) endQuiz();
+    }, 1000);
+}
+
+function endQuiz(){
+    clearInterval(timer);
+    document.getElementById('quizScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    document.getElementById('scoreDisplay').innerText = score;
+    document.getElementById('resultText').innerText = `Anda menjawab benar ${score} dari 30 soal materi Graf.`;
+    localStorage.setItem("score_graf_v1", score);
+}
+
+function goHome(){ location.reload(); }
+
+window.onload = function(){
+    let last = localStorage.getItem("score_graf_v1");
+    if(last) document.getElementById("lastScore").innerText = "Skor Terakhir: " + last + "/30";
+}
+</script>
+</body>
+</html>

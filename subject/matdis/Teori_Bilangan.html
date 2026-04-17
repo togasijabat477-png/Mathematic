@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Teori Bilangan – Matematika Diskrit</title>
+<style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #ffffff;
+        color: #333;
+    }
+
+    header {
+        background: #ffffff;
+        padding: 20px;
+        color: #000000;
+        text-align: center;
+        font-size: 26px;
+        font-weight: bold;
+        border-bottom: 2px solid #eee;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 10px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #000000;
+        font-size: 21px;
+    }
+
+    .option {
+        margin-bottom: 8px;
+    }
+
+    button {
+        margin-top: 18px;
+        padding: 12px 18px;
+        background: #003bb5;
+        border: none;
+        border-radius: 7px;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #003bb5;
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e8f0ff;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .explanation {
+        margin-top: 10px;
+        background: #f8f8f8;
+        padding: 12px;
+        border-left: 4px solid #000000;
+        border-radius: 6px;
+    }
+</style>
+</head>
+<body>
+
+<header>Teori Bilangan – Matematika Diskrit</header>
+
+<div class="container">
+
+    <button onclick="window.location.href='../../index.html?page=materi'">
+  ← Kembali ke Materi
+</button>
+
+    <div class="card">
+        <h2>1. Bilangan Bulat</h2>
+        <p>
+            Bilangan Bulat adalah himpunan:
+            Z = {...,-3,-2,-1,0,1,2,3,...}
+        </p>
+        <section>
+    <h4>Bilangan Bulat (Integers)</h4>
+    <p>Bilangan bulat adalah himpunan angka yang terdiri dari bilangan bulat negatif, nol, dan bilangan bulat positif.</p>
+    <pre>Z = { ..., -3, -2, -1, 0, 1, 2, 3, ... }</pre>
+
+    <h3>Klasifikasi</h3>
+    <ul>
+        <li>Bilangan bulat positif</li>
+        <li>Bilangan bulat negatif</li>
+        <li>Nol (0) bersifat netral</li>
+    </ul>
+
+    <h3>Operasi</h3>
+    <ul>
+        <li>Penjumlahan (tertutup)</li>
+        <li>Pengurangan (tertutup)</li>
+        <li>Perkalian (tertutup)</li>
+        <li>Pembagian (tidak selalu tertutup)</li>
+    </ul>
+
+    <h3>Sifat Bilangan Bulat</h3>
+    <ul>
+        <li>Komutatif</li>
+        <li>Asosiatif</li>
+        <li>Identitas</li>
+        <li>Invers penjumlahan</li>
+    </ul>
+
+</section>
+
+    </div>
+
+    <div class="card">
+        <h2>2. Pembagian Euclid</h2>
+        <p>
+            Untuk a dan b (b ≠ 0), terdapat q dan r sehingga:
+            a = bq + r, 0 ≤ r < b.
+        </p>
+        <section>
+    <h2>Pembagian Euclid</h2>
+
+    <p>Pembagian Euclid adalah cara membagi dua bilangan bulat a dan b dengan b ≠ 0 sedemikian sehingga diperoleh:</p>
+    <pre>a = bq + r,   dengan   0 ≤ r &lt; |b|</pre>
+
+    <h3>Contoh</h3>
+    <ul>
+        <li>25 = 4 × 6 + 1 → q = 6, r = 1</li>
+        <li>-15 = 4 × (-4) + 1 → q = -4, r = 1</li>
+        <li>83 = 6 × 13 + 5 → q = 13, r = 5</li>
+    </ul>
+
+    <h3>Hubungan dengan FPB</h3>
+    <ul>
+        <li>119 = 34 × 3 + 17</li>
+        <li>34  = 17 × 2 + 0</li>
+        <li>FPB = 17</li>
+    </ul>
+</section>
+
+    </div>
+
+    <div class="card">
+        <h2>3. Faktor dan Kelipatan</h2>
+        <p>
+            Faktor adalah pembagi suatu bilangan tanpa sisa.  
+            Kelipatan adalah hasil kali n × k.
+        </p>
+        <section>
+    <h2>Faktor dan Kelipatan</h2>
+
+    <h3>Pengertian Faktor</h3>
+    <p>Faktor adalah bilangan yang dapat membagi sebuah bilangan secara tepat tanpa sisa.</p>
+    <p>Contoh: Faktor dari 12 adalah {1,2,3,4,6,12}.</p>
+
+    <h3>Pengertian Kelipatan</h3>
+    <p>Kelipatan suatu bilangan adalah hasil perkalian bilangan tersebut dengan bilangan bulat positif.</p>
+    <p>Contoh: Kelipatan 5 adalah 5,10,15,20,...</p>
+
+    <h3>KPK dan FPB</h3>
+    <ul>
+        <li>KPK adalah kelipatan persekutuan terkecil.</li>
+        <li>FPB adalah faktor persekutuan terbesar.</li>
+    </ul>
+</section>
+
+    </div>
+
+    <div class="card">
+        <h2>4. Bilangan Prima</h2>
+        <p>
+            Bilangan yang hanya memiliki faktor 1 dan dirinya sendiri.
+        </p>
+        <section>
+    <h2>Bilangan Prima</h2>
+    <p>Bilangan prima adalah bilangan bulat positif yang memiliki tepat dua faktor, yaitu 1 dan dirinya sendiri.</p>
+    <p>Contoh: 2, 3, 5, 7, 11, dan seterusnya.</p>
+
+    <h3>Ciri Bilangan Prima</h3>
+    <ul>
+        <li>Bilangan prima terkecil adalah 2, dan merupakan satu-satunya bilangan prima genap.</li>
+        <li>Bukan prima jika memiliki lebih dari dua faktor.</li>
+        <li>Bilangan 1 bukan prima dan bukan komposit.</li>
+    </ul>
+
+    <h3>Sifat Bilangan Prima</h3>
+    <ul>
+        <li>Setiap bilangan bulat ≥ 2 dapat difaktorkan menjadi perkalian bilangan prima (Teorema Dasar Aritmetika).</li>
+        <li>Bilangan prima jumlahnya tidak berhingga.</li>
+        <li>Bilangan prima > 3 tidak habis dibagi 2 atau 3.</li>
+    </ul>
+
+    <h3>Peran dalam Kriptografi</h3>
+    <p>Bilangan prima menjadi dasar bagi enkripsi modern seperti RSA karena sulitnya memfaktorkan bilangan besar.</p>
+</section>
+
+    </div>
+
+    <div class="card">
+        <h2>5. Faktorisasi Prima</h2>
+        <p>
+            Setiap bilangan bulat dapat dipecah menjadi perkalian faktor-faktor prima.
+        </p>
+    <h2>Faktorisasi Prima</h2>
+    <p>
+        Faktorisasi prima adalah proses memecah suatu bilangan bulat menjadi hasil perkalian 
+        bilangan-bilangan prima. Setiap bilangan bulat positif lebih besar dari 1 dapat dituliskan 
+        sebagai perkalian faktor prima secara unik. Hal ini disebut 
+        <b>Teorema Dasar Aritmetika</b>.
+    </p>
+
+    <h2>Bilangan Prima</h2>
+    <p>
+        Bilangan prima adalah bilangan yang hanya memiliki dua faktor, yaitu 1 dan dirinya sendiri. 
+        Contoh: 2, 3, 5, 7, 11, 13, dan seterusnya.
+    </p>
+
+    <h2>Tujuan Faktorisasi Prima</h2>
+    <ul>
+        <li>Menentukan FPB (Faktor Persekutuan Terbesar)</li>
+        <li>Menentukan KPK (Kelipatan Persekutuan Terkecil)</li>
+        <li>Digunakan dalam teori bilangan</li>
+        <li>Digunakan dalam kriptografi modern</li>
+    </ul>
+    <h2>Metode Faktorisasi Prima</h2>
+    <h3>1. Metode Pembagian Bertahap</h3>
+    <p>Bilangan dibagi terus dengan bilangan prima terkecil hingga mencapai 1.</p>
+    <pre>
+60 ÷ 2 = 30
+30 ÷ 2 = 15
+15 ÷ 3 = 5
+5 ÷ 5 = 1
+    </pre>
+    <p>Maka:</p>
+    <pre>
+60 = 2 × 2 × 3 × 5
+    </pre>
+
+    <h3>2. Metode Pohon Faktor</h3>
+    <p>
+        Bilangan diuraikan dalam bentuk percabangan hingga semua cabang bernilai bilangan prima.
+    </p>
+
+    <h2>Contoh Faktorisasi</h2>
+    <pre>
+36 = 2 × 2 × 3 × 3
+100 = 2 × 2 × 5 × 5
+90 = 2 × 3 × 3 × 5
+    </pre>
+
+    <h2>Notasi Eksponen</h2>
+    <pre>
+36 = 2² × 3²
+100 = 2² × 5²
+90 = 2 × 3² × 5
+    </pre>
+
+
+    <h2>Teorema Dasar Aritmetika</h2>
+    <p>
+        Setiap bilangan bulat positif dapat dituliskan sebagai hasil perkalian faktor-faktor 
+        prima secara unik. Misalnya:
+    </p>
+    <pre>
+84 = 2² × 3 × 7
+    </pre>
+    <h2>Aplikasi Faktorisasi Prima</h2>
+    <ul>
+        <li>Menentukan FPB dan KPK</li>
+        <li>Aritmetika modular</li>
+        <li>Teori kongruensi</li>
+        <li>Dasar sistem keamanan enkripsi RSA</li>
+    </ul>
+    <h2>Kesimpulan</h2>
+    <p>
+        Faktorisasi prima merupakan konsep fundamental yang memecah bilangan menjadi faktor prima 
+        secara unik, dan menjadi dasar dari banyak konsep penting dalam teori bilangan dan 
+        komputasi modern.
+    </p>
+    </div>
+
+    <div class="card">
+        <h2>6. FPB dan KPK</h2>
+        <p>
+            FPB adalah faktor terbesar yang sama.  
+            KPK adalah kelipatan terkecil yang sama.
+        </p>
+    <h2>FPB (Faktor Persekutuan Terbesar)</h2>
+    <p>
+        FPB adalah bilangan bulat terbesar yang dapat membagi habis dua bilangan atau lebih. 
+        FPB dapat dicari menggunakan beberapa metode, seperti:
+    </p>
+    <ul>
+        <li><b>Faktorisasi Prima</b> – membagi bilangan menjadi faktor-faktor prima lalu mengambil faktor yang sama dengan pangkat terendah.</li>
+        <li><b>Algoritma Euclid</b> – memanfaatkan pembagian berulang hingga sisa 0.</li>
+        <li><b>Tabel Pembagian</b> – membagi bilangan bersama dengan bilangan prima yang sama.</li>
+    </ul>
+    <p>
+        FPB digunakan dalam penyederhanaan pecahan, pengukuran bersama, pengurangan rasio, 
+        serta berbagai perhitungan dalam teori bilangan.
+    </p>
+
+    <h2>KPK (Kelipatan Persekutuan Terkecil)</h2>
+    <p>
+        KPK adalah bilangan bulat positif terkecil yang merupakan kelipatan dari dua bilangan atau lebih. 
+        KPK dapat ditentukan dengan:
+    </p>
+    <ul>
+        <li><b>Faktorisasi Prima</b> – mengambil semua faktor prima dengan pangkat tertinggi dari masing-masing bilangan.</li>
+        <li><b>Tabel Pembagian Kelipatan</b> – membagi bilangan bersama hingga semua habis.</li>
+    </ul>
+    <p>
+        KPK banyak digunakan pada penjadwalan, perulangan kejadian periodik, perhitungan siklus, 
+        dan penyelesaian masalah yang melibatkan kelipatan bersama.
+    </p>
+
+    <h2>Hubungan FPB dan KPK</h2>
+    <p>
+        FPB dan KPK memiliki hubungan matematis penting:
+    </p>
+    <div class="answer-box">
+        FPB(a, b) × KPK(a, b) = a × b
+    </div>
+    <p>
+        Hubungan ini hanya berlaku untuk dua bilangan dan sering digunakan untuk memeriksa kesesuaian perhitungan atau mencari salah satunya jika yang lain sudah diketahui.
+    </p>
+
+    </div>
+
+    <div class="card">
+        <h2>7. Aritmetika Modular</h2>
+        <p>
+            a ≡ b (mod n) jika a − b = kn untuk k bilangan bulat.
+        </p>
+    <h2>Aritmetika Modular</h2>
+    <p>
+        Aritmetika modular adalah sistem aritmetika yang bekerja berdasarkan operasi 
+        sisa pembagian. Pada konsep ini, dua bilangan dinyatakan <b>kongruen</b> 
+        jika keduanya memiliki sisa pembagian yang sama terhadap suatu modulus <i>n</i>.
+    </p>
+
+        a ≡ b (mod n)
+
+    <p>
+        Pernyataan di atas berarti bahwa selisih <b>(a − b)</b> habis dibagi oleh <b>n</b>, 
+        atau dapat ditulis:
+    </p>
+
+        n | (a − b)
+
+
+    <p>
+        Operasi dasar penjumlahan, pengurangan, dan perkalian dalam aritmetika biasa 
+        tetap berlaku dalam sistem modular selama dilakukan terhadap sisa pembagian.
+    </p>
+
+    <ul>
+        <li><b>Penjumlahan:</b> (a + b) mod n</li>
+        <li><b>Pengurangan:</b> (a − b) mod n</li>
+        <li><b>Perkalian:</b> (a × b) mod n</li>
+    </ul>
+
+    <p>
+        Aritmetika modular banyak digunakan dalam berbagai bidang modern seperti 
+        <b>kriptografi, fungsi hash, keamanan digital, teori bilangan, dan algoritma komputer</b>.
+        Sistem ini efektif karena membatasi ruang bilangan menjadi nilai yang tetap melalui modulus.
+    </p>
+
+    </div>
+
+    <div class="card">
+        <h2>8. Kongruensi Linear</h2>
+        <p>
+            Bentuk umum: ax ≡ b (mod n).  
+            Dapat diselesaikan menggunakan sifat modular.
+        </p>
+    <h2>Kongruensi Linear</h2>
+    <p>
+        Kongruensi linear adalah persamaan dalam aritmetika modular yang berbentuk:
+    </p>
+
+    <div class="answer-box">
+        ax ≡ b (mod n)
+    </div>
+
+    <p>
+        Tujuannya adalah mencari nilai <b>x</b> yang memenuhi persamaan tersebut pada ruang bilangan 
+        yang dibatasi oleh modulus <b>n</b>. Suatu kongruensi linear memiliki solusi jika dan hanya jika:
+    </p>
+
+    <div class="answer-box">
+        gcd(a, n) | b
+    </div>
+
+    <p>
+        Artinya, solusi hanya ada jika <b>FPB(a, n)</b> membagi habis <b>b</b>. 
+        Jika FPB = d, maka persamaan kongruensi memiliki <b>d solusi berbeda</b> dalam modul <b>n</b>.
+    </p>
+
+    <p>
+        Penyelesaian biasanya dilakukan dengan mengubah kongruensi menjadi bentuk persamaan linear:
+    </p>
+
+    <div class="answer-box">
+        ax − b = k × n
+    </div>
+
+    <p>
+        kemudian menyelesaikannya menggunakan teknik seperti:
+    </p>
+
+    <ul>
+        <li>Algoritma Euclid</li>
+        <li>Reduksi koefisien secara modular</li>
+        <li>Invers modulo (jika gcd(a,n) = 1)</li>
+    </ul>
+
+    <p>
+        Kongruensi linear memiliki peranan penting dalam <b>kriptografi modern, teori bilangan komputasional, 
+        dan penyelesaian persamaan modular pada sistem sandi dan algoritma matematis</b>.
+    </p>
+
+    </div>
+
+
+    <div class="card">
+        <h2>Latihan Soal (Pilihan Ganda)</h2>
+
+        <div id="quiz">
+            
+            <p>1. Hasil pembagian Euclid 43 : 6 adalah?</p>
+            <label class="option"><input type="radio" name="q1" value="a"> 43 = 6×7 + 1</label><br>
+            <label class="option"><input type="radio" name="q1" value="b"> 43 = 6×6 + 7</label><br>
+            <label class="option"><input type="radio" name="q1" value="c"> 43 = 6×8 + 2</label>
+
+            <p>2. Faktor dari 28 adalah?</p>
+            <label class="option"><input type="radio" name="q2" value="a"> 1,2,4,7,14,28</label><br>
+            <label class="option"><input type="radio" name="q2" value="b"> 2,3,6,9</label><br>
+            <label class="option"><input type="radio" name="q2" value="c"> 1,3,9,27</label>
+
+            <p>3. Bilangan prima berikut adalah?</p>
+            <label class="option"><input type="radio" name="q3" value="a"> 33</label><br>
+            <label class="option"><input type="radio" name="q3" value="b"> 29</label><br>
+            <label class="option"><input type="radio" name="q3" value="c"> 51</label>
+
+            <p>4. FPB dari 20 dan 32 adalah?</p>
+            <label class="option"><input type="radio" name="q4" value="a"> 2</label><br>
+            <label class="option"><input type="radio" name="q4" value="b"> 4</label><br>
+            <label class="option"><input type="radio" name="q4" value="c"> 8</label>
+
+            <p>5. KPK dari 6 dan 15 adalah?</p>
+            <label class="option"><input type="radio" name="q5" value="a"> 30</label><br>
+            <label class="option"><input type="radio" name="q5" value="b"> 60</label><br>
+            <label class="option"><input type="radio" name="q5" value="c"> 90</label>
+
+            <p>6. 25 mod 6 = ?</p>
+            <label class="option"><input type="radio" name="q6" value="a"> 1</label><br>
+            <label class="option"><input type="radio" name="q6" value="b"> 3</label><br>
+            <label class="option"><input type="radio" name="q6" value="c"> 5</label>
+
+            <p>7. 19 ≡ 3 (mod 4) karena?</p>
+            <label class="option"><input type="radio" name="q7" value="a"> 19 − 3 = 12</label><br>
+            <label class="option"><input type="radio" name="q7" value="b"> 19 − 3 = 16</label><br>
+            <label class="option"><input type="radio" name="q7" value="c"> 19 × 3 = 57</label>
+
+            <p>8. Faktorisasi prima dari 84 adalah?</p>
+            <label class="option"><input type="radio" name="q8" value="a"> 2² × 3 × 7</label><br>
+            <label class="option"><input type="radio" name="q8" value="b"> 3² × 5</label><br>
+            <label class="option"><input type="radio" name="q8" value="c"> 2³ × 11</label>
+
+            <p>9. Syarat suatu bilangan memiliki invers modulo n adalah?</p>
+            <label class="option"><input type="radio" name="q9" value="a"> gcd(a,n) = 1</label><br>
+            <label class="option"><input type="radio" name="q9" value="b"> a dan n harus genap</label><br>
+            <label class="option"><input type="radio" name="q9" value="c"> n harus prima</label>
+
+            <p>10. Bilangan 45 termasuk?</p>
+            <label class="option"><input type="radio" name="q10" value="a"> Bilangan prima</label><br>
+            <label class="option"><input type="radio" name="q10" value="b"> Bilangan komposit</label><br>
+            <label class="option"><input type="radio" name="q10" value="c"> Bilangan negatif</label>
+
+        </div>
+
+        <button onclick="checkAnswer()">Kumpulkan Jawaban</button>
+
+        <div id="result"></div>
+        <div id="explanations"></div>
+    </div>
+
+</div>
+
+<script>
+function checkAnswer(){
+
+    let correct = {
+        q1:"a", q2:"a", q3:"b", q4:"c", q5:"a",
+        q6:"a", q7:"b", q8:"a", q9:"a", q10:"b"
+    };
+
+    let score = 0;
+    let explanations = "";
+
+    for(let i=1;i<=10;i++){
+        let user = document.querySelector(`input[name=q${i}]:checked`);
+        if(user && user.value === correct[`q${i}`]) score++;
+    }
+
+    explanations += `
+    <div class="explanation"><b>1.</b> 43 = 6×7 + 1</div>
+    <div class="explanation"><b>2.</b> Faktor 28 = 1,2,4,7,14,28</div>
+    <div class="explanation"><b>3.</b> 29 adalah bilangan prima</div>
+    <div class="explanation"><b>4.</b> FPB(20,32)=8</div>
+    <div class="explanation"><b>5.</b> KPK(6,15)=30</div>
+    <div class="explanation"><b>6.</b> 25 mod 6 = 1</div>
+    <div class="explanation"><b>7.</b> 19 − 3 = 16 = 4×4</div>
+    <div class="explanation"><b>8.</b> 84 = 2² × 3 × 7</div>
+    <div class="explanation"><b>9.</b> gcd(a,n)=1 → memiliki invers</div>
+    <div class="explanation"><b>10.</b> 45 adalah bilangan komposit</div>
+    `;
+
+    document.getElementById("result").innerHTML =
+        `<div class="result">Skor Anda : ${score} / 10</div>`;
+
+    document.getElementById("explanations").innerHTML = explanations;
+}
+</script>
+
+</body>
+</html>

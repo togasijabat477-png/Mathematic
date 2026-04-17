@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz Aljabar Boolean</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Times New Roman", Times, serif;
+            background: var(--bg-gradient);
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(15px, 5vw, 30px);
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: 100%;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1e3a8a;
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+        }
+
+        p {
+            color: #475569;
+            line-height: 1.6;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+
+        button {
+            display: block;
+            width: 100%; 
+            padding: 14px 20px;
+            margin: 10px 0; 
+            font-family: inherit;
+            font-size: clamp(16px, 4vw, 18px); 
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            word-wrap: break-word;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        #timer {
+            font-weight: bold;
+            font-family: monospace;
+            background: #1e293b;
+            color: #fff;
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .progress {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        #question {
+            font-size: clamp(1rem, 4.5vw, 1.2rem);
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .option {
+            text-align: left;
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: clamp(14px, 4vw, 16px);
+            line-height: 1.3;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .correct { background: var(--success) !important; border-color: var(--success) !important; color: white; }
+        .wrong { background: var(--danger) !important; border-color: var(--danger) !important; color: white; }
+
+        .explanation {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 14px;
+            background: #fffbeb;
+            padding: 15px;
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            color: #92400e;
+            white-space: pre-line;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .hidden { display: none; }
+        #score-display { font-size: clamp(60px, 15vw, 80px); font-weight: 800; color: var(--primary); margin: 10px 0; }
+        .nav-buttons { margin-top: 20px; display: flex; gap: 10px; }
+        .nav-buttons button { margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
+            Kembali ke Materi
+        </button>
+
+         <div class="wrap">
+     <div class="card">
+
+<div class="container">
+    <div id="startScreen" class="card">
+        <h2>Soal & Jawaban Aljabar Boolean</h2>
+        <p>Aljabar Boolean merupakan salah satu konsep penting dalam matematika yang digunakan untuk memahami operasi logika. 
+            Dalam Aljabar Boolean, variabel yang digunakan hanya memiliki dua nilai, yaitu 0 dan 1, yang biasanya merepresentasikan kondisi salah (false) dan benar (true).</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="startQuiz('easy')">Easy</button>
+            <button onclick="startQuiz('medium')" style="background: linear-gradient(135deg, #4f46e5, #4338ca);">Medium</button>
+            <button onclick="startQuiz('hard')" style="background: linear-gradient(135deg, #3730a3, #1e1b4b);">Hard</button>
+        </div>
+
+        <div style="background: #f1f5f9; padding: 12px; border-radius: 12px; text-align: left; font-size: 12px;">
+            <strong>Detail Ujian:</strong>
+            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
+                <li>30 Soal Aljabar Boolean</li>
+                <li>Waktu: 2 Jam</li>
+                <li>Pembahasan lengkap setiap nomor</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="quizScreen" class="card hidden">
+        <div id="timer">Waktu: 120:00</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        
+        <div id="question"></div>
+        <div id="options"></div>
+        
+        <div class="explanation hidden" id="explanation"></div>
+        
+        <div class="nav-buttons">
+            <button onclick="nextQuestion()" style="flex: 2;">Berikutnya</button>
+            <button onclick="goHome()" style="flex: 1; background: #94a3b8; font-size: 12px;">Kembali</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="card hidden">
+        <h2>Hasil Akhir</h2>
+        <div id="score-display">0</div>
+        <p id="resultMsg">Jawaban benar.</p>
+        <button onclick="goHome()">Ulangi Latihan</button>
+    </div>
+</div>
+
+<script>
+let quizData = [];
+let currentIndex = 0;
+let score = 0;
+let selected = null;
+let timer;
+let timeLeft = 7200; // 120 menit * 60 detik
+
+const questionsBank = {
+    easy: [
+        { q: "Siapakah penemu Aljabar Boolean?", opts: ["Isaac Newton", "George Boole", "Alan Turing", "Charles Babbage"], ans: "George Boole", exp: "George Boole memperkenalkan sistem logika ini dalam bukunya tahun 1854." },
+        { q: "Berapakah nilai dari 1 + 1 dalam Aljabar Boolean?", opts: ["0", "1", "2", "10"], ans: "1", exp: "Dalam operasi OR (+), 1 + 1 = 1 (Benar atau Benar adalah Benar)." },
+        { q: "Gerbang logika yang membalikkan nilai input disebut...", opts: ["AND", "OR", "NOT", "XOR"], ans: "NOT", exp: "Gerbang NOT menghasilkan komplemen (kebalikan) dari inputnya." },
+        { q: "Hukum yang menyatakan A + 0 = A disebut hukum...", opts: ["Identitas", "Dominansi", "Negasi", "Idempoten"], ans: "Identitas", exp: "Variabel yang di-OR-kan dengan 0 tetap menjadi dirinya sendiri." },
+        { q: "Hasil dari A . 0 adalah...", opts: ["A", "1", "0", "A'"], ans: "0", exp: "Hukum Dominansi: Sesuatu yang di-AND-kan dengan 0 selalu 0." },
+        { q: "Output gerbang AND bernilai 1 hanya jika...", opts: ["Salah satu input 1", "Kedua input 0", "Semua input 1", "Salah satu input 0"], ans: "Semua input 1", exp: "AND membutuhkan semua syarat terpenuhi (1) untuk menghasilkan 1." },
+        { q: "Simbol '+' dalam aljabar boolean merepresentasikan operasi...", opts: ["Konjungsi (AND)", "Disjungsi (OR)", "Negasi (NOT)", "Penjumlahan Matematika"], ans: "Disjungsi (OR)", exp: "Tanda tambah (+) digunakan untuk operasi logika OR." },
+        { q: "Variabel biner hanya memiliki dua kemungkinan nilai, yaitu...", opts: ["1 dan 2", "A dan B", "0 dan 1", "True dan False"], ans: "0 dan 1", exp: "Sistem biner berbasis 2 nilai: 0 (Off/False) dan 1 (On/True)." },
+        { q: "Hukum Idempoten menyatakan bahwa A + A = ...", opts: ["2A", "1", "0", "A"], ans: "A", exp: "A + A = A, dan A . A = A." },
+        { q: "Kebalikan dari variabel A ditulis sebagai...", opts: ["-A", "1/A", "A'", "A^2"], ans: "A'", exp: "Bisa ditulis A' atau A dengan garis di atas (bar)." },
+        { q: "Gerbang yang menghasilkan 0 jika kedua inputnya sama adalah...", opts: ["AND", "OR", "XOR", "NAND"], ans: "XOR", exp: "Exclusive OR menghasilkan 1 hanya jika input berbeda." },
+        { q: "Tabel yang menunjukkan semua kemungkinan kombinasi input dan output disebut...", opts: ["Tabel Logika", "Tabel Input", "Tabel Kebenaran", "Tabel Boolean"], ans: "Tabel Kebenaran", exp: "Truth Table mendefinisikan fungsi logika secara lengkap." },
+        { q: "Berapa jumlah kombinasi pada tabel kebenaran dengan 3 variabel?", opts: ["3", "6", "8", "9"], ans: "8", exp: "Rumusnya adalah 2^n, jadi 2^3 = 8." },
+        { q: "Hukum Komutatif menyatakan A + B = ...", opts: ["B + A", "A . B", "A' + B'", "1"], ans: "B + A", exp: "Urutan variabel dalam OR atau AND tidak mengubah hasil." },
+        { q: "Nilai dari 1 . 0 adalah...", opts: ["1", "0", "A", "Error"], ans: "0", exp: "Operasi AND (.) menghasilkan 0 jika ada input yang 0." },
+        { q: "Komplemen dari 0 adalah...", opts: ["0", "1", "A", "Tidak ada"], ans: "1", exp: "NOT 0 = 1." },
+        { q: "Output gerbang OR bernilai 0 hanya jika...", opts: ["Salah satu input 0", "Semua input 0", "Kedua input 1", "Salah satu input 1"], ans: "Semua input 0", exp: "OR menghasilkan 0 hanya jika tidak ada input yang bernilai 1." },
+        { q: "Hukum Komplemen menyatakan A + A' = ...", opts: ["0", "A", "1", "A'"], ans: "1", exp: "A atau Tidak A pasti menghasilkan Benar (1)." },
+        { q: "Hukum Komplemen untuk AND menyatakan A . A' = ...", opts: ["1", "0", "A", "A'"], ans: "0", exp: "Sesuatu tidak bisa Benar dan Salah secara bersamaan." },
+        { q: "Gerbang NAND adalah gabungan dari gerbang...", opts: ["NOT dan OR", "AND dan OR", "AND dan NOT", "OR dan XOR"], ans: "AND dan NOT", exp: "NAND = Not AND." },
+        { q: "Hukum Involusi (Double Complement) menyatakan (A')' = ...", opts: ["0", "1", "A'", "A"], ans: "A", exp: "Negasi ganda kembali ke nilai asli." },
+        { q: "Hukum Dominansi untuk OR menyatakan A + 1 = ...", opts: ["A", "1", "0", "A'"], ans: "1", exp: "Apapun yang di-OR-kan dengan 1 akan menjadi 1." },
+        { q: "Dual dari (A + 0) adalah...", opts: ["A . 1", "A + 1", "A' . 0", "A . 0"], ans: "A . 1", exp: "Dualitas mengganti + ke . dan 0 ke 1." },
+        { q: "Gerbang NOR menghasilkan 1 jika...", opts: ["Semua input 1", "Semua input 0", "Salah satu input 1", "Input berbeda"], ans: "Semua input 0", exp: "NOR = kebalikan OR. OR 0,0 adalah 0, maka NOR 0,0 adalah 1." },
+        { q: "Ekspresi untuk gerbang AND dengan input A dan B adalah...", opts: ["A + B", "A . B", "A XOR B", "A'"], ans: "A . B", exp: "Titik (.) atau penulisan berdampingan (AB) berarti AND." },
+        { q: "SOP singkatan dari...", opts: ["Sum of Products", "Standard of Process", "System of Power", "Simple of Product"], ans: "Sum of Products", exp: "Penjumlahan dari hasil kali (OR dari AND-AND)." },
+        { q: "POS singkatan dari...", opts: ["Product of Sums", "Point of Sale", "Power of System", "Primary of Sums"], ans: "Product of Sums", exp: "Perkalian dari hasil jumlah (AND dari OR-OR)." },
+        { q: "Gerbang yang disebut gerbang 'Universal' adalah...", opts: ["AND & OR", "NAND & NOR", "XOR & XNOR", "NOT & AND"], ans: "NAND & NOR", exp: "NAND dan NOR dapat membentuk fungsi logika apapun." },
+        { q: "Hukum Distributif: A . (B + C) = ...", opts: ["(A.B) + (A.C)", "A + B + C", "(A+B) . (A+C)", "A.B.C"], ans: "(A.B) + (A.C)", exp: "Mirip dengan perkalian dalam matematika biasa." },
+        { q: "Berapa output dari A + B jika A=0, B=0?", opts: ["1", "0", "A", "B"], ans: "0", exp: "0 OR 0 = 0." }
+    ],
+    medium: [
+        { q: "Hukum De Morgan untuk (A . B)' adalah...", opts: ["A' + B'", "A' . B'", "A + B", "A' + B"], ans: "A' + B'", exp: "Negasi dari AND adalah OR dari negasi-negasinya." },
+        { q: "Hukum De Morgan untuk (A + B)' adalah...", opts: ["A' + B'", "A' . B'", "A + B", "A . B'"], ans: "A' . B'", exp: "Negasi dari OR adalah AND dari negasi-negasinya." },
+        { q: "Bentuk sederhana dari A + AB adalah...", opts: ["B", "AB", "A", "A+B"], ans: "A", exp: "Hukum Absorpsi: A(1 + B) = A(1) = A." },
+        { q: "Bentuk sederhana dari A(A + B) adalah...", opts: ["A", "B", "AB", "A+B"], ans: "A", exp: "Hukum Absorpsi: AA + AB = A + AB = A." },
+        { q: "Bentuk kanonik SOP terdiri dari term-term yang disebut...", opts: ["Maxterm", "Minterm", "Midterm", "Boolean term"], ans: "Minterm", exp: "SOP menggunakan Minterm (perkalian variabel)." },
+        { q: "Bentuk kanonik POS terdiri dari term-term yang disebut...", opts: ["Maxterm", "Minterm", "Logic term", "Fullterm"], ans: "Maxterm", exp: "POS menggunakan Maxterm (penjumlahan variabel)." },
+        { q: "Simbol minterm biasanya dilambangkan dengan huruf...", opts: ["M besar (M)", "m kecil (m)", "S besar (S)", "p kecil (p)"], ans: "m kecil (m)", exp: "m0, m1, dst untuk SOP." },
+        { q: "Simbol maxterm biasanya dilambangkan dengan huruf...", opts: ["M besar (M)", "m kecil (m)", "X besar (X)", "z kecil (z)"], ans: "M besar (M)", exp: "M0, M1, dst untuk POS." },
+        { q: "Penyederhanaan f(A,B) = A'B + AB adalah...", opts: ["A", "B", "A'", "B'"], ans: "B", exp: "B(A' + A) = B(1) = B." },
+        { q: "Penyederhanaan f(A,B) = AB + AB' adalah...", opts: ["A", "B", "1", "0"], ans: "A", exp: "A(B + B') = A(1) = A." },
+        { q: "Minterm untuk input A=1, B=0, C=1 adalah...", opts: ["A'BC'", "ABC", "AB'C", "A+B'+C"], ans: "AB'C", exp: "Dalam minterm, 0 dianggap komplemen ('), 1 dianggap asli." },
+        { q: "Maxterm untuk input A=0, B=1, C=0 adalah...", opts: ["A+B'+C", "A'BC'", "ABC", "A'+B+C'"], ans: "A+B'+C", exp: "Dalam maxterm, 1 dianggap komplemen ('), 0 dianggap asli." },
+        { q: "Fungsi f = Σ(0, 2, 3) dalam bentuk SOP adalah...", opts: ["m0 + m2 + m3", "M0 . M2 . M3", "m1 + m4", "f = 1"], ans: "m0 + m2 + m3", exp: "Sigma (Σ) melambangkan Sum of Products (SOP)." },
+        { q: "Fungsi f = Π(1, 4, 5) dalam bentuk POS adalah...", opts: ["m1 + m4 + m5", "M1 . M4 . M5", "Σ(1, 4, 5)", "f = 0"], ans: "M1 . M4 . M5", exp: "Pi (Π) melambangkan Product of Sums (POS)." },
+        { q: "Sebuah K-Map 4 variabel memiliki berapa kotak?", opts: ["4", "8", "16", "32"], ans: "16", exp: "2^4 = 16 kotak." },
+        { q: "Urutan kode pada baris/kolom K-Map menggunakan...", opts: ["Biner biasa", "Kode Gray", "Desimal", "Hexadesimal"], ans: "Kode Gray", exp: "Kode Gray memastikan hanya 1 bit yang berubah antar kotak bertetangga." },
+        { q: "Penyederhanaan A + A'B adalah...", opts: ["A", "B", "A+B", "AB"], ans: "A+B", exp: "Hukum Redundansi: (A+A')(A+B) = 1(A+B) = A+B." },
+        { q: "Hasil dari XOR(1, 1) adalah...", opts: ["0", "1", "2", "True"], ans: "0", exp: "XOR bernilai 1 jika inputnya berbeda. Jika sama (1,1), hasilnya 0." },
+        { q: "Hasil dari XNOR(0, 0) adalah...", opts: ["0", "1", "A", "Error"], ans: "1", exp: "XNOR adalah kebalikan XOR. Karena XOR(0,0)=0, maka XNOR(0,0)=1." },
+        { q: "Berapa jumlah literal pada ekspresi AB'C + A'B?", opts: ["2", "3", "5", "1"], ans: "5", exp: "Literal adalah setiap kemunculan variabel (A, B', C, A', B)." },
+        { q: "Hukum Konsensus: AB + A'C + BC = ...", opts: ["AB + BC", "AB + A'C", "A'C + BC", "ABC"], ans: "AB + A'C", exp: "Term BC redundan karena variabel B ada di AB dan C ada di A'C." },
+        { q: "Pada K-Map, pengelompokan 4 kotak tetangga (quad) menghilangkan berapa variabel?", opts: ["1", "2", "3", "4"], ans: "2", exp: "Setiap kenaikan pangkat 2 dalam kelompok menghilangkan 1 variabel. 4 = 2^2, jadi 2 variabel hilang." },
+        { q: "Pengelompokan 8 kotak (octet) pada K-Map 4 variabel menyisakan berapa variabel?", opts: ["1", "2", "3", "4"], ans: "1", exp: "2^3 = 8 kotak menghilangkan 3 variabel, tersisa 4-3 = 1 variabel." },
+        { q: "K-Map digunakan untuk...", opts: ["Membuat tabel", "Menyederhanakan fungsi boolean", "Menghitung angka biner", "Enkripsi data"], ans: "Menyederhanakan fungsi boolean", exp: "Metode grafis untuk meminimalkan literal." },
+        { q: "Komplemen dari f = A + B adalah...", opts: ["A' + B'", "A'B'", "AB", "A' + B"], ans: "A'B'", exp: "Menggunakan hukum De Morgan." },
+        { q: "Dualitas dari A(B + 0) = AB adalah...", opts: ["A + (B . 1) = A + B", "A + B + 1 = A", "A'(B'+1) = A'B'", "A + B . 0 = A"], ans: "A + (B . 1) = A + B", exp: "Ubah . jadi +, + jadi ., 0 jadi 1." },
+        { q: "Nilai f = AB' + A'B jika A=1, B=1 adalah...", opts: ["1", "0", "11", "Tidak terdefinisi"], ans: "0", exp: "1.0 + 0.1 = 0 + 0 = 0." },
+        { q: "Fungsi f = A'B'C' + A'B'C menyederhanakan menjadi...", opts: ["A'B'", "A'C", "B'C'", "1"], ans: "A'B'", exp: "A'B'(C' + C) = A'B'(1) = A'B'." },
+        { q: "Dalam POS, nilai logika 0 pada output tabel kebenaran digunakan untuk membentuk...", opts: ["Minterm", "Maxterm", "SOP", "Identitas"], ans: "Maxterm", exp: "POS fokus pada output 0." },
+        { q: "Bentuk SOP standar dari f(A,B) = A adalah...", opts: ["AB + AB'", "A + B", "AB", "A'B"], ans: "AB + AB'", exp: "Menambahkan variabel B yang hilang: A(B + B')." }
+    ],
+    hard: [
+        { q: "Sederhanakan: f = (A+B)(A+B').", opts: ["A", "B", "A+B", "1"], ans: "A", exp: "A + BB' = A + 0 = A (Hukum Distributif kebalikan)." },
+        { q: "Sederhanakan: f = XY + X'Z + YZ.", opts: ["XY + X'Z", "XY + YZ", "X'Z + YZ", "XYZ"], ans: "XY + X'Z", exp: "Ini adalah Hukum Konsensus." },
+        { q: "Don't Care condition dalam K-Map dilambangkan dengan...", opts: ["0", "1", "X", "D"], ans: "X", exp: "Nilai X bisa dianggap 0 atau 1 untuk membantu pengelompokan terbesar." },
+        { q: "Metode tabulasi untuk penyederhanaan fungsi boolean disebut metode...", opts: ["K-Map", "Quine-McCluskey", "Euler", "Venn"], ans: "Quine-McCluskey", exp: "Metode ini lebih efektif untuk variabel berjumlah banyak (>6)." },
+        { q: "Sederhanakan: A'B'C + A'BC + AB'C + ABC.", opts: ["C", "A", "B", "1"], ans: "C", exp: "C(A'B' + A'B + AB' + AB) = C(A'(B'+B) + A(B'+B)) = C(A'+A) = C." },
+        { q: "Sebuah fungsi f(A,B,C) memiliki minterm m0, m2, m4, m6. Bentuk sederhananya adalah...", opts: ["C'", "B'", "A'", "A"], ans: "C'", exp: "Semua minterm memiliki C=0 (C') sementara A dan B bervariasi." },
+        { q: "Ekspresi XOR 3-input (A ⊕ B ⊕ C) akan bernilai 1 jika jumlah input bernilai 1 adalah...", opts: ["Genap", "Ganjil", "Nol", "Dua"], ans: "Ganjil", exp: "Parity check: XOR menghasilkan 1 jika jumlah angka 1 ganjil." },
+        { q: "Implementasi gerbang NOT menggunakan NAND saja membutuhkan...", opts: ["1 gerbang", "2 gerbang", "3 gerbang", "Tidak bisa"], ans: "1 gerbang", exp: "Hubungkan kedua input NAND ke satu sinyal yang sama." },
+        { q: "Berapa banyak gerbang NAND yang dibutuhkan untuk membuat gerbang AND?", opts: ["1", "2", "3", "4"], ans: "2", exp: "NAND diikuti oleh NOT (NAND sebagai NOT). (AB')' = AB." },
+        { q: "Berapa banyak gerbang NAND yang dibutuhkan untuk membuat gerbang OR?", opts: ["1", "2", "3", "4"], ans: "3", exp: "A' NAND B' = (A'B')' = A + B (De Morgan)." },
+        { q: "Berapa banyak gerbang NOR yang dibutuhkan untuk membuat gerbang AND?", opts: ["1", "2", "3", "4"], ans: "3", exp: "A' NOR B' = (A'+B')' = AB (De Morgan)." },
+        { q: "Konversi SOP ke POS: f = Σ(0, 1, 2) dengan 2 variabel adalah...", opts: ["Π(3)", "Π(0, 1, 2)", "Π(1, 2)", "f=1"], ans: "Π(3)", exp: "POS menggunakan indeks yang tidak ada di SOP." },
+        { q: "Fungsi f(A,B) = Σ(1, 2) ekuivalen dengan gerbang...", opts: ["AND", "OR", "XOR", "XNOR"], ans: "XOR", exp: "Output 1 pada kombinasi 01 dan 10 adalah definisi XOR." },
+        { q: "Sederhanakan f = ABC + AB'C + A'BC.", opts: ["AC + BC", "AB + BC", "AC + AB", "ABC"], ans: "AC + BC", exp: "AC(B+B') + BC(A+A') - penggabungan term." },
+        { q: "Bentuk kanonik SOP dari f(x,y) = x' + y adalah...", opts: ["x'y' + x'y + xy", "x'y + xy", "x'y' + xy", "x+y"], ans: "x'y' + x'y + xy", exp: "x'(y+y') + y(x+x') = x'y' + x'y + xy + x'y = x'y' + x'y + xy." },
+        { q: "Pada K-Map 4 variabel, kotak 0 bertetangga dengan kotak nomor berapa saja?", opts: ["1, 4, 2, 8", "1, 2, 3, 4", "5, 10, 15", "1, 4, 12, 8"], ans: "1, 4, 2, 8", exp: "Sifat 'wrap-around' (menggulung) pada tepi K-Map." },
+        { q: "Fungsi Boolean f disebut 'Self-Dual' jika...", opts: ["f = f'", "f = Dual(f)", "f = 1", "f = 0"], ans: "f = Dual(f)", exp: "Contoh: f = AB + BC + AC." },
+        { q: "Dualitas dari f = A + B . C adalah...", opts: ["A . (B + C)", "A' . B' + C'", "A + BC", "A(B+C)'"], ans: "A . (B + C)", exp: "Ganti + dengan . dan sebaliknya." },
+        { q: "Hasil dari (A + B) . (A' + C) adalah...", opts: ["AC + A'B", "AB + A'C", "A + BC", "ABC"], ans: "AC + A'B", exp: "Hukum Distributif: AA' + AC + A'B + BC = 0 + AC + A'B + BC = AC + A'B (karena BC redundan)." },
+        { q: "Sederhanakan f = A'B + B'C' + ABC.", opts: ["A'B + B'C' + AC", "A'B + B'C' + BC", "A'B + B'C'", "1"], ans: "A'B + B'C' + AC", exp: "Gunakan hukum redundansi/distributif." },
+        { q: "Berapa jumlah fungsi boolean yang mungkin dibuat dari n variabel?", opts: ["2^n", "n^2", "2^(2^n)", "2n"], ans: "2^(2^n)", exp: "Untuk 2 variabel ada 2^(2^2) = 16 fungsi." },
+        { q: "Dalam logika positif, tegangan tinggi dianggap 1. Dalam logika negatif, 1 adalah...", opts: ["Tegangan Rendah", "Tegangan Tinggi", "Tanpa Tegangan", "Ground"], ans: "Tegangan Rendah", exp: "Logika negatif membalik representasi fisik ke logika." },
+        { q: "Fungsi f = A ⊕ B ⊕ A adalah...", opts: ["A", "B", "0", "1"], ans: "B", exp: "A ⊕ A = 0, lalu 0 ⊕ B = B." },
+        { q: "Prime Implicant dalam K-Map adalah...", opts: ["Kelompok kotak terkecil", "Kelompok kotak terbesar yang mungkin", "Hanya kotak bernilai 1", "Hanya kotak bernilai 0"], ans: "Kelompok kotak terbesar yang mungkin", exp: "Satu atau lebih minterm yang digabungkan maksimal." },
+        { q: "Essential Prime Implicant adalah...", opts: ["PI yang mencakup minterm yang tidak dicakup PI lain", "Semua PI", "Don't care", "Maxterm"], ans: "PI yang mencakup minterm yang tidak dicakup PI lain", exp: "Kelompok yang 'wajib' ada dalam hasil akhir." },
+        { q: "Berapa nilai dari A + A'B + A'B'?", opts: ["1", "A", "B", "0"], ans: "1", exp: "A + A'(B+B') = A + A'(1) = A + A' = 1." },
+        { q: "Literals dalam f = A'BC' + AB'C adalah...", opts: ["A, B, C", "A', B, C', A, B', C", "2", "6"], ans: "A', B, C', A, B', C", exp: "Ada 6 literal berbeda." },
+        { q: "Sederhanakan f = (A + C)(A + C')(A + B).", opts: ["A", "AB", "A + BC", "C"], ans: "A", exp: "(A + CC')(A + B) = (A + 0)(A + B) = A(A + B) = A." },
+        { q: "Fungsi f(A,B) = Π(0, 1, 2, 3) adalah...", opts: ["0", "1", "A", "B"], ans: "0", exp: "Jika semua maxterm dikalikan, hasilnya 0." },
+        { q: "Fungsi f(A,B) = Σ(0, 1, 2, 3) adalah...", opts: ["0", "1", "A+B", "AB"], ans: "1", exp: "Jika semua minterm dijumlahkan, hasilnya 1." }
+    ]
+};
+
+function startQuiz(level) {
+    currentIndex = 0;
+    score = 0;
+    selected = null;
+    timeLeft = 7200; 
+    quizData = questionsBank[level]; 
+
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('resultScreen').classList.add('hidden');
+    
+    showQuestion();
+    startTimer();
+}
+
+function showQuestion() {
+    let q = quizData[currentIndex];
+    document.getElementById('question').innerHTML = `Soal ${currentIndex+1}:<br>${q.q}`;
+    
+    let html = '';
+    let shuffledOpts = [...q.opts].sort(() => Math.random() - 0.5);
+    shuffledOpts.forEach(opt => {
+        html += `<div class='option' onclick='selectAnswer(this, "${opt}")'>${opt}</div>`;
+    });
+    
+    document.getElementById('options').innerHTML = html;
+    document.getElementById('explanation').classList.add('hidden');
+    updateProgress();
+}
+
+function selectAnswer(el, val) {
+    if(selected !== null) return;
+    selected = val;
+    let q = quizData[currentIndex];
+
+    if(val === q.ans) {
+        el.classList.add('correct');
+        score++;
+    } else {
+        el.classList.add('wrong');
+        document.querySelectorAll('.option').forEach(o => {
+            if(o.innerText === q.ans) o.classList.add('correct');
+        });
+    }
+    
+    let expDiv = document.getElementById('explanation');
+    expDiv.innerText = "Penjelasan: " + q.exp;
+    expDiv.classList.remove('hidden');
+}
+
+function nextQuestion() {
+    if (selected === null) { alert("Pilih jawaban terlebih dahulu!"); return; }
+    
+    currentIndex++;
+    selected = null;
+    if(currentIndex < quizData.length) {
+        showQuestion();
+    } else {
+        endQuiz();
+    }
+}
+
+function startTimer() {
+    if(timer) clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60);
+        let s = timeLeft%60;
+        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft <= 0) endQuiz();
+    }, 1000);
+}
+
+function updateProgress() {
+    let p = (currentIndex / quizData.length) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+}
+
+function endQuiz() {
+    clearInterval(timer);
+    document.getElementById('quizScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    document.getElementById('score-display').innerText = score;
+    document.getElementById('resultMsg').innerText = `Latihan selesai. Anda menjawab benar ${score} dari ${quizData.length} soal.`;
+}
+
+function goHome() { window.location.href='../../index.html?page=materi'; }
+</script>
+</body>
+</html>
