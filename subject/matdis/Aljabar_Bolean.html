@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Materi Matematika Diskrit</title>
 
+   
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -13,10 +14,16 @@
             --bg-color: #f4f7f6;
             --text-color: #333;
             --white: #ffffff;
+            --calc-bg: #112240;
+            --calc-card: #1d2d50;
+            --calc-accent: #64ffda;
+        }
+
+        * {
+            font-family: "Times New Roman", Times, serif !important;
         }
 
         body {
-            font-family: "Times New Roman", Times, serif;
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--bg-color);
@@ -130,6 +137,7 @@
             height: 2px;
             background: #000;
         }
+
         .matrix-box::before { top: 0; left: 0; } 
         .matrix-box::after { bottom: 0; right: 0; }
 
@@ -143,7 +151,6 @@
             display: inline-block;
             width: 30px;
             text-align: center;
-            font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
             font-size: 1.1em;
         }
@@ -157,72 +164,210 @@
 
         .formula-text {
             font-size: 1.2em;
-            font-family: serif;
             font-style: italic;
             margin-top: 5px;
         }
 
-        .calc-container {
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 10px;
+        .calculator-area {
+            background: var(--calc-bg);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
         }
 
-        .matrix-input-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+        .main-title {
+            color: var(--white) !important;
+            text-align: center;
+            border-bottom: 2px solid var(--calc-accent) !important;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .calc-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .calc-box {
+            background: var(--calc-card);
+            padding: 20px;
+            border-radius: 8px;
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+
+        .box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calc-box h3 {
+            color: var(--calc-accent) !important;
+            margin: 0;
+            border: none;
+            padding: 0;
+            font-size: 1.2em;
+        }
+
+        .badge {
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--calc-accent);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .m-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background: #2f3542;
-            color: white;
+            background: #0a192f;
+            color: var(--calc-accent);
+            border: 1px solid var(--calc-accent);
+            padding: 8px;
+            border-radius: 4px;
             text-align: center;
-            font-size: 1.1em;
-        }
-
-        .m-input:focus {
-            outline: none;
-            border-color: #57604f;
-            box-shadow: 0 0 8px rgba(255,255,255,0.2);
-        }
-
-        .btn-calc {
+            font-size: 1em;
             width: 100%;
-            padding: 12px;
+        }
+
+        .operator-display {
+            color: var(--white);
+            font-weight: bold;
+            font-size: 0.9em;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-action {
+            background: var(--calc-accent);
+            color: #0a192f;
             border: none;
-            border-radius: 8px;
-            background: white;
-            color: black;
-            font-weight: bold;
+            padding: 8px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-calc:hover {
-            background: #ced4da;
-        }
-
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #555;
             font-weight: bold;
+            transition: 0.3s;
+            font-size: 0.9em;
+        }
+
+        .btn-action:hover {
+            filter: brightness(1.2);
+        }
+
+        .btn-action.primary {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .res-container {
+            margin-top: 15px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 10px;
+        }
+
+        .res-container small {
+            color: #8892b0;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .res-display {
+            background: #0a192f;
+            color: var(--calc-accent);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 1.4em;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .input-focus small {
+            color: #ccd6f6;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .ref-table {
+            text-align: left;
+            font-size: 0.95em;
+            color: #ccd6f6;
+        }
+
+        .ref-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .info-footer {
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: #8892b0;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 20px; }
+            h1 { font-size: 1.6em; }
+            h2 { font-size: 1.3em; }
+            h3 { font-size: 1.1em; }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                font-size: 0.85em;
+            }
+
+            .calc-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .calc-box {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 15px; }
+            h1 { font-size: 1.4em; }
+            h2 { font-size: 1.2em; }
+            h3 { font-size: 1em; }
+            table { font-size: 0.75em; }
         }
     </style>
 </head>
 
 <body>
-<div class="container">
-  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
+
 <div class="container">
     <header>
         <h1>Aljabar Boolean</h1>
@@ -240,179 +385,706 @@
             </div>
         </div>
 
-        <div class="card">
-            <h3>1. Operator Logika Utama</h3>
-            <p>
-                Dalam aljabar Boolean, seluruh sistem komputasi dibangun dari tiga operasi dasar. Operator ini menentukan bagaimana aliran listrik (sinyal digital) diproses di dalam microchip.
-            </p>
-            
-            
+       <div class="card">
+    <h2>A. Operator Logika Utama</h2>
+    <p>
+        Dalam aljabar Boolean, seluruh sistem komputasi dibangun dari tiga operasi dasar. 
+        Operator ini menentukan bagaimana sinyal digital (0 dan 1) diproses dalam rangkaian elektronik.
+    </p>            
 
-[Image of basic logic gates AND OR NOT]
+    <table>
+        <thead>
+            <tr>
+                <th>Operator</th>
+                <th>Simbol</th>
+                <th>Logika Operasional</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>AND</strong> (Konjungsi)</td>
+                <td>A · B</td>
+                <td>Bernilai 1 hanya jika A dan B = 1</td>
+            </tr>
+            <tr>
+                <td><strong>OR</strong> (Disjungsi)</td>
+                <td>A + B</td>
+                <td>Bernilai 1 jika salah satu atau keduanya = 1</td>
+            </tr>
+            <tr>
+                <td><strong>NOT</strong> (Negasi)</td>
+                <td>A' atau ¬A</td>
+                <td>Membalik nilai: 0 → 1, 1 → 0</td>
+            </tr>
+        </tbody>
+    </table>
 
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>Operator</th>
-                        <th>Simbol</th>
-                        <th>Logika Operasional</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>AND</strong> (Konjungsi)</td>
-                        <td>A &middot; B</td>
-                        <td>Hanya menghasilkan <strong>1</strong> jika variabel A <strong>dan</strong> B keduanya bernilai 1.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>OR</strong> (Disjungsi)</td>
-                        <td>A + B</td>
-                        <td>Menghasilkan <strong>1</strong> jika <strong>salah satu</strong> atau kedua variabel bernilai 1.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>NOT</strong> (Negasi)</td>
-                        <td>A' atau &AElig;</td>
-                        <td>Operasi unari yang <strong>membalikkan</strong> keadaan: 0 menjadi 1, dan 1 menjadi 0.</td>
-                    </tr>
-                </tbody>
-            </table>
+    <h4>2. Tabel Kebenaran</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>A AND B</th>
+                <th>A OR B</th>
+                <th>NOT A</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+            <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+            <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+        </tbody>
+    </table>
 
-            <div class="explain ok">
-                <strong>Analogi Dunia Nyata:</strong>
-                <p>
-                    Bayangkan sebuah sistem keamanan bank. Pintu brankas hanya terbuka jika (Kunci Manajer <strong>AND</strong> Kunci Direktur) diputar bersamaan. Namun, alarm akan berbunyi jika (Sensor Pintu Terbuka <strong>OR</strong> Sensor Gerak Terdeteksi).
-                </p>
-            </div>
-
-            <div class="example-box" style="margin-top: 20px;">
-                <strong>Implementasi pada Perangkat Keras:</strong>
-                <p>
-                    Aljabar Boolean memungkinkan teknisi untuk melakukan penyederhanaan sirkuit elektronik. Semakin sederhana ekspresi logikanya, semakin sedikit gerbang logika (transistor) yang dibutuhkan. Hasilnya, perangkat elektronik bisa menjadi lebih <strong>kecil</strong>, lebih <strong>dingin</strong> (tidak cepat panas), dan jauh lebih <strong>hemat daya</strong>.
-                </p>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>2. Operator & Tabel Kebenaran</h3>
-            <p>Operasi Boolean direalisasikan melalui <b>gerbang logika</b>. Berikut adalah perbandingan logika dasar yang paling sering digunakan dalam sirkuit digital:</p>
-            
-            
-
-[Image of AND OR XOR truth tables]
-
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>A</th>
-                        <th>B</th>
-                        <th>AND (A &middot; B)</th>
-                        <th>OR (A + B)</th>
-                        <th>XOR (A &oplus; B)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-                    <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
-                    <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
-                    <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
-                </tbody>
-            </table>
-            <p><small><i>*XOR: Menghasilkan 1 hanya jika input berbeda (sangat penting untuk sirkuit aritmatika/penjumlahan).</i></small></p>
-
-            <div class="explain ok">
-                <strong>Hukum Aljabar untuk Efisiensi Sirkuit:</strong>
-                <p>Gunakan aturan ini untuk memangkas jumlah gerbang logika dalam perancangan hardware:</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9em;">
-                    <div>
-                        &bull; <b>Identitas:</b> A + 0 = A; A &middot; 1 = A<br>
-                        &bull; <b>Dominasi:</b> A + 1 = 1; A &middot; 0 = 0<br>
-                        &bull; <b>Idempoten:</b> A + A = A; A &middot; A = A
-                    </div>
-                    <div>
-                        &bull; <b>Komplemen:</b> A + A' = 1; A &middot; A' = 0<br>
-                        &bull; <b>Absorpsi:</b> A + (A &middot; B) = A<br>
-                        &bull; <b>De Morgan:</b> (A &middot; B)' = A' + B'
-                    </div>
-                </div>
-            </div>
-
-            <div class="example-box" style="margin-top: 20px;">
-                <h3>Esensi Aljabar Boolean di Era Digital</h3>
-                <ul>
-                    <li><strong>Optimasi Hardware:</strong> Penyederhanaan persamaan Boolean berarti pengurangan jumlah transistor, yang berujung pada konsumsi daya lebih rendah dan suhu chip yang lebih dingin.</li>
-                    <li><strong>Logika Percabangan:</strong> Menjadi dasar struktur <code>if-else</code> dan <code>switch-case</code> dalam bahasa pemrograman.</li>
-                    <li><strong>Sistem Pencarian:</strong> Mengatur filter database dan mesin pencari melalui query <code>AND</code>, <code>OR</code>, dan <code>NOT</code>.</li>
-                    <li><strong>AI & Keamanan:</strong> Digunakan dalam pembentukan <i>decision tree</i> pada Machine Learning dan protokol enkripsi data.</li>
-                </ul>
-            </div>
-        </div>
+    <div class="explain ok">
+        <strong>Analogi Dunia Nyata:</strong>
+        <p>
+            Sistem keamanan: Brankas terbuka jika (Kunci A AND Kunci B). 
+            Alarm berbunyi jika (Sensor Pintu OR Sensor Gerak aktif).
+        </p>
     </div>
 
-    <div class="section">
-        <h2>Determinan</h2>
+    <h4>3. Hukum-Hukum Boolean</h4>
+    <ul>
+        <li><strong>Hukum Identitas:</strong> A + 0 = A, A · 1 = A</li>
+        <li><strong>Hukum Null:</strong> A + 1 = 1, A · 0 = 0</li>
+        <li><strong>Hukum Idempoten:</strong> A + A = A, A · A = A</li>
+        <li><strong>Hukum Komplemen:</strong> A + A' = 1, A · A' = 0</li>
+        <li><strong>Hukum Komutatif:</strong> A + B = B + A</li>
+        <li><strong>Hukum Asosiatif:</strong> (A + B) + C = A + (B + C)</li>
+        <li><strong>Hukum Distributif:</strong> A(B + C) = AB + AC</li>
+    </ul>
+
+    <h4>4. Gerbang Logika (Logic Gates)</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Gerbang</th>
+                <th>Simbol</th>
+                <th>Fungsi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>AND Gate</td>
+                <td>·</td>
+                <td>Output 1 jika semua input 1</td>
+            </tr>
+            <tr>
+                <td>OR Gate</td>
+                <td>+</td>
+                <td>Output 1 jika salah satu input 1</td>
+            </tr>
+            <tr>
+                <td>NOT Gate</td>
+                <td>'</td>
+                <td>Membalik sinyal</td>
+            </tr>
+            <tr>
+                <td>NAND</td>
+                <td>(A·B)'</td>
+                <td>Kebalikan AND</td>
+            </tr>
+            <tr>
+                <td>NOR</td>
+                <td>(A+B)'</td>
+                <td>Kebalikan OR</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>5. Contoh Soal</h4>
+    <div class="example-box">
+        <p><strong>Soal:</strong> Jika A = 1 dan B = 0, tentukan:</p>
+        <ul>
+            <li>A AND B = ?</li>
+            <li>A OR B = ?</li>
+            <li>NOT A = ?</li>
+        </ul>
+
+        <p><strong>Jawaban:</strong></p>
+        <ul>
+            <li>A AND B = 0</li>
+            <li>A OR B = 1</li>
+            <li>NOT A = 0</li>
+        </ul>
+    </div>
+
+    <h4>6. Implementasi dalam Kehidupan Nyata</h4>
+    <div class="example-box">
+        <p>
+            Dalam komputer dan smartphone, jutaan gerbang logika bekerja secara bersamaan. 
+            Aljabar Boolean membantu menyederhanakan rangkaian sehingga:
+        </p>
+        <ul>
+            <li>Perangkat lebih kecil</li>
+            <li>Konsumsi daya lebih rendah</li>
+            <li>Performa lebih cepat</li>
+            <li>Tidak mudah panas</li>
+        </ul>
+    </div>
+</div>
         <div class="card">
-            <h3>Determinan Matriks</h3>
-            <p>
-                Determinan adalah nilai skalar yang dihasilkan dari matriks persegi. Nilai ini sangat krusial karena menentukan apakah sebuah matriks memiliki invers atau tidak. Jika <b>det(A) = 0</b>, maka matriks tersebut disebut matriks singular (tidak punya invers).
-            </p>
+         <h2>B. Operator & Tabel Kebenaran</h2>
+<p>
+    Operasi Boolean direalisasikan melalui <b>gerbang logika</b>. 
+    Berikut adalah perbandingan logika dasar yang paling sering digunakan dalam sirkuit digital:
+</p>
 
-            <h3>Matriks Ordo 2x2</h3>
-            <p>Untuk matriks persegi berukuran 2x2, determinan dihitung dengan mengalikan elemen diagonal utama lalu dikurangi dengan hasil kali elemen diagonal samping.</p>
-            
-            
+<table>
+    <thead>
+        <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>AND (A · B)</th>
+            <th>OR (A + B)</th>
+            <th>XOR (A ⊕ B)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+    </tbody>
+</table>
 
-            <div class="matrix-layout">
-                <div class="matrix-wrapper">
-                    <span class="matrix-symbol">A =</span>
-                    <div class="matrix-box">
-                        <div class="matrix-row">
-                            <span>a</span><span>b</span>
-                        </div>
-                        <div class="matrix-row">
-                            <span>c</span><span>d</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="formula-box">
-                    <strong>Rumus:</strong>
-                    <div class="formula-text">det(A) = (a &times; d) &minus; (b &times; c)</div>
-                </div>
-            </div>
+<p><small><i>*XOR: Bernilai 1 jika input berbeda (digunakan pada rangkaian penjumlahan biner).</i></small></p>
 
-            <div class="explain ok">
-                <strong>Contoh Perhitungan:</strong>
-                <div class="matrix-layout">
-                    <div class="matrix-wrapper">
-                        <div class="matrix-box">
-                            <div class="matrix-row"><span>3</span><span>2</span></div>
-                            <div class="matrix-row"><span>1</span><span>4</span></div>
-                        </div>
-                    </div>
-                    <div style="flex: 1;">
-                        det(A) = (3 &times; 4) &minus; (2 &times; 1) <br>
-                        det(A) = 12 &minus; 2 = <b>10</b>
-                    </div>
-                </div>
-            </div>
+<h4>3. Gerbang Logika Lanjutan</h4>
+<table>
+    <thead>
+        <tr>
+            <th>Gerbang</th>
+            <th>Rumus</th>
+            <th>Keterangan</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>NAND</td>
+            <td>(A · B)'</td>
+            <td>Kebalikan AND</td>
+        </tr>
+        <tr>
+            <td>NOR</td>
+            <td>(A + B)'</td>
+            <td>Kebalikan OR</td>
+        </tr>
+        <tr>
+            <td>XNOR</td>
+            <td>(A ⊕ B)'</td>
+            <td>Bernilai 1 jika input sama</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>4. Tabel Tambahan (NAND, NOR, XNOR)</h4>
+<table>
+    <thead>
+        <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>NAND</th>
+            <th>NOR</th>
+            <th>XNOR</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+    </tbody>
+</table>
+
+<div class="explain ok">
+    <strong>Hukum Aljabar untuk Efisiensi Sirkuit:</strong>
+    <p>Gunakan aturan ini untuk menyederhanakan rangkaian digital:</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9em;">
+        <div>
+            • <b>Identitas:</b> A + 0 = A; A · 1 = A<br>
+            • <b>Dominasi:</b> A + 1 = 1; A · 0 = 0<br>
+            • <b>Idempoten:</b> A + A = A; A · A = A
+        </div>
+        <div>
+            • <b>Komplemen:</b> A + A' = 1; A · A' = 0<br>
+            • <b>Absorpsi:</b> A + (A · B) = A<br>
+            • <b>De Morgan:</b> (A · B)' = A' + B'
+        </div>
+    </div>
+</div>
+
+<h4>5. Contoh Implementasi Rangkaian</h4>
+<div class="example-box">
+    <p><strong>Kasus:</strong> Lampu menyala jika:</p>
+    <ul>
+        <li>Saklar A dan B aktif → AND</li>
+        <li>Atau saklar C aktif → OR</li>
+    </ul>
+
+    <p><strong>Persamaan:</strong></p>
+    <code>F = (A · B) + C</code>
+
+    <p><strong>Makna:</strong> Lampu menyala jika kedua saklar A dan B ON, atau cukup saklar C saja ON.</p>
+</div>
+
+<h4>6. Contoh Soal Latihan</h4>
+<div class="example-box">
+    <p><strong>Diketahui:</strong> A = 1, B = 0</p>
+    <ul>
+        <li>A NAND B = ?</li>
+        <li>A NOR B = ?</li>
+        <li>A XNOR B = ?</li>
+    </ul>
+
+    <p><strong>Jawaban:</strong></p>
+    <ul>
+        <li>NAND = 1</li>
+        <li>NOR = 0</li>
+        <li>XNOR = 0</li>
+    </ul>
+</div>
+
+<div class="example-box" style="margin-top: 20px;">
+    <h3>Esensi Aljabar Boolean di Era Digital</h3>
+    <ul>
+        <li><strong>Optimasi Hardware:</strong> Mengurangi jumlah transistor</li>
+        <li><strong>Pemrograman:</strong> Dasar logika <code>if-else</code></li>
+        <li><strong>Database:</strong> Query AND, OR, NOT</li>
+        <li><strong>AI:</strong> Decision tree dan logika keputusan</li>
+        <li><strong>Keamanan:</strong> Enkripsi dan autentikasi sistem</li>
+    </ul>
+</div>
+
+</div>
+</div>
+<div class="section">
+    <h2>C. Penyederhanaan Aljabar Boolean & Karnaugh Map</h2>
+
+    <div class="card">
+        <h3>1. Penyederhanaan Ekspresi Boolean</h3>
+        <p>
+            Penyederhanaan bertujuan untuk mengurangi kompleksitas rangkaian logika 
+            sehingga jumlah gerbang menjadi lebih sedikit, lebih cepat, dan hemat daya.
+        </p>
+
+        <div class="example-box">
+            <p><strong>Contoh:</strong></p>
+            <code>F = A·B + A·B'</code>
+
+            <p><strong>Penyelesaian:</strong></p>
+            <p>F = A(B + B')</p>
+            <p>F = A(1)</p>
+            <p><strong>F = A</strong></p>
         </div>
 
-        <div class="card" style="background: linear-gradient(135deg, #1e272e 0%, #000000 100%); color: white; padding: 30px; border-radius: 15px;">
-            <h2 style="color: white; border-bottom: 1px solid #444; text-align: center;">Kalkulator Determinan 2x2</h2>
+        <div class="explain ok">
+            <strong>Intinya:</strong> Ekspresi kompleks bisa disederhanakan menjadi bentuk minimal.
+        </div>
+
+        <h3>2. Karnaugh Map (K-Map)</h3>
+        <p>
+            Karnaugh Map adalah metode visual untuk menyederhanakan fungsi Boolean 
+            dengan mengelompokkan nilai 1 dalam tabel kebenaran.
+        </p>
+
+        <h4>K-Map 2 Variabel</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>A \ B</th>
+                    <th>0</th>
+                    <th>1</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><small>Kelompokkan angka 1 untuk mendapatkan bentuk sederhana.</small></p>
+
+        <h4>K-Map 3 Variabel</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>AB \ C</th>
+                    <th>0</th>
+                    <th>1</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>00</td><td>1</td><td>0</td></tr>
+                <tr><td>01</td><td>1</td><td>1</td></tr>
+                <tr><td>11</td><td>0</td><td>1</td></tr>
+                <tr><td>10</td><td>1</td><td>0</td></tr>
+            </tbody>
+        </table>
+
+        <h3>3. Aturan Pengelompokan K-Map</h3>
+        <ul>
+            <li>Kelompok harus berisi 1, 2, 4, 8 (kelipatan 2)</li>
+            <li>Semakin besar kelompok → semakin sederhana hasil</li>
+            <li>Boleh overlap (tumpang tindih)</li>
+            <li>Harus berbentuk persegi/persegi panjang</li>
+        </ul>
+
+        <h3>4. Contoh Penyederhanaan dengan K-Map</h3>
+        <div class="example-box">
+            <p><strong>F(A,B,C) = Σ(1,2,3,5)</strong></p>
+            <p>
+                Setelah dikelompokkan pada K-Map, hasil sederhananya:
+            </p>
+            <p><strong>F = A'C + B'C</strong></p>
+        </div>
+
+        <h3>5. Implementasi ke Rangkaian Logika</h3>
+        <div class="example-box">
+            <p><strong>F = A'C + B'C</strong></p>
+
+            <ul>
+                <li>NOT A → menghasilkan A'</li>
+                <li>NOT B → menghasilkan B'</li>
+                <li>AND untuk A'C dan B'C</li>
+                <li>OR untuk hasil akhir</li>
+            </ul>
+
+            <p><strong>Keuntungan:</strong></p>
+            <ul>
+                <li>Jumlah gerbang lebih sedikit</li>
+                <li>Biaya produksi lebih murah</li>
+                <li>Kinerja lebih cepat</li>
+            </ul>
+        </div>
+
+        <h3>6. Perbandingan Sebelum & Sesudah Simplifikasi</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sebelum</th>
+                    <th>Sesudah</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>A·B + A·B'</td>
+                    <td>A</td>
+                </tr>
+                <tr>
+                    <td>(A+B)(A+B')</td>
+                    <td>A</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section">
+    <h2>D. Rangkaian Sequential & Flip-Flop</h2>
+
+    <div class="card">
+        <h3>1. Pengertian Rangkaian Sequential</h3>
+        <p>
+            Rangkaian sequential adalah rangkaian logika yang output-nya tidak hanya 
+            bergantung pada input saat ini, tetapi juga pada <strong>state sebelumnya (memori)</strong>.
+        </p>
+
+        <div class="explain ok">
+            <strong>Perbedaan Utama:</strong>
+            <ul>
+                <li><b>Kombinasional:</b> Output hanya tergantung input saat ini</li>
+                <li><b>Sequential:</b> Output tergantung input + memori sebelumnya</li>
+            </ul>
+        </div>
+
+        <h3>2. Konsep Dasar Memori Digital</h3>
+        <p>
+            Memori dalam rangkaian digital disimpan menggunakan elemen dasar bernama 
+            <strong>Flip-Flop</strong>, yang mampu menyimpan 1 bit data (0 atau 1).
+        </p>
+
+        <h3>3. Jenis-Jenis Flip-Flop</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Jenis</th>
+                    <th>Input</th>
+                    <th>Karakteristik</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>SR Flip-Flop</td>
+                    <td>S, R</td>
+                    <td>Set (1) dan Reset (0)</td>
+                </tr>
+                <tr>
+                    <td>D Flip-Flop</td>
+                    <td>D</td>
+                    <td>Menyimpan nilai input</td>
+                </tr>
+                <tr>
+                    <td>JK Flip-Flop</td>
+                    <td>J, K</td>
+                    <td>Versi SR yang lebih stabil</td>
+                </tr>
+                <tr>
+                    <td>T Flip-Flop</td>
+                    <td>T</td>
+                    <td>Toggle (berubah tiap clock)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>4. Tabel Kebenaran D Flip-Flop</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Clock</th>
+                    <th>D</th>
+                    <th>Q (Next State)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>↑</td><td>0</td><td>0</td></tr>
+                <tr><td>↑</td><td>1</td><td>1</td></tr>
+            </tbody>
+        </table>
+
+        <h3>5. Clock Signal</h3>
+        <p>
+            Flip-flop bekerja berdasarkan sinyal clock (denyut). Perubahan state hanya 
+            terjadi saat <strong>edge trigger</strong> (naik atau turun).
+        </p>
+
+        <div class="example-box">
+            <p><strong>Contoh:</strong></p>
+            <p>Jika D = 1 saat clock aktif → Q akan menjadi 1</p>
+        </div>
+
+        <h3>6. Aplikasi Rangkaian Sequential</h3>
+        <ul>
+            <li>Register (penyimpanan data sementara)</li>
+            <li>Counter (penghitung digital)</li>
+            <li>Shift Register</li>
+            <li>Memori RAM sederhana</li>
+        </ul>
+
+        <h3>7. Contoh Counter Sederhana</h3>
+        <div class="example-box">
+            <p>Counter 2-bit menghasilkan urutan:</p>
+            <code>00 → 01 → 10 → 11 → kembali ke 00</code>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>E. Rangkaian Kombinasional & Aplikasinya</h2>
+
+    <div class="card">
+        <h3>1. Pengertian Rangkaian Kombinasional</h3>
+        <p>
+            Rangkaian yang output-nya hanya bergantung pada input saat ini tanpa memori.
+        </p>
+
+        <h3>2. Contoh Rangkaian Kombinasional</h3>
+
+        <h4>a. Half Adder</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>Sum</th>
+                    <th>Carry</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+            </tbody>
+        </table>
+
+        <div class="example-box">
+            <p><strong>Rumus:</strong></p>
+            <code>Sum = A ⊕ B</code><br>
+            <code>Carry = A · B</code>
+        </div>
+
+        <h4>b. Full Adder</h4>
+        <p>
+            Full Adder menjumlahkan 3 bit: A, B, dan Carry-in.
+        </p>
+
+        <div class="example-box">
+            <code>Sum = A ⊕ B ⊕ Cin</code><br>
+            <code>Carry = (A·B) + (Cin·(A⊕B))</code>
+        </div>
+
+        <h4>c. Multiplexer (MUX)</h4>
+        <p>
+            Memilih satu dari beberapa input berdasarkan sinyal selektor.
+        </p>
+
+        <div class="example-box">
+            <p><strong>Contoh 2:1 MUX:</strong></p>
+            <code>F = S'·I0 + S·I1</code>
+        </div>
+
+        <h4>d. Demultiplexer (DEMUX)</h4>
+        <p>
+            Kebalikan MUX: satu input disalurkan ke banyak output.
+        </p>
+
+        <h4>e. Encoder & Decoder</h4>
+        <ul>
+            <li><b>Encoder:</b> Mengubah banyak input menjadi kode biner</li>
+            <li><b>Decoder:</b> Mengubah kode biner menjadi output tertentu</li>
+        </ul>
+
+        <h3>3. Implementasi Nyata</h3>
+        <div class="example-box">
+            <ul>
+                <li>ALU (Arithmetic Logic Unit)</li>
+                <li>CPU dan mikroprosesor</li>
+                <li>Kalkulator digital</li>
+                <li>Sistem komunikasi</li>
+            </ul>
+        </div>
+
+        <h3>4. Perbandingan Kombinasional vs Sequential</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aspek</th>
+                    <th>Kombinasional</th>
+                    <th>Sequential</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Memori</td>
+                    <td>Tidak ada</td>
+                    <td>Ada</td>
+                </tr>
+                <tr>
+                    <td>Output</td>
+                    <td>Input saat ini</td>
+                    <td>Input + state sebelumnya</td>
+                </tr>
+                <tr>
+                    <td>Contoh</td>
+                    <td>Adder, MUX</td>
+                    <td>Counter, Register</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>5. Latihan Soal</h3>
+        <div class="example-box">
+            <p><strong>Diketahui:</strong> A=1, B=1, Cin=0</p>
+            <p><strong>Tentukan output Full Adder:</strong></p>
+
+            <p><strong>Jawaban:</strong></p>
+            <ul>
+                <li>Sum = 0</li>
+                <li>Carry = 1</li>
+            </ul>
+        </div>
+
+        <div class="explain ok">
+            <strong>Kesimpulan:</strong>
+            <p>
+                Rangkaian kombinasional dan sequential adalah fondasi utama sistem digital modern. 
+                Semua perangkat seperti komputer, smartphone, dan IoT dibangun dari kombinasi kedua jenis rangkaian ini.
+            </p>
+        </div>
+    </div>
+</div>
+
+        <div class="calculator-area">
+            <h2 class="main-title">🧮 Boolean Logic Workshop</h2>
             
-            <div class="calc-container">
-                <div class="matrix-input-grid">
-                    <input type="number" id="a" placeholder="a" class="m-input">
-                    <input type="number" id="b" placeholder="b" class="m-input">
-                    <input type="number" id="c" placeholder="c" class="m-input">
-                    <input type="number" id="d" placeholder="d" class="m-input">
+            <div class="calc-wrapper">
+                <div class="calc-box">
+                    <div class="box-header">
+                        <h3>Binary Logic</h3>
+                        <span class="badge">A & B</span>
+                    </div>
+                    
+                    <div class="input-row">
+                        <select id="valA" class="m-input">
+                            <option value="1">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <div id="opLabel" class="operator-display">AND</div>
+                        <select id="valB" class="m-input">
+                            <option value="1">1</option>
+                            <option value="0">0</option>
+                        </select>
+                    </div>
+
+                    <div class="btn-grid">
+                        <button class="btn-action" onclick="calcBool('AND')">AND</button>
+                        <button class="btn-action" onclick="calcBool('OR')">OR</button>
+                        <button class="btn-action" onclick="calcBool('XOR')">XOR</button>
+                        <button class="btn-action" onclick="calcBool('NAND')">NAND</button>
+                    </div>
+                    
+                    <div class="res-container">
+                        <small>OUTPUT</small>
+                        <div id="resBool" class="res-display">-</div>
+                    </div>
                 </div>
 
-                <button class="btn-calc" onclick="hitung()">Hitung Nilai</button>
+                <div class="calc-box">
+                    <div class="box-header">
+                        <h3>Unary Logic</h3>
+                        <span class="badge">NOT</span>
+                    </div>
+                    
+                    <div class="input-focus">
+                        <small>Input Nilai A</small>
+                        <select id="notA" class="m-input wide">
+                            <option value="1">1 (True)</option>
+                            <option value="0">0 (False)</option>
+                        </select>
+                    </div>
 
-                <div id="hasil" class="result-box">
-                    Hasil akan muncul di sini
+                    <button class="btn-action primary" onclick="calcNot()">Invert (NOT)</button>
+                    
+                    <div class="res-container">
+                        <small>OUTPUT</small>
+                        <div id="resNot" class="res-display">-</div>
+                    </div>
+                </div>
+
+                <div class="calc-box">
+                    <div class="box-header">
+                        <h3>Truth Table</h3>
+                        <span class="badge">Ref</span>
+                    </div>
+                    <div class="ref-table">
+                        <div class="ref-item"><span>1 AND 1</span> <span>= 1</span></div>
+                        <div class="ref-item"><span>1 OR 0</span> <span>= 1</span></div>
+                        <div class="ref-item"><span>1 XOR 1</span> <span>= 0</span></div>
+                        <div class="ref-item"><span>NOT 1</span> <span>= 0</span></div>
+                    </div>
+                    <div class="info-footer">
+                        Sistem Bilangan Biner
+                    </div>
                 </div>
             </div>
         </div>
@@ -420,19 +1092,106 @@
 </div>
 
 <script>
-function hitung(){
-    let a = parseFloat(document.getElementById("a").value) || 0;
-    let b = parseFloat(document.getElementById("b").value) || 0;
-    let c = parseFloat(document.getElementById("c").value) || 0;
-    let d = parseFloat(document.getElementById("d").value) || 0;
+    function calcBool(op) {
+        const a = parseInt(document.getElementById('valA').value);
+        const b = parseInt(document.getElementById('valB').value);
+        let res;
+        
+        document.getElementById('opLabel').innerText = op;
 
-    let det = (a * d) - (b * c);
+        switch(op) {
+            case 'AND':  res = a && b; break;
+            case 'OR':   res = a || b; break;
+            case 'XOR':  res = a ^ b; break;
+            case 'NAND': res = !(a && b) ? 1 : 0; break;
+            default: res = 0;
+        }
 
-    let hasilEl = document.getElementById("hasil");
-    hasilEl.innerHTML = "Determinan = " + det;
-    hasilEl.style.background = "#27ae60"; 
-}
+        const display = document.getElementById('resBool');
+        display.innerText = res ? "1" : "0";
+        display.style.opacity = 0;
+        setTimeout(() => { display.style.opacity = 1; }, 50);
+    }
+
+    function calcNot() {
+        const a = parseInt(document.getElementById('notA').value);
+        const res = a === 1 ? 0 : 1;
+        const display = document.getElementById('resNot');
+        display.innerText = res;
+    }
 </script>
+
+<div class="section">
+    <h2>Kesimpulan Akhir</h2>
+
+    <div class="card">
+        <p>
+            Aljabar Boolean dan rangkaian logika merupakan fondasi utama dalam dunia sistem digital modern. 
+            Seluruh perangkat seperti komputer, smartphone, hingga sistem kecerdasan buatan bekerja berdasarkan 
+            prinsip logika biner (0 dan 1).
+        </p>
+
+        <h3>Ringkasan Inti Materi</h3>
+        <ul>
+            <li>
+                <strong>Operator Logika (AND, OR, NOT, XOR):</strong> 
+                Digunakan untuk memproses sinyal digital dan membentuk dasar pengambilan keputusan dalam sistem.
+            </li>
+            <li>
+                <strong>Tabel Kebenaran:</strong> 
+                Menunjukkan semua kemungkinan kombinasi input dan output sebagai dasar analisis logika.
+            </li>
+            <li>
+                <strong>Hukum Aljabar Boolean:</strong> 
+                Memungkinkan penyederhanaan ekspresi logika sehingga rangkaian menjadi lebih efisien.
+            </li>
+            <li>
+                <strong>Karnaugh Map (K-Map):</strong> 
+                Metode visual untuk menyederhanakan fungsi Boolean secara cepat dan akurat.
+            </li>
+            <li>
+                <strong>Rangkaian Kombinasional:</strong> 
+                Output hanya bergantung pada input saat ini (contoh: Adder, MUX).
+            </li>
+            <li>
+                <strong>Rangkaian Sequential:</strong> 
+                Memiliki memori dan bergantung pada state sebelumnya (contoh: Flip-Flop, Counter).
+            </li>
+        </ul>
+
+        <h3>Inti Pemahaman</h3>
+        <div class="explain ok">
+            <p>
+                Semakin sederhana suatu ekspresi Boolean, maka semakin sedikit komponen yang dibutuhkan 
+                dalam rangkaian. Hal ini berdampak langsung pada:
+            </p>
+            <ul>
+                <li>Efisiensi energi (hemat daya)</li>
+                <li>Ukuran perangkat lebih kecil</li>
+                <li>Performa lebih cepat</li>
+                <li>Biaya produksi lebih rendah</li>
+            </ul>
+        </div>
+
+        <h3>Relevansi di Dunia Nyata</h3>
+        <div class="example-box">
+            <ul>
+                <li>CPU dan mikroprosesor bekerja dengan jutaan gerbang logika</li>
+                <li>Sistem AI menggunakan logika untuk pengambilan keputusan</li>
+                <li>Database menggunakan operasi AND, OR, NOT untuk pencarian data</li>
+                <li>Sistem keamanan digital menggunakan logika untuk autentikasi</li>
+            </ul>
+        </div>
+
+        <h3>Penutup</h3>
+        <p>
+            Dengan memahami aljabar Boolean dan rangkaian logika, kita dapat melihat bahwa 
+            seluruh teknologi modern sebenarnya dibangun dari konsep sederhana: 
+            <strong>logika benar (1) dan salah (0)</strong>. 
+            Dari dasar inilah berkembang sistem digital yang kompleks dan canggih.
+        </p>
+    </div>
+</div>
 
 </body>
 </html>
