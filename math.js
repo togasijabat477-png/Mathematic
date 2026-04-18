@@ -80,7 +80,7 @@ var materiData = {
       {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",tag:"Lanjut",file:"subject/matdis/numberoftheory.html"}
     ]
   },{
-   icon:"📼", title:"Video Pembelajaran Video",
+   icon:"📼", title:"Video Pembelajaran Matematika Diskrit",
     items:[
       {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Dasar",file:"subject/matdis/Logika_Matematika.html"},
       {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",tag:"Dasar",file:"subject/matdis/Himpunan.html"},
