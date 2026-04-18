@@ -76,7 +76,8 @@ var materiData = {
       {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",tag:"Menengah",file:"subject/matdis/Relasi_dan_Fungsi.html"},
       {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",tag:"Lanjut",file:"subject/matdis/teori_graf_gabungan.html"},
       {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",tag:"Lanjut",file:"subject/matdis/Aljabar_Bolean.html"},
-      {num:"06",title:"Pohon",description:"Karakteristik Pohon",tag:"Lanjut",file:"subject/matdis/Pohon.html"}
+      {num:"06",title:"Pohon",description:"Karakteristik Pohon",tag:"Lanjut",file:"subject/matdis/Pohon.html"},
+      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",tag:"Lanjut",file:"subject/matdis/.html"}
     ]
   },{
     icon:"📝", title:"Latihan Soal Matematika Diskrit",
