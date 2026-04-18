@@ -1,441 +1,436 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Materi Aljabar Boolean - Modern</title>
-<style>
-    :root {
-        --bg: #f5f6fa;
-        --card: #ffffff;
-        --text: #222;
-        --muted: #666;
-        --primary: #000;
-        --radius: 14px;
-        --shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    *{
-        box-sizing:border-box;
-    }
-    body {
-        margin: 0;
-        padding: 0;
-        background: var(--bg);
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        color: var(--text);
-    }
-    header {
-        background: #ffffff;
-        border-bottom: 1px solid #e5e5e5;
-        padding: 20px 30px;
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--primary);
-        box-shadow: var(--shadow);
-    }
-    .container {
-        max-width: 950px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-    .card {
-        background: var(--card);
-        color: var(--text);
-        border-radius: var(--radius);
-        padding: 20px 25px;
-        margin-bottom: 25px;
-        box-shadow: var(--shadow);
-    }
-    h2 {
-        color: var(--primary);
-        margin-top: 0;
-        font-weight: 700;
-        margin-bottom: 12px;
-    }
-    h3 {
-        color: var(--primary);
-        font-weight: 600;
-        margin-top: 18px;
-    }
-    ul {
-        margin-left: 18px;
-        line-height: 1.6;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    table, th, td {
-        border: 1px solid #ddd;
-    }
-    th {
-        background: #efefef;
-        font-weight: 600;
-    }
-    th, td {
-        padding: 9px;
-        text-align: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Matematika Diskrit</title>
 
-    /* QUIZ SECTION */
-    .wrap {
-        max-width: 950px;
-        margin: 40px auto 80px;
-        padding: 20px;
-    }
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --white: #ffffff;
+        }
 
-    .wrap header {
-        background: none;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        margin-bottom: 20px;
-    }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
 
-    .grid {
-        display: grid;
-        gap: 20px;
-        grid-template-columns: 2fr 1fr;
-    }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
-    .quiz h2 {
-        margin-bottom: 12px;
-        color: var(--primary);
-    }
+        header {
+            text-align: center;
+            border-bottom: 4px solid var(--secondary-color);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
 
-    button {
-        padding: 10px 18px;
-        border: none;
-        border-radius: 8px;
-        background: #000;
-        color: white;
-        cursor: pointer;
-        font-weight: 600;
-        margin-top: 10px;
-    }
+        h1, h2, h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 8px;
+        }
 
-    button:hover {
-        opacity: .85;
-    }
+        .section {
+            margin-bottom: 40px;
+        }
 
-    .explain {
-        margin-top: 8px;
-        padding: 12px;
-        border-radius: 8px;
-        display: none;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-    .ok {
-        background: #e0ffe6;
-        border-left: 4px solid #27ae60;
-    }
-    .bad {
-        background: #ffe5e5;
-        border-left: 4px solid #e74c3c;
-    }
+        .card {
+            margin-bottom: 25px;
+        }
 
-</style>
+        .learning-box, .theorem-box {
+            background: #eef2f3;
+            padding: 20px;
+            border-left: 5px solid var(--secondary-color);
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .example-box {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .explain {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        .ok { background: #e0ffe6; border-left: 4px solid #27ae60; }
+
+        .matrix-layout {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .matrix-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .matrix-symbol {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .matrix-box {
+            position: relative;
+            display: inline-block;
+            padding: 10px 15px;
+            border-left: 2px solid #000;
+            border-right: 2px solid #000;
+        }
+
+        .matrix-box::before, .matrix-box::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 2px;
+            background: #000;
+        }
+        .matrix-box::before { top: 0; left: 0; } 
+        .matrix-box::after { bottom: 0; right: 0; }
+
+        .matrix-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .matrix-row span {
+            display: inline-block;
+            width: 30px;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .formula-box {
+            background: #f1f2f6;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #ccc;
+        }
+
+        .formula-text {
+            font-size: 1.2em;
+            font-family: serif;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .calc-container {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .matrix-input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .m-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #2f3542;
+            color: white;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .m-input:focus {
+            outline: none;
+            border-color: #57604f;
+            box-shadow: 0 0 8px rgba(255,255,255,0.2);
+        }
+
+        .btn-calc {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-calc:hover {
+            background: #ced4da;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #555;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
 
-<header>Aljabar Boolean – Matematika Diskrit</header>
-
 <div class="container">
-  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
-    
+    <header>
+        <h1>Aljabar Boolean</h1>
+    </header>
 
-    <!-- 1 -->
-    <div class="card">
-        <h2>1. Pengertian Aljabar Boolean</h2>
-        <p>Aljabar Boolean adalah sistem matematika yang bekerja hanya menggunakan dua nilai logika yaitu 0 (False) dan 1 (True). Dikembangkan oleh George Boole, konsep ini menjadi dasar dari semua sistem digital dan komputer modern.</p>
-        <p>Aljabar Boolean digunakan dalam:</p>
-        <ul>
-            <li>Perancangan rangkaian digital</li>
-            <li>Pemrograman logika (struktur IF, AND, OR)</li>
-            <li>Sistem komputer dan prosesor</li>
-            <li>Sistem kecerdasan buatan</li>
-        </ul>
+    <div class="section">
+        <div class="card">
+            <p>
+                Aljabar Boolean adalah cabang matematika yang sangat penting dalam ilmu komputer karena menjadi dasar dari logika digital dan perancangan sirkuit elektronik. Sistem ini hanya mengenal dua keadaan atau nilai logika, yaitu <strong>0 (False/Salah)</strong> dan <strong>1 (True/Benar)</strong>.
+            </p>
+
+            <div class="example-box" style="background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; margin: 15px 0; border-radius: 8px;">
+                <strong>Konsep Dasar:</strong>
+                <p>Dalam dunia nyata, aljabar ini dianalogikan seperti saklar lampu: hanya ada kondisi <strong>Mati (0)</strong> atau <strong>Nyala (1)</strong>. Tidak ada kondisi di antaranya. Prinsip inilah yang digunakan oleh prosesor komputer untuk memproses miliaran data setiap detiknya.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>1. Operator Logika Utama</h3>
+            <p>
+                Dalam aljabar Boolean, seluruh sistem komputasi dibangun dari tiga operasi dasar. Operator ini menentukan bagaimana aliran listrik (sinyal digital) diproses di dalam microchip.
+            </p>
+            
+            
+
+[Image of basic logic gates AND OR NOT]
+
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operator</th>
+                        <th>Simbol</th>
+                        <th>Logika Operasional</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>AND</strong> (Konjungsi)</td>
+                        <td>A &middot; B</td>
+                        <td>Hanya menghasilkan <strong>1</strong> jika variabel A <strong>dan</strong> B keduanya bernilai 1.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OR</strong> (Disjungsi)</td>
+                        <td>A + B</td>
+                        <td>Menghasilkan <strong>1</strong> jika <strong>salah satu</strong> atau kedua variabel bernilai 1.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NOT</strong> (Negasi)</td>
+                        <td>A' atau &AElig;</td>
+                        <td>Operasi unari yang <strong>membalikkan</strong> keadaan: 0 menjadi 1, dan 1 menjadi 0.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="explain ok">
+                <strong>Analogi Dunia Nyata:</strong>
+                <p>
+                    Bayangkan sebuah sistem keamanan bank. Pintu brankas hanya terbuka jika (Kunci Manajer <strong>AND</strong> Kunci Direktur) diputar bersamaan. Namun, alarm akan berbunyi jika (Sensor Pintu Terbuka <strong>OR</strong> Sensor Gerak Terdeteksi).
+                </p>
+            </div>
+
+            <div class="example-box" style="margin-top: 20px;">
+                <strong>Implementasi pada Perangkat Keras:</strong>
+                <p>
+                    Aljabar Boolean memungkinkan teknisi untuk melakukan penyederhanaan sirkuit elektronik. Semakin sederhana ekspresi logikanya, semakin sedikit gerbang logika (transistor) yang dibutuhkan. Hasilnya, perangkat elektronik bisa menjadi lebih <strong>kecil</strong>, lebih <strong>dingin</strong> (tidak cepat panas), dan jauh lebih <strong>hemat daya</strong>.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>2. Operator & Tabel Kebenaran</h3>
+            <p>Operasi Boolean direalisasikan melalui <b>gerbang logika</b>. Berikut adalah perbandingan logika dasar yang paling sering digunakan dalam sirkuit digital:</p>
+            
+            
+
+[Image of AND OR XOR truth tables]
+
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>AND (A &middot; B)</th>
+                        <th>OR (A + B)</th>
+                        <th>XOR (A &oplus; B)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                    <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+                    <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+                    <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+                </tbody>
+            </table>
+            <p><small><i>*XOR: Menghasilkan 1 hanya jika input berbeda (sangat penting untuk sirkuit aritmatika/penjumlahan).</i></small></p>
+
+            <div class="explain ok">
+                <strong>Hukum Aljabar untuk Efisiensi Sirkuit:</strong>
+                <p>Gunakan aturan ini untuk memangkas jumlah gerbang logika dalam perancangan hardware:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9em;">
+                    <div>
+                        &bull; <b>Identitas:</b> A + 0 = A; A &middot; 1 = A<br>
+                        &bull; <b>Dominasi:</b> A + 1 = 1; A &middot; 0 = 0<br>
+                        &bull; <b>Idempoten:</b> A + A = A; A &middot; A = A
+                    </div>
+                    <div>
+                        &bull; <b>Komplemen:</b> A + A' = 1; A &middot; A' = 0<br>
+                        &bull; <b>Absorpsi:</b> A + (A &middot; B) = A<br>
+                        &bull; <b>De Morgan:</b> (A &middot; B)' = A' + B'
+                    </div>
+                </div>
+            </div>
+
+            <div class="example-box" style="margin-top: 20px;">
+                <h3>Esensi Aljabar Boolean di Era Digital</h3>
+                <ul>
+                    <li><strong>Optimasi Hardware:</strong> Penyederhanaan persamaan Boolean berarti pengurangan jumlah transistor, yang berujung pada konsumsi daya lebih rendah dan suhu chip yang lebih dingin.</li>
+                    <li><strong>Logika Percabangan:</strong> Menjadi dasar struktur <code>if-else</code> dan <code>switch-case</code> dalam bahasa pemrograman.</li>
+                    <li><strong>Sistem Pencarian:</strong> Mengatur filter database dan mesin pencari melalui query <code>AND</code>, <code>OR</code>, dan <code>NOT</code>.</li>
+                    <li><strong>AI & Keamanan:</strong> Digunakan dalam pembentukan <i>decision tree</i> pada Machine Learning dan protokol enkripsi data.</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <!-- 2 -->
-    <div class="card">
-        <h2>2. Nilai Logika dan Variabel Boolean</h2>
-        <p>Dalam Boolean, setiap variabel hanya memiliki dua kemungkinan nilai:</p>
-        <table>
-            <tr><th>Nilai</th><th>Makna</th></tr>
-            <tr><td>1</td><td>Benar / True</td></tr>
-            <tr><td>0</td><td>Salah / False</td></tr>
-        </table>
-        <p>Variabel Boolean dilambangkan dengan huruf kapital seperti A, B, C.</p>
+    <div class="section">
+        <h2>Determinan</h2>
+        <div class="card">
+            <h3>Determinan Matriks</h3>
+            <p>
+                Determinan adalah nilai skalar yang dihasilkan dari matriks persegi. Nilai ini sangat krusial karena menentukan apakah sebuah matriks memiliki invers atau tidak. Jika <b>det(A) = 0</b>, maka matriks tersebut disebut matriks singular (tidak punya invers).
+            </p>
+
+            <h3>Matriks Ordo 2x2</h3>
+            <p>Untuk matriks persegi berukuran 2x2, determinan dihitung dengan mengalikan elemen diagonal utama lalu dikurangi dengan hasil kali elemen diagonal samping.</p>
+            
+            
+
+            <div class="matrix-layout">
+                <div class="matrix-wrapper">
+                    <span class="matrix-symbol">A =</span>
+                    <div class="matrix-box">
+                        <div class="matrix-row">
+                            <span>a</span><span>b</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span>c</span><span>d</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="formula-box">
+                    <strong>Rumus:</strong>
+                    <div class="formula-text">det(A) = (a &times; d) &minus; (b &times; c)</div>
+                </div>
+            </div>
+
+            <div class="explain ok">
+                <strong>Contoh Perhitungan:</strong>
+                <div class="matrix-layout">
+                    <div class="matrix-wrapper">
+                        <div class="matrix-box">
+                            <div class="matrix-row"><span>3</span><span>2</span></div>
+                            <div class="matrix-row"><span>1</span><span>4</span></div>
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        det(A) = (3 &times; 4) &minus; (2 &times; 1) <br>
+                        det(A) = 12 &minus; 2 = <b>10</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, #1e272e 0%, #000000 100%); color: white; padding: 30px; border-radius: 15px;">
+            <h2 style="color: white; border-bottom: 1px solid #444; text-align: center;">Kalkulator Determinan 2x2</h2>
+            
+            <div class="calc-container">
+                <div class="matrix-input-grid">
+                    <input type="number" id="a" placeholder="a" class="m-input">
+                    <input type="number" id="b" placeholder="b" class="m-input">
+                    <input type="number" id="c" placeholder="c" class="m-input">
+                    <input type="number" id="d" placeholder="d" class="m-input">
+                </div>
+
+                <button class="btn-calc" onclick="hitung()">Hitung Nilai</button>
+
+                <div id="hasil" class="result-box">
+                    Hasil akan muncul di sini
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- 3 -->
-    <div class="card">
-        <h2>3. Operator Dasar Aljabar Boolean</h2>
-
-        <h3>NOT (Komplemen)</h3>
-        <table>
-            <tr><th>A</th><th>A'</th></tr>
-            <tr><td>0</td><td>1</td></tr>
-            <tr><td>1</td><td>0</td></tr>
-        </table>
-
-        <h3>AND (Konjungsi)</h3>
-        <table>
-            <tr><th>A</th><th>B</th><th>A AND B</th></tr>
-            <tr><td>0</td><td>0</td><td>0</td></tr>
-            <tr><td>0</td><td>1</td><td>0</td></tr>
-            <tr><td>1</td><td>0</td><td>0</td></tr>
-            <tr><td>1</td><td>1</td><td>1</td></tr>
-        </table>
-
-        <h3>OR (Disjungsi)</h3>
-        <table>
-            <tr><th>A</th><th>B</th><th>A OR B</th></tr>
-            <tr><td>0</td><td>0</td><td>0</td></tr>
-            <tr><td>0</td><td>1</td><td>1</td></tr>
-            <tr><td>1</td><td>0</td><td>1</td></tr>
-            <tr><td>1</td><td>1</td><td>1</td></tr>
-        </table>
-    </div>
-
-    <!-- 4 -->
-    <div class="card">
-        <h2>4. Operator Turunan</h2>
-        <h3>NAND (NOT AND)</h3>
-        <p>Merupakan kebalikan dari operasi AND.</p>
-
-        <h3>NOR (NOT OR)</h3>
-        <p>Merupakan kebalikan dari OR.</p>
-
-        <h3>XOR (Exclusive OR)</h3>
-        <p>Hasilnya benar jika kedua nilai berbeda.</p>
-    </div>
-
-    <!-- 5 -->
-    <div class="card">
-        <h2>5. Hukum-Hukum Dasar Aljabar Boolean</h2>
-        <ul>
-            <li><b>Identitas:</b> A + 0 = A, A · 1 = A</li>
-            <li><b>Dominasi:</b> A + 1 = 1, A · 0 = 0</li>
-            <li><b>Komutatif:</b> A + B = B + A</li>
-            <li><b>Asosiatif:</b> (A + B) + C = A + (B + C)</li>
-            <li><b>Distributif:</b> A · (B + C) = A·B + A·C</li>
-            <li><b>Komplemen:</b> A + A' = 1, A · A' = 0</li>
-        </ul>
-    </div>
-
-    <!-- 6 -->
-    <div class="card">
-        <h2>6. Hukum De Morgan</h2>
-        <p>(A + B)' = A' · B'</p>
-        <p>(A · B)' = A' + B'</p>
-    </div>
-
-    <!-- 7 -->
-    <div class="card">
-        <h2>7. Penyederhanaan Ekspresi Boolean</h2>
-        <ul>
-            <li>Hukum Aljabar Boolean</li>
-            <li>Tabel Kebenaran</li>
-            <li>Peta Karnaugh (K-Map)</li>
-        </ul>
-    </div>
-
-    <!-- 8 -->
-    <div class="card">
-        <h2>8. Penerapan Aljabar Boolean</h2>
-        <ul>
-            <li>Pemrograman komputasi</li>
-            <li>Perancangan rangkaian digital komputer</li>
-            <li>Sistem logika dalam prosesor</li>
-            <li>Database query (AND, OR, NOT)</li>
-            <li>Kecerdasan buatan</li>
-        </ul>
-    </div>
-
 </div>
-
-
-
-
-<!-- ==========================================
-            QUIZ SECTION
-=========================================== -->
-<div class="wrap">
-  <header>
-    <h2 style="color:#000;">Latihan Soal Aljabar Boolean — Matematika Diskrit</h2>
-    <div style="color:var(--muted);font-size:13px">Interaktif • Jawaban & Pembahasan</div>
-  </header>
-
-  <div class="grid">
-    <div class="card">
-      <div class="quiz">
-        <h2>Soal (12)</h2>
-        <div id="quiz"></div>
-        <button id="checkBtn">Periksa Jawaban</button>
-        <div id="score"></div>
-      </div>
-    </div>
-
-    <aside class="card">
-      <h2>Petunjuk</h2>
-      <ol style="color:var(--muted);line-height:1.6">
-        <li>Pilih satu jawaban untuk setiap soal.</li>
-        <li>Klik <strong>Periksa Jawaban</strong> untuk melihat kunci dan pembahasan.</li>
-        <li>Setiap pembahasan muncul per soal.</li>
-      </ol>
-    </aside>
-  </div>
-
-</div>
-
 
 <script>
-const questions = [
-  {
-    q: "1) Hukum De Morgan menyatakan bahwa (A · B)' = ...",
-    options: ["A' · B'","A' + B'","(A' + B')'","A + B"],
-    answer: "A' + B'",
-    explain: "De Morgan: komplemen dari AND menjadi OR dari komplemen."
-  },
-  {
-    q: "2) Sederhanakan A + A·B",
-    options: ["A·B","A + B","A","B"],
-    answer: "A",
-    explain: "Gunakan hukum absorpsi: A + A·B = A."
-  },
-  {
-    q: "3) Nilai dari ekspresi (A + B)·(A + B') ketika A=0 dan B=1 adalah ...",
-    options: ["0","1","A","B"],
-    answer: "0",
-    explain: "(0+1)·(0+0) = 1·0 = 0."
-  },
-  {
-    q: "4) Bentuk SOP dibangun dari ...",
-    options: ["maxterm","minterm","penjumlahan literal","tidak valid"],
-    answer: "minterm",
-    explain: "SOP adalah OR dari minterm."
-  },
-  {
-    q: "5) A XOR B bernilai 1 ketika ...",
-    options: ["A = B","A ≠ B","A = 1","B = 1"],
-    answer: "A ≠ B",
-    explain: "XOR = 1 jika input berbeda."
-  },
-  {
-    q: "6) Sederhanakan A·B + A·B' ",
-    options: ["A·(B + B')","A","B","0"],
-    answer: "A",
-    explain: "A(B+B')=A(1)=A."
-  },
-  {
-    q: "7) Hukum idempoten menyatakan ...",
-    options: ["A + A = 1","A + A = A dan A·A = A","A = A'","Tidak ada"],
-    answer: "A + A = A dan A·A = A",
-    explain: "Mengulang variabel tidak mengubah nilai."
-  },
-  {
-    q: "8) Jika F = Σm(1,3,5,7), bentuk ringkas = ...",
-    options: ["C","A·C + B·C","A + B + C","A·B·C"],
-    answer: "A·C + B·C",
-    explain: "Keempat minterm identik menghasilkan F = C(A+B)."
-  },
-  {
-    q: "9) Manakah identitas yang benar?",
-    options: ["A + 1 = A","A·0 = A","A + 0 = A","A·1 = 0"],
-    answer: "A + 0 = A",
-    explain: "Identitas penjumlahan."
-  },
-  {
-    q: "10) Sederhanakan (A + B)(A' + C)",
-    options: ["A·A' + A·C + B·A' + B·C","A·C + A'·B","(A + B·C)","A + B + C"],
-    answer: "A·C + A'·B",
-    explain: "Ekspresi minimum dua term."
-  },
-  {
-    q: "11) Komplemen dari (A + B') adalah ...",
-    options: ["A' + B","A'·B","A'·B'","A + B"],
-    answer: "A'·B",
-    explain: "De Morgan: (A + B')' = A'B."
-  },
-  {
-    q: "12) Pada K-Map, sel dapat digabung jika ...",
-    options: ["nilai output sama","nilai input sama","harus 1 dan 0","tidak bisa"],
-    answer: "nilai output sama",
-    explain: "Sel bersebelahan bernilai 1 dapat disederhanakan."
-  }
-];
+function hitung(){
+    let a = parseFloat(document.getElementById("a").value) || 0;
+    let b = parseFloat(document.getElementById("b").value) || 0;
+    let c = parseFloat(document.getElementById("c").value) || 0;
+    let d = parseFloat(document.getElementById("d").value) || 0;
 
+    let det = (a * d) - (b * c);
 
-const quizDiv = document.getElementById('quiz');
-
-questions.forEach((item, idx) => {
-  const box = document.createElement('div');
-  box.className = 'question';
-  box.id = 'q' + idx;
-
-  const opts = item.options.map((o,i) =>
-    `<li><label><input type="radio" name="q${idx}" value="${escapeHtml(o)}"> <strong>${String.fromCharCode(65+i)}.</strong> ${escapeHtml(o)}</label></li>`
-  ).join('');
-
-  box.innerHTML = `
-    <div style="font-weight:600;margin-bottom:8px">${escapeHtml(item.q)}</div>
-    <ul class="options">${opts}</ul>
-    <div class="explain" id="exp${idx}"></div>
-  `;
-  quizDiv.appendChild(box);
-});
-
-function escapeHtml(s){
-  return String(s)
-      .replaceAll('&','&amp;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;')
-      .replaceAll('"','&quot;')
-      .replaceAll("'","&#39;");
+    let hasilEl = document.getElementById("hasil");
+    hasilEl.innerHTML = "Determinan = " + det;
+    hasilEl.style.background = "#27ae60"; 
 }
-
-document.getElementById('checkBtn').addEventListener('click', () => {
-  let score = 0;
-
-  questions.forEach((item, idx) => {
-    const sel = document.querySelector(`input[name=q${idx}]:checked`);
-    const exp = document.getElementById('exp' + idx);
-
-    if (sel && sel.value === item.answer) {
-      score++;
-      exp.className = 'explain ok';
-      exp.style.display = 'block';
-      exp.innerHTML = `<strong>Benar.</strong> ${escapeHtml(item.explain)}`;
-    } else {
-      const given = sel ? sel.value : '<i>tidak menjawab</i>';
-      exp.className = 'explain bad';
-      exp.style.display = 'block';
-      exp.innerHTML =
-        `<strong>Salah.</strong> Jawaban benar: <b>${escapeHtml(item.answer)}</b>. 
-         Pembahasan: ${escapeHtml(item.explain)}
-         <div style="margin-top:6px;color:var(--muted)">Jawaban Anda: ${given}</div>`;
-    }
-  });
-
-  document.getElementById('score').innerHTML = `
-    <div style="
-      margin-top:12px;
-      padding:12px;
-      border-radius:8px;
-      background:#000;
-      color:#fff;
-      font-weight:700;
-    ">
-      Skor Anda: ${score} / ${questions.length}
-    </div>
-  `;
-});
 </script>
 
 </body>
