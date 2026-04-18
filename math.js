@@ -11,6 +11,19 @@ function handlePageParam() {
         navigateTo(page);
     }
 }
+function navigateTo(page, tab) {
+  // simpan halaman sebelumnya
+  localStorage.setItem("lastPage", currentPage);
+
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.classList.remove('active');
+  });
+
+  var el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+
+  currentPage = page;
+}
 
 
 /* ═══ DATA ═══ */
