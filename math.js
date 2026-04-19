@@ -125,15 +125,9 @@ var materiData = {
       {num:"05",title:"Diagonalisasi",description:"Nilai eigen, vektor eigen, dan diagonalisasi",tag:"Lanjut",file:"subject/aljali/bab6.html"}
     ]
   },{
-     icon:"📼", title:"Video Pembelajaran Matematika Diskrit",
+     icon:"📼", title:"Video Pembelajaran Aljabar Linear",
     items:[
-      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",file:"video/matdis/video_logika.html"},
-      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",file:"video/matdis/Himpunan.html"},
-      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",file:"video/matdis/Relasi_dan_Fungsi.html"},
-      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",file:"video/matdis/teori_graf_gabungan.html"},
-      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",file:"video/matdis/Aljabar_Bolean.html"},
-      {num:"06",title:"Pohon",description:"Karakteristik Pohon",file:"video/matdis/Pohon.html"},
-      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",file:"video/matdis/numberoftheory.html"}
+      {num:"01",title:"Sistem Persamaan Linear",description:"Proposisi, operator logika, dan tabel kebenaran",file:"video/aljali/spl.html"},
     ]
   },{
     icon:"📝", title:"Latihan Soal Aljabar Linear",
@@ -151,15 +145,9 @@ var materiData = {
       {num:"01",title:"Kriptografi",description:"Sejarah, konsep dasar enkripsi dan dekripsi",tag:"Dasar",file:"subject/kriptografi/bab7.html"}
     ]
   },{
-     icon:"📼", title:"Video Pembelajaran Matematika Diskrit",
+     icon:"📼", title:"Video Pembelajaran Kriptografi",
     items:[
-      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",file:"video/matdis/video_logika.html"},
-      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",file:"video/matdis/Himpunan.html"},
-      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",file:"video/matdis/Relasi_dan_Fungsi.html"},
-      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",file:"video/matdis/teori_graf_gabungan.html"},
-      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",file:"video/matdis/Aljabar_Bolean.html"},
-      {num:"06",title:"Pohon",description:"Karakteristik Pohon",file:"video/matdis/Pohon.html"},
-      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",file:"video/matdis/numberoftheory.html"}
+      {num:"01",title:"Kriptografi",description:"dasar-dasar teori yang digunakan dalam kriptografi.",file:"video/kriptografi/kriptografi.html"},
     ]
   },{
     icon:"📝", title:"Latihan Soal Kriptografi",
