@@ -82,15 +82,29 @@ h1, h2, h3 {
 }
 
 .math-block {
-    font-family: "Courier New", Courier, monospace;
-    background: #f9f9f9;
-    padding: 15px;
+    font-family: 'Times New Roman', serif;
+    background: #f8fafc;
+    padding: 18px 22px;
     display: block;
-    margin: 15px 0;
-    border-radius: 6px;
+    margin: 20px auto;
+    border-radius: 10px;
+    font-size: 22px; /* diperbesar */
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     overflow-x: auto;
 }
-
+pre {
+    font-family: 'Times New Roman', serif;
+    font-size: 22px; /* diperbesar */
+    background: #f8fafc;
+    padding: 18px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
 table {
     width: 100%;
     border-collapse: collapse;
@@ -108,25 +122,106 @@ th {
     color: white;
 }
 
+.matrix-section {
+    background: #f3f6fb;
+    border: 1px solid #dbe4f0;
+    border-radius: 12px;
+    padding: 30px 20px;
+    margin: 30px 0;
+}
+
 .matrix-container {
-    align-items: center;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
     justify-content: center;
-    margin: 20px 0;
+    align-items: center;
+    gap: 25px;
+    margin: 40px 0;
+}
+
+.matrix-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin: 40px 0;
+}
+
+.label {
+    font-size: 20px;
+    font-family: 'Times New Roman', serif;
+}
+
+.matrix.nice {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px 28px;
+
+    padding: 25px 30px;
+
+    border-left: 2px solid #2c3e50;
+    border-right: 2px solid #2c3e50;
+
+    border-radius: 14px;
+    background: #ffffff;
+
+    font-size: 18px;
+    font-family: 'Times New Roman', serif;
+    text-align: center;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.label {
+    font-size: 20px;
+    font-family: 'Times New Roman', serif;
 }
 
 .matrix {
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    padding: 10px;
-    margin-left: 8px;
-    font-family: serif;
-    font-size: 1.2em;
-    padding: 10px;
+    border-left: 2px solid #2c3e50;
+    border-right: 2px solid #2c3e50;
+    padding: 20px 25px;
+    font-family: 'Times New Roman', serif;
+    font-size: 18px;
+    display: inline-block;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    letter-spacing: 10px;   
+    line-height: 2.8;       
+}
+
+.math-block {
+    font-size: 18px;
+    text-align: center;
+    margin-top: 25px;
+    font-family: 'Times New Roman', serif;
+}
+
+.divider {
+    border-top: 1px dashed #cbd5e1;
+    margin: 25px auto;
+    width: 80%;
+}
+
+.formula-box {
+    text-align: center;
+    margin: 30px auto;
+    padding: 14px 18px;
+
+    max-width: 500px;
+
+    background: #ffffff;
     border-radius: 10px;
-    background: #fff;
+    border: 1px solid #e0e6ed;
+
+    font-size: 18px;
+    font-family: 'Times New Roman', serif;
+}
+
+.formula-box .math-block {
+    font-size: 20px;
+    font-family: 'Times New Roman', serif;
 }
 
 .badge {
@@ -138,7 +233,6 @@ th {
     margin-bottom: 5px;
 }
 
-/* Calculator Area */
 .calculator-area {
     background: var(--primary-color);
     color: white;
@@ -163,6 +257,13 @@ th {
     font-size: 1.1em;
     font-weight: bold;
 }
+
+.math-highlight {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
 
 .btn-action {
     background: var(--accent-color);
@@ -190,18 +291,25 @@ th {
 }
 
 @media (max-width: 600px) {
-    .container { padding: 20px; }
+    .matrix {
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+
+    .label {
+        font-size: 16px;
+    }
+
+    .formula-box .math-block {
+        font-size: 16px;
+    }
 }
+
 </style>
 </head>
 <body>
 
 <div class="container">
-
-    <button onclick="window.location.href='../../index.html?page=materi'">
-  ← Kembali ke Materi
-</button>
-
     <header>
         <h1>DETERMINAN</h1>
     </header>
@@ -268,19 +376,19 @@ det(A) = (3)(4) - (2)(1) = 12 - 2 = 10
         atau ekspansi kofaktor.
     </p>
 
-    <pre>
-     <div class="matrix-container">
+<div class="matrix-container">
     <div class="label">A =</div>
-    <div class="matrix">
-        a &nbsp; b &nbsp; c<br>
-        d &nbsp; e &nbsp; f<br>
-        g &nbsp; h &nbsp; i
+
+    <div class="matrix nice">
+        <span>a</span><span>b</span><span>c</span>
+        <span>d</span><span>e</span><span>f</span>
+        <span>g</span><span>h</span><span>i</span>
     </div>
 </div>
 
-
-det(A) = a(ei - fh) - b(di - fg) + c(dh - eg)
-    </pre>
+<div class="formula-box">
+    det(A) = a(ei − fh) − b(di − fg) + c(dh − eg)
+</div>
 
     <h2>D. Minor dan Kofaktor</h2>
     
