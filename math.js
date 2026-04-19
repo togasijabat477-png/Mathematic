@@ -95,7 +95,7 @@ var materiData = {
   },{
    icon:"📼", title:"Video Pembelajaran Matematika Diskrit",
     items:[
-      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",file:"video/matdis/video_logika.html"},
+      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",file:"https://youtu.be/aMVQq1kshao?si=8_VzRYqX_oUxulja"},
       {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",file:"video/matdis/Himpunan.html"},
       {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",file:"video/matdis/Relasi_dan_Fungsi.html"},
       {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",file:"video/matdis/teori_graf_gabungan.html"},
