@@ -154,7 +154,44 @@ th {
     margin-bottom: 5px;
 }
 
-/* Calculator Area */
+.matrix.advanced div {
+    min-width: 30px;
+}
+
+.matrix.advanced {
+    display: grid;
+    grid-template-columns: repeat(5, auto);
+    gap: 18px 28px;
+    padding: 25px 35px;
+    border-left: 3px solid black;
+    border-right: 3px solid black;
+    border-radius: 20px;
+    background: #f2f2f2;
+    font-family: "Times New Roman", serif;
+    font-size: 22px;
+    text-align: center;
+}
+
+.matrix.advanced {
+    display: grid;
+    grid-template-columns: repeat(5, min-content); 
+    gap: 10px 14px; 
+    padding: 18px 20px; 
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-radius: 16px;
+    background: #f2f2f2;
+    font-family: "Times New Roman", serif;
+    font-size: 18px; 
+    text-align: center;
+    width: fit-content; 
+    margin: auto; 
+}
+
+.matrix.advanced sup {
+    font-size: 0.6em;
+}
+
 .calculator-area {
     background: var(--primary-color);
     color: white;
@@ -449,14 +486,33 @@ th {
         Secara umum, bentuk matriks persegi dapat dituliskan sebagai berikut:
     </p>
 
-  <div class="matrix-container">
-      <div class="label">A =</div>
-    <div class="matrix">
-        a11 a12 a13 ... a1n<br>
-        a21 a22 a23 ... a2n<br>
-        a31 a32 a33 ... a3n<br>
-        ...  ...  ...  ...<br>
-        an1 an2 an3 ... ann
+<div class="matrix-container">
+    <div class="label">A =</div>
+
+    <div class="matrix advanced">
+        <div>a<sup>11</sup></div>
+        <div>a<sup>12</sup></div>
+        <div>...</div>
+        <div>a<sup>1n</sup></div>
+        <div>k<sup>1</sup></div>
+
+        <div>a<sup>21</sup></div>
+        <div>a<sup>22</sup></div>
+        <div>...</div>
+        <div>a<sup>2n</sup></div>
+        <div>k<sup>2</sup></div>
+
+        <div>...</div>
+        <div>...</div>
+        <div>...</div>
+        <div>...</div>
+        <div>...</div>
+
+        <div>a<sup>m1</sup></div>
+        <div>a<sup>m2</sup></div>
+        <div>...</div>
+        <div>a<sup>mn</sup></div>
+        <div>k<sup>m</sup></div>
     </div>
 </div>
 
@@ -807,14 +863,17 @@ th {
     <p>
         Secara umum, bentuk matriks diagonal dapat dituliskan sebagai berikut:
     </p>
-    <div class="matrix-container">
-                 <div class="label">D =</div>
+<div class="matrix-container">
+    <div class="label">D =</div>
+
     <div class="matrix">
-        d1 0 0 ... 0<br>
-        0 d2 0 ... 0<br>
-        0 0 d3 ... 0 <br>
-        ... ... ... ... <br>
-        0 0 0 ... dn 
+<pre>
+d₁   0    0   ...   0
+0    d₂   0   ...   0
+0    0    d₃  ...   0
+...  ...  ... ...  ...
+0    0    0   ...  dₙ
+</pre>
     </div>
 </div>
 
@@ -923,17 +982,19 @@ th {
         dituliskan sebagai berikut:
     </p>
 
-    <div class="matrix-container">
-                 <div class="label">A =</div>
+<div class="matrix-container">
+    <div class="label">A =</div>
+
     <div class="matrix">
-        a11 a12 a13 ... a1n<br>
-        0 a22 a23 ... a2n<br>
-        0 0 a33 ... a3n<br>
-        ... ... ... ... ...<br>
-        0 0 0 ... ann
+<pre>
+a₁₁  a₁₂  a₁₃  ...  a₁ₙ
+0    a₂₂  a₂₃  ...  a₂ₙ
+0    0    a₃₃  ...  a₃ₙ
+...  ...  ...  ...  ...
+0    0    0    ...  aₙₙ
+</pre>
     </div>
 </div>
-
     <p>
         Elemen a11, a22, a33, hingga ann merupakan elemen diagonal utama.
         Elemen di atas diagonal utama dapat bernilai bebas, sedangkan
@@ -1024,14 +1085,17 @@ th {
         Secara umum, bentuk matriks segitiga bawah ordo n x n dapat
         dituliskan sebagai berikut:
     </p>
-    <div class="matrix-container">
-                 <div class="label">A =</div>
+<div class="matrix-container">
+    <div class="label">A =</div>
+
     <div class="matrix">
-        a11 0 0 ... 0<br>
-        a21 a22 0 ... 0<br>
-        a31 a32 a33 ... 0<br>
-        ... ... ... ... ... <br>
-        an1 an2 an3 ... ann
+<pre>
+a₁₁  0    0    ...  0
+a₂₁  a₂₂  0    ...  0
+a₃₁  a₃₂  a₃₃  ...  0
+...  ...  ...  ...  ...
+aₙ₁  aₙ₂  aₙ₃  ...  aₙₙ
+</pre>
     </div>
 </div>
     <p>
@@ -1330,11 +1394,14 @@ Secara umum, matriks polinomial dapat dituliskan sebagai berikut:
 
 <div class="matrix-container">
     <div class="label">A(x) =</div>
+
     <div class="matrix">
-        p<sub>11</sub>(x)  p<sub>12</sub>(x)  ...  p<sub>1n</sub>(x)<br>
-        p<sub>21</sub>(x)  p<sub>22</sub>(x)  ...  p<sub>2n</sub>(x)<br>
-        ... ... ...<br>
-        p<sub>m1</sub>(x)  p<sub>m2</sub>(x)  ...  p<sub>mn</sub>(x)
+<pre>
+p₁₁(x)  p₁₂(x)  ...  p₁ₙ(x)
+p₂₁(x)  p₂₂(x)  ...  p₂ₙ(x)
+...     ...     ...  ...
+pₘ₁(x)  pₘ₂(x)  ...  pₘₙ(x)
+</pre>
     </div>
 </div>
 
