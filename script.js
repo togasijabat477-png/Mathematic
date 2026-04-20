@@ -121,7 +121,7 @@ var materiData = {
       {num:"01",title:"Sistem Persamaan Linear",description:"Operasi SPL",tag:"Dasar",file:"subject/aljali/Aljali_BAB1.html"},
       {num:"02",title:"Matriks",description:"Operasi matriks, determinan, dan invers",tag:"Dasar",file:"subject/aljali/Aljali_BAB2.html"},
       {num:"03",title:"Determinan",description:"Eliminasi Gauss dan metode penyelesaian",tag:"Menengah",file:"subject/aljali/Aljali_BAB3.html"},
-      {num:"04",title:"Nilai Eigen Dan Vektor Eigen",description:"Pemetaan linear dan representasi matriks",tag:"Lanjut",file:"subject/aljali/bab5.html"},
+      {num:"04",title:"Nilai Eigen Dan Vektor Eigen",description:"Pemetaan linear dan representasi matriks",tag:"Lanjut",file:"subject/aljali/Eigen Value & Eigen Vektor.html"},
       {num:"05",title:"Diagonalisasi",description:"Nilai eigen, vektor eigen, dan diagonalisasi",tag:"Lanjut",file:"subject/aljali/bab6.html"}
     ]
   },{
