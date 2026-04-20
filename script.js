@@ -84,75 +84,75 @@ var materiData = {
   diskrit: [{
     icon:"∑", title:"Matematika Diskrit",
     items:[
-      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Dasar",file:"subject/matdis/Logika_Matematika.html"},
-      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",tag:"Dasar",file:"subject/matdis/Himpunan.html"},
-      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",tag:"Menengah",file:"subject/matdis/Relasi_dan_Fungsi.html"},
-      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",tag:"Lanjut",file:"subject/matdis/teori_graf_gabungan.html"},
-      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",tag:"Lanjut",file:"subject/matdis/Aljabar_Bolean.html"},
-      {num:"06",title:"Pohon",description:"Karakteristik Pohon",tag:"Lanjut",file:"subject/matdis/Pohon.html"},
-      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",tag:"Lanjut",file:"subject/matdis/numberoftheory.html"}
+      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Learn",file:"subject/matdis/Logika_Matematika.html"},
+      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",tag:"Learn",file:"subject/matdis/Himpunan.html"},
+      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",tag:"Learn",file:"subject/matdis/Relasi_dan_Fungsi.html"},
+      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",tag:"Learn",file:"subject/matdis/teori_graf_gabungan.html"},
+      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",tag:"Learn",file:"subject/matdis/Aljabar_Bolean.html"},
+      {num:"06",title:"Pohon",description:"Karakteristik Pohon",tag:"Learn",file:"subject/matdis/Pohon.html"},
+      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",tag:"Learn",file:"subject/matdis/numberoftheory.html"}
     ]
   },{
    icon:"📼", title:"Video Pembelajaran Matematika Diskrit",
     items:[
-      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",file:"video/matdis/video_logika.html"},
-      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",file:"video/matdis/Himpunan.html"},
-      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",file:"video/matdis/Relasi_dan_Fungsi.html"},
-      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",file:"video/matdis/teori_graf_gabungan.html"},
-      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",file:"video/matdis/Aljabar_Bolean.html"},
-      {num:"06",title:"Pohon",description:"Karakteristik Pohon",file:"video/matdis/Pohon.html"},
-      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",file:"video/matdis/numberoftheory.html"}
+      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/matdis/video_logika.html"},
+      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",tag:"Watch",file:"video/matdis/Himpunan.html"},
+      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",tag:"Watch",file:"video/matdis/Relasi_dan_Fungsi.html"},
+      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",tag:"Watch",file:"video/matdis/teori_graf_gabungan.html"},
+      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",tag:"Watch",file:"video/matdis/Aljabar_Bolean.html"},
+      {num:"06",title:"Pohon",description:"Karakteristik Pohon",tag:"Watch",file:"video/matdis/Pohon.html"},
+      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",tag:"Watch",file:"video/matdis/numberoftheory.html"}
     ]
   },{
     icon:"📝", title:"Latihan Soal Matematika Diskrit",
     items:[
-      {num:"Latihan",title:"Himpunan",description:"Latihan soal Himpunan",file:"soal/matdis/Himpunan.html"},
-      {num:"Latihan",title:"Logika",description:"Latihan soal Logika tingkat menengah",file:"soal/matdis/Logika.html"},
-      {num:"Latihan",title:"Matriks",description:"Latihan soal matriks",file:"soal/matdis/Soal_Matriks.html"},
-      {num:"Latihan",title:"Graf",description:"Latihan soal Graf",file:"soal/matdis/soal_graf.html"},
-      {num:"Latihan",title:"Aljabar Bolean",description:"Latihan soal Aljabar Bolean",file:"soal/matdis/Aljabar_Bolean.html"},
-      {num:"Latihan",title:"Pohon",description:"Latihan soal Pohon",file:"soal/matdis/Latihan_Soal_Pohon.html"}
+      {num:"Latihan",title:"Himpunan",description:"Latihan soal Himpunan",tag:"Practice",file:"soal/matdis/Himpunan.html"},
+      {num:"Latihan",title:"Logika",description:"Latihan soal Logika tingkat menengah",tag:"Practice",file:"soal/matdis/Logika.html"},
+      {num:"Latihan",title:"Matriks",description:"Latihan soal matriks",tag:"Practice",file:"soal/matdis/Soal_Matriks.html"},
+      {num:"Latihan",title:"Graf",description:"Latihan soal Graf",tag:"Practice",file:"soal/matdis/soal_graf.html"},
+      {num:"Latihan",title:"Aljabar Bolean",description:"Latihan soal Aljabar Bolean",tag:"Practice",file:"soal/matdis/Aljabar_Bolean.html"},
+      {num:"Latihan",title:"Pohon",description:"Latihan soal Pohon",tag:"Practice",file:"soal/matdis/Latihan_Soal_Pohon.html"}
     ]
   }],
    
   aljabar: [{
     icon:"λ", title:"Aljabar Linear",
     items:[
-      {num:"01",title:"Sistem Persamaan Linear",description:"Operasi SPL",tag:"Dasar",file:"subject/aljali/Aljali_BAB1.html"},
-      {num:"02",title:"Matriks",description:"Operasi matriks, determinan, dan invers",tag:"Dasar",file:"subject/aljali/Aljali_BAB2.html"},
-      {num:"03",title:"Determinan",description:"Eliminasi Gauss dan metode penyelesaian",tag:"Menengah",file:"subject/aljali/Aljali_BAB3.html"},
-      {num:"04",title:"Nilai Eigen Dan Vektor Eigen",description:"Pemetaan linear dan representasi matriks",tag:"Lanjut",file:"subject/aljali/eigen vektor & value.html"},
-      {num:"05",title:"Diagonalisasi",description:"Nilai eigen, vektor eigen, dan diagonalisasi",tag:"Lanjut",file:"subject/aljali/bab6.html"}
+      {num:"01",title:"Sistem Persamaan Linear",description:"Operasi SPL",tag:"Learn",file:"subject/aljali/Aljali_BAB1.html"},
+      {num:"02",title:"Matriks",description:"Operasi matriks, determinan, dan invers",tag:"Learn",file:"subject/aljali/Aljali_BAB2.html"},
+      {num:"03",title:"Determinan",description:"Eliminasi Gauss dan metode penyelesaian",tag:"Learn",file:"subject/aljali/Aljali_BAB3.html"},
+      {num:"04",title:"Nilai Eigen Dan Vektor Eigen",description:"Pemetaan linear dan representasi matriks",tag:"Learn",file:"subject/aljali/eigen vektor & value.html"},
+      {num:"05",title:"Diagonalisasi",description:"Nilai eigen, vektor eigen, dan diagonalisasi",tag:"Learn",file:"subject/aljali/bab6.html"}
     ]
   },{
      icon:"📼", title:"Video Pembelajaran Aljabar Linear",
     items:[
-      {num:"01",title:"Sistem Persamaan Linear",description:"Proposisi, operator logika, dan tabel kebenaran",file:"video/aljali/spl.html"},
+      {num:"01",title:"Sistem Persamaan Linear",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/aljali/spl.html"},
     ]
   },{
     icon:"📝", title:"Latihan Soal Aljabar Linear",
     items:[
-      {num:"Latihan",title:"Sistem Persamaan Linear",description:"Latihan soal SPL tingkat dasar",file:"soal/aljali/Soal_PersamaanLinear.html"},
-      {num:"Latihan",title:"Matriks",description:"Latihan soal eigenvektor tingkat menengah",file:"soal/aljali/Soal_Matriks.html"},
-      {num:"Latihan",title:"Determinan",description:"Latihan soal eigenvektor tingkat lanjut",file:"soal/aljali/Soal_Determinan.html"},
-      {num:"Latihan",title:"Nilai Eigen Dan Vektor Eigen",description:"Latihan soal eigenvalue dan eigenvektor",file:"soal/aljali/Eigen Value & Eigen Vektor.html"},
-      {num:"Latihan",title:"Diagonalisasi",description:"Latihan soal Diagonalisasi",file:"soal/aljali/diagonalisasi.html"}
+      {num:"Latihan",title:"Sistem Persamaan Linear",description:"Latihan soal SPL tingkat dasar",tag:"Practice",file:"soal/aljali/Soal_PersamaanLinear.html"},
+      {num:"Latihan",title:"Matriks",description:"Latihan soal eigenvektor tingkat menengah",tag:"Practice",file:"soal/aljali/Soal_Matriks.html"},
+      {num:"Latihan",title:"Determinan",description:"Latihan soal eigenvektor tingkat lanjut",tag:"Practice",file:"soal/aljali/Soal_Determinan.html"},
+      {num:"Latihan",title:"Nilai Eigen Dan Vektor Eigen",description:"Latihan soal eigenvalue dan eigenvektor",tag:"Practice",file:"soal/aljali/Eigen Value & Eigen Vektor.html"},
+      {num:"Latihan",title:"Diagonalisasi",description:"Latihan soal Diagonalisasi",tag:"Practice",file:"soal/aljali/diagonalisasi.html"}
     ]
   }],
   kriptografi: [{
     icon:"🔐", title:"Kriptografi",
     items:[
-      {num:"01",title:"Kriptografi",description:"Sejarah, konsep dasar enkripsi dan dekripsi",tag:"Dasar",file:"subject/kriptografi/bab7.html"}
+      {num:"01",title:"Kriptografi",description:"Sejarah, konsep dasar enkripsi dan dekripsi",tag:"Learn",file:"subject/kriptografi/bab7.html"}
     ]
   },{
      icon:"📼", title:"Video Pembelajaran Kriptografi",
     items:[
-      {num:"01",title:"Kriptografi",description:"dasar-dasar teori yang digunakan dalam kriptografi.",file:"video/kriptografi/kriptografi.html"},
+      {num:"01",title:"Kriptografi",description:"dasar-dasar teori yang digunakan dalam kriptografi.",tag:"Watch",file:"video/kriptografi/kriptografi.html"},
     ]
   },{
     icon:"📝", title:"Latihan Soal Kriptografi",
     items:[
-      {num:"Latihan",title:"Kriptografi",description:"Latihan soal kriptografi",file:"soal/kriptografi/kriptografi.html"}
+      {num:"Latihan",title:"Kriptografi",description:"Latihan soal kriptografi",tag:"Practice",file:"soal/kriptografi/kriptografi.html"}
     ]
   }]
 };
