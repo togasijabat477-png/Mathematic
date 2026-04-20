@@ -697,13 +697,13 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     prev.className = 'carousel-btn prev';
     prev.type = 'button';
     prev.setAttribute('aria-label', 'Sebelumnya');
-    prev.innerHTML = '&larr;';
+    prev.innerHTML = '◀';
 
     var next = document.createElement('button');
     next.className = 'carousel-btn next';
     next.type = 'button';
     next.setAttribute('aria-label', 'Berikutnya');
-    next.innerHTML = '&rarr;';
+    next.innerHTML = '▶';
 
     var dots = document.createElement('div');
     dots.className = 'carousel-dots';
