@@ -1,1077 +1,1210 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materi Pohon - Matematika Diskrit</title>
-    <style>
-:root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
-    --bg-color: #f4f7f6;
-    --text-color: #333;
-    --white: #ffffff;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pohon (Tree) — Matematika Diskrit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #2d6a4f;
+      --accent2: #40916c;
+      --accent3: #b7e4c7;
+      --accent-warm: #c77c3c;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(45, 106, 79, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
 
-body {
-    font-family: "Times New Roman", Times, serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--bg-color);
-    margin: 0;
-    padding: 20px;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    background: var(--white);
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
 
-h1, h2, h3 {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--secondary-color);
-    padding-bottom: 10px;
-}
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 55%, #40916c 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(183,228,199,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
 
-.section {
-    margin-bottom: 40px;
-}
+    /* ── NAVBAR TOC ── */
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-.example-box {
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-}
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
 
-.step-list {
-    background: #eef2f3;
-    padding: 20px;
-    border-left: 5px solid var(--secondary-color);
-}
+    /* ── SECTION CARD ── */
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
 
-.tree {
-    width: 100%;
-    text-align: center;
-    margin: 20px 0;
-}
+    @media (max-width: 600px) {
+      .section-card { padding: 24px 18px; }
+    }
 
-.tree ul {
-    padding-top: 20px; 
-    position: relative;
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-}
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
 
-.tree li {
-    float: left; 
-    text-align: center;
-    list-style-type: none;
-    position: relative;
-    padding: 20px 5px 0 5px;
-}
+    /* ── TYPOGRAPHY ── */
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
 
-.tree li::before, .tree li::after {
-    content: '';
-    position: absolute; 
-    top: 0; 
-    right: 50%;
-    border-top: 2px solid var(--secondary-color);
-    width: 50%; 
-    height: 20px;
-}
-.tree li::after {
-    right: auto; 
-    left: 50%;
-    border-left: 2px solid var(--secondary-color);
-}
+    /* ── DEFINITION BOX ── */
+    .def-box {
+      background: linear-gradient(135deg, #e9f5ee 0%, #d1ead9 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
 
-.tree li:only-child::after, .tree li:only-child::before {
-    display: none;
-}
-.tree li:only-child { padding-top: 0; }
-.tree li:first-child::before, .tree li:last-child::after {
-    border: 0 none;
-}
-.tree li:last-child::before {
-    border-right: 2px solid var(--secondary-color);
-    border-radius: 0 5px 0 0;
-}
-.tree li:first-child::after {
-    border-radius: 5px 0 0 0;
-}
+    /* ── PROPERTY LIST ── */
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .prop-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
 
-/* Garis vertikal dari parent */
-.tree ul ul::before {
-    content: '';
-    position: absolute; 
-    top: 0; 
-    left: 50%;
-    border-left: 2px solid var(--secondary-color);
-    width: 0; 
-    height: 20px;
-}
+    /* ── TREE VISUAL ── */
+    .tree-visual {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .tree-visual svg { display: block; margin: 0 auto; }
 
-.tree li div {
-    border: 2px solid var(--secondary-color);
-    padding: 10px 15px;
-    display: inline-block;
-    border-radius: 8px;
-    background: #ecf6fb;
-    font-weight: bold;
-    color: var(--primary-color);
-    transition: 0.3s;
-    position: relative;
-    z-index: 2;
-}
+    /* ── TABLE ── */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
 
-.tree li div:hover {
-    background: var(--secondary-color);
-    color: white;
-    transform: scale(1.05);
-}
+    /* ── CODE / FORMULA ── */
+    .formula {
+      background: #1b2e24;
+      color: #b7e4c7;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
 
-@media (max-width: 600px) {
-    .container { padding: 20px; }
-    .tree li { padding: 15px 2px 0 2px; }
-    .tree li div { padding: 5px 10px; font-size: 12px; }
-}
-    </style>
+    /* ── TRAVERSAL STEPS ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── HIGHLIGHT CALLOUT ── */
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
+
+    /* ── TAG BADGE ── */
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #1b4332;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+
+    /* ── SCROLL TO TOP ── */
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(45,106,79,.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
+    }
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
-<div class="container">
 
-    <h1>Pohon (Tree)</h1>
-<div class="section">
-    <h2>1. Pengertian Pohon</h2>
-    <p>
-        Pohon (Tree) adalah struktur dalam matematika diskrit yang merupakan bentuk khusus dari graf 
-        tak berarah yang <strong>terhubung</strong> dan <strong>tidak memiliki siklus (cycle)</strong>. 
-        Pohon digunakan untuk merepresentasikan hubungan hierarki antara elemen, sehingga sangat penting 
-        dalam ilmu komputer dan struktur data.
-    </p>
-    <p>
-        Secara formal, pohon dapat didefinisikan sebagai graf G = (V, E) yang memenuhi:
-        <ul>
-            <li>Setiap pasangan simpul terhubung oleh tepat satu jalur</li>
-            <li>Tidak terdapat lintasan yang kembali ke simpul awal (tidak ada siklus)</li>
-            <li>Jika terdapat n simpul, maka jumlah sisi adalah n - 1</li>
-        </ul>
-    </p>
-</div>
+<!-- HERO -->
+<header class="hero" id="top">
+  <span class="hero-icon">🌲</span>
+  <h1>Pohon (Tree)</h1>
+  <p>Materi lengkap Matematika Diskrit — Struktur Pohon, Terminologi, Ekspresi, dan Aplikasi</p>
+  <a href="materi.html" class="btn-back">← Kembali ke Halaman Materi</a>
+</header>
 
-<div class="section">
-    <h3>Karakteristik Pohon</h3>
-    <ul>
-        <li>Memiliki satu simpul khusus yang disebut <strong>root (akar)</strong></li>
-        <li>Memiliki hubungan parent (induk) dan child (anak)</li>
-        <li>Tidak ada siklus (loop)</li>
-        <li>Jumlah sisi selalu satu kurang dari jumlah simpul (|E| = |V| - 1)</li>
-        <li>Setiap simpul (kecuali root) memiliki tepat satu parent</li>
-    </ul>
-</div>
+<!-- TOC BAR -->
+<nav class="toc-bar">
+  <a href="#def">Definisi</a>
+  <a href="#sifat">Sifat-sifat</a>
+  <a href="#merentang">Pohon Merentang</a>
+  <a href="#berakar">Pohon Berakar</a>
+  <a href="#terminologi">Terminologi</a>
+  <a href="#terurut">Pohon Terurut</a>
+  <a href="#ekspresi">Pohon Ekspresi</a>
+  <a href="#mary">Pohon m-ary</a>
+  <a href="#biner">Pohon Biner</a>
+  <a href="#keputusan">Pohon Keputusan</a>
+  <a href="#huffman">Kode Huffman</a>
+  <a href="#derivasi">Pohon Derivasi</a>
+</nav>
 
-<div class="section">
-    <h3>Istilah Penting dalam Pohon</h3>
-    <ul>
-        <li><strong>Root</strong>: simpul paling atas dalam pohon</li>
-        <li><strong>Parent</strong>: simpul yang memiliki anak</li>
-        <li><strong>Child</strong>: simpul turunan dari parent</li>
-        <li><strong>Sibling</strong>: simpul yang memiliki parent yang sama</li>
-        <li><strong>Leaf (Daun)</strong>: simpul yang tidak memiliki anak</li>
-        <li><strong>Subtree</strong>: bagian dari pohon yang juga merupakan pohon</li>
-        <li><strong>Level</strong>: tingkat kedalaman simpul dari root</li>
-        <li><strong>Height (Tinggi)</strong>: panjang jalur terpanjang dari root ke leaf</li>
-        <li><strong>Degree</strong>: jumlah anak dari suatu simpul</li>
-    </ul>
-</div>
+<main class="container">
 
-<div class="section">
-    <h2>2. Jenis-jenis Pohon</h2>
-
-    <h3>A. Pohon Biner (Binary Tree)</h3>
-  <p>
-Pohon Biner adalah jenis pohon yang paling populer dalam ilmu komputer. Pada pohon ini, setiap simpul (node) diperbolehkan memiliki <strong>paling banyak dua anak</strong>. Kedua anak tersebut biasanya dibedakan secara posisi, yaitu sebagai <strong>anak kiri (left child)</strong> dan <strong>anak kanan (right child)</strong>.
-</p>
-
-Karakteristik Khusus:
-<ul>
-<li>Derajat maksimal setiap simpul adalah 2.</li>
-<li>Memungkinkan adanya <strong>Pohon Kosong</strong> (pohon yang tidak memiliki simpul sama sekali).</li>
-<li>Urutan anak sangat penting; pohon dengan anak kiri saja berbeda dengan pohon yang hanya memiliki anak kanan saja.</li>
-</ul>
-
-Contoh Visual Pohon Biner:
-<div class="tree">
-<ul>
-<li>
-<div>A (Akar)</div>
-<ul>
-<li>
-<div>B (Kiri)</div>
-<ul>
-<li><div>D</div></li>
-<li><div>E</div></li>
-</ul>
-</li>
-<li>
-<div>C (Kanan)</div>
-<ul>
-<li><div>F</div></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-
-Jenis-jenis Pohon Biner:
-<div class="step-list">
-<ul>
-<li><strong>Full Binary Tree:</strong> Setiap simpul memiliki tepat 0 atau 2 anak (tidak ada simpul yang hanya punya 1 anak).</li>
-<li><strong>Perfect Binary Tree:</strong> Semua simpul dalam memiliki 2 anak dan semua leaf berada pada level yang sama.</li>
-<li><strong>Skewed Binary Tree:</strong> Pohon yang hanya condong ke satu sisi saja (hanya punya anak kiri saja atau kanan saja).</li>
-</ul>
-</div>
-
-<div class="example-box">
-<strong>Catatan Penting:</strong>
-Dalam implementasi pemrograman, pohon biner sering digunakan untuk <em>Binary Search Tree (BST)</em>, di mana nilai anak kiri selalu lebih kecil dari parent, dan nilai anak kanan selalu lebih besar dari parent.
-</div>
-   <div class="section">
-    <h3>B. Pohon Biner Lengkap (Complete Binary Tree)</h3>
-    <p>
-        Pohon Biner Lengkap adalah jenis pohon biner di mana setiap tingkat (level), kecuali mungkin yang terakhir, terisi sepenuhnya oleh simpul. Karakteristik paling penting adalah semua simpul pada level terakhir harus <strong>terisi sedapat mungkin dari sebelah kiri</strong>.
-    </p>
-
-    <strong>Aturan Pembentukan:</strong>
-    <ul>
-        <li>Semua level, mulai dari level 0 hingga $h-1$ (di mana $h$ adalah tinggi pohon), harus memiliki jumlah simpul maksimal.</li>
-        <li>Pada level terakhir (level daun), simpul-simpul ditambahkan mulai dari posisi paling kiri tanpa ada celah (lompatan).</li>
-        <li>Jika level terakhir tidak penuh, maka bagian yang kosong hanya boleh berada di sisi kanan.</li>
-    </ul>
-
-    <strong>Contoh Visual Pohon Biner Lengkap:</strong>
-    <div class="tree">
-        <ul>
-            <li>
-                <div>1</div>
-                <ul>
-                    <li>
-                        <div>2</div>
-                        <ul>
-                            <li><div>4</div></li>
-                            <li><div>5</div></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div>3</div>
-                        <ul>
-                            <li><div>6</div></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. DEFINISI -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="def">
+    <div class="section-header">
+      <div class="section-num">1.1</div>
+      <h2>Definisi Pohon</h2>
     </div>
 
-    <div class="example-box">
-        <strong>Analisis Contoh:</strong>
-        <p>
-            Pada pohon di atas, level 0 (simpul 1) dan level 1 (simpul 2 dan 3) terisi penuh. Pada level terakhir, simpul 4, 5, dan 6 ditambahkan secara berurutan dari kiri. Karena tidak ada "celah" di antara simpul 4, 5, dan 6, maka pohon ini disebut <strong>Pohon Biner Lengkap</strong>.
-        </p>
+    <div class="def-box">
+      <div class="label">Definisi Formal</div>
+      <p><strong>Pohon (tree)</strong> adalah graf tak-berarah terhubung yang <em>tidak mengandung sirkuit</em>.</p>
     </div>
 
-    <div class="step-list">
-        <strong>Mengapa ini penting?</strong>
-        <p>
-            Struktur ini sangat efisien untuk diimplementasikan ke dalam <em>Array</em>. Itulah sebabnya Pohon Biner Lengkap menjadi dasar utama dalam algoritma <strong>Heap Sort</strong> dan struktur data <strong>Priority Queue</strong>.
-        </p>
-    </div>
-</div>
+    <p>Pohon merupakan salah satu struktur data dan konsep matematika yang paling fundamental dalam ilmu komputer dan matematika diskrit. Struktur pohon bersifat sederhana namun sangat kuat karena menggambarkan hubungan hierarkis antara simpul-simpul.</p>
 
-  <div class="section">
-    <h3>C. Pohon Biner Sempurna (Perfect Binary Tree)</h3>
-    <p>
-        Pohon Biner Sempurna adalah jenis pohon biner yang jauh lebih spesifik dibandingkan pohon lengkap. Dalam struktur ini, setiap simpul internal (bukan daun) <strong>harus memiliki tepat dua anak</strong>, dan semua simpul daun (leaf) wajib berada pada <strong>level atau kedalaman yang sama</strong>.
-    </p>
-
-    <strong>Aturan Pembentukan:</strong>
-    <ul>
-        <li>Setiap simpul induk (parent) tidak boleh memiliki hanya satu anak; pilihannya adalah memiliki dua anak atau tidak sama sekali.</li>
-        <li>Semua jalur dari akar (root) ke setiap daun memiliki panjang yang sama.</li>
-        <li>Jumlah total simpul pada pohon biner sempurna dengan tinggi $h$ dapat dihitung dengan rumus $2^{h+1} - 1$.</li>
-    </ul>
-
-    <strong>Contoh Visual Pohon Biner Sempurna:</strong>
-    <div class="tree">
-        <ul>
-            <li>
-                <div>A</div>
-                <ul>
-                    <li>
-                        <div>B</div>
-                        <ul>
-                            <li><div>D</div></li>
-                            <li><div>E</div></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div>C</div>
-                        <ul>
-                            <li><div>F</div></li>
-                            <li><div>G</div></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+    <div class="tree-visual">
+      <svg viewBox="0 0 400 200" width="100%" height="180" xmlns="http://www.w3.org/2000/svg">
+        <!-- edges -->
+        <line x1="200" y1="30" x2="100" y2="100" stroke="#40916c" stroke-width="2"/>
+        <line x1="200" y1="30" x2="200" y2="100" stroke="#40916c" stroke-width="2"/>
+        <line x1="200" y1="30" x2="300" y2="100" stroke="#40916c" stroke-width="2"/>
+        <line x1="100" y1="100" x2="60" y2="170" stroke="#40916c" stroke-width="2"/>
+        <line x1="100" y1="100" x2="140" y2="170" stroke="#40916c" stroke-width="2"/>
+        <line x1="300" y1="100" x2="260" y2="170" stroke="#40916c" stroke-width="2"/>
+        <line x1="300" y1="100" x2="340" y2="170" stroke="#40916c" stroke-width="2"/>
+        <!-- nodes -->
+        <circle cx="200" cy="30" r="18" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <text x="200" y="35" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace" font-weight="bold">a</text>
+        <circle cx="100" cy="100" r="18" fill="#40916c" stroke="#2d6a4f" stroke-width="2"/>
+        <text x="100" y="105" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace" font-weight="bold">b</text>
+        <circle cx="200" cy="100" r="18" fill="#40916c" stroke="#2d6a4f" stroke-width="2"/>
+        <text x="200" y="105" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace" font-weight="bold">c</text>
+        <circle cx="300" cy="100" r="18" fill="#40916c" stroke="#2d6a4f" stroke-width="2"/>
+        <text x="300" y="105" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace" font-weight="bold">d</text>
+        <circle cx="60" cy="170" r="16" fill="#74c69d" stroke="#40916c" stroke-width="2"/>
+        <text x="60" y="175" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">e</text>
+        <circle cx="140" cy="170" r="16" fill="#74c69d" stroke="#40916c" stroke-width="2"/>
+        <text x="140" y="175" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">f</text>
+        <circle cx="260" cy="170" r="16" fill="#74c69d" stroke="#40916c" stroke-width="2"/>
+        <text x="260" y="175" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">g</text>
+        <circle cx="340" cy="170" r="16" fill="#74c69d" stroke="#40916c" stroke-width="2"/>
+        <text x="340" y="175" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">h</text>
+        <!-- labels -->
+        <text x="200" y="8" text-anchor="middle" fill="#1b4332" font-size="11" font-family="Source Serif 4,serif" font-style="italic">Contoh pohon dengan akar a</text>
+      </svg>
     </div>
 
-    <div class="example-box">
-        <strong>Analisis Contoh:</strong>
-        <p>
-            Pada pohon di atas, simpul A, B, dan C masing-masing memiliki tepat dua anak. Selain itu, simpul daun (D, E, F, G) semuanya terletak pada level 2. Karena tidak ada celah dan semua daun sejajar, pohon ini dikategorikan sebagai <strong>Pohon Biner Sempurna</strong>.
-        </p>
+    <div class="def-box">
+      <div class="label">Hutan (Forest)</div>
+      <p><strong>Hutan (forest)</strong> adalah kumpulan dua atau lebih pohon yang saling lepas (tidak terhubung satu sama lain). Setiap komponen dari hutan adalah pohon tersendiri.</p>
     </div>
 
-    <div class="step-list">
-        <strong>Perbedaan Utama:</strong>
-        <p>
-            Berbeda dengan pohon biner lengkap yang memperbolehkan level terakhir tidak penuh (asalkan terisi dari kiri), pohon biner sempurna <strong>wajib penuh</strong> di seluruh levelnya tanpa pengecualian.
-        </p>
-    </div>
-</div>
+    <p>Perbedaan utama pohon dan hutan: pohon bersifat <em>terhubung</em> (semua simpulnya dapat dicapai dari simpul manapun), sedangkan hutan boleh terdiri dari beberapa komponen terpisah yang masing-masing merupakan pohon.</p>
+  </section>
 
-   <div class="section">
-    <h3>D. Pohon Seimbang (Balanced Tree)</h3>
-    <p>
-        Pohon Seimbang (sering disebut sebagai <strong>AVL Tree</strong> dalam struktur data) adalah jenis pohon biner yang menjaga agar tingginya tetap minimal agar proses pencarian tetap cepat. Syarat utamanya adalah selisih tinggi (height) antara subtree kiri dan subtree kanan untuk setiap simpul <strong>tidak boleh lebih dari 1</strong>.
-    </p>
-
-    <strong>Aturan Pembentukan:</strong>
-    <ul>
-        <li>Untuk setiap simpul, hitung tinggi subtree kiri ($hL$) dan tinggi subtree kanan ($hR$).</li>
-        <li>Faktor Keseimbangan (Balance Factor) dihitung dengan rumus $|hL - hR| \leq 1$.</li>
-        <li>Jika selisihnya mencapai 2 atau lebih, maka pohon tersebut dikatakan tidak seimbang dan harus dilakukan "rotasi" untuk menyeimbangkannya kembali.</li>
-    </ul>
-
-    <strong>Contoh Visual Pohon Seimbang:</strong>
-    <div class="tree">
-        <ul>
-            <li>
-                <div>A</div>
-                <ul>
-                    <li>
-                        <div>B</div>
-                        <ul>
-                            <li><div>D</div></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div>C</div>
-                    </ul>
-                </li>
-            </ul>
-        </li>
-    </ul>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. SIFAT-SIFAT -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="sifat">
+    <div class="section-header">
+      <div class="section-num">1.2</div>
+      <h2>Sifat-sifat Pohon</h2>
     </div>
 
-    <div class="example-box">
-        <strong>Analisis Contoh:</strong>
-        <p>
-            Pada pohon di atas, simpul A memiliki subtree kiri dengan tinggi 2 (jalur A-B-D) dan subtree kanan dengan tinggi 1 (jalur A-C). Selisih tingginya adalah $|2 - 1| = 1$. Karena selisihnya tidak lebih dari 1, maka pohon ini masih dikategorikan sebagai <strong>Pohon Seimbang</strong>.
-        </p>
+    <p>Misalkan <strong>G = (V, E)</strong> adalah graf tak-berarah sederhana dengan <strong>n</strong> simpul. Semua pernyataan berikut adalah ekuivalen (saling setara), artinya jika satu berlaku maka semua berlaku:</p>
+
+    <div class="prop-grid">
+      <div class="prop-card">
+        <div class="prop-icon">🌿</div>
+        <strong>Sifat 1 — Definisi</strong>
+        G adalah pohon (terhubung tanpa sirkuit).
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🛤️</div>
+        <strong>Sifat 2 — Lintasan Unik</strong>
+        Setiap pasang simpul terhubung dengan tepat <em>satu</em> lintasan.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🔗</div>
+        <strong>Sifat 3 — n−1 Sisi (Terhubung)</strong>
+        G terhubung dan memiliki tepat <em>m = n − 1</em> buah sisi.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🚫</div>
+        <strong>Sifat 4 — n−1 Sisi (Tanpa Sirkuit)</strong>
+        G tidak mengandung sirkuit dan memiliki <em>m = n − 1</em> sisi.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">➕</div>
+        <strong>Sifat 5 — Sirkuit Unik</strong>
+        G tidak mengandung sirkuit, dan menambah 1 sisi akan membentuk tepat 1 sirkuit baru.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🌉</div>
+        <strong>Sifat 6 — Semua Jembatan</strong>
+        G terhubung dan semua sisinya adalah jembatan (menghapus satu sisi memecah graf).
+      </div>
     </div>
 
-    <div class="step-list">
-        <strong>Mengapa ini penting?</strong>
-        <p>
-            Pohon yang tidak seimbang (terlalu miring ke satu sisi) akan membuat kinerja pencarian menjadi lambat (seperti mencari dalam daftar linier). Dengan menjaga pohon tetap seimbang, waktu pencarian, penyisipan, dan penghapusan data tetap efisien secara logaritmik.
-        </p>
+    <div class="formula">Jumlah sisi pohon: |E| = |V| − 1  →  m = n − 1</div>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <strong>Mengapa m = n − 1?</strong> Bayangkan membangun pohon dari n simpul terisolasi. Setiap sisi yang ditambahkan menghubungkan dua komponen menjadi satu. Untuk menghubungkan n komponen menjadi 1 pohon, diperlukan tepat n − 1 langkah (sisi).
     </div>
-</div>
+  </section>
 
-   <div class="section">
-    <h3>E. Binary Search Tree (BST)</h3>
-    <p>
-        Binary Search Tree (BST) atau Pohon Pencarian Biner adalah jenis pohon biner terurut yang dirancang khusus untuk mempercepat proses pencarian, penambahan, dan penghapusan data. Struktur ini bekerja berdasarkan prinsip perbandingan nilai pada setiap simpulnya.
-    </p>
-
-    <strong>Aturan Pembentukan:</strong>
-    <ul>
-        <li>Setiap simpul memiliki nilai (key).</li>
-        <li>Nilai pada semua simpul di <strong>subtree kiri</strong> harus lebih kecil dari nilai simpul akar (parent).</li>
-        <li>Nilai pada semua simpul di <strong>subtree kanan</strong> harus lebih besar dari nilai simpul akar (parent).</li>
-        <li>Subtree kiri dan kanan juga harus merupakan Binary Search Tree.</li>
-    </ul>
-
-    <strong>Contoh Visual Binary Search Tree:</strong>
-    <div class="tree">
-        <ul>
-            <li>
-                <div>8</div>
-                <ul>
-                    <li>
-                        <div>3</div>
-                        <ul>
-                            <li><div>1</div></li>
-                            <li><div>6</div></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div>10</div>
-                        <ul>
-                            <li><div>14</div></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. POHON MERENTANG -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="merentang">
+    <div class="section-header">
+      <div class="section-num">1.3</div>
+      <h2>Pohon Merentang (Spanning Tree)</h2>
     </div>
 
-    <div class="example-box">
-        <strong>Analisis Contoh:</strong>
-        <p>
-            Perhatikan simpul akar dengan nilai <strong>8</strong>. Semua nilai di sebelah kirinya (3, 1, 6) lebih kecil dari 8, dan semua nilai di sebelah kanannya (10, 14) lebih besar dari 8. Aturan ini juga berlaku pada simpul 3, di mana 1 (kiri) lebih kecil dan 6 (kanan) lebih besar.
-        </p>
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon merentang</strong> dari sebuah graf terhubung G adalah upagraf merentang G yang berupa pohon — yaitu subgraf yang mencakup semua simpul G namun tidak mengandung sirkuit.</p>
     </div>
 
-    <div class="step-list">
-        <strong>Keunggulan BST:</strong>
-        <p>
-            Dengan aturan ini, kita tidak perlu memeriksa seluruh simpul saat mencari data. Jika nilai yang dicari lebih kecil dari akar, kita cukup mencari di sebelah kiri. Hal ini membuat rata-rata waktu pencarian menjadi jauh lebih singkat dibanding pencarian pada daftar linier.
-        </p>
-    </div>
-</div>
+    <p>Cara memperoleh pohon merentang:</p>
+    <ol class="steps">
+      <li>Ambil semua simpul dari graf terhubung G.</li>
+      <li>Pilih sisi-sisi dari G sedemikian sehingga semua simpul terhubung.</li>
+      <li>Putus sirkuit yang terbentuk dengan menghapus satu sisi dari tiap sirkuit.</li>
+      <li>Hasilnya adalah pohon merentang dari G.</li>
+    </ol>
 
-<div class="section">
-    <h2>2. Representasi Pohon</h2>
-    <p>
-        Pohon dapat direpresentasikan dalam beberapa cara di dalam sistem komputer maupun secara matematis. Pemilihan representasi ini sangat bergantung pada efisiensi memori dan jenis operasi yang akan dilakukan (misalnya pencarian atau modifikasi data).
-    </p>
-    
-    <ul>
-        <li><strong>Diagram Grafis:</strong> Cara paling umum secara visual dengan menggunakan simpul (node) yang dihubungkan oleh sisi (edge) untuk menunjukkan hierarki.</li>
-        <li><strong>List (Parent-Child List):</strong> Menggunakan struktur data linear seperti linked list untuk menyimpan alamat memori simpul anak.</li>
-        <li><strong>Matriks Ketetanggaan (Adjacency Matrix):</strong> Menggunakan tabel dua dimensi untuk mencatat hubungan antar simpul (biasanya kurang efisien untuk pohon karena banyak ruang kosong).</li>
-        <li><strong>Array (khusus pohon biner):</strong> Menyimpan simpul secara berurutan dalam larik satu dimensi.</li>
-    </ul>
-
-    <div class="step-list">
-        <strong>Representasi dalam Array (Pohon Biner):</strong>
-        <p>
-            Untuk pohon biner lengkap, representasi array sangat efektif. Jika sebuah simpul berada pada indeks <strong>i</strong>, maka:
-        </p>
-        <ul>
-            <li>Anak kiri berada pada indeks <strong>2i + 1</strong></li>
-            <li>Anak kanan berada pada indeks <strong>2i + 2</strong></li>
-            <li>Induk (parent) berada pada indeks <strong>(i - 1) / 2</strong></li>
-        </ul>
+    <div class="callout">
+      <span class="callout-icon">📌</span>
+      Setiap graf terhubung memiliki <strong>paling sedikit satu</strong> pohon merentang. Graf lengkap dengan n simpul memiliki n<sup>n−2</sup> pohon merentang berbeda (Formula Cayley).
     </div>
 
-    <div class="example-box">
-        <strong>Contoh Representasi Array:</strong>
-        <p>Pohon dengan urutan: A (akar), B (kiri), C (kanan)</p>
-        <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
-            <tr style="background-color: #eef2f3;">
-                <th>Indeks</th>
-                <td>0</td>
-                <td>1</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <th>Data</th>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-            </tr>
-        </table>
-        <p><small>*Indeks 0 adalah akar, indeks 1 adalah anak kiri dari A, dan indeks 2 adalah anak kanan dari A.</small></p>
-    </div>
-</div>
+    <h3>Pohon Merentang Minimum (MST)</h3>
+    <p>Pada graf berbobot terhubung, bobot setiap sisi merepresentasikan biaya atau jarak. <strong>Pohon Merentang Minimum (Minimum Spanning Tree / MST)</strong> adalah pohon merentang dengan total bobot sisi terkecil.</p>
 
-<div class="section">
-    <h2>3. Traversal Pohon</h2>
-    <p>
-        Traversal adalah proses mengunjungi setiap simpul dalam pohon secara sistematis, sehingga setiap simpul dikunjungi tepat satu kali. Karena pohon bukan struktur data linear, terdapat beberapa urutan (order) jalan yang bisa digunakan.
-    </p>
+    <table class="info-table">
+      <thead><tr><th>Algoritma</th><th>Strategi</th><th>Kompleksitas</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Algoritma Kruskal</strong></td><td>Tambah sisi berbobot terkecil yang tidak membentuk sirkuit</td><td>O(E log E)</td></tr>
+        <tr><td><strong>Algoritma Prim</strong></td><td>Mulai dari simpul, tambah sisi terkecil ke simpul baru</td><td>O(E log V)</td></tr>
+      </tbody>
+    </table>
 
-    <strong>Jenis-jenis Traversal:</strong>
-    <ul>
-        <li><strong>Preorder (Depth-First):</strong> Mengunjungi akar terlebih dahulu, kemudian seluruh subtree kiri, baru seluruh subtree kanan.</li>
-        <li><strong>Inorder (Depth-First):</strong> Mengunjungi seluruh subtree kiri, kemudian akar, baru seluruh subtree kanan. (Sering digunakan pada BST untuk mendapatkan urutan angka yang urut).</li>
-        <li><strong>Postorder (Depth-First):</strong> Mengunjungi seluruh subtree kiri, kemudian subtree kanan, baru terakhir adalah akarnya.</li>
-        <li><strong>Level Order (Breadth-First):</strong> Mengunjungi simpul berdasarkan tingkat kedalamannya, mulai dari level 0 (akar) hingga level terdalam dari kiri ke kanan.</li>
-    </ul>
+    <p>MST digunakan secara luas, contohnya: perencanaan jaringan kabel minimal, perancangan jalur pipa, clustering data, dan desain sirkuit elektronik.</p>
+  </section>
 
-    <div class="example-box">
-        <strong>Pohon Referensi:</strong>
-        <div class="tree">
-            <ul>
-                <li>
-                    <div>A</div>
-                    <ul>
-                        <li>
-                            <div>B</div>
-                            <ul>
-                                <li><div>D</div></li>
-                                <li><div>E</div></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <div>C</div>
-                            <ul>
-                                <li><div>F</div></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. POHON BERAKAR -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="berakar">
+    <div class="section-header">
+      <div class="section-num">1.4</div>
+      <h2>Pohon Berakar (Rooted Tree)</h2>
     </div>
 
-    <div class="step-list">
-        <strong>Hasil Urutan Kunjungan:</strong>
-        <p>Berdasarkan pohon di atas, berikut adalah hasil dari masing-masing metode traversal:</p>
-        <table border="0" style="width: 100%; border-spacing: 10px;">
-            <tr>
-                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
-                    <strong>1. Preorder:</strong><br>
-                    <span style="color: var(--accent-color); font-weight: bold;">A &rarr; B &rarr; D &rarr; E &rarr; C &rarr; F</span>
-                </td>
-            </tr>
-            <tr>
-                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
-                    <strong>2. Inorder:</strong><br>
-                    <span style="color: var(--accent-color); font-weight: bold;">D &rarr; B &rarr; E &rarr; A &rarr; F &rarr; C</span>
-                </td>
-            </tr>
-            <tr>
-                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
-                    <strong>3. Postorder:</strong><br>
-                    <span style="color: var(--accent-color); font-weight: bold;">D &rarr; E &rarr; B &rarr; F &rarr; C &rarr; A</span>
-                </td>
-            </tr>
-            <tr>
-                <td style="background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1;">
-                    <strong>4. Level Order:</strong><br>
-                    <span style="color: var(--accent-color); font-weight: bold;">A &rarr; B &rarr; C &rarr; D &rarr; E &rarr; F</span>
-                </td>
-            </tr>
-        </table>
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon berakar</strong> adalah pohon yang salah satu simpulnya ditetapkan sebagai <em>akar (root)</em>, dan sisi-sisinya diberi arah menjauh dari akar.</p>
     </div>
 
-    <div class="example-box">
-        <strong>Tips Menghafal:</strong>
-        <p>Perhatikan posisi <strong>ROOT</strong> dalam namanya:</p>
-        <ul>
-            <li><strong>Pre</strong>-order: Root di <strong>depan</strong> (awal).</li>
-            <li><strong>In</strong>-order: Root di <strong>tengah</strong> (antara kiri dan kanan).</li>
-            <li><strong>Post</strong>-order: Root di <strong>belakang</strong> (akhir).</li>
-        </ul>
-    </div>
-</div>
+    <p>Pohon berakar memperkenalkan konsep hierarki. Dari akar, kita dapat menelusuri pohon ke bawah melalui anak-anaknya. Ini sangat berguna untuk memodelkan struktur berurutan seperti sistem berkas, organisasi perusahaan, dan ekspresi matematika.</p>
 
-<div class="section">
-    <h2>4. Teorema Penting pada Pohon</h2>
-    <p>
-        Dalam studi matematika diskrit, terdapat beberapa teorema dasar yang mendefinisikan properti matematis dari sebuah pohon. Teorema ini sangat berguna untuk memvalidasi apakah suatu struktur graf layak disebut pohon atau tidak.
-    </p>
-
-    <ul>
-        <li><strong>Jumlah Sisi:</strong> Jika sebuah pohon memiliki $n$ buah simpul (vertex), maka jumlah sisi (edge) yang menghubungkannya pasti tepat sebanyak <strong>$n - 1$</strong>.</li>
-        <li><strong>Jumlah Daun:</strong> Pada sebuah pohon biner penuh (full binary tree), jumlah simpul daun (leaf) selalu sama dengan jumlah simpul internal ditambah satu ($\text{daun} = \text{simpul internal} + 1$).</li>
-        <li><strong>Tinggi Maksimum:</strong> Tinggi maksimum sebuah pohon biner dengan $n$ simpul adalah <strong>$n - 1$</strong>. Hal ini terjadi jika pohon berbentuk menyerupai garis lurus (skewed tree).</li>
-        <li><strong>Tinggi Minimum:</strong> Tinggi minimum yang mungkin untuk sebuah pohon biner dengan $n$ simpul adalah <strong>$\lceil \log_2(n+1) \rceil - 1$</strong>. Ini terjadi jika pohon tersebut sangat padat atau seimbang.</li>
-    </ul>
-
-    <div class="example-box">
-        <strong>Contoh Penerapan Teorema 1:</strong>
-        <p>Misalkan terdapat struktur organisasi perusahaan yang memiliki 25 orang anggota (simpul). Untuk memastikan semua orang terhubung dalam struktur hierarki tanpa ada siklus, maka dibutuhkan:</p>
-        <p style="text-align: center; font-weight: bold; background: #eef2f3; padding: 10px; border-radius: 5px;">
-            Sisi = n - 1 <br>
-            Sisi = 25 - 1 = 24 garis hubungan
-        </p>
-    </div>
-
-    <div class="tree">
-        <div style="display: flex; gap: 50px; justify-content: center; align-items: flex-start;">
-            <div>
-                <small>Tinggi Maksimum (Skewed)</small>
-                <ul>
-                    <li>
-                        <div>1</div>
-                        <ul>
-                            <li>
-                                <div>2</div>
-                                <ul>
-                                    <li><div>3</div></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <small>Tinggi Minimum (Balanced)</small>
-                <ul>
-                    <li>
-                        <div>1</div>
-                        <ul>
-                            <li><div>2</div></li>
-                            <li><div>3</div></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="tree-visual">
+      <svg viewBox="0 0 420 240" width="100%" height="220" xmlns="http://www.w3.org/2000/svg">
+        <!-- level 0 -->
+        <circle cx="210" cy="28" r="20" fill="#1b4332" stroke="#0a2015" stroke-width="2"/>
+        <text x="210" y="34" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="JetBrains Mono,monospace">a</text>
+        <text x="210" y="14" text-anchor="middle" font-size="10" fill="#1b4332" font-family="Source Serif 4,serif">(akar)</text>
+        <!-- level 1 edges -->
+        <line x1="210" y1="48" x2="100" y2="105" stroke="#40916c" stroke-width="2"/>
+        <line x1="210" y1="48" x2="210" y2="105" stroke="#40916c" stroke-width="2"/>
+        <line x1="210" y1="48" x2="330" y2="105" stroke="#40916c" stroke-width="2"/>
+        <!-- level 1 nodes -->
+        <circle cx="100" cy="118" r="18" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <text x="100" y="123" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace">b</text>
+        <circle cx="210" cy="118" r="18" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <text x="210" y="123" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace">c</text>
+        <circle cx="330" cy="118" r="18" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <text x="330" y="123" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace">d</text>
+        <!-- level 2 edges -->
+        <line x1="100" y1="136" x2="55" y2="195" stroke="#74c69d" stroke-width="1.5"/>
+        <line x1="100" y1="136" x2="135" y2="195" stroke="#74c69d" stroke-width="1.5"/>
+        <line x1="330" y1="136" x2="290" y2="195" stroke="#74c69d" stroke-width="1.5"/>
+        <line x1="330" y1="136" x2="365" y2="195" stroke="#74c69d" stroke-width="1.5"/>
+        <!-- level 2 nodes (leaves) -->
+        <circle cx="55" cy="207" r="16" fill="#95d5b2" stroke="#52b788" stroke-width="2"/>
+        <text x="55" y="212" text-anchor="middle" fill="#1b4332" font-size="12" font-family="JetBrains Mono,monospace">e</text>
+        <circle cx="135" cy="207" r="16" fill="#95d5b2" stroke="#52b788" stroke-width="2"/>
+        <text x="135" y="212" text-anchor="middle" fill="#1b4332" font-size="12" font-family="JetBrains Mono,monospace">f</text>
+        <circle cx="210" cy="207" r="16" fill="#95d5b2" stroke="#52b788" stroke-width="2"/>
+        <text x="210" y="212" text-anchor="middle" fill="#1b4332" font-size="12" font-family="JetBrains Mono,monospace">g</text>
+        <circle cx="290" cy="207" r="16" fill="#95d5b2" stroke="#52b788" stroke-width="2"/>
+        <text x="290" y="212" text-anchor="middle" fill="#1b4332" font-size="12" font-family="JetBrains Mono,monospace">h</text>
+        <circle cx="365" cy="207" r="16" fill="#95d5b2" stroke="#52b788" stroke-width="2"/>
+        <text x="365" y="212" text-anchor="middle" fill="#1b4332" font-size="12" font-family="JetBrains Mono,monospace">i</text>
+        <!-- level lines -->
+        <text x="16" y="30" fill="#999" font-size="10" font-family="JetBrains Mono,monospace">Level 0</text>
+        <text x="16" y="122" fill="#999" font-size="10" font-family="JetBrains Mono,monospace">Level 1</text>
+        <text x="16" y="210" fill="#999" font-size="10" font-family="JetBrains Mono,monospace">Level 2</text>
+        <!-- arrow on c's edge to show g is child -->
+        <line x1="210" y1="136" x2="210" y2="193" stroke="#74c69d" stroke-width="1.5"/>
+      </svg>
     </div>
 
-    <div class="step-list">
-        <strong>Mengapa Teorema ini penting?</strong>
-        <p>
-            Teorema ini membantu dalam analisis <strong>kompleksitas algoritma</strong>. Semakin kecil tinggi pohon (semakin mendekati tinggi minimum), maka proses pencarian data di dalamnya akan semakin cepat.
-        </p>
-    </div>
-</div>
+    <p>Dalam pohon berakar, tinggi pohon (height) adalah panjang lintasan terpanjang dari akar ke daun. Kedalaman (depth) suatu simpul adalah panjang lintasan dari akar ke simpul tersebut.</p>
+  </section>
 
-<div class="section">
-    <h2>5. Aplikasi Pohon dalam Kehidupan Nyata</h2>
-    <p>
-        Struktur pohon bukan hanya sekadar teori matematika, melainkan fondasi utama yang digunakan untuk memecahkan berbagai masalah kompleks di dunia nyata, mulai dari pengelolaan data hingga kecerdasan buatan.
-    </p>
-
-    <ul>
-        <li><strong>Struktur Folder pada Komputer:</strong> Sistem operasi (seperti Windows atau macOS) menggunakan struktur pohon untuk mengelola file. <em>Root</em> adalah drive utama (C:), <em>Branch</em> adalah folder, dan <em>Leaf</em> adalah file dokumen Anda.</li>
-        <li><strong>Silsilah Keluarga (Genealogy):</strong> Digunakan untuk melacak keturunan. Akar dimulai dari leluhur tertua, di mana setiap cabang merepresentasikan generasi berikutnya.</li>
-        <li><strong>Struktur Organisasi:</strong> Menunjukkan hierarki jabatan di perusahaan. CEO berada di posisi <em>Root</em>, diikuti oleh Manajer (Parent), dan staf operasional sebagai <em>Child</em> atau <em>Leaf</em>.</li>
-        <li><strong>Decision Tree (AI & Machine Learning):</strong> Digunakan dalam pengambilan keputusan otomatis. Setiap simpul internal mewakili "pertanyaan" atau "kondisi", dan setiap daun mewakili "hasil" atau "keputusan final".</li>
-        <li><strong>Parsing Ekspresi dalam Compiler:</strong> Saat Anda mengetik kode pemrograman, komputer mengubah rumus matematika seperti <code>(2 + 3) * 5</code> menjadi sebuah <em>Expression Tree</em> agar bisa dihitung dengan urutan yang benar.</li>
-        <li><strong>Pencarian Data (Binary Search Tree):</strong> Digunakan oleh basis data (database) berskala besar untuk menemukan data di antara jutaan record dalam hitungan milidetik.</li>
-    </ul>
-
-    <div class="example-box">
-        <strong>Studi Kasus: Pohon Keputusan (Decision Tree)</strong>
-        <p>Misalnya, sebuah bank menggunakan pohon untuk memutuskan pinjaman:</p>
-        <div class="tree">
-            <ul>
-                <li>
-                    <div>Apakah Gaji > 5 Juta?</div>
-                    <ul>
-                        <li>
-                            <div>Ya</div>
-                            <ul>
-                                <li><div style="background: #d4edda; border-color: #28a745;">Terima Pinjaman</div></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <div>Tidak</div>
-                            <ul>
-                                <li>
-                                    <div>Punya Jaminan?</div>
-                                    <ul>
-                                        <li><div style="background: #d4edda; border-color: #28a745;">Terima</div></li>
-                                        <li><div style="background: #f8d7da; border-color: #dc3545;">Tolak</div></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. TERMINOLOGI -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="terminologi">
+    <div class="section-header">
+      <div class="section-num">1.5</div>
+      <h2>Terminologi pada Pohon Berakar</h2>
     </div>
 
-    <div class="step-list">
-        <strong>Kesimpulan:</strong>
-        <p>
-            Alasan utama mengapa struktur pohon begitu populer adalah karena <strong>efisiensi</strong>. Dengan struktur yang terorganisir secara hierarkis, kita bisa mempercepat akses informasi tanpa harus memeriksa seluruh elemen satu per satu.
-        </p>
+    <p>Berikut adalah istilah-istilah penting yang digunakan dalam pohon berakar (mengacu pada pohon di Gambar 1.1 dengan akar <strong>a</strong>):</p>
+
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Istilah</th>
+          <th>Bahasa Inggris</th>
+          <th>Penjelasan</th>
+          <th>Contoh (Gambar 1.1)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Anak</strong></td>
+          <td>Child / Children</td>
+          <td>Simpul y adalah anak dari x jika ada sisi langsung dari x ke y.</td>
+          <td>Anak dari a: b, c, d</td>
+        </tr>
+        <tr>
+          <td><strong>Orangtua</strong></td>
+          <td>Parent</td>
+          <td>Simpul yang memiliki anak. Setiap simpul (kecuali akar) memiliki tepat satu orangtua.</td>
+          <td>Orangtua dari b, c, d: a</td>
+        </tr>
+        <tr>
+          <td><strong>Keturunan</strong></td>
+          <td>Descendant</td>
+          <td>Semua simpul yang dapat dicapai dari simpul x dengan berjalan menuruni pohon.</td>
+          <td>h adalah keturunan dari b</td>
+        </tr>
+        <tr>
+          <td><strong>Leluhur</strong></td>
+          <td>Ancestor</td>
+          <td>Semua simpul yang berada di lintasan dari akar ke simpul x.</td>
+          <td>b adalah leluhur dari h</td>
+        </tr>
+        <tr>
+          <td><strong>Saudara Kandung</strong></td>
+          <td>Sibling</td>
+          <td>Simpul-simpul yang memiliki orangtua yang sama.</td>
+          <td>e dan f adalah saudara kandung; g bukan saudara e</td>
+        </tr>
+        <tr>
+          <td><strong>Daun</strong></td>
+          <td>Leaf</td>
+          <td>Simpul berderajat nol — tidak memiliki anak.</td>
+          <td>h, i, j, f, c, l, m adalah daun</td>
+        </tr>
+        <tr>
+          <td><strong>Simpul Dalam</strong></td>
+          <td>Internal Node</td>
+          <td>Simpul yang memiliki setidaknya satu anak.</td>
+          <td>b, e, d, g, k adalah simpul dalam</td>
+        </tr>
+        <tr>
+          <td><strong>Derajat</strong></td>
+          <td>Degree</td>
+          <td>Jumlah anak (upapohon) yang dimiliki suatu simpul.</td>
+          <td>derajat(a)=3, derajat(b)=2, derajat(c)=0</td>
+        </tr>
+        <tr>
+          <td><strong>Upapohon</strong></td>
+          <td>Subtree</td>
+          <td>Pohon yang terbentuk dari suatu simpul dan semua keturunannya.</td>
+          <td>Upapohon b: {b, e, f, h, i, j}</td>
+        </tr>
+        <tr>
+          <td><strong>Aras / Tingkat</strong></td>
+          <td>Level</td>
+          <td>Kedalaman simpul. Akar berada di aras 0.</td>
+          <td>a: aras 0, b/c/d: aras 1, dst.</td>
+        </tr>
+        <tr>
+          <td><strong>Tinggi Pohon</strong></td>
+          <td>Height</td>
+          <td>Aras maksimum yang ada dalam pohon.</td>
+          <td>Tinggi = aras terdalam dari daun</td>
+        </tr>
+        <tr>
+          <td><strong>Lintasan</strong></td>
+          <td>Path</td>
+          <td>Urutan simpul yang terhubung. Panjang lintasan = jumlah sisi yang dilalui.</td>
+          <td>Panjang lintasan a→h = 3</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <span class="callout-icon">🎯</span>
+      <strong>Tips Belajar:</strong> Bayangkan pohon berakar seperti silsilah keluarga: akar = kakek/nenek, anak = putra/putri, daun = anggota termuda yang belum punya anak, dan sibling = saudara kandung.
     </div>
-</div>
+  </section>
 
-  <div class="section">
-    <h2>6. Ciri-ciri Pohon (Tree Properties)</h2>
-    <p>
-        Sebuah graf dapat diklasifikasikan sebagai pohon jika dan hanya jika memenuhi kriteria tertentu. Memahami ciri-ciri ini sangat penting untuk membedakan pohon dari jenis graf lainnya, seperti graf umum yang mungkin memiliki sirkuit.
-    </p>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. POHON TERURUT -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="terurut">
+    <div class="section-header">
+      <div class="section-num">1.6</div>
+      <h2>Pohon Berakar Terurut (Ordered Tree)</h2>
+    </div>
 
-    <ul>
-        <li><strong>Acyclic (Tidak Memiliki Siklus):</strong> Tidak ada lintasan yang berawal dan berakhir pada simpul yang sama. Artinya, Anda tidak akan pernah bisa kembali ke titik asal tanpa melewati sisi yang sama dua kali.</li>
-        <li><strong>Terhubung (Connected):</strong> Setiap pasang simpul dalam pohon selalu memiliki tepat satu lintasan tunggal yang menghubungkannya. Tidak boleh ada simpul yang terisolasi atau terpisah dari struktur utama.</li>
-        <li><strong>Properti Sisi (n-1 Edges):</strong> Jika sebuah pohon memiliki $n$ jumlah simpul, maka pohon tersebut harus memiliki tepat <strong>$n - 1$</strong> jumlah sisi. Jika kurang dari itu, graf tidak terhubung; jika lebih, maka graf pasti memiliki siklus.</li>
-        <li><strong>Simpul Tunggal (Root):</strong> Pada pohon berakar, terdapat satu simpul khusus yang menjadi sumber utama tanpa memiliki induk.</li>
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon terurut (ordered tree)</strong> adalah pohon berakar di mana urutan anak-anak dari setiap simpul adalah penting dan dispesifikasikan dari kiri ke kanan.</p>
+    </div>
+
+    <p>Pada pohon terurut, anak pertama (paling kiri) berbeda secara struktural dari anak kedua, meskipun keduanya berada di level yang sama. Ini berbeda dari pohon biasa di mana hanya hubungan orang tua–anak yang penting, bukan urutannya.</p>
+
+    <p><strong>Contoh nyata pohon terurut:</strong></p>
+    <div class="prop-grid">
+      <div class="prop-card">
+        <div class="prop-icon">📂</div>
+        <strong>Sistem Berkas</strong>
+        Urutan folder/file dalam direktori bisa berurutan (alfabetis, waktu, dll.).
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🌐</div>
+        <strong>DOM HTML</strong>
+        Elemen anak dalam HTML memiliki urutan yang menentukan tampilannya di halaman web.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🧮</div>
+        <strong>Ekspresi Matematika</strong>
+        (a − b) berbeda dengan (b − a); urutan operand menentukan hasil.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. POHON EKSPRESI -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="ekspresi">
+    <div class="section-header">
+      <div class="section-num">1.7</div>
+      <h2>Pohon Ekspresi & Penelusuran Pohon Biner</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon ekspresi</strong> adalah pohon biner di mana <em>daun</em> menyatakan operand dan <em>simpul dalam</em> menyatakan operator.</p>
+    </div>
+
+    <p>Pohon ekspresi merepresentasikan ekspresi matematika secara hierarkis. Contoh: pohon ekspresi dari <strong>(a + b) × (c / (d + e))</strong> memiliki operator × di akar, dengan cabang kiri berisi (a + b) dan cabang kanan berisi (c / (d + e)).</p>
+
+    <hr class="divider"/>
+
+    <h3>Pohon Pencarian Biner (Binary Search Tree)</h3>
+    <p>Pohon pencarian biner (BST) adalah pohon biner di mana untuk setiap simpul R dengan upapohon kiri T1 dan upapohon kanan T2:</p>
+
+    <div class="formula">∀ kunci ∈ T1 :  kunci(T1) &lt; kunci(R)
+∀ kunci ∈ T2 :  kunci(T2) &gt; kunci(R)</div>
+
+    <p><strong>Contoh:</strong> Menyisipkan data 50, 32, 18, 40, 60, 52, 5, 25, 70 ke dalam BST menghasilkan:</p>
+
+    <div class="tree-visual">
+      <svg viewBox="0 0 400 280" width="100%" height="260" xmlns="http://www.w3.org/2000/svg">
+        <!-- edges -->
+        <line x1="200" y1="40" x2="120" y2="100" stroke="#40916c" stroke-width="1.8"/>
+        <line x1="200" y1="40" x2="290" y2="100" stroke="#40916c" stroke-width="1.8"/>
+        <line x1="120" y1="115" x2="70" y2="175" stroke="#40916c" stroke-width="1.5"/>
+        <line x1="120" y1="115" x2="165" y2="175" stroke="#40916c" stroke-width="1.5"/>
+        <line x1="290" y1="115" x2="258" y2="175" stroke="#40916c" stroke-width="1.5"/>
+        <line x1="290" y1="115" x2="336" y2="175" stroke="#40916c" stroke-width="1.5"/>
+        <line x1="70" y1="190" x2="44" y2="240" stroke="#74c69d" stroke-width="1.5"/>
+        <line x1="70" y1="190" x2="97" y2="240" stroke="#74c69d" stroke-width="1.5"/>
+        <!-- root -->
+        <circle cx="200" cy="28" r="20" fill="#1b4332" stroke="#0a2015" stroke-width="2"/>
+        <text x="200" y="33" text-anchor="middle" fill="white" font-size="13" font-family="JetBrains Mono,monospace" font-weight="bold">50</text>
+        <!-- level 1 -->
+        <circle cx="120" cy="112" r="18" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <text x="120" y="117" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">32</text>
+        <circle cx="290" cy="112" r="18" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <text x="290" y="117" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">60</text>
+        <!-- level 2 -->
+        <circle cx="70" cy="188" r="18" fill="#40916c" stroke="#2d6a4f" stroke-width="2"/>
+        <text x="70" y="193" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">18</text>
+        <circle cx="165" cy="188" r="18" fill="#40916c" stroke="#2d6a4f" stroke-width="2"/>
+        <text x="165" y="193" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">40</text>
+        <circle cx="258" cy="188" r="18" fill="#40916c" stroke="#2d6a4f" stroke-width="2"/>
+        <text x="258" y="193" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">52</text>
+        <circle cx="336" cy="188" r="18" fill="#40916c" stroke="#2d6a4f" stroke-width="2"/>
+        <text x="336" y="193" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">70</text>
+        <!-- level 3 -->
+        <circle cx="44" cy="250" r="16" fill="#95d5b2" stroke="#52b788" stroke-width="2"/>
+        <text x="44" y="255" text-anchor="middle" fill="#1b4332" font-size="11" font-family="JetBrains Mono,monospace">5</text>
+        <circle cx="97" cy="250" r="16" fill="#95d5b2" stroke="#52b788" stroke-width="2"/>
+        <text x="97" y="255" text-anchor="middle" fill="#1b4332" font-size="11" font-family="JetBrains Mono,monospace">25</text>
+      </svg>
+    </div>
+
+    <hr class="divider"/>
+
+    <h3>Penelusuran (Traversal) Pohon Biner</h3>
+    <p>Penelusuran adalah proses mengunjungi semua simpul pohon dalam urutan tertentu. Ada tiga metode utama untuk pohon biner dengan akar R, upapohon kiri T1, dan upapohon kanan T2:</p>
+
+    <div class="prop-grid">
+      <div class="prop-card">
+        <div class="prop-icon">▶️</div>
+        <strong>Preorder (R, T1, T2)</strong>
+        Kunjungi R → telusuri T1 preorder → telusuri T2 preorder.
+        <br><span class="badge">Prefix</span>
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🔁</div>
+        <strong>Inorder (T1, R, T2)</strong>
+        Telusuri T1 inorder → kunjungi R → telusuri T2 inorder.
+        <br><span class="badge">Infix</span>
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">⏪</div>
+        <strong>Postorder (T1, T2, R)</strong>
+        Telusuri T1 postorder → telusuri T2 postorder → kunjungi R.
+        <br><span class="badge">Postfix</span>
+      </div>
+    </div>
+
+    <p><strong>Contoh hasil traversal</strong> untuk pohon ekspresi <code>a+b/c*d-e*f</code>:</p>
+    <div class="formula">Preorder  (prefix) :  * + a / b c - d * e f
+Inorder   (infix)  :  a + b / c * d - e * f
+Postorder (postfix):  a b c / + d e f * - *</div>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <strong>Inorder pada BST</strong> selalu menghasilkan urutan data yang <em>terurut</em> (ascending). Inilah mengapa BST sangat efisien untuk pencarian dan pengurutan.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 8. POHON M-ARY -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="mary">
+    <div class="section-header">
+      <div class="section-num">1.8</div>
+      <h2>Pohon m-ary</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon m-ary</strong> adalah pohon berakar di mana setiap simpul (simpul cabang) memiliki <em>paling banyak m</em> buah anak.</p>
+    </div>
+
+    <p>Pohon m-ary dikatakan <strong>teratur atau penuh (full)</strong> jika setiap simpul cabangnya memiliki <em>tepat m</em> anak. Simpul yang bukan daun dan bukan akar harus memiliki tepat m anak.</p>
+
+    <table class="info-table">
+      <thead><tr><th>Nilai m</th><th>Nama Pohon</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td><strong>m = 2</strong></td><td>Pohon Biner</td><td>Maks. 2 anak per simpul — paling umum digunakan</td></tr>
+        <tr><td><strong>m = 3</strong></td><td>Pohon Terner</td><td>Maks. 3 anak per simpul</td></tr>
+        <tr><td><strong>m = k</strong></td><td>Pohon k-ary</td><td>Maks. k anak per simpul</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Properti Pohon m-ary Penuh</h3>
+    <p>Misalkan T adalah pohon m-ary penuh dengan i simpul dalam (internal nodes):</p>
+    <div class="formula">Jumlah simpul total   n = m·i + 1
+Jumlah daun           l = (m-1)·i + 1
+Jumlah simpul dalam   i = (n-1) / m</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 9. POHON BINER -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="biner">
+    <div class="section-header">
+      <div class="section-num">1.9</div>
+      <h2>Pohon Biner (Binary Tree)</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon biner</strong> adalah pohon m-ary dengan m = 2. Setiap simpul cabang memiliki <em>paling banyak dua buah anak</em>: anak kiri (left child) dan anak kanan (right child).</p>
+    </div>
+
+    <ul class="steps">
+      <li>Pohon yang akarnya adalah anak kiri disebut <strong>upapohon kiri (left subtree)</strong>.</li>
+      <li>Pohon yang akarnya adalah anak kanan disebut <strong>upapohon kanan (right subtree)</strong>.</li>
     </ul>
 
-    <div class="example-box">
-        <strong>Visualisasi Struktur Pohon:</strong>
-        <p>Perhatikan contoh di bawah ini. Pohon ini memiliki 6 simpul (A, B, C, D, E, F), sehingga berdasarkan rumus $n-1$, ia harus memiliki tepat 5 sisi penghubung.</p>
-        
-        <div class="tree">
-            <ul>
-                <li>
-                    <div>A (Root)</div>
-                    <ul>
-                        <li>
-                            <div>B</div>
-                            <ul>
-                                <li><div>D</div></li>
-                                <li><div>E</div></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <div>C</div>
-                            <ul>
-                                <li><div>F</div></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+    <hr class="divider"/>
+
+    <h3>Jenis-jenis Pohon Biner</h3>
+
+    <div class="prop-grid">
+      <div class="prop-card">
+        <div class="prop-icon">↙️</div>
+        <strong>Pohon Condong-Kiri (Left Skewed)</strong>
+        Semua simpul hanya memiliki anak kiri. Tidak efisien untuk pencarian.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">↘️</div>
+        <strong>Pohon Condong-Kanan (Right Skewed)</strong>
+        Semua simpul hanya memiliki anak kanan. Menyerupai daftar terhubung.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">✅</div>
+        <strong>Pohon Biner Penuh (Full Binary Tree)</strong>
+        Setiap simpul memiliki tepat 0 atau 2 anak. Tidak ada simpul dengan 1 anak.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">⚖️</div>
+        <strong>Pohon Biner Seimbang (Balanced Binary Tree)</strong>
+        Perbedaan tinggi antara upapohon kiri dan kanan tiap simpul maksimal 1.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🔢</div>
+        <strong>Pohon Biner Lengkap (Complete Binary Tree)</strong>
+        Semua level penuh kecuali mungkin level terakhir, dan daun level terakhir serapat mungkin ke kiri.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🔍</div>
+        <strong>Pohon Pencarian Biner (BST)</strong>
+        Elemen kiri selalu lebih kecil dari akar, elemen kanan lebih besar. Mendukung pencarian O(log n).
+      </div>
     </div>
 
-    <div class="step-list">
-        <strong>Analisis Teknis:</strong>
-        <p>
-            Jika kita mencoba menambahkan satu sisi lagi (misalnya menghubungkan D ke E), maka struktur ini akan berubah menjadi <strong>Graf Bersiklus</strong> dan bukan lagi sebuah pohon. Sebaliknya, jika kita menghapus satu sisi (misalnya sisi antara A dan C), maka graf akan menjadi <strong>Tidak Terhubung</strong> (Disconnected).
-        </p>
+    <h3>Sifat Pohon Biner Seimbang</h3>
+    <p>Pohon biner seimbang (seperti AVL Tree dan Red-Black Tree) sangat penting dalam struktur data karena menjamin bahwa operasi pencarian, penyisipan, dan penghapusan berjalan dalam waktu <strong>O(log n)</strong>, bukan O(n) seperti pada pohon condong.</p>
+
+    <div class="callout">
+      <span class="callout-icon">📐</span>
+      <strong>Tinggi pohon biner dengan n simpul:</strong>
+      <ul style="margin-top:8px; padding-left:20px;">
+        <li>Minimum: ⌊log₂ n⌋ (ketika pohon seimbang sempurna)</li>
+        <li>Maksimum: n − 1 (ketika pohon condong)</li>
+      </ul>
     </div>
-</div>
+  </section>
 
-   <div class="section">
-    <h2>7. Istilah-Istilah pada Pohon (Tree Terminology)</h2>
-    <p>
-        Untuk memahami operasi pada pohon, kita harus mengenali terminologi yang digunakan untuk mendeskripsikan hubungan antar simpul di dalamnya. Hubungan ini sering kali dianalogikan dengan silsilah keluarga.
-    </p>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 10. POHON KEPUTUSAN -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="keputusan">
+    <div class="section-header">
+      <div class="section-num">1.10</div>
+      <h2>Pohon Keputusan (Decision Tree)</h2>
+    </div>
 
-    <ul>
-        <li><strong>Root (Akar):</strong> Simpul tunggal di bagian paling atas pohon yang tidak memiliki induk (parent).</li>
-        <li><strong>Parent (Induk):</strong> Simpul yang memiliki satu atau lebih simpul di bawahnya yang terhubung langsung.</li>
-        <li><strong>Child (Anak):</strong> Simpul yang berada di bawah simpul lain dan terhubung langsung sebagai turunan.</li>
-        <li><strong>Leaf (Daun):</strong> Simpul terminal atau simpul yang berada di ujung bawah dan tidak memiliki anak sama sekali.</li>
-        <li><strong>Sibling (Saudara):</strong> Simpul-simpul yang memiliki induk (parent) yang sama.</li>
-        <li><strong>Ancestor (Leluhur):</strong> Semua simpul yang berada pada jalur dari akar menuju simpul tertentu (termasuk induk, kakek, dst).</li>
-        <li><strong>Descendant (Keturunan):</strong> Semua simpul yang dapat dicapai dari sebuah simpul induk menuju ke bawah.</li>
-        <li><strong>Subtree (Upapohon):</strong> Struktur yang terdiri dari sebuah simpul beserta seluruh keturunannya.</li>
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon keputusan</strong> digunakan untuk memodelkan persoalan yang terdiri dari serangkaian keputusan yang mengarah ke solusi. Setiap simpul dalam merepresentasikan sebuah keputusan atau pengujian, dan setiap cabang mewakili kemungkinan hasil.</p>
+    </div>
+
+    <div class="tree-visual">
+      <svg viewBox="0 0 420 260" width="100%" height="250" xmlns="http://www.w3.org/2000/svg">
+        <!-- Root decision -->
+        <rect x="140" y="10" width="140" height="40" rx="8" fill="#1b4332" stroke="#0a2015" stroke-width="2"/>
+        <text x="210" y="35" text-anchor="middle" fill="white" font-size="12" font-family="Source Serif 4,serif">x &lt; 50?</text>
+        <!-- branches label -->
+        <text x="148" y="82" fill="#2d6a4f" font-size="11" font-family="JetBrains Mono,monospace">Ya</text>
+        <text x="258" y="82" fill="#c77c3c" font-size="11" font-family="JetBrains Mono,monospace">Tidak</text>
+        <!-- edges -->
+        <line x1="175" y1="50" x2="100" y2="100" stroke="#40916c" stroke-width="2"/>
+        <line x1="245" y1="50" x2="320" y2="100" stroke="#c77c3c" stroke-width="2"/>
+        <!-- second level -->
+        <rect x="35" y="100" width="130" height="40" rx="8" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <text x="100" y="125" text-anchor="middle" fill="white" font-size="12" font-family="Source Serif 4,serif">x &lt; 25?</text>
+        <rect x="255" y="100" width="130" height="40" rx="8" fill="#c77c3c" stroke="#9e5f28" stroke-width="2"/>
+        <text x="320" y="125" text-anchor="middle" fill="white" font-size="12" font-family="Source Serif 4,serif">x &lt; 75?</text>
+        <!-- third level edges -->
+        <line x1="75" y1="140" x2="50" y2="190" stroke="#40916c" stroke-width="1.5"/>
+        <line x1="125" y1="140" x2="150" y2="190" stroke="#c77c3c" stroke-width="1.5"/>
+        <line x1="295" y1="140" x2="270" y2="190" stroke="#40916c" stroke-width="1.5"/>
+        <line x1="345" y1="140" x2="370" y2="190" stroke="#c77c3c" stroke-width="1.5"/>
+        <!-- leaves -->
+        <rect x="15" y="190" width="70" height="35" rx="6" fill="#95d5b2" stroke="#52b788" stroke-width="1.5"/>
+        <text x="50" y="212" text-anchor="middle" fill="#1b4332" font-size="11" font-family="Source Serif 4,serif">Kecil</text>
+        <rect x="110" y="190" width="80" height="35" rx="6" fill="#95d5b2" stroke="#52b788" stroke-width="1.5"/>
+        <text x="150" y="212" text-anchor="middle" fill="#1b4332" font-size="11" font-family="Source Serif 4,serif">Sedang</text>
+        <rect x="230" y="190" width="80" height="35" rx="6" fill="#95d5b2" stroke="#52b788" stroke-width="1.5"/>
+        <text x="270" y="212" text-anchor="middle" fill="#1b4332" font-size="11" font-family="Source Serif 4,serif">Besar</text>
+        <rect x="335" y="190" width="80" height="35" rx="6" fill="#95d5b2" stroke="#52b788" stroke-width="1.5"/>
+        <text x="375" y="212" text-anchor="middle" fill="#1b4332" font-size="11" font-family="Source Serif 4,serif">Sangat Besar</text>
+        <text x="210" y="252" text-anchor="middle" fill="#666" font-size="10" font-family="Source Serif 4,serif" font-style="italic">Contoh pohon keputusan untuk mengklasifikasikan nilai x</text>
+      </svg>
+    </div>
+
+    <h3>Aplikasi Pohon Keputusan</h3>
+    <div class="prop-grid">
+      <div class="prop-card">
+        <div class="prop-icon">🤖</div>
+        <strong>Machine Learning</strong>
+        Algoritma CART, ID3, dan C4.5 menggunakan pohon keputusan untuk klasifikasi dan regresi data.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🎮</div>
+        <strong>Game AI</strong>
+        Karakter game menggunakan pohon keputusan untuk menentukan aksi berdasarkan kondisi lingkungan.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🏥</div>
+        <strong>Sistem Pakar Medis</strong>
+        Diagnosa penyakit berdasarkan serangkaian gejala yang ditanyakan secara berurutan.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">📊</div>
+        <strong>Analisis Bisnis</strong>
+        Menentukan strategi bisnis berdasarkan kondisi pasar dan probabilitas hasil.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 11. KODE HUFFMAN -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="huffman">
+    <div class="section-header">
+      <div class="section-num">1.11</div>
+      <h2>Kode Huffman</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Algoritma pengkodean Huffman</strong> adalah metode kompresi data yang memberikan kode biner lebih pendek kepada simbol yang lebih sering muncul, dan kode lebih panjang kepada simbol yang jarang muncul.</p>
+    </div>
+
+    <p>Prinsip utama kode Huffman:</p>
+    <ul class="steps">
+      <li>Simbol dengan <strong>probabilitas terbesar</strong> mendapat <strong>kode terpendek</strong> (bit paling sedikit).</li>
+      <li>Simbol dengan <strong>probabilitas terkecil</strong> mendapat <strong>kode terpanjang</strong> (bit paling banyak).</li>
+      <li>Kode diperoleh dengan membangun pohon Huffman berdasarkan nilai probabilitas masing-masing simbol.</li>
     </ul>
 
-    <div class="example-box">
-        <strong>Identifikasi Hubungan pada Pohon:</strong>
-        <p>Berdasarkan visualisasi di bawah ini, mari kita bedah hubungannya:</p>
-        
-        <div class="tree">
-            <ul>
-                <li>
-                    <div>A</div>
-                    <ul>
-                        <li>
-                            <div>B</div>
-                            <ul>
-                                <li><div>D</div></li>
-                                <li><div>E</div></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <div>C</div>
-                            <ul>
-                                <li><div>F</div></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+    <h3>Langkah Membangun Pohon Huffman</h3>
+    <ol class="steps">
+      <li>Buat simpul daun untuk setiap simbol dengan bobotnya = frekuensi/probabilitas.</li>
+      <li>Masukkan semua simpul ke dalam antrian prioritas (priority queue) berdasarkan bobot terkecil.</li>
+      <li>Ambil dua simpul dengan bobot terkecil, buat simpul baru sebagai orangtua dengan bobot = jumlah keduanya.</li>
+      <li>Masukkan kembali simpul baru ke antrian. Ulangi langkah 3–4 sampai hanya ada satu simpul (akar).</li>
+      <li>Beri label 0 pada cabang kiri dan 1 pada cabang kanan (atau sebaliknya). Kode tiap simbol = lintasan dari akar ke daun.</li>
+    </ol>
 
-        <ul style="margin-top: 15px;">
-            <li><strong>A</strong> adalah <em>Root</em>.</li>
-            <li><strong>B</strong> adalah <em>Parent</em> dari D dan E.</li>
-            <li><strong>D dan E</strong> adalah <em>Sibling</em>.</li>
-            <li><strong>D, E, dan F</strong> adalah <em>Leaf</em> karena tidak punya anak.</li>
-            <li>Struktur <strong>B-D-E</strong> merupakan salah satu <em>Subtree</em> dari A.</li>
-        </ul>
+    <h3>Contoh Sederhana</h3>
+    <table class="info-table">
+      <thead><tr><th>Simbol</th><th>Frekuensi</th><th>Kode Huffman</th><th>Kode ASCII (8-bit)</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>50%</td><td>0</td><td>01000001</td></tr>
+        <tr><td>B</td><td>25%</td><td>10</td><td>01000010</td></tr>
+        <tr><td>C</td><td>15%</td><td>110</td><td>01000011</td></tr>
+        <tr><td>D</td><td>10%</td><td>111</td><td>01000100</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <span class="callout-icon">💾</span>
+      <strong>Efisiensi Kompresi:</strong> Untuk contoh di atas, kode rata-rata = 0.5×1 + 0.25×2 + 0.15×3 + 0.10×3 = <strong>1.75 bit/simbol</strong>, dibandingkan ASCII 8 bit/simbol. Penghematan ≈ 78%!
     </div>
 
-    <div class="step-list">
-        <strong>Ukuran Pohon:</strong>
-        <p>Selain hubungan, terdapat istilah untuk mengukur dimensi pohon:</p>
-        <ul>
-            <li><strong>Degree (Derajat):</strong> Jumlah anak yang dimiliki oleh sebuah simpul.</li>
-            <li><strong>Level (Tingkat):</strong> Tingkatan posisi simpul. Root berada pada level 0.</li>
-            <li><strong>Height (Tinggi):</strong> Level maksimum yang ada pada pohon tersebut.</li>
-        </ul>
-    </div>
-</div>
+    <p>Kode Huffman digunakan dalam berbagai format kompresi nyata, antara lain: <span class="badge">JPEG</span> <span class="badge">MP3</span> <span class="badge">ZIP</span> <span class="badge">GZIP</span> <span class="badge">PDF</span></p>
+  </section>
 
-   <div class="section">
-    <h3>Contoh Struktur Pohon</h3>
-    <p>
-        Untuk memberikan gambaran yang lebih nyata, mari kita perhatikan struktur pohon di bawah ini. Sebuah pohon biasanya dinamai berdasarkan simpul akarnya dan diidentifikasi melalui hubungan hierarkis antar simpulnya.
-    </p>
-
-    <div class="tree">
-        <ul>
-            <li>
-                <div>A</div>
-                <ul>
-                    <li>
-                        <div>B</div>
-                        <ul>
-                            <li><div>D</div></li>
-                            <li><div>E</div></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div>C</div>
-                        <ul>
-                            <li><div>F</div></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 12. POHON DERIVASI (dari Modeling Computation) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="derivasi">
+    <div class="section-header">
+      <div class="section-num">1.12</div>
+      <h2>Pohon Derivasi (Parse Tree)</h2>
     </div>
 
-    <div class="example-box">
-        <strong>Analisis Komponen Pohon:</strong>
-        <p>Berdasarkan ilustrasi grafis di atas, kita dapat mengidentifikasi elemen-elemennya sebagai berikut:</p>
-        <ul>
-            <li><strong>A</strong> bertindak sebagai <strong>Root</strong> (akar), karena merupakan titik awal dan tidak memiliki induk.</li>
-            <li><strong>B dan C</strong> adalah <strong>Child</strong> (anak) langsung dari simpul A. Sebaliknya, A adalah <em>Parent</em> dari B dan C.</li>
-            <li><strong>D, E, dan F</strong> dikategorikan sebagai <strong>Leaf</strong> (daun) karena berada di ujung hierarki dan tidak memiliki anak lagi.</li>
-        </ul>
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Pohon derivasi (parse tree)</strong> adalah pohon berakar terurut yang digunakan untuk merepresentasikan derivasi (penurunan) dalam bahasa yang dihasilkan oleh tata bahasa bebas-konteks (context-free grammar).</p>
     </div>
 
-    <div class="step-list">
-        <strong>Fakta Menarik:</strong>
-        <p>
-            Meskipun dalam biologi akar pohon berada di bawah tanah, dalam ilmu komputer dan matematika diskrit, kita justru menggambar <strong>Root</strong> di bagian paling atas. Struktur ini sering disebut sebagai pohon terbalik.
-        </p>
-    </div>
-</div>
+    <p>Pohon derivasi menggambarkan bagaimana sebuah kalimat atau ekspresi diturunkan dari simbol awal menggunakan aturan produksi suatu tata bahasa.</p>
 
-   <div class="section">
-    <h2>8. Jenis-Jenis Pohon (Types of Trees)</h2>
-    <p>
-        Dalam matematika diskrit dan ilmu komputer, pohon diklasifikasikan ke dalam beberapa jenis berdasarkan struktur, jumlah anak, dan keseimbangan tingginya. Berikut adalah jenis-jenis pohon yang paling sering dipelajari:
-    </p>
-
-    <h3>1. Pohon Biner (Binary Tree)</h3>
-    <p>
-        Pohon Biner adalah jenis pohon yang paling mendasar di mana setiap simpul induk hanya diperbolehkan memiliki <strong>maksimal dua anak</strong>, yang biasanya disebut sebagai anak kiri (left child) dan anak kanan (right child).
-    </p>
-    <div class="tree">
-        <ul>
-            <li>
-                <div>A</div>
-                <ul>
-                    <li><div>B</div></li>
-                    <li><div>C</div></li>
-                </ul>
-            </li>
-        </ul>
+    <h3>Struktur Pohon Derivasi</h3>
+    <div class="prop-grid">
+      <div class="prop-card">
+        <div class="prop-icon">🌱</div>
+        <strong>Akar</strong>
+        Merepresentasikan simbol awal (start symbol) dari tata bahasa.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🔲</div>
+        <strong>Simpul Dalam</strong>
+        Merepresentasikan simbol nonterminal yang muncul dalam derivasi.
+      </div>
+      <div class="prop-card">
+        <div class="prop-icon">🍃</div>
+        <strong>Daun</strong>
+        Merepresentasikan simbol terminal (kata akhir dalam bahasa).
+      </div>
     </div>
 
-    <h3>2. Pohon Lengkap (Complete Binary Tree)</h3>
-    <p>
-        Sebuah pohon biner dikatakan lengkap jika semua levelnya terisi penuh oleh simpul, kecuali mungkin pada level terakhir. Pada level terakhir tersebut, simpul-simpul harus diisi secara berurutan dari <strong>kiri ke kanan</strong> tanpa ada celah kosong.
-    </p>
-    <div class="tree">
-        <ul>
-            <li>
-                <div>1</div>
-                <ul>
-                    <li>
-                        <div>2</div>
-                        <ul>
-                            <li><div>4</div></li>
-                            <li><div>5</div></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div>3</div>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+    <p>Jika ada produksi <strong>A → w</strong>, maka simpul yang merepresentasikan A memiliki anak-anak yang merepresentasikan setiap simbol dalam w, berurutan dari kiri ke kanan.</p>
+
+    <h3>Contoh: Tata Bahasa Sederhana</h3>
+    <p>Misalkan tata bahasa G memiliki produksi untuk menghasilkan kalimat <em>"the hungry rabbit eats quickly"</em>:</p>
+
+    <div class="tree-visual">
+      <svg viewBox="0 0 480 320" width="100%" height="310" xmlns="http://www.w3.org/2000/svg">
+        <!-- Root: sentence -->
+        <rect x="170" y="5" width="140" height="32" rx="6" fill="#1b4332"/>
+        <text x="240" y="26" text-anchor="middle" fill="white" font-size="12" font-family="JetBrains Mono,monospace">sentence</text>
+        <!-- level 1 edges -->
+        <line x1="210" y1="37" x2="120" y2="75" stroke="#40916c" stroke-width="1.8"/>
+        <line x1="270" y1="37" x2="360" y2="75" stroke="#40916c" stroke-width="1.8"/>
+        <!-- level 1 -->
+        <rect x="50" y="75" width="140" height="32" rx="6" fill="#2d6a4f"/>
+        <text x="120" y="96" text-anchor="middle" fill="white" font-size="11" font-family="JetBrains Mono,monospace">noun phrase</text>
+        <rect x="290" y="75" width="140" height="32" rx="6" fill="#2d6a4f"/>
+        <text x="360" y="96" text-anchor="middle" fill="white" font-size="11" font-family="JetBrains Mono,monospace">verb phrase</text>
+        <!-- noun phrase children -->
+        <line x1="85" y1="107" x2="55" y2="145" stroke="#74c69d" stroke-width="1.5"/>
+        <line x1="120" y1="107" x2="120" y2="145" stroke="#74c69d" stroke-width="1.5"/>
+        <line x1="155" y1="107" x2="185" y2="145" stroke="#74c69d" stroke-width="1.5"/>
+        <rect x="20" y="145" width="70" height="28" rx="5" fill="#40916c"/>
+        <text x="55" y="164" text-anchor="middle" fill="white" font-size="11" font-family="JetBrains Mono,monospace">article</text>
+        <rect x="90" y="145" width="70" height="28" rx="5" fill="#40916c"/>
+        <text x="125" y="164" text-anchor="middle" fill="white" font-size="11" font-family="JetBrains Mono,monospace">adjective</text>
+        <rect x="155" y="145" width="55" height="28" rx="5" fill="#40916c"/>
+        <text x="182" y="164" text-anchor="middle" fill="white" font-size="11" font-family="JetBrains Mono,monospace">noun</text>
+        <!-- verb phrase children -->
+        <line x1="330" y1="107" x2="310" y2="145" stroke="#74c69d" stroke-width="1.5"/>
+        <line x1="390" y1="107" x2="410" y2="145" stroke="#74c69d" stroke-width="1.5"/>
+        <rect x="270" y="145" width="80" height="28" rx="5" fill="#40916c"/>
+        <text x="310" y="164" text-anchor="middle" fill="white" font-size="11" font-family="JetBrains Mono,monospace">verb</text>
+        <rect x="365" y="145" width="80" height="28" rx="5" fill="#40916c"/>
+        <text x="405" y="164" text-anchor="middle" fill="white" font-size="11" font-family="JetBrains Mono,monospace">adverb</text>
+        <!-- terminals -->
+        <line x1="55" y1="173" x2="55" y2="210" stroke="#95d5b2" stroke-width="1.5"/>
+        <line x1="125" y1="173" x2="125" y2="210" stroke="#95d5b2" stroke-width="1.5"/>
+        <line x1="182" y1="173" x2="182" y2="210" stroke="#95d5b2" stroke-width="1.5"/>
+        <line x1="310" y1="173" x2="310" y2="210" stroke="#95d5b2" stroke-width="1.5"/>
+        <line x1="405" y1="173" x2="405" y2="210" stroke="#95d5b2" stroke-width="1.5"/>
+        <!-- terminal boxes -->
+        <rect x="20" y="210" width="70" height="28" rx="4" fill="#d8f3dc" stroke="#95d5b2"/>
+        <text x="55" y="229" text-anchor="middle" fill="#1b4332" font-size="11" font-family="JetBrains Mono,monospace">the</text>
+        <rect x="86" y="210" width="78" height="28" rx="4" fill="#d8f3dc" stroke="#95d5b2"/>
+        <text x="125" y="229" text-anchor="middle" fill="#1b4332" font-size="10" font-family="JetBrains Mono,monospace">hungry</text>
+        <rect x="148" y="210" width="68" height="28" rx="4" fill="#d8f3dc" stroke="#95d5b2"/>
+        <text x="182" y="229" text-anchor="middle" fill="#1b4332" font-size="10" font-family="JetBrains Mono,monospace">rabbit</text>
+        <rect x="273" y="210" width="74" height="28" rx="4" fill="#d8f3dc" stroke="#95d5b2"/>
+        <text x="310" y="229" text-anchor="middle" fill="#1b4332" font-size="11" font-family="JetBrains Mono,monospace">eats</text>
+        <rect x="365" y="210" width="80" height="28" rx="4" fill="#d8f3dc" stroke="#95d5b2"/>
+        <text x="405" y="229" text-anchor="middle" fill="#1b4332" font-size="10" font-family="JetBrains Mono,monospace">quickly</text>
+        <!-- caption -->
+        <text x="240" y="265" text-anchor="middle" fill="#666" font-size="10" font-family="Source Serif 4,serif" font-style="italic">Pohon derivasi: "the hungry rabbit eats quickly"</text>
+      </svg>
     </div>
 
-    <h3>3. Pohon Seimbang (Balanced Tree)</h3>
-    <p>
-        Pohon Seimbang adalah pohon biner di mana selisih tinggi (height) antara subtree kiri dan subtree kanan untuk setiap simpul tidak pernah lebih dari satu. Struktur ini sangat penting untuk menjaga efisiensi waktu operasi pencarian agar tetap stabil.
-    </p>
-    <div class="example-box">
-        <strong>Mengapa Klasifikasi ini Penting?</strong>
-        <p>
-            Perbedaan jenis pohon ini menentukan bagaimana data disimpan di memori. Misalnya, <strong>Pohon Lengkap</strong> sangat efisien jika disimpan menggunakan <em>Array</em>, sementara <strong>Pohon Seimbang</strong> sangat unggul dalam kecepatan algoritma pencarian (<em>Searching</em>).
-        </p>
-    </div>
-
-    <div class="step-list">
-        <strong>Ringkasan Perbedaan:</strong>
-        <ul>
-            <li><strong>Biner:</strong> Fokus pada jumlah anak (maksimal 2).</li>
-            <li><strong>Lengkap:</strong> Fokus pada kepadatan pengisian simpul dari kiri ke kanan.</li>
-            <li><strong>Seimbang:</strong> Fokus pada kesamaan tinggi antara cabang kiri dan kanan.</li>
-        </ul>
-    </div>
-</div>
-
-   <div class="section">
-    <h2>9. Traversal Pohon (Kunjungan Pohon)</h2>
-    <p>
-        Traversal adalah sebuah prosedur sistematis untuk mengunjungi setiap simpul (node) pada pohon tepat satu kali. Karena pohon merupakan struktur data non-linear, kita memerlukan aturan tertentu agar proses kunjungan berjalan teratur. Secara umum, terdapat tiga metode utama dalam <em>Depth-First Traversal</em>:
-    </p>
-
-    <div class="step-list">
-        <strong>Jenis-Jenis Traversal:</strong>
-        <ol>
-            <li>
-                <strong>Preorder (Root, Left, Right):</strong> 
-                Simpul akar dikunjungi terlebih dahulu, kemudian melakukan traversal ke subtree kiri, dan terakhir ke subtree kanan. 
-                <em>Kegunaan: Digunakan untuk menyalin struktur pohon atau membuat ekspresi awalan (prefix).</em>
-            </li>
-            <li>
-                <strong>Inorder (Left, Root, Right):</strong> 
-                Melakukan traversal ke subtree kiri terlebih dahulu, mengunjungi akar, kemudian baru ke subtree kanan. 
-                <em>Kegunaan: Pada Binary Search Tree (BST), metode ini akan menghasilkan urutan data yang tersortir menaik.</em>
-            </li>
-            <li>
-                <strong>Postorder (Left, Right, Root):</strong> 
-                Melakukan traversal ke subtree kiri, kemudian ke subtree kanan, dan terakhir mengunjungi akar. 
-                <em>Kegunaan: Digunakan untuk menghapus pohon atau mengevaluasi ekspresi matematika dalam bentuk postfix (reverse polish notation).</em>
-            </li>
-        </ol>
-    </div>
-
-    <div class="example-box">
-        <p><strong>Simulasi Traversal pada Pohon Berikut:</strong></p>
-        <div class="tree">
-            <ul>
-                <li>
-                    <div>A</div>
-                    <ul>
-                        <li>
-                            <div>B</div>
-                            <ul>
-                                <li><div>D</div></li>
-                                <li><div>E</div></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <div>C</div>
-                            <ul>
-                                <li><div>F</div></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-
-        <strong>Hasil Kunjungan:</strong>
-        <ul style="list-style-type: none; padding-left: 0;">
-            <li>🔵 <strong>Preorder:</strong> A - B - D - E - C - F</li>
-            <li>🟢 <strong>Inorder:</strong> D - B - E - A - F - C</li>
-            <li>🔴 <strong>Postorder:</strong> D - E - B - F - C - A</li>
-        </ul>
-    </div>
-
-    <div class="step-list" style="border-left-color: var(--accent-color);">
-        <strong>Aturan Sederhana:</strong>
-        <p>
-            Bayangkan Anda berjalan mengelilingi pohon mulai dari sebelah kiri akar. 
-            <strong>Preorder</strong> mencatat simpul saat pertama kali dilewati, 
-            <strong>Inorder</strong> mencatat simpul saat berada di bagian bawahnya, dan 
-            <strong>Postorder</strong> mencatat simpul saat terakhir kali meninggalkan simpul tersebut.
-        </p>
-    </div>
-</div>
-
-        <div class="section">
-    <div class="example-box">
-        <strong>Analisis Hasil Traversal:</strong>
-        <p>
-            Berdasarkan struktur pohon yang memiliki akar <strong>A</strong>, cabang kiri <strong>B (dengan anak D, E)</strong>, dan cabang kanan <strong>C (dengan anak F)</strong>, berikut adalah urutan kunjungan sistematisnya:
-        </p>
-
-        <ul>
-            <li>
-                <strong>Preorder (A-B-D-E-C-F):</strong> 
-                Dimulai dari akar (A), lalu ke anak kiri (B), lanjut ke cucu kiri (D) dan kanan (E). Setelah cabang kiri selesai, pindah ke cabang kanan (C) dan terakhir ke (F).
-            </li>
-            <li>
-                <strong>Inorder (D-B-E-A-F-C):</strong> 
-                Dimulai dari posisi paling kiri (D), naik ke induknya (B), lalu ke anak kanan (E). Setelah sisi kiri selesai, baru mengunjungi akar utama (A), kemudian anak kiri dari C (yaitu F), dan berakhir di C.
-            </li>
-            <li>
-                <strong>Postorder (D-E-B-F-C-A):</strong> 
-                Mengunjungi semua daun terbawah terlebih dahulu. Mulai dari (D) dan (E), naik ke induknya (B). Kemudian pindah ke daun cabang lain (F), naik ke induknya (C), dan terakhir menutup kunjungan di akar utama (A).
-            </li>
-        </ul>
-    </div>
-
-    <div class="step-list">
-        <strong>Latihan Mandiri:</strong>
-        <p>
-            Cobalah untuk menuliskan kembali urutan ini tanpa melihat kunci jawaban. Jika hasil akhirnya selalu menempatkan <strong>A</strong> di depan pada <em>Preorder</em> dan di paling belakang pada <em>Postorder</em>, berarti pemahaman Anda sudah tepat!
-        </p>
-    </div>
-</div>
-
-   <div class="section">
-    <h2>10. Aplikasi Pohon dalam Teknologi dan Kehidupan</h2>
-    <p>
-        Struktur pohon bukan hanya sekadar konsep teori, melainkan fondasi utama yang memungkinkan efisiensi dalam berbagai sistem yang kita gunakan sehari-hari. Berikut adalah beberapa aplikasi utamanya:
-    </p>
-
-    <ul>
-        <li>
-            <strong>Struktur Folder Komputer (File System):</strong> 
-            Sistem operasi menggunakan pohon untuk mengelola file dan direktori. <em>Root</em> adalah drive utama (seperti C:), folder berfungsi sebagai simpul internal (internal nodes), dan file adalah daun (leaf) di ujung hierarki.
-        </li>
-        <li>
-            <strong>Struktur Organisasi:</strong> 
-            Digunakan untuk memodelkan hierarki kepemimpinan. Jabatan tertinggi (seperti CEO atau Direktur) menjadi akar, manajer sebagai induk, dan staf operasional sebagai simpul daun.
-        </li>
-        <li>
-            <strong>Algoritma Pencarian (Binary Search Tree - BST):</strong> 
-            Struktur ini memungkinkan komputer menemukan data dalam hitungan milidetik meskipun di antara jutaan record. Prinsip "kiri lebih kecil, kanan lebih besar" memangkas waktu pencarian secara signifikan.
-        </li>
-        <li>
-            <strong>Kecerdasan Buatan (Decision Tree):</strong> 
-            Dalam <em>Machine Learning</em>, pohon keputusan digunakan untuk memprediksi hasil. Setiap cabang mewakili sebuah kondisi logis, dan setiap daun mewakili kesimpulan atau klasifikasi akhir.
-        </li>
-        <li>
-            <strong>Parsing Ekspresi:</strong> 
-            Kompilator bahasa pemrograman menggunakan pohon (Expression Tree) untuk menerjemahkan rumus matematika atau kode menjadi instruksi yang dapat dipahami oleh prosesor.
-        </li>
+    <h3>Backus-Naur Form (BNF)</h3>
+    <p><strong>BNF (Backus-Naur Form)</strong> adalah notasi standar untuk mendeskripsikan tata bahasa bebas-konteks, sering digunakan dalam spesifikasi bahasa pemrograman. Dalam BNF:</p>
+    <ul style="padding-left:20px; margin:12px 0;">
+      <li>Simbol nonterminal ditulis dalam kurung sudut: <code>&lt;identifier&gt;</code></li>
+      <li>Operator <code>::=</code> berarti "didefinisikan sebagai"</li>
+      <li>Tanda <code>|</code> berarti "atau" (alternatif produksi)</li>
     </ul>
 
-    <div class="example-box">
-        <strong>Mengapa Pohon?</strong>
-        <p>
-            Alasan utama penggunaan struktur pohon adalah <strong>Efisiensi Skalabilitas</strong>. Bayangkan jika Anda harus mencari satu file di antara sejuta file dalam daftar lurus (linear), itu akan sangat lambat. Dengan pohon, Anda hanya perlu melewati beberapa "cabang" untuk menemukan tujuan Anda.
-        </p>
+    <div class="formula">&lt;identifier&gt; ::= &lt;letter&gt; | &lt;identifier&gt;&lt;letter&gt; | &lt;identifier&gt;&lt;digit&gt;
+&lt;letter&gt;     ::= a | b | c | … | z
+&lt;digit&gt;      ::= 0 | 1 | 2 | … | 9</div>
+
+    <p>Pohon derivasi sangat berguna dalam <strong>compiler</strong> (proses parsing kode sumber program) untuk memastikan bahwa suatu program ditulis sesuai aturan sintaks bahasa pemrograman yang digunakan.</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SUMMARY -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" style="background: linear-gradient(135deg,#e9f5ee,#d1ead9);">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--accent-warm);">✓</div>
+      <h2 style="color:#1b4332;">Rangkuman Materi</h2>
     </div>
 
-    <div class="step-list">
-        <strong>Contoh Nyata:</strong>
-        <p>
-            Saat Anda mengetik alamat situs web di browser, sistem yang bernama <strong>DNS (Domain Name System)</strong> bekerja menggunakan struktur pohon global untuk mencari alamat IP server tujuan dalam waktu sekejap.
-        </p>
+    <table class="info-table">
+      <thead><tr><th>Topik</th><th>Poin Utama</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Definisi Pohon</strong></td><td>Graf tak-berarah terhubung tanpa sirkuit; m = n − 1 sisi</td></tr>
+        <tr><td><strong>Hutan</strong></td><td>Kumpulan pohon yang saling lepas (tidak terhubung)</td></tr>
+        <tr><td><strong>Pohon Merentang</strong></td><td>Upagraf yang mencakup semua simpul tanpa sirkuit; MST = bobot minimum</td></tr>
+        <tr><td><strong>Pohon Berakar</strong></td><td>Pohon dengan satu simpul khusus sebagai akar; sisi berarah menjauhi akar</td></tr>
+        <tr><td><strong>Terminologi</strong></td><td>Anak, orangtua, leluhur, keturunan, sibling, daun, simpul dalam, aras, derajat</td></tr>
+        <tr><td><strong>Pohon Terurut</strong></td><td>Urutan anak penting; dispesifikasikan kiri ke kanan</td></tr>
+        <tr><td><strong>Pohon Ekspresi</strong></td><td>Daun = operand, simpul dalam = operator; traversal → prefix/infix/postfix</td></tr>
+        <tr><td><strong>Pohon m-ary</strong></td><td>Maks. m anak per simpul; penuh = tepat m anak tiap simpul cabang</td></tr>
+        <tr><td><strong>Pohon Biner</strong></td><td>m = 2; BST mendukung pencarian O(log n); berbagai varian seimbang</td></tr>
+        <tr><td><strong>Pohon Keputusan</strong></td><td>Memodelkan serangkaian keputusan; digunakan dalam ML dan sistem pakar</td></tr>
+        <tr><td><strong>Kode Huffman</strong></td><td>Kompresi data; simbol sering = kode pendek; simbol jarang = kode panjang</td></tr>
+        <tr><td><strong>Pohon Derivasi</strong></td><td>Merepresentasikan penurunan grammar bebas-konteks; dasar parsing compiler</td></tr>
+      </tbody>
+    </table>
+
+    <div style="text-align:center; margin-top:24px;">
+      <a href="materi.html" class="btn-back" style="background:var(--accent); border-color:var(--accent2); color:#fff; font-size:1rem; padding:13px 32px;">← Kembali ke Halaman Materi</a>
     </div>
-</div>
+  </section>
+
+</main>
+
+<!-- FAB scroll to top -->
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
 </body>
 </html>
