@@ -3,6 +3,32 @@
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
 
+/* Container menu jadi seperti kapsul */
+.menu-links {
+  display: flex;
+  gap: 10px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.05); /* menyesuaikan tema terang */
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+}
+
+/* Link menu */
+.menu-links a {
+  text-decoration: none;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+/* Hover biar interaktif */
+.menu-links a:hover {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
 /* ===== CONTAINER KANAN ===== */
 .right {
   display: flex;
