@@ -20,12 +20,12 @@
         <span class="logo-text font-display">Mathematic</span>
       </a>
       <div class="right" id="menuWrapper">
-        <button class="btn-icon" id="themeBtn" title="Toggle theme">🌙</button>
         <div class="menu-links">
-          <a href="#">Home</a>
-          <a href="#">Materi</a>
+          <a href="#beranda" data-page="beranda" onclick="navigateTo('beranda');return false;">Beranda</a>
+          <a href="#materi" data-page="materi" onclick="navigateTo('materi');return false;">Materi</a>
           <a href="#game" data-page="materi" onclick="navigateTo('game');return false;">Game</a>
         </div>
+        <button class="btn-icon" id="themeBtn" title="Toggle theme">🌙</button>
         <button class="btn-icon" id="menuBtn">☰</button>
         <div class="dropdown" id="dropdownMenu">
           <a href="#beranda" class="active" data-page="beranda" onclick="navigateTo('beranda');return false;"><span>🏠</span> Beranda</a>
