@@ -183,8 +183,7 @@ var subjects = [
 
 var referensiData = [
   {icon:"📚",title:"Buku Referensi",gradient:"from-teal-to-amber",items:[{title:"Discrete Mathematics and Its Applications",desc:"oleh Kenneth H. Rosen",detail:"Buku referensi paling populer untuk Matematika Diskrit"},{title:"Discrete Mathematics",desc:"oleh Richard Johnsonbaugh",detail:"Pendekatan praktis dengan banyak contoh soal"},{title:"Matematika Diskrit",desc:"oleh Rinaldi Munir",detail:"Buku dalam bahasa Indonesia yang mudah dipahami"}]},
-  {icon:"🌐",title:"Website & Platform",gradient:"from-teal-to-cyan",items:[{title:"GeeksforGeeks",desc:"Tutorial dan contoh code untuk berbagai topik",url:"https://www.geeksforgeeks.org/discrete-mathematics/"},{title:"Khan Academy",desc:"Video pembelajaran interaktif gratis",url:"https://www.khanacademy.org/computing/computer-science"},{title:"Brilliant.org",desc:"Platform pembelajaran dengan pendekatan problem-solving",url:"https://brilliant.org/courses/discrete-mathematics/"}]},
-  {icon:"🎬",title:"Video Pembelajaran",gradient:"from-violet-to-indigo",items:[{title:"Discrete Math - Full Course",desc:"Trefor Bazett",detail:"Playlist lengkap dari dasar hingga advanced"},{title:"Matematika Diskrit",desc:"Kuliah Online ID",detail:"Video pembelajaran dalam bahasa Indonesia"}]}
+  {icon:"🌐",title:"Website & Platform",gradient:"from-teal-to-cyan",items:[{title:"GeeksforGeeks",desc:"Tutorial dan contoh code untuk berbagai topik",url:"https://www.geeksforgeeks.org/discrete-mathematics/"},{title:"Khan Academy",desc:"Video pembelajaran interaktif gratis",url:"https://www.khanacademy.org/computing/computer-science"},{title:"Brilliant.org",desc:"Platform pembelajaran dengan pendekatan problem-solving",url:"https://brilliant.org/courses/discrete-mathematics/"}]}
 ];
 
 var filterCategories = [
