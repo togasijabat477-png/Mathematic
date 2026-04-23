@@ -3,32 +3,6 @@
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
 
-/* Container menu jadi seperti kapsul */
-.menu-links {
-  display: flex;
-  gap: 10px;
-  padding: 6px 12px;
-  background: gray; /* menyesuaikan tema terang */
-  border-radius: 20px;
-  backdrop-filter: blur(6px);
-}
-
-/* Link menu */
-.menu-links a {
-  text-decoration: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 12px;
-  transition: all 0.25s ease;
-}
-
-/* Hover biar interaktif */
-.menu-links a:hover {
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transform: translateY(-1px);
-}
-
 /* ===== CONTAINER KANAN ===== */
 .right {
   display: flex;
@@ -36,28 +10,28 @@
   gap: 12px;
 }
 
-/* ===== MENU BOX ===== */
+/* ===== MENU CONTAINER (KAPSUL) ===== */
 .menu-links {
   display: flex;
-  gap: 10px;
-  padding: 6px 12px;
+  gap: 12px;
+  padding: 6px 14px;
   background: rgba(0, 0, 0, 0.05);
-  border-radius: 20px;
-  backdrop-filter: blur(6px);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
   transition: all 0.3s ease;
 }
 
 /* ===== ITEM MENU ===== */
 .menu-links a {
   text-decoration: none;
-  color: #333;
+  color: #333; /* default terang */
   padding: 6px 12px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 500;
   transition: all 0.25s ease;
 }
 
-/* ===== HOVER EFFECT ===== */
+/* ===== HOVER (TERANG) ===== */
 .menu-links a:hover {
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -72,38 +46,33 @@
   cursor: pointer;
 }
 
+/* ========================= */
 /* ===== DARK MODE ===== */
+/* ========================= */
+
 body.dark .menu-links {
   background: rgba(255, 255, 255, 0.1);
 }
 
 body.dark .menu-links a {
-  color: white !important;
+  color: #ffffff; /* teks jadi putih */
 }
 
 body.dark .menu-links a:hover {
-  background: white;
+  background: rgba(255,255,255,0.2);
+  box-shadow: none;
 }
 
-/* ===== RESPONSIVE (HP) ===== */
+/* ========================= */
+/* ===== RESPONSIVE ===== */
+/* ========================= */
+
 @media (max-width: 768px) {
   .menu-links {
     display: none;
   }
 }
 
-/* Default: tampil di desktop */
-.menu-links {
-  display: flex;
-  gap: 15px;
-}
-
-/* Di layar kecil */
-@media (max-width: 768px) {
-  .menu-links {
-    display: none;
-  }
-}
 
 /* ═══ RESET & CSS VARIABLES ═══ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
