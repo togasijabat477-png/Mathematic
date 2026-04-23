@@ -5,143 +5,219 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relasi & Fungsi - Matematika Diskrit</title>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
-            --white: #ffffff;
-        }
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --bg-color: #f4f7fb;
+    --text-color: #333;
+    --white: #ffffff;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: "Times New Roman", Times, serif;
-            background: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.7;
-        }
+body {
+    font-family: "Times New Roman", Times, serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.7;
+    padding: 20px;
+}
 
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: var(--white);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
+.container {
+    max-width: 1100px;
+    margin: auto;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
 
-        h1, h2, h3 {
-            color: var(--primary-color);
-        }
+h1.title {
+    text-align: center;
+    color: var(--primary-color);
+    border-bottom: 4px solid var(--secondary-color);
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+}
 
-        h1.title {
-            text-align: center;
-            border-bottom: 4px solid var(--secondary-color);
-            padding-bottom: 15px;
-            margin-bottom: 10px;
-        }
+.description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 35px;
+}
 
-        .description {
-            text-align: center;
-            color: #666;
-            margin-bottom: 35px;
-            font-size: 1.05em;
-        }
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 25px;
+    margin-bottom: 35px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    transition: 0.3s;
+}
 
-        .card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            position: relative;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+.card:hover {
+    transform: translateY(-5px);
+}
 
-        .card::before {
-            content: "MATERI";
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: var(--secondary-color);
-            color: white;
-            padding: 4px 14px;
-            border-radius: 999px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
+.card::before {
+    content: "MATERI";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    color: white;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 0.75em;
+    font-weight: bold;
+}
 
-        h2 {
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 8px;
-            margin-top: 0;
-        }
+h2 {
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
 
-        ul {
-            padding-left: 20px;
-        }
+h3 {
+    margin-top: 20px;
+    color: var(--primary-color);
+}
 
-        li {
-            margin-bottom: 8px;
-        }
+ul {
+    padding-left: 20px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            overflow: hidden;
-            border-radius: 10px;
-        }
+li {
+    margin-bottom: 8px;
+}
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
+.formula {
+    background: #f4f8fc;
+    border-left: 5px solid var(--accent-color);
+    padding: 12px 16px;
+    margin: 15px 0;
+    border-radius: 8px;
+    font-weight: bold;
+}
 
-        th {
-            background: var(--primary-color);
-            color: white;
-        }
+.answer-box {
+    background: #eef5fb;
+    border-left: 6px solid var(--secondary-color);
+    padding: 18px;
+    border-radius: 10px;
+    margin-top: 25px;
+}
 
-        tr:nth-child(even) {
-            background: #f9f9f9;
-        }
 
-        .answer-box {
-            background: #eef5fb;
-            border-left: 6px solid var(--secondary-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
+code {
+    background: #eee;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+}
 
-        .formula {
-            background: #f4f8fc;
-            border-left: 4px solid var(--accent-color);
-            padding: 12px 16px;
-            margin: 15px 0;
-            border-radius: 8px;
-            font-weight: bold;
-        }
+button {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
 
-        code {
-            background: #eee;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
+button:hover {
+    opacity: 0.9;
+}
 
-        @media (max-width: 768px) {
-            .container { padding: 20px; }
-            h1.title { font-size: 1.8em; }
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+thead {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+}
+
+thead th {
+    padding: 14px;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    transition: 0.2s;
+}
+
+tbody tr:nth-child(even) {
+    background: #f9fbfd;
+}
+
+tbody tr:hover {
+    background: #eaf3ff;
+    transform: scale(1.01);
+}
+
+tbody td:first-child {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1.title {
+        font-size: 1.6em;
+    }
+
+    table {
+        font-size: 0.85em;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    tbody td {
+        display: block;
+        text-align: left;
+        padding: 10px;
+        border: none;
+    }
+
+    tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: var(--secondary-color);
+        margin-bottom: 5px;
+    }
+}
     </style>
 </head>
 <body>
