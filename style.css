@@ -46,6 +46,10 @@
   cursor: pointer;
 }
 
+body.dark .menu-links a:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
 /* ===== DARK MODE TERBAIK (JELAS & MODERN) ===== */
 html:not(.light) .menu-links a {
   color: white;
