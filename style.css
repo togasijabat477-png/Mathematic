@@ -2,22 +2,25 @@
    MATHEMATIC — Design System & Styles
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
-/* ===== HOVER LIGHT ===== */
-html.light .menu-links a:hover,
-html:not(.light) .menu-links a:hover {
-  background: #ffffff !important;
-  color: #000 !important;
+/* ===== CONTAINER KANAN ===== */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-/* ===== MENU ===== */
+
+/* ===== MENU KAPSUL ===== */
 .menu-links {
   display: flex;
   gap: 12px;
   padding: 6px 14px;
   background: rgba(0, 0, 0, 0.05);
   border-radius: 999px;
+  backdrop-filter: blur(8px);
+  transition: 0.3s;
 }
 
-/* ===== LINK ===== */
+/* ===== LINK MENU ===== */
 .menu-links a {
   text-decoration: none;
   color: #333;
@@ -27,8 +30,88 @@ html:not(.light) .menu-links a:hover {
   transition: 0.25s;
 }
 
+/* ===== HOVER NORMAL ===== */
+.menu-links a:hover {
+  background: #ffffff;
+  color: #000;
+}
 
+/* ========================= */
+/* ===== DARK MODE ===== */
+/* ========================= */
 
+/* background menu */
+html:not(.light) .menu-links {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* teks jadi putih */
+html:not(.light) .menu-links a {
+  color: #ffffff;
+}
+
+/* hover dark */
+html:not(.light) .menu-links a:hover {
+  background: #ffffff;
+  color: #000;
+}
+
+/* ========================= */
+/* ===== TOMBOL ICON ===== */
+/* ========================= */
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ========================= */
+/* ===== MOBILE (HP) ===== */
+/* ========================= */
+
+/* tombol menu (☰) */
+.menu-toggle {
+  display: none;
+  font-size: 22px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* versi HP */
+@media (max-width: 768px) {
+  
+  .menu-toggle {
+    display: block;
+  }
+
+  .menu-links {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    flex-direction: column;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 12px;
+    display: none;
+    width: 150px;
+  }
+
+  .menu-links.show {
+    display: flex;
+  }
+
+  .menu-links a {
+    padding: 10px;
+  }
+
+  /* dark mode mobile */
+  html:not(.light) .menu-links {
+    background: #1e1e1e;
+  }
+}
 
 /* ═══ RESET & CSS VARIABLES ═══ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
