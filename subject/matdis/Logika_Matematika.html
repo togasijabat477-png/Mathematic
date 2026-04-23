@@ -7,164 +7,222 @@
   <title>Logika Matematika</title>
 
   <style>
-    :root {
-      --primary-color: #2c3e50;
-      --secondary-color: #3498db;
-      --accent-color: #e74c3c;
-      --bg-color: #f4f7f6;
-      --text-color: #333;
-      --white: #ffffff;
-    }
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --bg-color: #f4f7f6;
+  --text-color: #333;
+  --white: #ffffff;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: "Times New Roman", Times, serif;
-      background: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.7;
-    }
+body {
+  margin: 0;
+  padding: 15px;
+  font-family: "Times New Roman", Times, serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.7;
+}
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      background: var(--white);
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    }
+/* CONTAINER */
+.container {
+  max-width: 1000px;
+  margin: auto;
+  background: var(--white);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
 
-    .back-btn {
-      display: inline-block;
-      text-decoration: none;
-      background: var(--secondary-color);
-      color: white;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      transition: 0.3s;
-    }
+/* BUTTON */
+.back-btn {
+  display: inline-block;
+  text-decoration: none;
+  background: var(--secondary-color);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
 
-    .back-btn:hover {
-      background: var(--primary-color);
-    }
+.back-btn:hover {
+  background: var(--primary-color);
+}
 
-    h1,
-    h2,
-    h3 {
-      color: var(--primary-color);
-    }
+/* TITLE */
+h1, h2, h3 {
+  color: var(--primary-color);
+}
 
-    h1.title {
-      text-align: center;
-      border-bottom: 4px solid var(--secondary-color);
-      padding-bottom: 15px;
-      margin-bottom: 10px;
-    }
+h1.title {
+  text-align: center;
+  border-bottom: 4px solid var(--secondary-color);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
 
-    .description {
-      text-align: center;
-      color: #666;
-      margin-bottom: 35px;
-      font-size: 1.05em;
-    }
+.description {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
 
-    .card {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 25px;
-      margin-bottom: 30px;
-      position: relative;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
+/* CARD */
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
 
-    .card::before {
-      content: "MATERI";
-      position: absolute;
-      top: -12px;
-      left: 20px;
-      background: var(--secondary-color);
-      color: white;
-      padding: 4px 14px;
-      border-radius: 999px;
-      font-size: 0.8em;
-      font-weight: bold;
-    }
+.card::before {
+  content: "MATERI";
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: var(--secondary-color);
+  color: white;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.75em;
+}
 
-    h2 {
-      border-bottom: 2px solid var(--secondary-color);
-      padding-bottom: 8px;
-      margin-top: 0;
-    }
+/* LIST */
+ul {
+  padding-left: 18px;
+}
 
-    ul {
-      padding-left: 20px;
-    }
+/* ========================= */
+/* 🔥 TABLE SUPER IMPROVE 🔥 */
+/* ========================= */
 
-    li {
-      margin-bottom: 8px;
-    }
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 15px;
+  border-radius: 12px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      overflow: hidden;
-      border-radius: 10px;
-    }
+/* TABLE */
+table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: center;
-    }
+/* HEADER */
+th {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
 
-    th {
-      background: var(--primary-color);
-      color: white;
-    }
+/* CELL */
+td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  transition: 0.2s;
+}
 
-    tr:nth-child(even) {
-      background: #f9f9f9;
-    }
+/* ZEBRA */
+tr:nth-child(even) {
+  background: #f8fbff;
+}
 
-    .answer-box {
-      background: #eef5fb;
-      border-left: 6px solid var(--secondary-color);
-      padding: 20px;
-      border-radius: 8px;
-      margin-top: 30px;
-    }
+/* HOVER */
+tr:hover td {
+  background: #eaf3ff;
+}
 
-    .formula {
-      background: #f4f8fc;
-      border-left: 4px solid var(--accent-color);
-      padding: 12px 16px;
-      margin: 15px 0;
-      border-radius: 8px;
-      font-weight: bold;
-    }
+/* LAST ROW FIX */
+table tr:last-child td {
+  border-bottom: none;
+}
 
-    @media (max-width: 768px) {
-      .container {
-        padding: 20px;
-      }
+/* WARNA LOGIKA */
+td strong {
+  color: #2ecc71; /* TRUE */
+}
 
-      body {
-        padding: 10px;
-      }
+.highlight {
+  color: #e74c3c;
+  font-weight: bold;
+}
 
-      h1.title {
-        font-size: 1.8em;
-      }
-    }
+/* ========================= */
+/* BOX */
+/* ========================= */
+
+.answer-box {
+  background: #eef5fb;
+  border-left: 5px solid var(--secondary-color);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.formula {
+  background: #f4f8fc;
+  border-left: 4px solid var(--accent-color);
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* ========================= */
+/* 📱 MOBILE */
+/* ========================= */
+
+@media (max-width: 768px) {
+
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  h1.title {
+    font-size: 1.5em;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  h3 {
+    font-size: 1em;
+  }
+
+  th, td {
+    padding: 8px;
+    font-size: 0.85em;
+  }
+
+  .card {
+    padding: 15px;
+  }
+}
   </style>
 </head>
 
@@ -218,7 +276,8 @@
       </ul>
 
       <h3>B. Tabel Kebenaran Master</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <thead>
           <tr>
             <th>p</th>
@@ -273,7 +332,9 @@
             <td><strong>T</strong></td>
           </tr>
         </tbody>
-      </table>
+  </table>
+      </div>
+
 
       <div class="note">
         <strong>Presedensi Operator:</strong> Jika terdapat beberapa operator dalam satu ekspresi tanpa kurung, urutan pengerjaannya adalah:
@@ -285,7 +346,8 @@
       <h2>3. Operator Logika & Tabel Kebenaran</h2>
 
       <h3>A. Negasi (¬p)</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>¬p</th>
@@ -298,10 +360,12 @@
           <td>F</td>
           <td>T</td>
         </tr>
-      </table>
+  </table>
+      </div>
 
       <h3>B. Konjungsi (p ∧ q)</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>q</th>
@@ -327,10 +391,12 @@
           <td>F</td>
           <td>F</td>
         </tr>
-      </table>
+  </table>
+      </div>
 
       <h3>C. Disjungsi (p ∨ q)</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>q</th>
@@ -356,10 +422,12 @@
           <td>F</td>
           <td>F</td>
         </tr>
-      </table>
+  </table>
+      </div>
 
       <h3>D. XOR (p ⊕ q)</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>q</th>
@@ -385,10 +453,12 @@
           <td>F</td>
           <td>F</td>
         </tr>
-      </table>
+  </table>
+      </div>
 
       <h3>E. Implikasi (p → q)</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>q</th>
@@ -414,7 +484,8 @@
           <td>F</td>
           <td>T</td>
         </tr>
-      </table>
+  </table>
+      </div>
     </div>
 
     <div class="card">
@@ -444,7 +515,8 @@
       </ul>
 
       <h3>Tabel Pembuktian (Analisis Nilai)</h3>
-      <table border="1" style="width:100%; border-collapse: collapse; text-align: center;">
+      <div class="table-wrapper">
+  <table>
         <thead>
           <tr style="background-color: #f2f2f2;">
             <th>p</th>
@@ -467,7 +539,8 @@
             <td><strong>F</strong></td>
           </tr>
         </tbody>
-      </table>
+  </table>
+      </div>
 
       <div class="formula">
         <strong>Penting:</strong> Untuk membuktikan apakah sebuah rumus kompleks termasuk tautologi atau kontradiksi, kita menggunakan <strong>Tabel Kebenaran</strong> atau <strong>Hukum-Hukum Logika</strong> (seperti Hukum De Morgan, Distributif, dll).
@@ -534,7 +607,8 @@
       </div>
 
       <h3>D. Buat tabel kebenaran untuk p ∨ ¬q</h3>
-      <table>
+     <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>q</th>
@@ -566,9 +640,11 @@
           <td>T</td>
         </tr>
       </table>
+     </div>
 
       <h3>(p ∧ q) → p</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>q</th>
@@ -599,10 +675,12 @@
           <td>F</td>
           <td>T</td>
         </tr>
-      </table>
+  </table>
+      </div>
 
       <h3>(¬p) ∨ q</h3>
-      <table>
+      <div class="table-wrapper">
+  <table>
         <tr>
           <th>p</th>
           <th>q</th>
@@ -633,7 +711,8 @@
           <td>T</td>
           <td>T</td>
         </tr>
-      </table>
+  </table>
+    </div>
     </div>
 
     <div class="card">
