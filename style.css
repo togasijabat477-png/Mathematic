@@ -78,7 +78,7 @@ body.dark .menu-links {
 }
 
 body.dark .menu-links a {
-  color: #eee;
+  color: white !important;
 }
 
 body.dark .menu-links a:hover {
