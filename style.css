@@ -13,7 +13,7 @@
 /* ===== MENU DESKTOP ===== */
 .menu-links {
   display: flex;
-  gap: 12px;
+  gap: 15px;
 }
 
 .menu-links a {
@@ -21,26 +21,34 @@
   color: #333;
   padding: 6px 12px;
   border-radius: 8px;
+  font-weight: 500;
   transition: 0.25s;
 }
 
-/* hover normal */
+/* HOVER LIGHT */
 .menu-links a:hover {
   background: #ffffff;
   color: #000;
 }
 
+/* ========================= */
 /* ===== DARK MODE ===== */
+/* ========================= */
+
+/* teks */
 html:not(.light) .menu-links a {
-  color: #fff;
+  color: #ffffff;
 }
 
+/* hover */
 html:not(.light) .menu-links a:hover {
-  background: #fff;
+  background: #ffffff;
   color: #000;
 }
 
-/* ===== BUTTON ICON ===== */
+/* ========================= */
+/* ===== BUTTON ===== */
+/* ========================= */
 .btn-icon {
   background: none;
   border: none;
@@ -49,23 +57,26 @@ html:not(.light) .menu-links a:hover {
 }
 
 /* ========================= */
-/* ===== MOBILE (HP) ===== */
+/* ===== MOBILE FIX ===== */
 /* ========================= */
 
 @media (max-width: 768px) {
 
-  /* sembunyikan menu default */
+  /* menu jadi dropdown */
   .menu-links {
     position: absolute;
-    top: 50px;
-    right: 0;
-    background: #ffffff;
+    top: 60px;
+    right: 10px;
+    width: 170px;
+
+    display: none; /* penting */
     flex-direction: column;
-    width: 160px;
-    border-radius: 10px;
+
     padding: 10px;
-    display: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 12px;
+
+    background: #ffffff;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
   }
 
   /* tampil saat aktif */
@@ -75,15 +86,21 @@ html:not(.light) .menu-links a:hover {
 
   .menu-links a {
     padding: 10px;
+    width: 100%;
   }
 
-  /* dark mode mobile */
+  /* ===== DARK MODE MOBILE (FIX UTAMA) ===== */
   html:not(.light) .menu-links {
     background: #1e1e1e;
   }
 
   html:not(.light) .menu-links a {
-    color: #fff;
+    color: #ffffff;
+  }
+
+  html:not(.light) .menu-links a:hover {
+    background: #ffffff;
+    color: #000;
   }
 }
 
