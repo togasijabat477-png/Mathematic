@@ -15,28 +15,33 @@
     --white: #ffffff;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Times New Roman", Times, serif;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--text-color);
     background-color: var(--bg-color);
     margin: 0;
-    padding: 20px;
+    padding: 15px;
 }
 
 .container {
     max-width: 1000px;
     margin: 0 auto;
     background: var(--white);
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
 }
 
 header {
     text-align: center;
     border-bottom: 4px solid var(--secondary-color);
     margin-bottom: 30px;
+    padding-bottom: 10px;
 }
 
 h1, h2, h3 {
@@ -48,28 +53,147 @@ h1, h2, h3 {
 }
 
 .learning-box {
-    background: #eef2f3;
-    padding: 20px;
+    background: #eef5fb;
+    padding: 18px;
     border-left: 5px solid var(--secondary-color);
-    border-radius: 6px;
+    border-radius: 8px;
     margin: 20px 0;
+    font-weight: 500;
 }
 
 .example-box {
     background: #fff;
     border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
+    padding: 18px;
+    border-radius: 10px;
     margin: 20px 0;
 }
 
 .answer-box {
-    background: #f9f9f9;
+    background: #fdf2f2;
     border-left: 5px solid var(--accent-color);
     padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
 }
 
-ul { margin-left: 20px; }
+ul {
+    margin-left: 20px;
+}
+
+li {
+    margin-bottom: 6px;
+}
+
+
+/* Bungkus tabel biar bisa scroll di HP */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    padding: 14px;
+    text-align: center;
+    font-size: 15px;
+}
+
+td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+tr:nth-child(even) {
+    background-color: #f9fbfd;
+}
+
+tr:hover {
+    background-color: #eaf4ff;
+    transition: 0.2s;
+}
+
+@media (max-width: 768px) {
+
+    .container {
+        padding: 20px;
+    }
+
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.7em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    h3 {
+        font-size: 1.1em;
+    }
+
+    table {
+        min-width: unset;
+        font-size: 13px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    .table-responsive table,
+    .table-responsive thead,
+    .table-responsive tbody,
+    .table-responsive th,
+    .table-responsive td,
+    .table-responsive tr {
+        display: block;
+        width: 100%;
+    }
+
+    .table-responsive thead {
+        display: none;
+    }
+
+    .table-responsive tr {
+        margin-bottom: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        padding: 10px;
+    }
+
+    .table-responsive td {
+        text-align: left;
+        padding: 8px 10px;
+        border: none;
+        position: relative;
+    }
+
+    .table-responsive td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: var(--primary-color);
+        margin-bottom: 3px;
+        font-size: 12px;
+    }
+}
 </style>
 </head>
 
@@ -273,7 +397,8 @@ A' = {x | x ∈ U dan x ∉ A}
 
 <h3>Tabel Ringkasan Operasi</h3>
 
-<table>
+<div class="table-wrapper">
+  <table>
 <tr>
 <th>Operasi</th>
 <th>Simbol</th>
@@ -304,7 +429,8 @@ A' = {x | x ∈ U dan x ∉ A}
 <td>'</td>
 <td>Anggota semesta yang tidak ada di A</td>
 </tr>
-</table>
+  </table>
+</div>
 
 <h3>Hukum-hukum Aljabar Himpunan</h3>
 <p>
@@ -716,8 +842,8 @@ Setiap simpul memiliki daftar simpul lain yang terhubung langsung dengannya.
 <hr>
 
 <h3>Perbandingan Matriks dan List Ketetanggaan</h3>
-
-<table>
+<div class="table-wrapper">
+  <table>
 <tr>
 <th>Aspek</th>
 <th>Matriks</th>
@@ -738,7 +864,8 @@ Setiap simpul memiliki daftar simpul lain yang terhubung langsung dengannya.
 <td>Graf padat</td>
 <td>Graf jarang</td>
 </tr>
-</table>
+  </table>
+</div>
 
 <h3>Contoh Penggunaan Representasi Graf</h3>
 <ul>
