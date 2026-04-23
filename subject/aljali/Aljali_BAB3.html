@@ -20,14 +20,14 @@ body {
     color: var(--text-color);
     background-color: var(--bg-color);
     margin: 0;
-    padding: 20px;
+    padding: 15px;
 }
 
 .container {
     max-width: 1000px;
     margin: 0 auto;
     background: var(--white);
-    padding: 40px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
@@ -35,34 +35,34 @@ body {
 header {
     text-align: center;
     border-bottom: 4px solid var(--secondary-color);
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     padding-bottom: 10px;
 }
 
 h1, h2, h3 {
     color: var(--primary-color);
     border-bottom: 2px solid var(--secondary-color);
-    padding-bottom: 8px;
+    padding-bottom: 6px;
 }
 
 .section {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .step-list,
 .learning-box,
 .theorem-box {
     background: #eef2f3;
-    padding: 20px;
+    padding: 15px;
     border-left: 5px solid var(--secondary-color);
     border-radius: 6px;
-    margin: 20px 0;
+    margin: 15px 0;
 }
 
 .example-box {
     background: #fff;
     border: 1px solid #ddd;
-    padding: 20px;
+    padding: 15px;
     border-radius: 8px;
     margin: 20px 0;
     position: relative;
@@ -72,39 +72,26 @@ h1, h2, h3 {
     content: "CONTOH";
     position: absolute;
     top: -12px;
-    left: 20px;
+    left: 15px;
     background: var(--secondary-color);
     color: white;
-    padding: 2px 15px;
-    font-size: 0.8em;
+    padding: 2px 12px;
+    font-size: 0.75em;
     font-weight: bold;
     border-radius: 10px;
 }
 
-.math-block {
+.math-block, pre {
     font-family: 'Times New Roman', serif;
     background: #f8fafc;
-    padding: 18px 22px;
-    display: block;
-    margin: 20px auto;
-    border-radius: 10px;
-    font-size: 22px; /* diperbesar */
-    text-align: center;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    overflow-x: auto;
-}
-pre {
-    font-family: 'Times New Roman', serif;
-    font-size: 22px; /* diperbesar */
-    background: #f8fafc;
-    padding: 18px;
+    padding: 14px;
     border-radius: 10px;
     border: 1px solid #e0e0e0;
     text-align: center;
     overflow-x: auto;
-    white-space: pre-wrap;
+    font-size: 18px;
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -113,8 +100,7 @@ table {
 
 th, td {
     border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
+    padding: 10px;
 }
 
 th {
@@ -126,170 +112,93 @@ th {
     background: #f3f6fb;
     border: 1px solid #dbe4f0;
     border-radius: 12px;
-    padding: 30px 20px;
-    margin: 30px 0;
+    padding: 20px;
+    margin: 20px 0;
 }
 
 .matrix-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 25px;
-    margin: 40px 0;
-}
-
-.matrix-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 25px;
-    margin: 40px 0;
+    gap: 15px;
+    margin: 25px 0;
+    flex-wrap: wrap;
 }
 
 .label {
-    font-size: 20px;
-    font-family: 'Times New Roman', serif;
-}
-
-.matrix.nice {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px 28px;
-
-    padding: 25px 30px;
-
-    border-left: 2px solid #2c3e50;
-    border-right: 2px solid #2c3e50;
-
-    border-radius: 14px;
-    background: #ffffff;
-
     font-size: 18px;
-    font-family: 'Times New Roman', serif;
-    text-align: center;
-
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.label {
-    font-size: 20px;
-    font-family: 'Times New Roman', serif;
 }
 
 .matrix {
     border-left: 2px solid #2c3e50;
     border-right: 2px solid #2c3e50;
-    padding: 20px 25px;
-    font-family: 'Times New Roman', serif;
-    font-size: 18px;
-    display: inline-block;
+    padding: 12px 16px;
+    font-size: 16px;
     text-align: center;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    letter-spacing: 10px;   
-    line-height: 2.8;       
+    background: white;
+    border-radius: 10px;
+    letter-spacing: 6px;
+    line-height: 2.2;
 }
 
-.math-block {
-    font-size: 18px;
-    text-align: center;
-    margin-top: 25px;
-    font-family: 'Times New Roman', serif;
-}
-
-.divider {
-    border-top: 1px dashed #cbd5e1;
-    margin: 25px auto;
-    width: 80%;
+.matrix.nice {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 15px;
+    font-size: 16px;
 }
 
 .formula-box {
     text-align: center;
-    margin: 30px auto;
-    padding: 14px 18px;
-
-    max-width: 500px;
-
+    margin: 20px auto;
+    padding: 12px;
+    max-width: 100%;
     background: #ffffff;
     border-radius: 10px;
     border: 1px solid #e0e6ed;
-
-    font-size: 18px;
-    font-family: 'Times New Roman', serif;
-}
-
-.formula-box .math-block {
-    font-size: 20px;
-    font-family: 'Times New Roman', serif;
-}
-
-.badge {
-    display: inline-block;
-    padding: 3px 8px;
-    background: #ddd;
-    border-radius: 4px;
-    font-size: 0.9em;
-    margin-bottom: 5px;
 }
 
 .calculator-area {
     background: var(--primary-color);
     color: white;
-    padding: 30px;
-    border-radius: 15px;
-    margin: 40px 0;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 30px 0;
 }
 
 .calc-grid {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin: 10px 0;
+    gap: 8px;
+    margin: 8px 0;
 }
 
 .m-input {
-    width: 60px;
-    padding: 10px;
+    width: 55px;
+    padding: 8px;
     border-radius: 4px;
     border: none;
     text-align: center;
-    font-size: 1.1em;
-    font-weight: bold;
 }
-
-.math-highlight {
-    font-size: 26px;
-    font-weight: 500;
-    letter-spacing: 1px;
-}
-
 
 .btn-action {
     background: var(--accent-color);
     color: white;
     border: none;
-    padding: 12px 25px;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-weight: bold;
     display: block;
-    margin: 20px auto;
-    transition: 0.3s;
-}
-
-.btn-action:hover {
-    opacity: 0.85;
+    margin: 15px auto;
 }
 
 .result-display {
-    background: rgba(255,255,255,0.15);
-    padding: 20px;
+    background: rgba(255,255,255,0.2);
+    padding: 15px;
     border-radius: 8px;
     text-align: center;
-    font-family: 'Courier New', Courier, monospace;
 }
-
 
 .btn-kembali {
     display: inline-block;
@@ -310,21 +219,62 @@ th {
     background: linear-gradient(135deg, #3498db, #2c3e50);
 }
 
-@media (max-width: 600px) {
-    .matrix {
+@media (max-width: 768px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    h3 {
         font-size: 16px;
-        padding: 10px 14px;
+    }
+
+    p, li {
+        font-size: 14px;
+    }
+
+    .matrix {
+        font-size: 14px;
+        letter-spacing: 4px;
+        line-height: 2;
+        padding: 10px;
+    }
+
+    .matrix.nice {
+        gap: 10px;
+        font-size: 14px;
     }
 
     .label {
-        font-size: 16px;
+        font-size: 14px;
     }
 
-    .formula-box .math-block {
-        font-size: 16px;
+    .math-block, pre {
+        font-size: 14px;
+    }
+
+    .m-input {
+        width: 40px;
+        font-size: 14px;
+    }
+
+    .btn-action {
+        padding: 8px 15px;
+        font-size: 14px;
     }
 }
-
 </style>
 </head>
 <body>
