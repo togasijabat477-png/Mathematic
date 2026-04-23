@@ -47,23 +47,8 @@
 }
 
 /* ===== DARK MODE TERBAIK (JELAS & MODERN) ===== */
-body.dark .menu-links {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  backdrop-filter: blur(8px);
-}
-
-body.dark .menu-links a {
-  color: #ffffff;
-  font-weight: 600;
-  text-shadow: 0 0 6px rgba(255,255,255,0.3);
-  transition: all 0.25s ease;
-}
-
-body.dark .menu-links a:hover {
-  background: rgba(255,255,255,0.25);
-  color: #ffffff;
-  transform: translateY(-1px);
+html:not(.light) .menu-links a {
+  color: white;
 }
 
 /* ========================= */
