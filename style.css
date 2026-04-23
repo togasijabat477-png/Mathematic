@@ -2,8 +2,16 @@
    MATHEMATIC — Design System & Styles
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
-a:hover {
-  background: red !important;
+/* ===== HOVER LIGHT ===== */
+html.light .menu-links a:hover {
+  background: #ffffff;
+  color: #000;
+}
+
+/* ===== HOVER DARK ===== */
+html:not(.light) .menu-links a:hover {
+  background: #ffffff;
+  color: #000;
 }
 /* ===== MENU ===== */
 .menu-links {
@@ -24,11 +32,6 @@ a:hover {
   transition: 0.25s;
 }
 
-/* ===== HOVER LIGHT ===== */
-.menu-links a:hover {
-  background: #fff;
-  color: #000;
-}
 
 /* ========================= */
 /* ===== DARK MODE ===== */
