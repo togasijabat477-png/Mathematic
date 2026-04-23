@@ -3,15 +3,10 @@
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
 /* ===== HOVER LIGHT ===== */
-html.light .menu-links a:hover {
-  background: #ffffff;
-  color: #000;
-}
-
-/* ===== HOVER DARK ===== */
+html.light .menu-links a:hover,
 html:not(.light) .menu-links a:hover {
-  background: #ffffff;
-  color: #000;
+  background: #ffffff !important;
+  color: #000 !important;
 }
 /* ===== MENU ===== */
 .menu-links {
@@ -33,20 +28,6 @@ html:not(.light) .menu-links a:hover {
 }
 
 
-/* ========================= */
-/* ===== DARK MODE ===== */
-/* ========================= */
-
-/* DARK = html TIDAK punya class light */
-html:not(.light) .menu-links a {
-  color: #ffffff !important;
-}
-
-/* INI BAGIAN PALING PENTING */
-html:not(.light) .menu-links a:hover {
-  background: #ffffff !important;
-  color: #000000 !important;
-}
 
 
 /* ═══ RESET & CSS VARIABLES ═══ */
