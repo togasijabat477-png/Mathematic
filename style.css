@@ -3,80 +3,44 @@
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
 
-/* ===== CONTAINER KANAN ===== */
-.right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* ===== MENU CONTAINER (KAPSUL) ===== */
+/* ===== MENU ===== */
 .menu-links {
   display: flex;
   gap: 12px;
   padding: 6px 14px;
   background: rgba(0, 0, 0, 0.05);
   border-radius: 999px;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
 }
 
-/* ===== ITEM MENU ===== */
+/* ===== LINK ===== */
 .menu-links a {
   text-decoration: none;
-  color: #333; /* mode terang */
+  color: #333;
   padding: 6px 12px;
   border-radius: 10px;
   font-weight: 500;
-  transition: all 0.25s ease;
+  transition: 0.25s;
 }
 
-/* ===== HOVER (TERANG) ===== */
+/* ===== HOVER LIGHT ===== */
 .menu-links a:hover {
-  background: #ffffff;
+  background: #fff;
   color: #000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transform: translateY(-1px);
-}
-
-/* ===== TOMBOL ICON ===== */
-.btn-icon {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
 }
 
 /* ========================= */
 /* ===== DARK MODE ===== */
 /* ========================= */
 
-/* kondisi dark = html TIDAK punya class light */
-html:not(.light) .menu-links {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-/* teks jadi putih */
+/* DARK = html TIDAK punya class light */
 html:not(.light) .menu-links a {
-  color: #ffffff;
-  font-weight: 600;
+  color: #ffffff !important;
 }
 
-/* hover dark (FIX supaya kelihatan) */
+/* INI BAGIAN PALING PENTING */
 html:not(.light) .menu-links a:hover {
-  background: #ffffff;
-  color: #000000;
-}
-
-/* ========================= */
-/* ===== RESPONSIVE ===== */
-/* ========================= */
-
-@media (max-width: 768px) {
-  .menu-links {
-    display: none;
-  }
+  background: #ffffff !important;
+  color: #000000 !important;
 }
 
 
