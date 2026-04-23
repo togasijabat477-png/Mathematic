@@ -2,7 +2,9 @@
    MATHEMATIC — Design System & Styles
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
-
+a:hover {
+  background: red !important;
+}
 /* ===== MENU ===== */
 .menu-links {
   display: flex;
