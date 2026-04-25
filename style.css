@@ -501,52 +501,57 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .btn-sm-teal:hover { background: hsl(var(--teal)); color: hsl(var(--bg)); transform: translateY(-2px); }
 
-/* ═══ SUBJECT CARD HOVER — PURE CSS, NO FLICKER ═══
-   Kunci: hover diterapkan pada .subject-card, mencakup SELURUH area card + konten dropdown.
-   Tidak ada gap antara trigger dan konten, sehingga tidak ada flicker.
+/* ═══ SUBJECT CARD ACTIVE — CLASS-BASED, NO HOVER ═══
+   State dikendalikan oleh JavaScript via class .active.
+   Tidak bergantung pada :hover sehingga bekerja di mobile dan desktop.
 */
-.subject-card:hover {
+.subject-card.active {
   border-color: hsl(174 72% 52% / .4);
   background: hsl(174 72% 52% / .03);
   box-shadow: 0 12px 40px hsl(220 18% 3% / .5), 0 0 0 1px hsl(174 72% 52% / .1);
   transform: translateY(-4px);
 }
-.subject-card:hover::before { transform: scaleX(1); }
-.subject-card:hover::after { opacity: 1; }
-.subject-card:hover h3 { color: hsl(var(--teal)); }
-.subject-card:hover .icon-box { transform: rotate(-10deg) scale(1.15); }
-.subject-card:hover .expand-icon { transform: translateY(-50%) rotate(180deg); color: hsl(var(--teal)); }
-.subject-card:hover .icon-violet { box-shadow: 0 4px 20px hsl(265 60% 55% / .5); }
-.subject-card:hover .icon-teal { box-shadow: 0 4px 20px hsl(174 72% 52% / .5); }
-.subject-card:hover .icon-amber { box-shadow: 0 4px 20px hsl(38 95% 58% / .5); }
+.subject-card.active::before { transform: scaleX(1); }
+.subject-card.active::after { opacity: 1; }
+.subject-card.active h3 { color: hsl(var(--teal)); }
+.subject-card.active .icon-box { transform: rotate(-10deg) scale(1.15); }
+.subject-card.active .expand-icon { transform: translateY(-50%) rotate(180deg); color: hsl(var(--teal)); }
+.subject-card.active .icon-violet { box-shadow: 0 4px 20px hsl(265 60% 55% / .5); }
+.subject-card.active .icon-teal { box-shadow: 0 4px 20px hsl(174 72% 52% / .5); }
+.subject-card.active .icon-amber { box-shadow: 0 4px 20px hsl(38 95% 58% / .5); }
 
-/* Hover opens content smoothly */
-.subject-card:hover .topics-grid,
-.subject-card:focus-within .topics-grid {
+/* Active membuka konten dengan smooth */
+.subject-card.active .topics-grid {
   max-height: 500px;
   opacity: 1;
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid hsl(var(--border));
 }
-.subject-card:hover .topics-bottom,
-.subject-card:focus-within .topics-bottom {
+.subject-card.active .topics-bottom {
   opacity: 1;
   transform: translateY(0);
 }
-.subject-card:hover .topic-tile {
+.subject-card.active .topic-tile {
   animation: tilePopIn .35s var(--ease-spring) both;
   opacity: 1;
   transform: none;
 }
-.subject-card:hover .topic-tile:nth-child(1) { animation-delay: .03s; }
-.subject-card:hover .topic-tile:nth-child(2) { animation-delay: .07s; }
-.subject-card:hover .topic-tile:nth-child(3) { animation-delay: .11s; }
-.subject-card:hover .topic-tile:nth-child(4) { animation-delay: .15s; }
-.subject-card:hover .topic-tile:nth-child(5) { animation-delay: .19s; }
-.subject-card:hover .topic-tile:nth-child(6) { animation-delay: .23s; }
-.subject-card:hover .progress-fill {
+.subject-card.active .topic-tile:nth-child(1) { animation-delay: .03s; }
+.subject-card.active .topic-tile:nth-child(2) { animation-delay: .07s; }
+.subject-card.active .topic-tile:nth-child(3) { animation-delay: .11s; }
+.subject-card.active .topic-tile:nth-child(4) { animation-delay: .15s; }
+.subject-card.active .topic-tile:nth-child(5) { animation-delay: .19s; }
+.subject-card.active .topic-tile:nth-child(6) { animation-delay: .23s; }
+.subject-card.active .progress-fill {
   width: var(--hover-pct, 100%);
+}
+
+/* Hover ringan (hanya visual, tidak membuka card) */
+.subject-card:not(.active):hover {
+  border-color: hsl(174 72% 52% / .2);
+  background: hsl(174 72% 52% / .01);
+  cursor: pointer;
 }
 
 /* ═══ STATS ═══ */

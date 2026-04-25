@@ -327,10 +327,10 @@ function renderSubjectCards() {
   var html = '';
   subjects.forEach(function(s, i) {
     var pct = (s.availableTopics / s.totalTopics) * 100;
-    html += '<div class="subject-card" style="animation-delay:' + (i*0.15) + 's;--hover-pct:' + pct + '%">' +
+    html += '<div class="subject-card" data-card-index="' + i + '" style="animation-delay:' + (i*0.15) + 's;--hover-pct:' + pct + '%">' +
       '<div class="top"><div class="icon-box ' + (iconClasses[s.id]||'icon-teal') + '">' + s.icon + '</div>' +
       '<div style="min-width:0;flex:1"><h3>' + s.title + '</h3><p>' + s.description + '</p></div>' +
-      '<span class="expand-icon">▼</span></div>' +
+      '<span class="expand-icon">&#9660;</span></div>' +
       '<div class="topics-grid"><div class="topics-inner">';
     s.topics.forEach(function(t) {
       html += '<div class="topic-tile"><div class="num">' + t.num + '</div><div class="name">' + t.name + '</div></div>';
@@ -338,10 +338,43 @@ function renderSubjectCards() {
     html += '</div><div class="topics-bottom"><div style="flex:1">' +
       '<div class="font-mono" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:hsl(var(--fg3))">' + s.availableTopics + ' dari ' + s.totalTopics + ' topik tersedia</div>' +
       '<div class="progress-bar"><div class="progress-fill ' + (progClasses[s.id]||'prog-teal') + '" style="width:' + pct + '%"></div></div>' +
-      '</div><a href="#materi" class="btn-sm-teal" onclick="navigateTo(\'materi\');return false;">Pelajari ➔</a>' +
+      '</div><a href="#materi" class="btn-sm-teal" onclick="navigateTo(\'materi\');return false;">Pelajari &#10132;</a>' +
       '</div></div></div>';
   });
   document.getElementById('subjectCards').innerHTML = html;
+  initSubjectCards();
+}
+
+/* ═══ SUBJECT CARDS — Active State Logic ═══
+   Menggantikan sistem :hover dengan class .active berbasis JS.
+   - Card pertama otomatis aktif saat load
+   - Satu card selalu aktif (tidak ada kondisi semua tertutup)
+   - Bekerja dengan click (mobile) dan mouseenter (desktop)
+*/
+function initSubjectCards() {
+  var cards = document.querySelectorAll('#subjectCards .subject-card');
+  if (!cards.length) return;
+
+  function activateCard(targetCard) {
+    cards.forEach(function(c) { c.classList.remove('active'); });
+    targetCard.classList.add('active');
+  }
+
+  cards.forEach(function(card) {
+    // Click: wajib untuk mobile compatibility
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('.btn-sm-teal')) return;
+      activateCard(card);
+    });
+
+    // Mouseenter (opsional): untuk pengalaman desktop yang lebih smooth
+    card.addEventListener('mouseenter', function() {
+      activateCard(card);
+    });
+  });
+
+  // Card pertama aktif saat pertama kali load
+  activateCard(cards[0]);
 }
 
 function renderStats() {
