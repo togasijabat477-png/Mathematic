@@ -54,6 +54,12 @@ html:not(.light) .menu-links a:hover {
   border: none;
   font-size: 20px;
   cursor: pointer;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ========================= */
@@ -196,9 +202,11 @@ button { cursor: pointer; border: none; font-family: inherit; }
 
 /* ── Container ── */
 .container { 
-  width: 86%;
+  width: 100%;
   max-width: 1600px;
-  margin: 0 auto; }
+  margin: 0 auto;
+  padding: 0 2rem;
+}
 .font-display { font-family: var(--font-display); }
 .font-mono { font-family: var(--font-mono); }
 
@@ -273,16 +281,17 @@ button { cursor: pointer; border: none; font-family: inherit; }
 
 /* ═══ NAVBAR ═══ */
 .navbar {
-  position: relative;
+  position: sticky;
+  top: 0;
   width: 100%;
-  z-index: 10;
+  z-index: 100;
   border-bottom: 1px solid hsl(var(--border));
   background: hsl(var(--bg) / .85);
   backdrop-filter: blur(24px) saturate(1.8);
   transition: all .4s var(--ease-smooth);
 }
 .navbar.scrolled { box-shadow: 0 4px 30px hsl(220 18% 3% / .3); }
-.navbar .inner { display: flex; height: 64px; align-items: center; justify-content: space-between; }
+.navbar .inner { display: flex; height: 64px; align-items: center; justify-content: space-between; gap: 8px; overflow: visible; }
 .navbar .logo { display: flex; align-items: center; gap: 10px; transition: transform .3s var(--ease-spring); }
 .navbar .logo:hover { transform: scale(1.05); }
 .navbar .logo-icon {
@@ -295,7 +304,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .navbar .logo:hover .logo-icon { box-shadow: 0 0 24px hsl(174 72% 52% / .5); transform: rotate(-5deg); }
 .navbar .logo-text { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; }
-.navbar .right { display: flex; align-items: center; gap: 8px; }
+.navbar .right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .navbar .btn-icon {
   display: flex; width: 36px; height: 36px; align-items: center; justify-content: center;
   border-radius: 10px; border: 1px solid hsl(var(--border));
@@ -961,7 +970,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .advisor-info { font-size: .9rem; color: hsl(var(--fg3)); line-height: 1.6; }
 
 .creators-section-label { text-align: center; font-family: var(--font-mono); font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: hsl(var(--teal)); margin-bottom: 32px; }
-.creators-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+.creators-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 20px; }
 @media (min-width: 900px) { .creators-grid { grid-template-columns: repeat(4, 1fr); } }
 
 .creator-card {
@@ -1033,6 +1042,8 @@ button { cursor: pointer; border: none; font-family: inherit; }
 /* ═══ RESPONSIVE — MOBILE ═══ */
 @media (max-width: 768px) {
   .container { padding: 0 1rem; }
+  .navbar .logo { min-width: 0; }
+  .navbar .logo-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hero { min-height: auto; }
   .hero .grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 64px 0 48px !important; }
   .hero .grid > div:first-child { position: static !important; }
@@ -1048,21 +1059,16 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .topic-tile .name { font-size: .75rem; }
   .topic-tile .num { font-size: .7rem; }
   .topics-bottom { flex-direction: column; gap: 10px !important; }
-  .stats-grid { grid-template-columns: 1fr !important; gap: 12px; }
   .stat-card { padding: 24px; }
   .stat-num { font-size: 2rem; }
-  .features-grid { grid-template-columns: 1fr !important; }
   .feature-card { padding: 20px; }
   .cta-section { padding: 64px 0 !important; }
   .tabs { gap: 6px; }
   .tab-btn { padding: 6px 14px; font-size: .85rem; }
-  .materi-grid { grid-template-columns: 1fr !important; }
   .materi-card { padding: 20px; }
   .section-header h2 { font-size: 1.2rem; }
-  .fact-grid { grid-template-columns: 1fr !important; gap: 16px; }
   .fact-card { padding: 20px; }
   .vokasi-section { padding: 64px 0; }
-  .vokasi-grid { grid-template-columns: 1fr !important; gap: 16px; }
   .accordion-btn { padding: 16px; gap: 12px; }
   .accordion-btn .emoji { font-size: 1.5rem; }
   .accordion-btn h3 { font-size: .95rem; }
@@ -1096,8 +1102,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 
 @media (max-width: 400px) {
-  .container { padding: 0 .75rem; }
-  .hero h1 { font-size: 1.75rem !important; }
+  .container { padding: 0 .75rem; }  .hero h1 { font-size: 1.75rem !important; }
   .badge { font-size: .75rem; padding: 4px 12px; }
   .creators-grid { grid-template-columns: 1fr !important; }
   .btn-primary, .btn-outline { padding: 10px 16px; }
@@ -1109,58 +1114,49 @@ button { cursor: pointer; border: none; font-family: inherit; }
 html, body { overflow-x: hidden; max-width: 100vw; }
 img, video, iframe { max-width: 100%; height: auto; }
 /* ═══════════════════════════════════════════
-   CAROUSEL OVERRIDE — refactor semua list card
-   Berlaku untuk: .stats-grid, .features-grid,
-   .materi-grid, .fact-grid, .vokasi-grid
+   ADAPTIVE CARD SYSTEM
+   - Desktop (≥1024px): Grid statis, tanpa slider
+   - Tablet (≥768px–1024px): Slider grup
+   - Mobile (<768px): Slider 1 card
    ═══════════════════════════════════════════ */
 
+/* ── Wrapper carousel ── */
 .carousel-wrap {
   position: relative;
   width: 100%;
-  margin: 0 auto;
 }
 
-/* Override grid -> horizontal scroller */
+/* ── Default: grid normal (Desktop) ──
+   JS akan tambah class .is-slider hanya jika perlu */
 .stats-grid,
 .features-grid,
 .materi-grid,
 .fact-grid,
 .vokasi-grid {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  overflow-x: auto !important;
-  overflow-y: visible !important;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  gap: 24px !important;
-  grid-template-columns: none !important;
-  padding: 12px 4px 28px !important;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 24px;
+  padding: 8px 4px;
+  /* pastikan tidak overflow di mode grid */
+  overflow-x: visible;
+  scroll-snap-type: none;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  scroll-padding-inline: 16px;
-}
-.stats-grid::-webkit-scrollbar,
-.features-grid::-webkit-scrollbar,
-.materi-grid::-webkit-scrollbar,
-.fact-grid::-webkit-scrollbar,
-.vokasi-grid::-webkit-scrollbar {
-  display: none;
 }
 
-/* Card sizing — 3 visible on desktop, snap center */
+/* ── Card base ── */
 .stats-grid > *,
 .features-grid > *,
 .materi-grid > *,
 .fact-grid > *,
 .vokasi-grid > * {
-  flex: 0 0 calc((100% - 48px) / 3); /* 3 cards + 2 gaps of 24px */
-  min-width: 280px;
-  max-width: 420px;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
   border-radius: 18px;
-  box-shadow: 0 10px 30px hsl(220 18% 3% / .35);
+  box-shadow: 0 8px 28px hsl(220 18% 3% / .30);
   transition: transform .35s var(--ease-spring), box-shadow .35s var(--ease-smooth);
+  /* reset flex sizing (mode slider akan override via JS inline) */
+  flex: none;
+  min-width: 0;
+  max-width: none;
 }
 .stats-grid > *:hover,
 .features-grid > *:hover,
@@ -1168,86 +1164,119 @@ img, video, iframe { max-width: 100%; height: auto; }
 .fact-grid > *:hover,
 .vokasi-grid > *:hover {
   transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 14px 36px hsl(220 18% 3% / .45);
 }
 
-@media (max-width: 900px) {
-  .stats-grid > *,
-  .features-grid > *,
-  .materi-grid > *,
-  .fact-grid > *,
-  .vokasi-grid > * {
-    flex: 0 0 78%;
-    max-width: 78%;
-  }
+/* ── Mode SLIDER (aktif via JS: tambah class .is-slider ke grid) ── */
+.stats-grid.is-slider,
+.features-grid.is-slider,
+.materi-grid.is-slider,
+.fact-grid.is-slider,
+.vokasi-grid.is-slider {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 12px 4px 32px !important;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  /* scroll padding biar card pertama tidak terpotong */
+  scroll-padding-inline: 8px;
 }
-@media (max-width: 560px) {
-  .stats-grid > *,
-  .features-grid > *,
-  .materi-grid > *,
-  .fact-grid > *,
-  .vokasi-grid > * {
-    flex: 0 0 88%;
-    max-width: 88%;
-  }
+.stats-grid.is-slider::-webkit-scrollbar,
+.features-grid.is-slider::-webkit-scrollbar,
+.materi-grid.is-slider::-webkit-scrollbar,
+.fact-grid.is-slider::-webkit-scrollbar,
+.vokasi-grid.is-slider::-webkit-scrollbar {
+  display: none;
 }
 
-/* Nav buttons */
+/* Card width di mode slider diatur via JS (calc per breakpoint) */
+.is-slider > * {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  flex-shrink: 0 !important;
+}
+
+/* ── Tombol navigasi — hanya muncul saat .is-slider ── */
 .carousel-btn {
+  display: none; /* tersembunyi by default */
   position: absolute;
-  top: 50%;
+  top: calc(50% - 20px); /* kompensasi dots di bawah */
   transform: translateY(-50%);
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid hsl(var(--border-hi));
-  background: hsl(var(--surface) / .92);
+  background: hsl(var(--surface) / .94);
   color: hsl(var(--fg));
-  font-size: 1.25rem;
-  display: flex;
+  font-size: 1.1rem;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 5;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 6px 20px hsl(220 18% 3% / .45);
-  transition: transform .25s var(--ease-spring), background .25s, opacity .25s;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px hsl(220 18% 3% / .4);
+  transition: transform .25s var(--ease-spring), background .2s, opacity .2s;
+}
+/* Tampilkan hanya jika slider aktif */
+.carousel-wrap:has(.is-slider) .carousel-btn {
+  display: flex;
+}
+/* Fallback untuk browser yang tidak support :has() — JS akan toggle class .slider-active */
+.carousel-wrap.slider-active .carousel-btn {
+  display: flex;
 }
 .carousel-btn:hover {
-  transform: translateY(-50%) scale(1.08);
+  transform: translateY(-50%) scale(1.1);
   background: hsl(var(--teal));
-  color: #001;
+  color: hsl(220 18% 7%);
   border-color: transparent;
 }
-.carousel-btn.prev { left: -8px; }
-.carousel-btn.next { right: -8px; }
-.carousel-btn[disabled] { opacity: .35; cursor: default; }
+.carousel-btn.prev { left: -6px; }
+.carousel-btn.next { right: -6px; }
+.carousel-btn[disabled] { opacity: .3; cursor: default; pointer-events: none; }
 
 @media (max-width: 640px) {
-  .carousel-btn { width: 40px; height: 40px; font-size: 1rem; }
-  .carousel-btn.prev { left: 4px; }
-  .carousel-btn.next { right: 4px; }
+  .carousel-btn { width: 38px; height: 38px; font-size: .95rem; }
+  .carousel-btn.prev { left: 2px; }
+  .carousel-btn.next { right: 2px; }
 }
 
-/* Dots */
+/* ── Dots — hanya muncul saat slider aktif ── */
 .carousel-dots {
-  display: flex;
-  gap: 8px;
+  display: none; /* hidden by default */
+  gap: 7px;
   justify-content: center;
-  margin-top: 14px;
+  margin-top: 16px;
   flex-wrap: wrap;
+  padding: 0 8px;
 }
+.carousel-wrap:has(.is-slider) .carousel-dots {
+  display: flex;
+}
+.carousel-wrap.slider-active .carousel-dots {
+  display: flex; /* fallback */
+}
+
 .carousel-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   background: hsl(var(--border-hi));
   border: none;
   padding: 0;
   cursor: pointer;
   transition: all .3s var(--ease-spring);
+  flex-shrink: 0;
 }
 .carousel-dot.active {
-  width: 26px;
+  width: 24px;
   background: hsl(var(--teal));
 }
-.carousel-dot:hover { background: hsl(var(--teal-dim)); }
+.carousel-dot:hover:not(.active) {
+  background: hsl(var(--teal-dim));
+  width: 12px;
+}

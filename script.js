@@ -703,11 +703,22 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   handlePageParam();
 })();
 /* ═══════════════════════════════════════════
-   CAROUSEL ENHANCER
-   Bungkus setiap grid target jadi carousel
-   dengan tombol prev/next + dots indicator.
+   ADAPTIVE CAROUSEL SYSTEM
+   ─────────────────────────────────────────
+   Desktop (≥1024px) : grid statis, tanpa slider
+   Tablet  (≥768px)  : slider per-grup (2–3 card)
+   Mobile  (<768px)  : slider 1 card (~1.1 width)
+   ─────────────────────────────────────────
+   Logika:
+   1. Hitung berapa card yang muat di container
+   2. Jika semua card muat → grid biasa, tanpa slider
+   3. Jika tidak muat   → aktifkan slider, set lebar
+      card agar N card terlihat, dots per slide-group
    ═══════════════════════════════════════════ */
 (function () {
+  'use strict';
+
+  /* ── Selector target ── */
   var TARGET_SELECTORS = [
     '.stats-grid',
     '.features-grid',
@@ -716,6 +727,40 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     '.vokasi-grid',
   ];
 
+  /* ── Breakpoints ── */
+  var BP_DESKTOP = 1024;
+  var BP_TABLET  = 768;
+
+  /* ─────────────────────────────────────
+     Hitung berapa card muat di container
+     Gunakan lebar minimal card sebagai patokan
+  ───────────────────────────────────────*/
+  var CARD_MIN_WIDTH = 260; // px — sama dengan minmax CSS
+  var GAP            = 24;  // px — gap antar card
+
+  function getContainerWidth(grid) {
+    return grid.parentElement
+      ? grid.parentElement.getBoundingClientRect().width
+      : grid.getBoundingClientRect().width;
+  }
+
+  function calcCardsPerView(containerWidth, vw) {
+    if (vw >= BP_DESKTOP) {
+      /* Desktop: hitung berapa banyak muat, min 1 */
+      return Math.max(1, Math.floor((containerWidth + GAP) / (CARD_MIN_WIDTH + GAP)));
+    } else if (vw >= BP_TABLET) {
+      /* Tablet: tampilkan 2 card (atau 3 jika lebar) */
+      return containerWidth >= 720 ? 3 : 2;
+    } else {
+      /* Mobile: 1 card (dengan sedikit peek) */
+      return 1;
+    }
+  }
+
+  /* ─────────────────────────────────────
+     Pastikan grid dibungkus .carousel-wrap
+     dan punya tombol prev/next serta dots
+  ───────────────────────────────────────*/
   function ensureWrapped(grid) {
     if (grid.parentElement && grid.parentElement.classList.contains('carousel-wrap')) {
       return grid.parentElement;
@@ -725,108 +770,246 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     grid.parentNode.insertBefore(wrap, grid);
     wrap.appendChild(grid);
 
+    /* Tombol navigasi */
     var prev = document.createElement('button');
     prev.className = 'carousel-btn prev';
     prev.type = 'button';
     prev.setAttribute('aria-label', 'Sebelumnya');
-    prev.innerHTML = '◀';
+    prev.innerHTML = '&#9664;';
 
     var next = document.createElement('button');
     next.className = 'carousel-btn next';
     next.type = 'button';
     next.setAttribute('aria-label', 'Berikutnya');
-    next.innerHTML = '▶';
+    next.innerHTML = '&#9654;';
 
-    var dots = document.createElement('div');
-    dots.className = 'carousel-dots';
+    /* Dots */
+    var dotsEl = document.createElement('div');
+    dotsEl.className = 'carousel-dots';
 
     wrap.appendChild(prev);
     wrap.appendChild(next);
-    wrap.appendChild(dots);
+    wrap.appendChild(dotsEl);
 
-    prev.addEventListener('click', function () { scrollByCard(grid, -1); });
-    next.addEventListener('click', function () { scrollByCard(grid, 1); });
+    /* Scroll event untuk update tombol & dots */
+    var scrollTimer;
     grid.addEventListener('scroll', function () {
-      requestAnimationFrame(function () { updateDots(grid); updateButtons(grid); });
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function () {
+        updateDots(grid);
+        updateButtons(grid);
+      }, 50);
     });
+
+    prev.addEventListener('click', function () { scrollByGroup(grid, -1); });
+    next.addEventListener('click', function () { scrollByGroup(grid, 1); });
+
     return wrap;
   }
 
-  function getCardStep(grid) {
+  /* ─────────────────────────────────────
+     Aktifkan / nonaktifkan mode slider
+  ───────────────────────────────────────*/
+  function activateSlider(grid, cardsPerView, vw) {
+    var wrap = grid.parentElement;
+    var containerWidth = getContainerWidth(grid);
+    var cardWidth;
+
+    if (vw < BP_TABLET) {
+      /* Mobile: 1 card dengan sedikit peek (5%) */
+      cardWidth = containerWidth * 0.88;
+    } else {
+      /* Tablet: N cards per view */
+      cardWidth = (containerWidth - GAP * (cardsPerView - 1)) / cardsPerView;
+    }
+
+    /* Terapkan lebar ke setiap card */
+    Array.from(grid.children).forEach(function (card) {
+      card.style.flex     = '0 0 ' + Math.floor(cardWidth) + 'px';
+      card.style.maxWidth = Math.floor(cardWidth) + 'px';
+      card.style.minWidth = '0';
+    });
+
+    var alreadyActive = grid.classList.contains('is-slider');
+
+    /* Aktifkan mode slider */
+    grid.classList.add('is-slider');
+    if (wrap) wrap.classList.add('slider-active');
+
+    /* Reset scroll ke awal HANYA jika baru pertama kali diaktifkan */
+    if (!alreadyActive) {
+      grid.scrollLeft = 0;
+    }
+  }
+
+  function deactivateSlider(grid) {
+    var wrap = grid.parentElement;
+
+    /* Reset lebar card agar grid CSS mengambil alih */
+    Array.from(grid.children).forEach(function (card) {
+      card.style.flex     = '';
+      card.style.maxWidth = '';
+      card.style.minWidth = '';
+    });
+
+    grid.classList.remove('is-slider');
+    if (wrap) wrap.classList.remove('slider-active');
+    grid.scrollLeft = 0;
+  }
+
+  /* ─────────────────────────────────────
+     Hitung jumlah slide (grup card)
+     1 slide = N cards yang terlihat sekaligus
+  ───────────────────────────────────────*/
+  function getSlideCount(grid, cardsPerView) {
+    var total = grid.children.length;
+    return Math.ceil(total / cardsPerView);
+  }
+
+  /* ─────────────────────────────────────
+     Scroll sebesar 1 grup card (bukan 1 card)
+  ───────────────────────────────────────*/
+  function getGroupStep(grid, cardsPerView) {
     var first = grid.children[0];
     if (!first) return grid.clientWidth;
+    var cardW = first.getBoundingClientRect().width;
     var styles = getComputedStyle(grid);
-    var gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
-    return first.getBoundingClientRect().width + gap;
+    var gap = parseFloat(styles.columnGap || styles.gap || '0') || GAP;
+    return (cardW + gap) * cardsPerView;
   }
 
-  function getCurrentIndex(grid) {
-    var step = getCardStep(grid);
-    if (!step) return 0;
-    return Math.round(grid.scrollLeft / step);
-  }
-
-  function scrollByCard(grid, dir) {
-    var step = getCardStep(grid);
+  function scrollByGroup(grid, dir) {
+    /* Ambil cardsPerView dari dataset yang disimpan saat enhance */
+    var cpv = parseInt(grid.dataset.cardsPerView || '1', 10);
+    var step = getGroupStep(grid, cpv);
     grid.scrollBy({ left: dir * step, behavior: 'smooth' });
   }
 
-  function buildDots(grid) {
+  /* ─────────────────────────────────────
+     Dots — satu dot per slide-group
+  ───────────────────────────────────────*/
+  function buildDots(grid, slideCount) {
     var wrap = grid.parentElement;
-    var dots = wrap.querySelector('.carousel-dots');
-    if (!dots) return;
-    var n = grid.children.length;
-    if (dots.childElementCount === n) return;
-    dots.innerHTML = '';
-    for (var i = 0; i < n; i++) {
+    if (!wrap) return;
+    var dotsEl = wrap.querySelector('.carousel-dots');
+    if (!dotsEl) return;
+
+    /* Rebuild hanya jika jumlah slide berubah */
+    if (parseInt(dotsEl.dataset.slideCount || '0', 10) === slideCount) return;
+    dotsEl.dataset.slideCount = slideCount;
+    dotsEl.innerHTML = '';
+
+    for (var i = 0; i < slideCount; i++) {
       (function (idx) {
-        var d = document.createElement('button');
-        d.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
-        d.type = 'button';
-        d.setAttribute('aria-label', 'Ke kartu ' + (idx + 1));
-        d.addEventListener('click', function () {
-          var step = getCardStep(grid);
+        var dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', 'Ke slide ' + (idx + 1));
+        dot.addEventListener('click', function () {
+          var cpv = parseInt(grid.dataset.cardsPerView || '1', 10);
+          var step = getGroupStep(grid, cpv);
           grid.scrollTo({ left: step * idx, behavior: 'smooth' });
         });
-        dots.appendChild(d);
+        dotsEl.appendChild(dot);
       })(i);
     }
   }
 
   function updateDots(grid) {
     var wrap = grid.parentElement;
+    if (!wrap) return;
     var dots = wrap.querySelectorAll('.carousel-dot');
     if (!dots.length) return;
-    var idx = Math.min(dots.length - 1, Math.max(0, getCurrentIndex(grid)));
+
+    var cpv  = parseInt(grid.dataset.cardsPerView || '1', 10);
+    var step = getGroupStep(grid, cpv);
+    var idx  = step > 0 ? Math.round(grid.scrollLeft / step) : 0;
+    idx = Math.max(0, Math.min(dots.length - 1, idx));
+
     dots.forEach(function (d, i) { d.classList.toggle('active', i === idx); });
   }
 
+  /* ─────────────────────────────────────
+     Update status tombol prev/next
+  ───────────────────────────────────────*/
   function updateButtons(grid) {
     var wrap = grid.parentElement;
+    if (!wrap) return;
     var prev = wrap.querySelector('.carousel-btn.prev');
     var next = wrap.querySelector('.carousel-btn.next');
     if (!prev || !next) return;
-    prev.disabled = grid.scrollLeft <= 2;
-    next.disabled = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 2;
+
+    var atStart = grid.scrollLeft <= 4;
+    var atEnd   = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4;
+    prev.disabled = atStart;
+    next.disabled = atEnd;
   }
 
+  /* ─────────────────────────────────────
+     Enhance: titik masuk utama per grid
+  ───────────────────────────────────────*/
   function enhance(grid) {
     if (!grid || !grid.children.length) return;
+
+    /* Pastikan sudah dibungkus */
     ensureWrapped(grid);
-    buildDots(grid);
-    updateDots(grid);
-    updateButtons(grid);
+
+    var vw             = window.innerWidth;
+    var containerWidth = getContainerWidth(grid);
+    var totalCards     = grid.children.length;
+    var cardsPerView   = calcCardsPerView(containerWidth, vw);
+
+    /* Simpan untuk dipakai scrollByGroup & dot click */
+    var prevCpv = parseInt(grid.dataset.cardsPerView || '0', 10);
+    grid.dataset.cardsPerView = cardsPerView;
+
+    var needsSlider = totalCards > cardsPerView;
+    var alreadySlider = grid.classList.contains('is-slider');
+
+    if (needsSlider) {
+      /* Hanya re-activate jika cardsPerView berubah (misal resize layar) */
+      if (!alreadySlider || prevCpv !== cardsPerView) {
+        activateSlider(grid, cardsPerView, vw);
+      }
+      var slideCount = getSlideCount(grid, cardsPerView);
+      buildDots(grid, slideCount);
+      updateDots(grid);
+      updateButtons(grid);
+    } else {
+      deactivateSlider(grid);
+      /* Kosongkan dots jika tidak perlu slider */
+      var wrap = grid.parentElement;
+      if (wrap) {
+        var dotsEl = wrap.querySelector('.carousel-dots');
+        if (dotsEl) { dotsEl.innerHTML = ''; dotsEl.dataset.slideCount = '0'; }
+      }
+    }
   }
 
+  /* ─────────────────────────────────────
+     Scan semua target grid di halaman
+  ───────────────────────────────────────*/
   function scanAll() {
     TARGET_SELECTORS.forEach(function (sel) {
       document.querySelectorAll(sel).forEach(enhance);
     });
   }
 
-  // Observe DOM changes — content is rendered async via innerHTML
+  /* Debounce resize agar tidak terlalu sering */
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(scanAll, 120);
+  });
+
+  /* Observe DOM — konten dirender secara async */
   var scheduled = false;
-  function schedule() {
+  function schedule(mutations) {
+    /* Hanya proses jika ada node yang benar-benar ditambah/dihapus */
+    var hasNodeChange = mutations && mutations.some(function (m) {
+      return m.addedNodes.length > 0 || m.removedNodes.length > 0;
+    });
+    if (!hasNodeChange) return;
     if (scheduled) return;
     scheduled = true;
     requestAnimationFrame(function () {
@@ -838,20 +1021,11 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       scanAll();
-      var mo = new MutationObserver(schedule);
-      mo.observe(document.body, { childList: true, subtree: true });
+      new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     });
   } else {
     scanAll();
-    var mo = new MutationObserver(schedule);
-    mo.observe(document.body, { childList: true, subtree: true });
+    new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
   }
 
-  window.addEventListener('resize', function () {
-    TARGET_SELECTORS.forEach(function (sel) {
-      document.querySelectorAll(sel).forEach(function (g) {
-        updateDots(g); updateButtons(g);
-      });
-    });
-  });
 })();
