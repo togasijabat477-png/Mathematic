@@ -1056,4 +1056,18 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', toggleMenu);
   }
 });
+function toggleMenu() {
+  const menu = document.querySelector('.menu-links');
+  menu.classList.toggle('active');
+
+  // Paksa browser reflow agar layout langsung menyesuaikan
+  void menu.offsetHeight;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.querySelector('.btn-icon');
+  if (btn) {
+    btn.addEventListener('click', toggleMenu);
+  }
+});
 
