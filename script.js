@@ -7,22 +7,11 @@
 function handlePageParam() {
     var params = new URLSearchParams(window.location.search);
     var page = params.get("page");
+    var tab  = params.get("tab");
     if (page) {
+        if (tab && page === 'materi') { activeMateriTab = tab; renderMateri(); }
         navigateTo(page);
     }
-}
-function navigateTo(page, tab) {
-  // simpan halaman sebelumnya
-  localStorage.setItem("lastPage", currentPage);
-
-  document.querySelectorAll('.page').forEach(function(p) {
-    p.classList.remove('active');
-  });
-
-  var el = document.getElementById('page-' + page);
-  if (el) el.classList.add('active');
-
-  currentPage = page;
 }
 
 
@@ -397,6 +386,17 @@ function renderFeatures() {
   document.getElementById('featuresGrid').innerHTML = html;
 }
 
+function openModuleFile(file) {
+  // Simpan halaman asal di history agar tombol back browser kembali ke halaman materi
+  history.replaceState(null, '', '?page=materi&tab=' + activeMateriTab);
+  window.location.href = file;
+}
+
+function openGameFile(file) {
+  history.replaceState(null, '', '?page=game');
+  window.location.href = file;
+}
+
 function renderMateri() {
   // Tabs
   var tabs = [{key:'diskrit',label:'∑ Matematika Diskrit'},{key:'aljabar',label:'λ Aljabar Linear'},{key:'kriptografi',label:'🔐 Kriptografi'}];
@@ -412,7 +412,7 @@ function renderMateri() {
   sections.forEach(function(s) {
     html += '<div style="margin-bottom:48px"><div class="section-header"><span class="emoji">' + s.icon + '</span><h2 class="font-display">' + s.title + '</h2></div><div class="materi-grid">';
     s.items.forEach(function(item) {
-      html += '<div class="materi-card"' + (item.file ? ' onclick="window.location.href=\'' + item.file + '\'"' : '') + '>' +
+      html += '<div class="materi-card"' + (item.file ? ' onclick="openModuleFile(\'' + item.file + '\')"' : '') + '>' +
         '<div class="accent-line"></div><div class="num">' + item.num + '</div>' +
         '<h3>' + item.title + '</h3><p class="mdesc">' + item.description + '</p>' +
         '<span class="tag">' + item.tag + '</span>' +
@@ -435,7 +435,7 @@ function renderGame() {
         else if (item.accentColor==='violet') { cls += ' new-violet'; tagCls += ' tag-violet'; }
         else if (item.accentColor==='green') { cls += ' new-green'; tagCls += ' tag-green'; }
       }
-      html += '<div class="' + cls + '"' + (item.file ? ' onclick="window.location.href=\'' + item.file + '\'"' : '') + '>' +
+      html += '<div class="' + cls + '"' + (item.file ? ' onclick="openGameFile(\'' + item.file + '\')"' : '') + '>' +
         '<div class="accent-line"></div><div class="num">' + item.num + '</div>' +
         '<h3>' + item.title + '</h3><p class="mdesc">' + item.description + '</p>' +
         '<span class="' + tagCls + '">' + item.tag + '</span>' +
