@@ -1310,3 +1310,34 @@ img, video, iframe { max-width: 100%; height: auto; }
   background: hsl(var(--teal-dim));
   width: 12px;
 }
+/* === FIX MOBILE MENU & CARDS === */
+@media (max-width: 768px) {
+  .menu-links {
+    position: fixed;
+    top: 64px;       /* sejajar navbar */
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    background: #ffffff;
+    flex-direction: column;
+    padding: 12px;
+    z-index: 999;    /* pastikan di atas konten */
+  }
+
+  html:not(.light) .menu-links {
+    background: #1e1e1e;
+  }
+}
+
+/* Perbaikan kotak agar tidak berantakan */
+.topics-grid {
+  overflow: hidden;
+  will-change: max-height;
+}
+
+.subject-card.active .topics-grid {
+  max-height: none; /* langsung menyesuaikan konten */
+}
+
