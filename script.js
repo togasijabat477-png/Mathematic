@@ -959,6 +959,18 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     var totalCards     = grid.children.length;
     var cardsPerView   = calcCardsPerView(containerWidth, vw);
 
+    /* Di mobile, materi-grid tampil sebagai grid 1-kolom biasa, BUKAN slider
+       agar teks tidak terpotong dan card terbaca dengan baik */
+    if (vw < BP_TABLET && grid.classList.contains('materi-grid')) {
+      deactivateSlider(grid);
+      var wrap2 = grid.parentElement;
+      if (wrap2) {
+        var dotsEl2 = wrap2.querySelector('.carousel-dots');
+        if (dotsEl2) { dotsEl2.innerHTML = ''; dotsEl2.dataset.slideCount = '0'; }
+      }
+      return;
+    }
+
     /* Simpan untuk dipakai scrollByGroup & dot click */
     var prevCpv = parseInt(grid.dataset.cardsPerView || '0', 10);
     grid.dataset.cardsPerView = cardsPerView;
