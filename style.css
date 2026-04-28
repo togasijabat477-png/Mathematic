@@ -1068,6 +1068,27 @@ button { cursor: pointer; border: none; font-family: inherit; }
   .tabs { gap: 6px; }
   .tab-btn { padding: 6px 14px; font-size: .85rem; }
   .materi-card { padding: 20px; }
+  /* Paksa materi-grid jadi 1 kolom full-width di mobile — bukan slider */
+  .materi-grid,
+  .materi-grid.is-slider {
+    display: grid !important;
+    flex-wrap: unset !important;
+    overflow-x: visible !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 4px 0 !important;
+    scroll-snap-type: none !important;
+  }
+  .materi-grid > *,
+  .materi-grid.is-slider > * {
+    flex: unset !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  /* Sembunyikan tombol carousel dan dots untuk materi-grid di mobile */
+  .carousel-wrap:has(.materi-grid) .carousel-btn,
+  .carousel-wrap:has(.materi-grid) .carousel-dots { display: none !important; }
   .section-header h2 { font-size: 1.2rem; }
   .fact-card { padding: 20px; }
   .vokasi-section { padding: 64px 0; }
@@ -1126,6 +1147,13 @@ img, video, iframe { max-width: 100%; height: auto; }
 .carousel-wrap {
   position: relative;
   width: 100%;
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .carousel-wrap { overflow: hidden; }
+  /* Khusus materi-grid: wrap tidak perlu overflow hidden */
+  .carousel-wrap:has(.materi-grid) { overflow: visible; }
 }
 
 /* ── Default: grid normal (Desktop) ──
