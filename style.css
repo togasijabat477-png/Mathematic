@@ -1341,3 +1341,25 @@ img, video, iframe { max-width: 100%; height: auto; }
   max-height: none; /* langsung menyesuaikan konten */
 }
 
+@media (max-width: 768px) {
+  .menu-links {
+    position: fixed;
+    top: 64px;       /* sejajar navbar */
+    left: 0;
+    right: 0;
+    bottom: 0;       /* tambahkan agar penuh sampai bawah */
+    width: 100%;
+    height: calc(100vh - 64px); /* biar muat seluruh layar */
+    overflow-y: auto; /* scroll jika konten panjang */
+    border-radius: 0;
+    box-shadow: none;
+    background: #ffffff;
+    flex-direction: column;
+    padding: 12px;
+    z-index: 999;
+  }
+
+  html:not(.light) .menu-links {
+    background: #1e1e1e;
+  }
+}
