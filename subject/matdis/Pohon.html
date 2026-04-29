@@ -32,7 +32,6 @@
       font-size: 17px;
     }
 
-    /* ── HERO ── */
     .hero {
       background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 55%, #40916c 100%);
       color: #fff;
@@ -90,7 +89,6 @@
       transform: translateY(-1px);
     }
 
-    /* ── NAVBAR TOC ── */
     .toc-bar {
       background: var(--surface);
       border-bottom: 2px solid var(--border);
@@ -115,14 +113,12 @@
     }
     .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-    /* ── LAYOUT ── */
     .container {
       max-width: 860px;
       margin: 0 auto;
       padding: 48px 20px 80px;
     }
 
-    /* ── SECTION CARD ── */
     .section-card {
       background: var(--surface);
       border-radius: var(--radius);
@@ -134,11 +130,6 @@
     }
     .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
 
-    @media (max-width: 600px) {
-      .section-card { padding: 24px 18px; }
-    }
-
-    /* ── SECTION HEADER ── */
     .section-header {
       display: flex;
       align-items: center;
@@ -166,7 +157,6 @@
       line-height: 1.2;
     }
 
-    /* ── TYPOGRAPHY ── */
     h3 {
       font-family: 'Playfair Display', serif;
       font-size: 1.18rem;
@@ -186,7 +176,6 @@
     strong { color: var(--accent); }
     em { color: var(--accent-warm); font-style: italic; }
 
-    /* ── DEFINITION BOX ── */
     .def-box {
       background: linear-gradient(135deg, #e9f5ee 0%, #d1ead9 100%);
       border-left: 5px solid var(--accent);
@@ -205,7 +194,6 @@
     }
     .def-box p { margin: 0; font-size: 0.97rem; }
 
-    /* ── PROPERTY LIST ── */
     .prop-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -222,7 +210,6 @@
     .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
     .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
 
-    /* ── TREE VISUAL ── */
     .tree-visual {
       background: var(--surface2);
       border-radius: var(--radius-sm);
@@ -232,7 +219,6 @@
     }
     .tree-visual svg { display: block; margin: 0 auto; }
 
-    /* ── TABLE ── */
     .info-table {
       width: 100%;
       border-collapse: collapse;
@@ -250,7 +236,6 @@
     .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
     .info-table tr:nth-child(even) td { background: var(--surface2); }
 
-    /* ── CODE / FORMULA ── */
     .formula {
       background: #1b2e24;
       color: #b7e4c7;
@@ -262,12 +247,12 @@
       overflow-x: auto;
     }
 
-    /* ── TRAVERSAL STEPS ── */
     .steps {
       counter-reset: step;
       list-style: none;
       margin: 16px 0;
     }
+
     .steps li {
       counter-increment: step;
       display: flex;
@@ -276,6 +261,7 @@
       margin-bottom: 12px;
       font-size: 0.95rem;
     }
+
     .steps li::before {
       content: counter(step);
       background: var(--accent);
@@ -290,7 +276,6 @@
       margin-top: 2px;
     }
 
-    /* ── HIGHLIGHT CALLOUT ── */
     .callout {
       background: #fff8f0;
       border: 1.5px solid #e8c490;
@@ -301,7 +286,6 @@
     }
     .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
 
-    /* ── TAG BADGE ── */
     .badge {
       display: inline-block;
       background: var(--accent3);
@@ -314,7 +298,6 @@
       margin: 2px;
     }
 
-    /* ── DIVIDER ── */
     .divider {
       height: 2px;
       background: linear-gradient(90deg, var(--accent3), transparent);
@@ -322,8 +305,66 @@
       margin: 28px 0;
       border-radius: 2px;
     }
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #1b4332;
+    }
 
-    /* ── SCROLL TO TOP ── */
+    .huffman-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #2d6a4f;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .green {
+        color: #2d6a4f;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #c77c3c;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
     .fab {
       position: fixed;
       bottom: 28px; right: 28px;
@@ -339,7 +380,95 @@
       transition: transform .2s, background .2s;
       z-index: 200;
     }
+
     .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 15px;
+      }
+
+      .hero {
+        padding: 40px 16px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .btn-back {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+      
+      .container {
+        padding: 24px 14px 60px;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+      }
+      
+      .section-header {
+        gap: 10px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-num {
+         width: 34px;
+         height: 34px;
+         font-size: 0.8rem;
+        }
+        
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .formula {
+        font-size: 0.8rem;
+      }
+      
+      .tree-visual {
+        overflow-x: auto;
+      }
+      
+      .tree-visual svg {
+        min-width: 400px;
+      }
+      
+      .toc-bar {
+        padding: 0 10px;
+      }
+      
+      .toc-bar a {
+        font-size: 0.75rem;
+        padding: 10px 10px;
+      }
+      
+      .fab {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1005,12 +1134,36 @@ Jumlah simpul dalam   i = (n-1) / m</div>
       <p><strong>Algoritma pengkodean Huffman</strong> adalah metode kompresi data yang memberikan kode biner lebih pendek kepada simbol yang lebih sering muncul, dan kode lebih panjang kepada simbol yang jarang muncul.</p>
     </div>
 
-    <p>Prinsip utama kode Huffman:</p>
-    <ul class="steps">
-      <li>Simbol dengan <strong>probabilitas terbesar</strong> mendapat <strong>kode terpendek</strong> (bit paling sedikit).</li>
-      <li>Simbol dengan <strong>probabilitas terkecil</strong> mendapat <strong>kode terpanjang</strong> (bit paling banyak).</li>
-      <li>Kode diperoleh dengan membangun pohon Huffman berdasarkan nilai probabilitas masing-masing simbol.</li>
-    </ul>
+    <div class="huffman-box">
+  <h3>Prinsip Utama Kode Huffman</h3>
+
+  <div class="huffman-item">
+    <div class="num">1</div>
+    <p>
+      Simbol dengan <strong>probabilitas terbesar</strong>
+      mendapat <span class="green">kode terpendek</span>
+      <span class="note">(bit paling sedikit)</span>
+    </p>
+  </div>
+
+  <div class="huffman-item">
+    <div class="num">2</div>
+    <p>
+      Simbol dengan <strong>probabilitas terkecil</strong>
+      mendapat <span class="orange">kode terpanjang</span>
+      <span class="note">(bit paling banyak)</span>
+    </p>
+  </div>
+
+  <div class="huffman-item">
+    <div class="num">3</div>
+    <p>
+      Kode diperoleh dengan membangun
+      <strong>pohon Huffman</strong>
+      berdasarkan probabilitas masing-masing simbol
+    </p>
+  </div>
+</div>
 
     <h3>Langkah Membangun Pohon Huffman</h3>
     <ol class="steps">
