@@ -1,766 +1,1244 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Logika Matematika</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logika — Matematika Diskrit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
-:root {
-  --primary-color: #2c3e50;
-  --secondary-color: #3498db;
-  --accent-color: #e74c3c;
-  --bg-color: #f4f7f6;
-  --text-color: #333;
-  --white: #ffffff;
-}
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #002aff;
+      --accent2: #002aff;
+      --accent3: #b7e4c7;
+      --accent-warm: #c77c3c;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(45, 106, 79, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  margin: 0;
-  padding: 15px;
-  font-family: "Times New Roman", Times, serif;
-  background: var(--bg-color);
-  color: var(--text-color);
-  line-height: 1.7;
-}
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
 
-/* CONTAINER */
-.container {
-  max-width: 1000px;
-  margin: auto;
-  background: var(--white);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
+    .table-container {
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    
+    .truth-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-family: "Times New Roman", serif;
+      text-align: center;
+      overflow: hidden;
+      border-radius: 14px;
+    }
 
-/* BUTTON */
-.back-btn {
-  display: inline-block;
-  text-decoration: none;
-  background: var(--secondary-color);
-  color: white;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  transition: 0.3s;
-}
+    .truth-table thead th {
+      padding: 14px;
+      color: white;
+      font-weight: bold;
+      background: linear-gradient(to right, #2c3e50, #3498db);
+    }
+    
+    .truth-table thead th:first-child {
+      border-top-left-radius: 14px;
+    }
+    
+    .truth-table thead th:last-child {
+      border-top-right-radius: 14px;
+    }
+    
+    .truth-table td {
+      padding: 14px;
+      font-size: 16px;
+    }
+    
+    .truth-table tbody tr:nth-child(even) {
+      background: #e5e7eb;
+    }
+    
+    .truth-table tbody tr {
+      border-bottom: 1px solid #d1d5db;
+    }
+    
+    .t {
+      color: #16a1a3;
+      font-weight: bold;
+    }
+    
+    .f {
+      color: #dc2626;
+      font-weight: bold;
+    }
 
-.back-btn:hover {
-  background: var(--primary-color);
-}
+    .hero {
+      background: linear-gradient(135deg, #002aff 0%, #2d396a 55%, #405391 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, #002aff(183,228,199,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
 
-/* TITLE */
-h1, h2, h3 {
-  color: var(--primary-color);
-}
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-h1.title {
-  text-align: center;
-  border-bottom: 4px solid var(--secondary-color);
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
 
-.description {
-  text-align: center;
-  color: #666;
-  margin-bottom: 25px;
-}
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
 
-/* CARD */
-.card {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 25px;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
 
-.card::before {
-  content: "MATERI";
-  position: absolute;
-  top: -10px;
-  left: 15px;
-  background: var(--secondary-color);
-  color: white;
-  padding: 3px 12px;
-  border-radius: 20px;
-  font-size: 0.75em;
-}
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
 
-/* LIST */
-ul {
-  padding-left: 18px;
-}
+    .def-box {
+      background: linear-gradient(135deg, #a2d1ff 0%, #bdc6eb 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
+    .prop-grid {
+      
+      display: flex;
+      flex-direction: column; 
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto; 
+    }
+    
+    .prop-card {
+      background: #f5f1ea;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    
+    .prop-card ul {
+      padding-left: 18px;
+    }
+    
+    .prop-card li {
+      margin-bottom: 10px;
+    }
 
-/* ========================= */
-/* 🔥 TABLE SUPER IMPROVE 🔥 */
-/* ========================= */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
 
-.table-wrapper {
-  overflow-x: auto;
-  margin-top: 15px;
-  border-radius: 12px;
-}
+    .formula {
+      background: #1b2e24;
+      color: #b7e4c7;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
 
-/* TABLE */
-table {
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #1b4332;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #1b2043;
+    }
+
+    .huffman-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #0073ff;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .blue {
+        color: #0066ff;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #c77c3c;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(45,106,79,.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
+    }
+
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+.info-table {
   width: 100%;
-  min-width: 600px;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 24px 0;
+  font-size: 0.95rem;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
 }
 
-/* HEADER */
-th {
-  background: linear-gradient(135deg, #2c3e50, #3498db);
-  color: white;
-  padding: 12px;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+.info-table thead th {
+  background: linear-gradient(135deg, #002aff, #405391);
+  color: #fff;
+  padding: 14px;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
 }
 
-/* CELL */
-td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #eee;
+.info-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+
+.info-table tr:nth-child(even) td {
+  background: #f5f7fb;
+}
+
+.info-table tr:hover td {
+  background: #eef2ff;
   transition: 0.2s;
 }
 
-/* ZEBRA */
-tr:nth-child(even) {
-  background: #f8fbff;
-}
-
-/* HOVER */
-tr:hover td {
-  background: #eaf3ff;
-}
-
-/* LAST ROW FIX */
-table tr:last-child td {
-  border-bottom: none;
-}
-
-/* WARNA LOGIKA */
-td strong {
-  color: #2ecc71; /* TRUE */
-}
-
-.highlight {
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-/* ========================= */
-/* BOX */
-/* ========================= */
-
-.answer-box {
-  background: #eef5fb;
-  border-left: 5px solid var(--secondary-color);
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 20px;
-}
-
-.formula {
-  background: #f4f8fc;
-  border-left: 4px solid var(--accent-color);
-  padding: 10px;
-  margin: 15px 0;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-/* ========================= */
-/* 📱 MOBILE */
-/* ========================= */
-
 @media (max-width: 768px) {
 
-  body {
-    padding: 10px;
+  .info-table,
+  .info-table thead,
+  .info-table tbody,
+  .info-table th,
+  .info-table td,
+  .info-table tr {
+    display: block;
+    width: 100%;
   }
 
-  .container {
-    padding: 15px;
+  .info-table thead {
+    display: none;
   }
 
-  h1.title {
-    font-size: 1.5em;
+  .info-table tr {
+    margin-bottom: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    background: white;
   }
 
-  h2 {
-    font-size: 1.2em;
+  .info-table td {
+    padding: 12px 14px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
   }
 
-  h3 {
-    font-size: 1em;
+  .info-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: var(--accent);
+    display: block;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  th, td {
-    padding: 8px;
-    font-size: 0.85em;
-  }
-
-  .card {
-    padding: 15px;
+  .info-table td:last-child {
+    border-bottom: none;
   }
 }
   </style>
 </head>
-
 <body>
-  <div class="container">
-  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
-<div class="container">
-    <h1 class="title">Logika Matematika</h1>
-    <p class="description">
-      Ringkasan materi dasar logika matematika yang digunakan dalam proposisi dan penalaran logis.
+
+<header class="hero" id="top">
+  <span class="hero-icon">🧠</span>
+  <h1>Logika</h1>
+  <p>Materi lengkap Matematika Diskrit — Logika Proposisi, Operator Logika, Tabel Kebenaran, Implikasi, dan Hukum Logika</p>
+  <a href="../../index.html?page=materi" class="btn-back">←  Kembali ke Materi</a>
+</header>
+
+<nav class="toc-bar">
+  <a href="#Pengertian">Pengertian Logika Matematika</a>
+  <a href="#Mengkombinasikan">Mengkombinasikan Proposisi (Operator Logika)</a>
+  <a href="#Operator Logika">Operator Logika & Tabel Kebenaran</a>
+  <a href="#Bentuk Rumus">Bentuk Rumus dalam Logika</a>
+  <a href="#Hukum">Hukum-Hukum Logika</a>
+  <a href="#Latihan">Latihan Soal</a>
+  <a href="#Proposisi">Proposisi Bersyarat</a>
+</nav>
+
+
+<!-- 1. PENGERTIAN LOGIKA MATEMATIKA -->
+<main class="container">
+  <section class="section-card" id="Pengertian">
+    
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Pengertian Logika Matematika</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Pengertian</div>
+      <p>
+        <strong>Logika Matematika</strong> adalah cabang matematika yang mempelajari cara berpikir yang benar dan sistematis 
+        menggunakan aturan-aturan formal untuk menentukan apakah suatu pernyataan bernilai benar (true) atau salah (false), 
+        serta <em>tidak mengandung unsur subjektif</em>.
+      </p>
+    </div>
+
+    <ul>
+      <li>Digunakan dalam ilmu komputer, matematika, dan pemrograman</li>
+      <li>Berfokus pada kebenaran pernyataan</li>
+    </ul>
+
+    <h3>Apa itu Proposisi?</h3>
+    <p>
+      Proposisi adalah kalimat deklaratif yang memiliki nilai Benar (True) atau Salah (False), tetapi tidak keduanya.
     </p>
 
-    <div class="card">
-      <h2>1. Pengertian Logika Matematika</h2>
-      <p>
-        Logika matematika adalah cabang ilmu yang mempelajari penalaran secara sistematis dan ilmiah menggunakan metode formal.
-      </p>
-
+    <div class="answer-box">
+      <strong>Contoh Proposisi:</strong>
       <ul>
-        <li>Digunakan dalam ilmu komputer, matematika, dan pemrograman</li>
-        <li>Berfokus pada kebenaran pernyataan</li>
+        <li>13 adalah bilangan ganjil → Benar</li>
+        <li>1 + 1 = 2 → Benar</li>
+        <li>Bumi berbentuk segitiga → Salah</li>
       </ul>
-
-      <h3>Apa itu Proposisi?</h3>
-      <p>
-        Proposisi adalah kalimat deklaratif yang memiliki nilai Benar (True) atau Salah (False), tetapi tidak keduanya.
-      </p>
-
-      <div class="answer-box">
-        <strong>Contoh Proposisi:</strong>
-        <ul>
-          <li>13 adalah bilangan ganjil → Benar</li>
-          <li>1 + 1 = 2 → Benar</li>
-          <li>Bumi berbentuk segitiga → Salah</li>
-        </ul>
-      </div>
     </div>
+  </section>
 
-    <div class="card">
-      <h2>2. Mengkombinasikan Proposisi (Operator Logika)</h2>
-      <p>Proposisi majemuk dibentuk dengan mengombinasikan satu atau lebih proposisi atomik menggunakan <strong>kata hubung logika</strong>. Nilai kebenarannya ditentukan oleh nilai proposisi penyusunnya.</p>
 
-      <h3>A. Jenis-Jenis Operator & Definisi</h3>
-      <ul>
-        <li><strong>Negasi (¬p):</strong> Operasi unari yang membalikkan nilai kebenaran. Jika <code>p</code> True, maka <code>¬p</code> False.</li>
-        <li><strong>Konjungsi (p ∧ q):</strong> Operator "Dan". Hanya bernilai <strong>Benar</strong> jika kedua proposisi penyusunnya bernilai Benar.</li>
-        <li><strong>Disjungsi (p ∨ q):</strong> Operator "Atau" (Inklusif). Bernilai <strong>Benar</strong> jika minimal salah satu proposisi bernilai Benar.</li>
-        <li><strong>XOR (p ⊕ q):</strong> <em>Exclusive Or</em>. Bernilai <strong>Benar</strong> jika kedua proposisi memiliki nilai kebenaran yang berbeda.</li>
-        <li><strong>Implikasi (p → q):</strong> Hubungan sebab-akibat. Bernilai <span class="highlight">Salah hanya jika</span> anteseden (p) Benar namun konsekuen (q) Salah.</li>
-        <li><strong>Biimplikasi (p ↔ q):</strong> Syarat perlu dan cukup. Bernilai <strong>Benar</strong> jika kedua proposisi memiliki nilai kebenaran yang identik (sama-sama T atau sama-sama F).</li>
-      </ul>
+<!-- 2. MENGKOMBINASIKAN PROPOSISI -->
+  <section class="section-card" id="Mengkombinasikan">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Mengkombinasikan Proposisi (Operator Logika) </h2>
+    </div>
+    
+    <p>Proposisi majemuk dibentuk dengan mengombinasikan satu atau lebih proposisi atomik menggunakan <strong>kata hubung logika</strong>. Nilai kebenarannya ditentukan oleh nilai proposisi penyusunnya.</p>
+<div class="prop-grid">
 
-      <h3>B. Tabel Kebenaran Master</h3>
-      <div class="table-wrapper">
-  <table>
-        <thead>
-          <tr>
-            <th>p</th>
-            <th>q</th>
-            <th>¬p</th>
-            <th>p ∧ q</th>
-            <th>p ∨ q</th>
-            <th>p ⊕ q</th>
-            <th>p → q</th>
-            <th>p ↔ q</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>T</td>
-            <td>T</td>
-            <td>F</td>
-            <td><strong>T</strong></td>
-            <td>T</td>
-            <td>F</td>
-            <td>T</td>
-            <td><strong>T</strong></td>
-          </tr>
-          <tr>
-            <td>T</td>
-            <td>F</td>
-            <td>F</td>
-            <td>F</td>
-            <td>T</td>
-            <td><strong>T</strong></td>
-            <td><span class="highlight">F</span></td>
-            <td>F</td>
-          </tr>
-          <tr>
-            <td>F</td>
-            <td>T</td>
-            <td>T</td>
-            <td>F</td>
-            <td>T</td>
-            <td><strong>T</strong></td>
-            <td>T</td>
-            <td>F</td>
-          </tr>
-          <tr>
-            <td>F</td>
-            <td>F</td>
-            <td>T</td>
-            <td>F</td>
-            <td>F</td>
-            <td>F</td>
-            <td>T</td>
-            <td><strong>T</strong></td>
-          </tr>
-        </tbody>
+  <div class="prop-card">
+    <strong>⚙️ Jenis-Jenis Operator & Definisi</strong>
+
+    <ul>
+      <li><strong>Negasi (¬p):</strong> Operasi unari yang membalikkan nilai kebenaran. Jika <code>p</code> True, maka <code>¬p</code> False.</li>
+      <li><strong>Konjungsi (p ∧ q):</strong> Operator "Dan". Hanya bernilai <strong>Benar</strong> jika kedua proposisi penyusunnya bernilai Benar.</li>
+      <li><strong>Disjungsi (p ∨ q):</strong> Operator "Atau" (Inklusif). Bernilai <strong>Benar</strong> jika minimal salah satu proposisi bernilai Benar.</li>
+      <li><strong>XOR (p ⊕ q):</strong> <em>Exclusive Or</em>. Bernilai <strong>Benar</strong> jika kedua proposisi memiliki nilai kebenaran yang berbeda.</li>
+      <li><strong>Implikasi (p → q):</strong> Hubungan sebab-akibat. Bernilai <span class="highlight">Salah hanya jika</span> anteseden (p) Benar namun konsekuen (q) Salah.</li>
+      <li><strong>Biimplikasi (p ↔ q):</strong> Syarat perlu dan cukup. Bernilai <strong>Benar</strong> jika kedua proposisi memiliki nilai kebenaran yang identik (sama-sama T atau sama-sama F).</li>
+    </ul>
+  </div>
+
+  <div class="prop-card">
+    <strong>📊Tabel Kebenaran Master</strong>
+
+    <div class="table-wrapper">
+<div class="table-container">
+  <table class="truth-table">
+    <thead>
+      <tr>
+        <th>p</th>
+        <th>q</th>
+        <th>¬p</th>
+        <th>p ∧ q</th>
+        <th>p ∨ q</th>
+        <th>p ⊕ q</th>
+        <th>p → q</th>
+        <th>p ↔ q</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T</td>
+        <td>T</td>
+        <td>F</td>
+        <td class="t">T</td>
+        <td>T</td>
+        <td>F</td>
+        <td>T</td>
+        <td class="t">T</td>
+      </tr>
+      <tr>
+        <td>T</td>
+        <td>F</td>
+        <td>F</td>
+        <td>F</td>
+        <td>T</td>
+        <td class="t">T</td>
+        <td class="f">F</td>
+        <td>F</td>
+      </tr>
+      <tr>
+        <td>F</td>
+        <td>T</td>
+        <td>T</td>
+        <td>F</td>
+        <td>T</td>
+        <td class="t">T</td>
+        <td>T</td>
+        <td>F</td>
+      </tr>
+      <tr>
+        <td>F</td>
+        <td>F</td>
+        <td>T</td>
+        <td>F</td>
+        <td>F</td>
+        <td>F</td>
+        <td>T</td>
+        <td class="t">T</td>
+      </tr>
+    </tbody>
   </table>
-      </div>
+</div>
 
-
-      <div class="note">
-        <strong>Presedensi Operator:</strong> Jika terdapat beberapa operator dalam satu ekspresi tanpa kurung, urutan pengerjaannya adalah:
-        Negasi (¬) &rarr; Konjungsi (∧) &rarr; Disjungsi (∨) &rarr; Implikasi (→) &rarr; Biimplikasi (↔).
-      </div>
+    <div class="note">
+      <strong>Presedensi Operator:</strong> Jika terdapat beberapa operator dalam satu ekspresi tanpa kurung, urutan pengerjaannya adalah:
+      Negasi (¬) &rarr; Konjungsi (∧) &rarr; Disjungsi (∨) &rarr; Implikasi (→) &rarr; Biimplikasi (↔).
     </div>
+  </div>
 
-    <div class="card">
-      <h2>3. Operator Logika & Tabel Kebenaran</h2>
+</div>
+</div>
+  </section>
 
-      <h3>A. Negasi (¬p)</h3>
-      <div class="table-wrapper">
-  <table>
+<!-- 3. OPERATOR LOGIKA & TABEL KEBENARAN -->
+  <section class="section-card" id="Operator Logika">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>Operator Logika & Tabel Kebenaran</h2>
+  </div>
+
+  <div class="def-box">
+    <div class="label">Definisi</div>
+    <p>
+      <strong>Operator Logika</strong> adalah simbol dalam logika matematika yang digunakan 
+      untuk menghubungkan atau memodifikasi pernyataan sehingga menghasilkan nilai 
+      <strong>Benar (T)</strong> atau <strong>Salah (F)</strong>.
+    </p>
+  </div>
+
+  <h3>A. Negasi (¬p)</h3>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>¬p</th>
         </tr>
-        <tr>
-          <td>T</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-  </table>
-      </div>
+      </thead>
+      <tbody>
+        <tr><td class="t">T</td><td class="f">F</td></tr>
+        <tr><td class="f">F</td><td class="t">T</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-      <h3>B. Konjungsi (p ∧ q)</h3>
-      <div class="table-wrapper">
-  <table>
+  <h3>B. Konjungsi (p ∧ q)</h3>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>q</th>
           <th>p ∧ q</th>
         </tr>
-        <tr>
-          <td>T</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>T</td>
-          <td>F</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>T</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>F</td>
-          <td>F</td>
-        </tr>
-  </table>
-      </div>
+      </thead>
+      <tbody>
+        <tr><td class="t">T</td><td class="t">T</td><td class="t">T</td></tr>
+        <tr><td class="t">T</td><td class="f">F</td><td class="f">F</td></tr>
+        <tr><td class="f">F</td><td class="t">T</td><td class="f">F</td></tr>
+        <tr><td class="f">F</td><td class="f">F</td><td class="f">F</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-      <h3>C. Disjungsi (p ∨ q)</h3>
-      <div class="table-wrapper">
-  <table>
+  <h3>C. Disjungsi (p ∨ q)</h3>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>q</th>
           <th>p ∨ q</th>
         </tr>
-        <tr>
-          <td>T</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>F</td>
-          <td>F</td>
-        </tr>
-  </table>
-      </div>
+      </thead>
+      <tbody>
+        <tr><td class="t">T</td><td class="t">T</td><td class="t">T</td></tr>
+        <tr><td class="t">T</td><td class="f">F</td><td class="t">T</td></tr>
+        <tr><td class="f">F</td><td class="t">T</td><td class="t">T</td></tr>
+        <tr><td class="f">F</td><td class="f">F</td><td class="f">F</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-      <h3>D. XOR (p ⊕ q)</h3>
-      <div class="table-wrapper">
-  <table>
+  <h3>D. XOR (p ⊕ q)</h3>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>q</th>
           <th>p ⊕ q</th>
         </tr>
-        <tr>
-          <td>T</td>
-          <td>T</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>F</td>
-          <td>F</td>
-        </tr>
-  </table>
-      </div>
+      </thead>
+      <tbody>
+        <tr><td class="t">T</td><td class="t">T</td><td class="f">F</td></tr>
+        <tr><td class="t">T</td><td class="f">F</td><td class="t">T</td></tr>
+        <tr><td class="f">F</td><td class="t">T</td><td class="t">T</td></tr>
+        <tr><td class="f">F</td><td class="f">F</td><td class="f">F</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-      <h3>E. Implikasi (p → q)</h3>
-      <div class="table-wrapper">
-  <table>
+  <h3>E. Implikasi (p → q)</h3>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>q</th>
           <th>p → q</th>
         </tr>
+      </thead>
+      <tbody>
+        <tr><td class="t">T</td><td class="t">T</td><td class="t">T</td></tr>
+        <tr><td class="t">T</td><td class="f">F</td><td class="f highlight">F</td></tr>
+        <tr><td class="f">F</td><td class="t">T</td><td class="t">T</td></tr>
+        <tr><td class="f">F</td><td class="f">F</td><td class="t">T</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 4. BENTUK RUMUS DALAM LOGIKA -->
+ <section class="section-card" id="Bentuk Rumus">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>Bentuk Rumus dalam Logika</h2>
+  </div>
+
+  <p>
+    Dalam logika proposisi, ekspresi logika (proposisi majemuk) diklasifikasikan 
+    berdasarkan hasil akhir pada tabel kebenarannya tanpa mempedulikan nilai 
+    kebenaran dari proposisi penyusunnya.
+  </p>
+
+  <ul>
+    <li>
+      <strong>Tautologi</strong><br>
+      Sebuah proposisi majemuk yang selalu bernilai <strong>Benar (True)</strong> 
+      dalam kondisi apa pun.
+      <br><em>Contoh:</em> <code>p ∨ ¬p</code>
+    </li>
+
+    <li>
+      <strong>Kontradiksi</strong><br>
+      Sebuah proposisi majemuk yang selalu bernilai <strong>Salah (False)</strong>.
+      <br><em>Contoh:</em> <code>p ∧ ¬p</code>
+    </li>
+
+    <li>
+      <strong>Kontingen</strong><br>
+      Proposisi yang nilai kebenarannya bisa <strong>Benar atau Salah</strong>.
+      <br><em>Contoh:</em> <code>p ∧ q</code>
+    </li>
+  </ul>
+
+  <h3>Tabel Pembuktian (Analisis Nilai)</h3>
+
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
+        <tr>
+          <th>p</th>
+          <th>¬p</th>
+          <th>p ∨ ¬p (Tautologi)</th>
+          <th>p ∧ ¬p (Kontradiksi)</th>
+        </tr>
+      </thead>
+      <tbody>
         <tr>
           <td>T</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>T</td>
           <td>F</td>
+          <td>T</td>
           <td>F</td>
         </tr>
         <tr>
           <td>F</td>
           <td>T</td>
           <td>T</td>
-        </tr>
-        <tr>
           <td>F</td>
-          <td>F</td>
-          <td>T</td>
         </tr>
-  </table>
-      </div>
-    </div>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="card">
-      <h2>4. Bentuk Rumus dalam Logika</h2>
-      <p>Dalam logika proposisi, ekspresi logika (proposisi majemuk) diklasifikasikan berdasarkan hasil akhir pada tabel kebenarannya tanpa mempedulikan nilai kebenaran dari proposisi penyusunnya.</p>
+  <div class="callout">
+      <span class="callout-icon">🎯</span>
+    <strong>Penting:</strong> 
+    p ∨ ¬p selalu bernilai benar (Tautologi), sedangkan p ∧ ¬p selalu bernilai salah (Kontradiksi).
+    Untuk rumus yang lebih kompleks, pembuktian dapat dilakukan menggunakan tabel kebenaran 
+    atau hukum-hukum logika.
+  </div>
+</section>
 
-      <ul>
-        <li>
-          <strong>Tautologi</strong><br>
-          Sebuah proposisi majemuk yang selalu bernilai <strong>Benar (True)</strong> dalam kondisi apa pun (untuk semua interpretasi nilai kebenaran atom-atomnya).
-          <br><em>Contoh Klasik:</em> <code>p ∨ ¬p</code> (Hukum Eksklusi Tengah)
-          <br><em>Contoh Kompleks:</em> <code>((p → q) ∧ p) → q</code> (Modus Ponens)
-        </li>
+<!-- 5. HUKUM-HUKUM LOGIKA -->
+<section class="section-card" id="Hukum">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>Hukum-Hukum Logika</h2>
+  </div>
 
-        <li>
-          <strong>Kontradiksi</strong><br>
-          Sebuah proposisi majemuk yang selalu bernilai <strong>Salah (False)</strong> dalam kondisi apa pun. Kontradiksi adalah negasi dari sebuah tautologi.
-          <br><em>Contoh Klasik:</em> <code>p ∧ ¬p</code> (Sesuatu tidak bisa benar dan salah secara bersamaan)
-          <br><em>Contoh Kompleks:</em> <code>(p ∧ q) ∧ ¬(p ∨ q)</code>
-        </li>
+  <div>
+ <div class="callout">
+    <h3>🔹 Hukum Identitas</h3>
+    <p>
+      <span>➤ <code>p ∧ T = p</code></span><br>
+      <span>➤ <code>p ∨ F = p</code></span>
+    </p>
+ </div>
+    <hr>
 
-        <li>
-          <strong>Kontingen (Satisfiable)</strong><br>
-          Sebuah proposisi majemuk yang nilai kebenarannya <strong>bisa Benar atau Salah</strong>, tergantung pada nilai kebenaran proposisi atomik yang membentuknya. Sebagian besar pernyataan logika sehari-hari bersifat kontingen.
-          <br><em>Contoh:</em> <code>(p ∨ q) → r</code> atau sekadar <code>p ∧ q</code>
-        </li>
-      </ul>
+     <div class="callout">
+    <h3>🔹 Hukum Negasi</h3>
+    <p>
+      <span>➤ <code>p ∨ ¬p = T</code></span><br>
+      <span>➤ <code>p ∧ ¬p = F</code></span>
+    </p>
+     </div>
+    <hr>
 
-      <h3>Tabel Pembuktian (Analisis Nilai)</h3>
-      <div class="table-wrapper">
-  <table>
-        <thead>
-          <tr style="background-color: #f2f2f2;">
-            <th>p</th>
-            <th>¬p</th>
-            <th>p ∨ ¬p (Tautologi)</th>
-            <th>p ∧ ¬p (Kontradiksi)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>T</td>
-            <td>F</td>
-            <td><strong>T</strong></td>
-            <td><strong>F</strong></td>
-          </tr>
-          <tr>
-            <td>F</td>
-            <td>T</td>
-            <td><strong>T</strong></td>
-            <td><strong>F</strong></td>
-          </tr>
-        </tbody>
-  </table>
-      </div>
+     <div class="callout">
+    <h3>🔹 Hukum Komutatif</h3>
+    <p>
+      <span>➤ <code>p ∨ q = q ∨ p</code></span><br>
+      <span>➤ <code>p ∧ q = q ∧ p</code></span>
+    </p>
+     </div>
+    <hr>
 
-      <div class="formula">
-        <strong>Penting:</strong> Untuk membuktikan apakah sebuah rumus kompleks termasuk tautologi atau kontradiksi, kita menggunakan <strong>Tabel Kebenaran</strong> atau <strong>Hukum-Hukum Logika</strong> (seperti Hukum De Morgan, Distributif, dll).
-      </div>
-    </div>
+     <div class="callout">
+    <h3>🔹 Hukum Asosiatif</h3>
+    <p>
+      <span>➤ <code>(p ∨ q) ∨ r = p ∨ (q ∨ r)</code></span><br>
+      <span>➤ <code>(p ∧ q) ∧ r = p ∧ (q ∧ r)</code></span>
+    </p>
+     </div>
+    <hr>
 
-    <div class="card">
-      <h2>5. Hukum-Hukum Logika</h2>
-      <ul>
-        <li>Hukum Identitas : p ∧ T = p, p ∨ F = p</li>
-        <li>Hukum Negasi : p ∨ ¬p = T, p ∧ ¬p = F</li>
-        <li>Hukum Komutatif : p ∨ q = q ∨ p</li>
-        <li>Hukum Asosiatif : (p ∨ q) ∨ r = p ∨ (q ∨ r)</li>
-        <li>Hukum Distributif : p ∧ (q ∨ r) = (p ∧ q) ∨ (p ∧ r)</li>
-        <li>Hukum De Morgan : ¬(p ∧ q) = ¬p ∨ ¬q</li>
-      </ul>
-    </div>
+     <div class="callout">
+    <h3>🔹 Hukum Distributif</h3>
+    <p>
+      <span>➤ <code>p ∧ (q ∨ r) = (p ∧ q) ∨ (p ∧ r)</code></span><br>
+      <span>➤ <code>p ∨ (q ∧ r) = (p ∨ q) ∧ (p ∨ r)</code></span>
+    </p>
+     </div>
+    <hr>
 
-    <div class="card">
-      <h2>6. Latihan Soal</h2>
+     <div class="callout">
+    <h3>🔹 Hukum De Morgan</h3>
+    <p>
+      <span>➤ <code>¬(p ∧ q) = ¬p ∨ ¬q</code></span><br>
+      <span>➤ <code>¬(p ∨ q) = ¬p ∧ ¬q</code></span>
+    </p>
+     </div>
 
-      <h3>A. Tentukan apakah berikut proposisi atau bukan:</h3>
-      <ul>
-        <li>Buka pintu itu!</li>
-        <li>5 + 2 = 7</li>
-        <li>Siapa nama kamu?</li>
-        <li>Jakarta adalah ibu kota Indonesia</li>
-      </ul>
+  </div>
 
-      <div class="answer-box">
-        <strong>Jawaban:</strong>
-        <ul>
-          <li>Bukan proposisi – kalimat perintah.</li>
-          <li>Proposisi – bernilai benar.</li>
-          <li>Bukan proposisi – kalimat tanya.</li>
-          <li>Proposisi – dapat bernilai benar.</li>
-        </ul>
-      </div>
+</section>
 
-      <h3>B. Tentukan nilai kebenaran:</h3>
-      <ul>
-        <li>Bumi berbentuk bulat</li>
-        <li>2 × 3 = 10</li>
-        <li>5 adalah bilangan ganjil</li>
-      </ul>
+<!-- 6. LATIHAN SOAL -->
+<section class="section-card" id="Latihan">
 
-      <div class="answer-box">
-        <ul>
-          <li>Benar</li>
-          <li>Salah</li>
-          <li>Benar</li>
-        </ul>
-      </div>
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>Latihan Soal</h2>
+  </div>
+  <h3>A. Tentukan apakah berikut proposisi atau bukan:</h3>
+  <ul>
+    <li>Buka pintu itu!</li>
+    <li>5 + 2 = 7</li>
+    <li>Siapa nama kamu?</li>
+    <li>Jakarta adalah ibu kota Indonesia</li>
+  </ul>
 
-      <h3>C. Jika diketahui:</h3>
-      <p>p : Saya belajar<br>q : Saya lulus</p>
+    <div class="callout">
+  <div class="answer-box">
+    <strong>Jawaban:</strong>
+    <ul>
+      <li>Bukan proposisi – kalimat perintah</li>
+      <li>Proposisi – bernilai benar</li>
+      <li>Bukan proposisi – kalimat tanya</li>
+      <li>Proposisi – bernilai benar</li>
+    </ul>
+  </div>
+  </div>
 
-      <div class="answer-box">
-        <ul>
-          <li>Jika saya belajar maka saya lulus → p → q</li>
-          <li>Saya belajar dan saya lulus → p ∧ q</li>
-          <li>Saya tidak belajar → ¬p</li>
-        </ul>
-      </div>
+  <h3>B. Tentukan nilai kebenaran:</h3>
+  <ul>
+    <li>Bumi berbentuk bulat</li>
+    <li>2 × 3 = 10</li>
+    <li>5 adalah bilangan ganjil</li>
+  </ul>
 
-      <h3>D. Buat tabel kebenaran untuk p ∨ ¬q</h3>
-     <div class="table-wrapper">
-  <table>
+ <div class="callout">
+ <strong>Jawaban:</strong>
+  <div class="answer-box">
+    <ul>
+      <li>Benar</li>
+      <li>Salah</li>
+      <li>Benar</li>
+    </ul>
+  </div>
+ </div>
+
+  <h3>C. Jika diketahui:</h3>
+  <p>
+    p : Saya belajar <br>
+    q : Saya lulus
+  </p>
+
+ <div class="callout">
+  <div class="answer-box">
+    <strong>Jawaban:</strong>
+    <ul>
+      <li>Jika saya belajar maka saya lulus → <code>p → q</code></li>
+      <li>Saya belajar dan saya lulus → <code>p ∧ q</code></li>
+      <li>Saya tidak belajar → <code>¬p</code></li>
+    </ul>
+  </div>
+ </div>
+
+  <h3>D. Tabel Kebenaran</h3>
+
+  <h4>1. p ∨ ¬q</h4>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>q</th>
           <th>¬q</th>
           <th>p ∨ ¬q</th>
         </tr>
-        <tr>
-          <td>T</td>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>T</td>
-          <td>F</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-      </table>
-     </div>
+      </thead>
+      <tbody>
+        <tr><td>T</td><td>T</td><td>F</td><td>T</td></tr>
+        <tr><td>T</td><td>F</td><td>T</td><td>T</td></tr>
+        <tr><td>F</td><td>T</td><td>F</td><td>F</td></tr>
+        <tr><td>F</td><td>F</td><td>T</td><td>T</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-      <h3>(p ∧ q) → p</h3>
-      <div class="table-wrapper">
-  <table>
+  <h4>2. (p ∧ q) → p</h4>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>q</th>
           <th>p ∧ q</th>
           <th>(p ∧ q) → p</th>
         </tr>
-        <tr>
-          <td>T</td>
-          <td>T</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>T</td>
-          <td>F</td>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>F</td>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-  </table>
-      </div>
+      </thead>
+      <tbody>
+        <tr><td>T</td><td>T</td><td>T</td><td>T</td></tr>
+        <tr><td>T</td><td>F</td><td>F</td><td>T</td></tr>
+        <tr><td>F</td><td>T</td><td>F</td><td>T</td></tr>
+        <tr><td>F</td><td>F</td><td>F</td><td>T</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-      <h3>(¬p) ∨ q</h3>
-      <div class="table-wrapper">
-  <table>
+  <h4>3. (¬p) ∨ q</h4>
+  <div class="table-wrapper">
+    <table class="truth-table">
+      <thead>
         <tr>
           <th>p</th>
           <th>q</th>
           <th>¬p</th>
           <th>(¬p) ∨ q</th>
         </tr>
-        <tr>
-          <td>T</td>
-          <td>T</td>
-          <td>F</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>T</td>
-          <td>F</td>
-          <td>F</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-        <tr>
-          <td>F</td>
-          <td>F</td>
-          <td>T</td>
-          <td>T</td>
-        </tr>
-  </table>
-    </div>
-    </div>
-
-    <div class="card">
-      <h2>7. Proposisi Bersyarat (Implikasi)</h2>
-
-      <div class="formula">Bentuk umum: p → q</div>
-
-      <p>
-        Proposisi p disebut hipotesis, anteseden, premis, atau kondisi.
-        Proposisi q disebut konklusi atau konsekuen.
-      </p>
-
-      <h3>Cara Menyatakan p → q</h3>
-      <ul>
-        <li>Jika p, maka q</li>
-        <li>Jika p, q</li>
-        <li>p mengakibatkan q</li>
-        <li>q jika p</li>
-        <li>p hanya jika q</li>
-        <li>p syarat cukup untuk q</li>
-        <li>q syarat perlu untuk p</li>
-        <li>q bilamana p</li>
-      </ul>
-
-      <h3>Contoh Implikasi</h3>
-      <ol>
-        <li>Jika hari hujan, maka tanaman akan tumbuh subur.</li>
-        <li>Jika tekanan gas diperbesar, mobil melaju kencang.</li>
-        <li>Es yang mencair di kutub mengakibatkan permukaan air laut naik.</li>
-        <li>Orang itu mau berangkat jika ia diberi ongkos jalan.</li>
-        <li>Ahmad bisa mengambil matakuliah Teori Bahasa Formal hanya jika ia sudah lulus Matematika Diskrit.</li>
-        <li>Syarat cukup agar pom bensin meledak adalah percikan api dari rokok.</li>
-        <li>Syarat perlu bagi Indonesia agar ikut Piala Dunia adalah dengan mengontrak pemain asing kenamaan.</li>
-        <li>Banjir bandang terjadi bilamana hutan ditebangi.</li>
-      </ol>
-
-      <div class="answer-box">
-        <strong>Tambahan:</strong><br><br>
-        Dalam implikasi, yang diperhatikan adalah nilai kebenaran premis dan konsekuen, bukan hubungan sebab-akibatnya.
-        Oleh karena itu kalimat berikut tetap dianggap implikasi yang valid:
-        <ul>
-          <li>Jika 1 + 1 = 2 maka Paris ibu kota Perancis.</li>
-          <li>Jika n bilangan bulat maka hari ini hujan.</li>
-        </ul>
-      </div>
-    </div>
-
+      </thead>
+      <tbody>
+        <tr><td>T</td><td>T</td><td>F</td><td>T</td></tr>
+        <tr><td>T</td><td>F</td><td>F</td><td>F</td></tr>
+        <tr><td>F</td><td>T</td><td>T</td><td>T</td></tr>
+        <tr><td>F</td><td>F</td><td>T</td><td>T</td></tr>
+      </tbody>
+    </table>
   </div>
-</body>
 
+</section>
+
+<!-- 7. PROPOSISI BERSYARAT (IMPLIKASI) -->
+  <section class="section-card" id="Proposisi">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Proposisi Bersyarat (Implikasi)</h2>
+    </div>
+<div>
+   <div class="callout">
+  <h3>🔷 Bentuk Umum Implikasi</h3>
+  <p><code>p → q</code></p>
+
+  <p>
+    <strong>p</strong> = hipotesis / premis<br>
+    <strong>q</strong> = konklusi / konsekuen
+  </p>
+</div>
+</div>
+
+<hr>
+
+ <div class="callout">
+<div>
+  <h3>🧠 Cara Menyatakan p → q</h3>
+  <ul>
+    <li>Jika p, maka q</li>
+    <li>p mengakibatkan q</li>
+    <li>q jika p</li>
+    <li>p hanya jika q</li>
+    <li>p adalah syarat cukup untuk q</li>
+    <li>q adalah syarat perlu untuk p</li>
+  </ul>
+</div>
+ </div>
+
+<hr>
+
+ <div class="callout">
+<div>
+  <h3>📘 Contoh Implikasi</h3>
+  <ol>
+    <li>Jika hari hujan, maka tanaman tumbuh subur.</li>
+    <li>Jika tekanan gas diperbesar, mobil melaju kencang.</li>
+    <li>Permukaan laut naik jika es di kutub mencair.</li>
+    <li>Orang itu berangkat jika diberi ongkos.</li>
+  </ol>
+</div>
+ </div>
+
+<hr>
+
+ <div class="callout">
+<div>
+  <h3>⚠️ Catatan Penting</h3>
+
+  <p>
+    Dalam logika, implikasi tidak melihat hubungan sebab-akibat, 
+    tetapi hanya nilai benar atau salah dari pernyataan.
+  </p>
+
+  <ul>
+    <li>Jika 1 + 1 = 2 maka Paris adalah ibu kota Perancis.</li>
+    <li>Jika n bilangan bulat maka hari ini hujan.</li>
+  </ul>
+</div>
+  </section>
+
+  <section class="section-card" style="background: linear-gradient(135deg,#e9f5ee,#d1ead9);">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--accent-warm);">✓</div>
+      <h2 style="color:#1b4332;">Rangkuman Materi</h2>
+    </div>
+
+<table class="info-table">
+  <thead>
+    <tr>
+      <th>Topik</th>
+      <th>Poin Utama</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    <tr>
+      <td><strong>Proposisi</strong></td>
+      <td>Pernyataan yang memiliki nilai kebenaran (Benar atau Salah)</td>
+    </tr>
+
+    <tr>
+      <td><strong>Bukan Proposisi</strong></td>
+      <td>Kalimat tanya, perintah, atau opini yang tidak memiliki nilai benar/salah</td>
+    </tr>
+
+    <tr>
+      <td><strong>Negasi (¬p)</strong></td>
+      <td>Membalik nilai kebenaran proposisi</td>
+    </tr>
+
+    <tr>
+      <td><strong>Konjungsi (∧)</strong></td>
+      <td>Bernilai benar jika kedua proposisi benar</td>
+    </tr>
+
+    <tr>
+      <td><strong>Disjungsi (∨)</strong></td>
+      <td>Bernilai benar jika minimal satu proposisi benar</td>
+    </tr>
+
+    <tr>
+      <td><strong>XOR (⊕)</strong></td>
+      <td>Benar jika kedua proposisi berbeda nilai kebenaran</td>
+    </tr>
+
+    <tr>
+      <td><strong>Implikasi (→)</strong></td>
+      <td>Salah hanya saat p benar dan q salah</td>
+    </tr>
+
+    <tr>
+      <td><strong>Biimplikasi (↔)</strong></td>
+      <td>Benar jika kedua proposisi memiliki nilai yang sama</td>
+    </tr>
+
+    <tr>
+      <td><strong>Tautologi</strong></td>
+      <td>Selalu bernilai benar (contoh: p ∨ ¬p)</td>
+    </tr>
+
+    <tr>
+      <td><strong>Kontradiksi</strong></td>
+      <td>Selalu bernilai salah (contoh: p ∧ ¬p)</td>
+    </tr>
+
+    <tr>
+      <td><strong>Kontingen</strong></td>
+      <td>Bisa benar atau salah tergantung nilai variabel</td>
+    </tr>
+
+    <tr>
+      <td><strong>Hukum Identitas</strong></td>
+      <td>p ∧ T = p, p ∨ F = p</td>
+    </tr>
+
+    <tr>
+      <td><strong>Hukum Negasi</strong></td>
+      <td>p ∨ ¬p = T, p ∧ ¬p = F</td>
+    </tr>
+
+    <tr>
+      <td><strong>Hukum De Morgan</strong></td>
+      <td>¬(p ∧ q) = ¬p ∨ ¬q, ¬(p ∨ q) = ¬p ∧ ¬q</td>
+    </tr>
+
+    <tr>
+      <td><strong>Tabel Kebenaran</strong></td>
+      <td>Digunakan untuk menentukan nilai kebenaran suatu ekspresi logika</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+    <div style="text-align:center; margin-top:24px;">
+      <a href="../../index.html?page=materi" class="btn-back" style="background:var(--accent); border-color:var(--accent2); color:#fff; font-size:1rem; padding:13px 32px;">← Kembali ke Halaman Materi</a>
+    </div>
+  </section>
+
+</main>
+
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
 </html>
