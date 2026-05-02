@@ -1,613 +1,1577 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relasi & Fungsi - Matematika Diskrit</title>
-    <style>
-:root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
-    --bg-color: #f4f7fb;
-    --text-color: #333;
-    --white: #ffffff;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relasi & Fungsi Matematika Diskrit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #642d6a;
+      --accent2: #894091;
+      --accent3: #b7e4c7;
+      --accent-warm: #c77c3c;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(106, 45, 106, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #3e1b43 0%, #6a2d68 55%, #8a4091 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(226, 183, 228, 0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
+
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
+
+    .def-box {
+      background: linear-gradient(135deg, #f2e9f5 0%, #ead1ea 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
+
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .prop-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
+
+    .tree-visual {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .tree-visual svg { display: block; margin: 0 auto; }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
+
+    .formula {
+      background: #1b2e24;
+      color: #dfb7e4;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 10px 0;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+.table-mini {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 320px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
 }
 
-
-body {
-    font-family: "Times New Roman", Times, serif;
-    background: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.7;
-    padding: 15px;
+.table-mini thead th {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  color: white;
+  padding: 10px;
+  font-size: 0.85rem;
+  text-align: center;
 }
 
-
-.container {
-    max-width: 1100px;
-    margin: auto;
-    background: var(--white);
-    padding: 30px;
-    border-radius: 18px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+.table-mini td {
+  padding: 10px;
+  font-size: 0.85rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
-
-h1.title {
-    text-align: center;
-    color: var(--primary-color);
-    border-bottom: 4px solid var(--secondary-color);
-    padding-bottom: 12px;
-    margin-bottom: 10px;
+.table-mini tbody tr:nth-child(even) {
+  background: #f5f3ff;
 }
 
-.description {
-    text-align: center;
-    color: #666;
-    margin-bottom: 30px;
+.table-mini tbody tr:hover {
+  background: #ede9fe;
 }
 
-
-.card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 25px;
-    position: relative;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+@media (max-width: 600px) {
+  .table-mini td,
+  .table-mini th {
+    font-size: 0.75rem;
+    padding: 8px;
+  }
 }
 
-.card::before {
-    content: "MATERI";
-    position: absolute;
-    top: -10px;
-    left: 15px;
-    background: linear-gradient(135deg, #3498db, #2c3e50);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.7em;
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #381b43;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .table-purple-wrapper {
+  overflow-x: auto;
+  margin: 20px 0;
 }
 
-h2 {
-    border-bottom: 2px solid var(--secondary-color);
-    padding-bottom: 6px;
-    margin-bottom: 12px;
-    color: var(--primary-color);
+.table-purple {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  font-size: 0.95rem;
 }
 
-h3 {
-    margin-top: 15px;
+.table-purple thead th {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  color: white;
+  padding: 14px;
+  text-align: center;
 }
 
-ul {
-    padding-left: 18px;
+.table-purple td {
+  padding: 14px;
+  text-align: center;
+  background: #f5f3ff;
+  border-bottom: 1px solid #ddd6fe;
 }
 
-li {
-    margin-bottom: 6px;
+.table-purple tbody tr:hover td {
+  background: #ede9fe;
+  transition: 0.2s;
 }
 
-.formula {
-    background: #f4f8fc;
-    border-left: 5px solid var(--accent-color);
-    padding: 10px 14px;
-    margin: 12px 0;
-    border-radius: 6px;
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #3c1b43;
+    }
+
+    .huffman-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #6a2d6a;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .purple {
+        color: #6a2d69;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #c77c3c;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(106, 45, 104, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
+    }
+
+    .table-purple-wrapper {
+  overflow-x: auto;
+  width: 100%;
 }
 
-.answer-box {
-    background: #eef5fb;
-    border-left: 5px solid var(--secondary-color);
-    padding: 14px;
-    border-radius: 8px;
-    margin-top: 20px;
+.table-purple {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.9rem;
 }
 
-/* CODE */
-code {
-    background: #eee;
-    padding: 2px 5px;
-    border-radius: 4px;
-}
-
-button {
-    display: inline-block;
-    width: auto;            
-    max-width: 220px;         
-    background: linear-gradient(135deg, #3498db, #2c3e50);
-    color: white;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9em;
-    cursor: pointer;
-    margin-bottom: 15px;
-}
-
-.table-wrapper {
-    width: 100%;
-    overflow-x: auto; 
-}
-
-table {
-    width: 100%;
-    min-width: 600px; 
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-thead {
-    background: linear-gradient(135deg, #2c3e50, #3498db);
-    color: white;
-}
-
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
+.table-purple th,
+.table-purple td {
+  padding: 10px;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
+  h3 {
+    font-size: 1.05rem;
+  }
 
-    body {
-        padding: 10px;
-    }
+  ul {
+    padding: 12px 18px;
+  }
 
-    .container {
-        padding: 15px;
-    }
+  .formula {
+    font-size: 0.85rem;
+  }
 
-    h1.title {
-        font-size: 1.4em;
-    }
-
-
-    button {
-        font-size: 0.8em;
-        padding: 6px 10px;
-        max-width: 180px;
-    }
-
-    table {
-        font-size: 0.85em;
-    }
+  .note-text {
+    font-size: 0.9rem;
+  }
 }
-    </style>
+
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 15px;
+      }
+
+      .hero {
+        padding: 40px 16px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .btn-back {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+      
+      .container {
+        padding: 24px 14px 60px;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+      }
+      
+      .section-header {
+        gap: 10px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-num {
+         width: 34px;
+         height: 34px;
+         font-size: 0.8rem;
+        }
+        
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .formula {
+        font-size: 0.8rem;
+      }
+      
+      .tree-visual {
+        overflow-x: auto;
+      }
+      
+      .tree-visual svg {
+        min-width: 400px;
+      }
+      
+      .toc-bar {
+        padding: 0 10px;
+      }
+      
+      .toc-bar a {
+        font-size: 0.75rem;
+        padding: 10px 10px;
+      }
+      
+      .fab {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
+<header class="hero" id="top">
+  <span class="hero-icon">🔗</span>
+  <h1>Relasi & Fungsi</h1>
+ <p>Materi lengkap Matematika Diskrit — Relasi dan Fungsi serta konsep dasarnya dalam teori himpunan</p>
+  <a href="../../index.html?page=materi" class="btn-back">←  Kembali ke Materi</a>
+</header>
 
-    <h1 class="title">Relasi & Fungsi</h1>
-    <p class="description">Matematika Diskrit: Himpunan, Relasi, Logika Kuantor, dan Pemetaan Fungsi.</p>
+<nav class="toc-bar">
+  <a href="#Himpunan">Himpunan & Operasinya</a>
+  <a href="#Relasi">Relasi (Relation)</a>
+  <a href="#Kuantor">Kuantor & Predikat</a>
+  <a href="#Fungsi">Fungsi (Pemetaan)</a>
+  <a href="#Komposisi">Komposisi & Invers</a>
+  <a href="#Ekuivalensi">Relasi Ekuivalensi</a>
+  <a href="#Partisi">Partisi Himpunan</a>
+  <a href="#Khusus">Fungsi Khusus & Sifatnya</a>
+</nav>
 
-<div class="card">
-    <h2>1. Himpunan & Operasinya</h2>
+<main class="container">
+
+  <!-- 1. Himpunan & Operasinya -->
+  <section class="section-card" id="Himpunan">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Himpunan & Operasinya</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi Formal</div>
+   <p>
+    <strong>Himpunan</strong> adalah kumpulan objek atau elemen yang terdefinisi dengan jelas.
+    Dalam matematika diskrit, himpunan menjadi dasar untuk membentuk <strong>relasi</strong> dan <strong>fungsi</strong>.</p>
+    </div>
+
     <p>Himpunan adalah sekumpulan objek (elemen) yang memiliki keanggotaan jelas dan terdefinisi dengan baik (*well-defined*). Objek di dalam himpunan disebut anggota atau elemen.</p>
-    
-    <div class="formula">
-        Notasi Dasar:<br>
-        • x ∈ A (x adalah anggota himpunan A)<br>
-        • x ∉ A (x bukan anggota himpunan A)
-    </div>
 
-    <h3>A. Cara Penyajian Himpunan</h3>
-    <ul>
-        <li><strong>Enumerasi:</strong> Mencacah semua anggotanya. Contoh: <code>A = {1, 2, 3}</code>.</li>
-        <li><strong>Simbol Baku:</strong> Menggunakan simbol khusus seperti <code>ℕ</code> (bilangan asli), <code>ℤ</code> (bilangan bulat), <code>ℝ</code> (bilangan riil).</li>
-        <li><strong>Notasi Pembentuk Himpunan:</strong> <code>{x | syarat yang harus dipenuhi x}</code>. Contoh: <code>A = {x | x < 4, x ∈ ℤ}</code>.</li>
-        <li><strong>Diagram Venn:</strong> Menyajikan himpunan secara grafis.</li>
-    </ul>
-
-    <h3>B. Operasi Dasar Himpunan</h3>
-    <p>Misalkan <strong>U</strong> adalah semesta, <strong>A = {1, 2, 3}</strong> dan <strong>B = {2, 3, 4}</strong>:</p>
-    
-    
-    
-   <div class="table-wrapper">
-  <table>
-        <thead>
-            <tr>
-                <th>Operasi</th>
-                <th>Notasi</th>
-                <th>Definisi Formal</th>
-                <th>Contoh Hasil</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Irisan (Intersection)</strong></td>
-                <td>A ∩ B</td>
-                <td>{x | x ∈ A ∧ x ∈ B}</td>
-                <td>{2, 3}</td>
-            </tr>
-            <tr>
-                <td><strong>Gabungan (Union)</strong></td>
-                <td>A ∪ B</td>
-                <td>{x | x ∈ A ∨ x ∈ B}</td>
-                <td>{1, 2, 3, 4}</td>
-            </tr>
-            <tr>
-                <td><strong>Selisih (Difference)</strong></td>
-                <td>A − B</td>
-                <td>{x | x ∈ A ∧ x ∉ B}</td>
-                <td>{1}</td>
-            </tr>
-            <tr>
-                <td><strong>Beda Setangkup (XOR)</strong></td>
-                <td>A ⊕ B</td>
-                <td>(A ∪ B) − (A ∩ B)</td>
-                <td>{1, 4}</td>
-            </tr>
-            <tr>
-                <td><strong>Komplemen</strong></td>
-                <td>Aᶜ atau A'</td>
-                <td>{x ∈ U | x ∉ A}</td>
-                <td>Elemen di U selain 1, 2, 3</td>
-            </tr>
-            <tr>
-                <td><strong>Perkalian Kartesius</strong></td>
-                <td>A × B</td>
-                <td>{(a, b) | a ∈ A ∧ b ∈ B}</td>
-                <td>{(1,2), (1,3), (1,4), ...}</td>
-            </tr>
-        </tbody>
-  </table>
-   </div>
-
-    <h3>C. Jenis-Jenis Himpunan Khusus</h3>
-    <ul>
-        <li><strong>Himpunan Kosong (Ø atau {}):</strong> Himpunan yang tidak memiliki anggota. Kardinalitasnya |Ø| = 0.</li>
-        <li><strong>Himpunan Bagian (Subset):</strong> <code>A ⊆ B</code> jika setiap anggota A adalah anggota B.</li>
-        <li><strong>Himpunan Kuasa (Power Set):</strong> Himpunan yang anggotanya adalah semua subset dari A. Jika <code>|A| = n</code>, maka <code>|P(A)| = 2ⁿ</code>.</li>
-    </ul>
-
-    <div class="answer-box">
-        <strong>Prinsip Inklusi-Eksklusi:</strong><br>
-        Untuk dua himpunan berhingga A dan B, jumlah anggota gabungannya adalah:<br>
-        <strong>|A ∪ B| = |A| + |B| − |A ∩ B|</strong>
-    </div>
+<div class="formula">
+📌 <strong>Notasi Dasar Himpunan</strong><br>
+• x ∈ A → x adalah anggota himpunan A<br>
+• x ∉ A → x bukan anggota himpunan A
 </div>
 
-  <div class="card">
-    <h2>2. Relasi (Relation)</h2>
-    <p>Relasi biner <code>R</code> antara himpunan <code>A</code> dan <code>B</code> adalah himpunan bagian (subset) dari perkalian kartesius <code>A × B</code>. Jika <code>(a, b) ∈ R</code>, kita katakan <code>a</code> berelasi dengan <code>b</code> oleh <code>R</code> (notasi: <code>aRb</code>).</p>
+<h3>📚 A. Cara Penyajian Himpunan</h3>
+<ul>
+    <li><strong>Enumerasi:</strong> Menuliskan semua anggota himpunan. Contoh: <code>A = {1, 2, 3}</code>.</li>
+    <li><strong>Simbol Baku:</strong> Menggunakan simbol seperti <code>ℕ</code>, <code>ℤ</code>, <code>ℝ</code>.</li>
+    <li><strong>Notasi Pembentuk:</strong> <code>{x | syarat x}</code>. Contoh: <code>A = {x | x < 4, x ∈ ℤ}</code>.</li>
+    <li><strong>Diagram Venn:</strong> Representasi visual hubungan antar himpunan.</li>
+</ul>
 
-    <div class="formula">
-        <strong>Definisi:</strong> R ⊆ {(a, b) | a ∈ A ∧ b ∈ B}
-    </div>
+<h3>⚙️ B. Operasi Dasar Himpunan</h3>
 
-    <h3>A. Cara Menyajikan Relasi</h3>
-    <ul>
-        <li><strong>Diagram Panah:</strong> Menghubungkan elemen domain ke kodomain dengan garis panah.</li>
-        <li><strong>Tabel:</strong> Kolom pertama mewakili elemen himpunan A, kolom kedua mewakili elemen himpunan B.</li>
-        <li><strong>Matriks Relasi:</strong> Representasi 0 dan 1, di mana <code>M[i,j] = 1</code> jika elemen berelasi.</li>
-        <li><strong>Graf Berarah (Digraph):</strong> Digunakan untuk relasi pada himpunan yang sama (relasi pada A).</li>
-    </ul>
+<p class="note-text">
+Misalkan: <strong>U</strong> = semesta, <strong>A = {1,2,3}</strong>, <strong>B = {2,3,4}</strong>
+</p>
 
-    <h3>B. Sifat-Sifat Relasi pada Himpunan</h3>
-    <p>Misalkan <code>R</code> adalah relasi pada himpunan <code>A</code>:</p>
-    
-    <div class="table-wrapper">
-  <table>
-        <thead>
-            <tr>
-                <th>Sifat</th>
-                <th>Definisi Formal</th>
-                <th>Keterangan Sederhana</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Refleksif</strong></td>
-                <td>∀a ∈ A, (a, a) ∈ R</td>
-                <td>Setiap elemen harus berelasi dengan dirinya sendiri.</td>
-            </tr>
-            <tr>
-                <td><strong>Irrefleksif</strong></td>
-                <td>∀a ∈ A, (a, a) ∉ R</td>
-                <td>Tidak ada elemen yang berelasi dengan dirinya sendiri.</td>
-            </tr>
-            <tr>
-                <td><strong>Simetris</strong></td>
-                <td>(a, b) ∈ R → (b, a) ∈ R</td>
-                <td>Jika ada hubungan timbal balik (A ke B, maka B ke A).</td>
-            </tr>
-            <tr>
-                <td><strong>Antisimetris</strong></td>
-                <td>((a, b) ∈ R ∧ (b, a) ∈ R) → a = b</td>
-                <td>Jika <code>aRb</code> dan <code>bRa</code>, maka <code>a</code> dan <code>b</code> harus elemen yang sama.</td>
-            </tr>
-            <tr>
-                <td><strong>Transitif</strong></td>
-                <td>((a, b) ∈ R ∧ (b, c) ∈ R) → (a, c) ∈ R</td>
-                <td>Jika A ke B dan B ke C, maka A harus terhubung langsung ke C.</td>
-            </tr>
-        </tbody>
-  </table>
-    </div>
-
-    <h3>C. Relasi Khusus</h3>
-    <ul>
-        <li><strong>Relasi Kesetaraan (Equivalence Relation):</strong> Relasi yang memenuhi sifat <em>Refleksif, Simetris,</em> dan <em>Transitif</em> sekaligus.</li>
-        <li><strong>Relasi Pengurutan Parsial (Poset):</strong> Relasi yang memenuhi sifat <em>Refleksif, Antisimetris,</em> dan <em>Transitif</em>.</li>
-        <li><strong>Relasi Invers (R⁻¹):</strong> Jika <code>R = {(a, b)}</code>, maka <code>R⁻¹ = {(b, a)}</code>.</li>
-    </ul>
-
-    <div class="answer-box">
-        <strong>Contoh Analisis Sifat:</strong><br>
-        Misalkan A = {1, 2} dan R = {(1,1), (2,2), (1,2)}<br>
-        • <strong>Refleksif?</strong> Ya, karena ada (1,1) dan (2,2).<br>
-        • <strong>Simetris?</strong> Tidak, karena ada (1,2) tapi tidak ada (2,1).<br>
-        • <strong>Antisimetris?</strong> Ya, karena hanya (1,2) yang tidak punya pasangan kebalikannya.<br>
-        • <strong>Transitif?</strong> Ya.
-    </div>
+<div class="table-purple-wrapper">
+<table class="table-purple">
+    <thead>
+        <tr>
+            <th>Operasi</th>
+            <th>Notasi</th>
+            <th>Definisi</th>
+            <th>Hasil</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Irisan</td>
+            <td>A ∩ B</td>
+            <td>x ∈ A dan x ∈ B</td>
+            <td>{2, 3}</td>
+        </tr>
+        <tr>
+            <td>Gabungan</td>
+            <td>A ∪ B</td>
+            <td>x ∈ A atau x ∈ B</td>
+            <td>{1, 2, 3, 4}</td>
+        </tr>
+        <tr>
+            <td>Selisih</td>
+            <td>A − B</td>
+            <td>x ∈ A dan x ∉ B</td>
+            <td>{1}</td>
+        </tr>
+        <tr>
+            <td>XOR</td>
+            <td>A ⊕ B</td>
+            <td>(A ∪ B) − (A ∩ B)</td>
+            <td>{1, 4}</td>
+        </tr>
+        <tr>
+            <td>Komplemen</td>
+            <td>Aᶜ</td>
+            <td>x ∈ U tetapi x ∉ A</td>
+            <td>A di luar A</td>
+        </tr>
+        <tr>
+            <td>Kartesius</td>
+            <td>A × B</td>
+            <td>(a,b) dengan a ∈ A, b ∈ B</td>
+            <td>{(1,2),(1,3)...}</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
-    <div class="card">
-    <h2>3. Kuantor & Predikat (Logika Predikat)</h2>
-    <p>Logika predikat (first-order logic) menggunakan kuantor untuk menyatakan seberapa banyak elemen dalam semesta pembicaraan (domain) yang memenuhi suatu sifat atau predikat tertentu.</p>
+<h3>🧠 C. Himpunan Khusus</h3>
+<ul>
+    <li><strong>Ø:</strong> Himpunan kosong (tidak memiliki anggota)</li>
+    <li><strong>Subset (⊆):</strong> Semua elemen A ada di B</li>
+    <li><strong>Power Set:</strong> Semua subset dari A, |P(A)| = 2ⁿ</li>
+</ul>
 
-    <h3>A. Jenis Kuantor Utama</h3>
-    <div class="table-wrapper">
-  <table>
-        <thead>
-            <tr>
-                <th>Simbol</th>
-                <th>Nama</th>
-                <th>Definisi Formal</th>
-                <th>Cara Baca</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>∀</strong></td>
-                <td>Kuantor Universal</td>
-                <td>∀x P(x)</td>
-                <td>"Untuk semua x, P(x) benar"</td>
-            </tr>
-            <tr>
-                <td><strong>∃</strong></td>
-                <td>Kuantor Eksistensial</td>
-                <td>∃x P(x)</td>
-                <td>"Ada minimal satu x, sehingga P(x) benar"</td>
-            </tr>
-            <tr>
-                <td><strong>∃!</strong></td>
-                <td>Kuantor Unik</td>
-                <td>∃!x P(x)</td>
-                <td>"Ada tepat satu x, sehingga P(x) benar"</td>
-            </tr>
-        </tbody>
-  </table>
+<div class="formula">
+📌 <strong>Inklusi–Eksklusi</strong><br>
+|A ∪ B| = |A| + |B| − |A ∩ B|
+</div>
+  </section>
+
+  <!-- 2. Relasi -->
+  <section class="section-card" id="Relasi">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Relasi (Relation)</h2>
     </div>
-
-    <h3>B. Negasi Pernyataan Berkuantor (Hukum De Morgan)</h3>
-    <p>Menegasikan pernyataan berkuantor berarti mengubah jenis kuantor dan menegasikan predikatnya:</p>
-    <ul>
-        <li><code>¬(∀x P(x)) ≡ ∃x ¬P(x)</code> <br> (Ingkaran dari "Semua" adalah "Ada yang tidak")</li>
-        <li><code>¬(∃x P(x)) ≡ ∀x ¬P(x)</code> <br> (Ingkaran dari "Ada" adalah "Semua tidak")</li>
-    </ul>
-
-    <h3>C. Kuantor Bersarang (Nested Quantifiers)</h3>
-    <p>Kuantor dapat muncul lebih dari satu dalam satu pernyataan majemuk. Urutan kuantor sangat menentukan makna pernyataan.</p>
-    <div class="formula">
-        Contoh pada domain Bilangan Riil (ℝ):<br>
-        • <strong>∀x ∃y (x + y = 0)</strong> → Benar (Setiap angka punya lawan penjumlahan).<br>
-        • <strong>∃y ∀x (x + y = 0)</strong> → Salah (Tidak ada satu angka y yang jika ditambah angka apapun hasilnya selalu 0).
-    </div>
-
-    <h3>D. Daftar Simbol Logika & Himpunan Pendukung</h3>
-    <div class="table-wrapper">
-  <table>
-        <thead>
-            <tr>
-                <th>Simbol</th>
-                <th>Kategori</th>
-                <th>Makna / Penggunaan</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>∴</strong></td>
-                <td>Logika</td>
-                <td>"Jadi" atau "Oleh karena itu" (Konklusi)</td>
-            </tr>
-            <tr>
-                <td><strong>≡</strong></td>
-                <td>Logika</td>
-                <td>"Ekivalen secara logis"</td>
-            </tr>
-            <tr>
-                <td><strong>∈ / ∉</strong></td>
-                <td>Himpunan</td>
-                <td>"Anggota dari" / "Bukan anggota dari"</td>
-            </tr>
-            <tr>
-                <td><strong>⊂ / ⊆</strong></td>
-                <td>Himpunan</td>
-                <td>"Himpunan bagian murni" / "Himpunan bagian"</td>
-            </tr>
-            <tr>
-                <td><strong>| / :</strong></td>
-                <td>Notasi</td>
-                <td>"Sedemikian hingga" (Such that)</td>
-            </tr>
-        </tbody>
-  </table>
-    </div>
-
-    <div class="answer-box">
-        <strong>Pentingnya Domain:</strong><br>
-        Nilai kebenaran pernyataan berkuantor sangat bergantung pada <strong>Semesta Pembicaraan (Domain)</strong>.<br>
-        Pernyataan <code>∃x (x² = 2)</code> bernilai <strong>Benar</strong> jika domainnya adalah Bilangan Riil (ℝ), namun bernilai <strong>Salah</strong> jika domainnya adalah Bilangan Bulat (ℤ).
-    </div>
+    <p>
+        Misalkan <strong>R ⊆ A × B</strong> adalah relasi pada dua himpunan A dan B.
+        Relasi ini menghubungkan elemen-elemen dari A ke elemen di B.
+        Jika setiap elemen di A memiliki tepat satu pasangan di B, maka relasi tersebut disebut <strong>fungsi</strong>.
+    </p>
+   <p>Relasi biner <code>R</code> antara himpunan <code>A</code> dan <code>B</code> adalah himpunan bagian (subset) dari perkalian kartesius <code>A × B</code>. Jika <code>(a, b) ∈ R</code>, kita katakan <code>a</code> berelasi dengan <code>b</code> oleh <code>R</code> (notasi: <code>aRb</code>).</p>
+<div class="formula">
+📌 <strong>Definisi Relasi</strong><br>
+R ⊆ A × B, yaitu himpunan bagian dari hasil kali Kartesius A dan B
 </div>
 
-    <div class="card">
-    <h2>4. Fungsi (Pemetaan)</h2>
-    <p>Fungsi <code>f</code> dari himpunan <code>A</code> ke <code>B</code> (notasi: <code>f: A → B</code>) adalah relasi khusus yang memasangkan <strong>setiap</strong> elemen pada domain ke <strong>tepat satu</strong> elemen pada kodomain.</p>
+<h3>📚 A. Cara Menyajikan Relasi</h3>
+<ul>
+    <li><strong>Diagram Panah:</strong> Menunjukkan hubungan antar elemen A ke B.</li>
+    <li><strong>Tabel:</strong> Baris = A, kolom = B untuk menunjukkan hubungan.</li>
+    <li><strong>Matriks Relasi:</strong> Nilai 1 jika berelasi, 0 jika tidak.</li>
+    <li><strong>Graf Berarah:</strong> Representasi relasi dalam bentuk node dan panah.</li>
+</ul>
+
+<h3>⚙️ B. Sifat-Sifat Relasi</h3>
+
+<p>
+Misalkan <strong>R</strong> adalah relasi pada himpunan <strong>A</strong>.
+</p>
+
+<div class="table-purple-wrapper">
+<table class="table-purple">
+    <thead>
+        <tr>
+            <th>Sifat</th>
+            <th>Definisi Formal</th>
+            <th>Makna</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Refleksif</td>
+            <td>∀a ∈ A, (a,a) ∈ R</td>
+            <td>Setiap elemen berelasi dengan dirinya sendiri</td>
+        </tr>
+        <tr>
+            <td>Irrefleksif</td>
+            <td>∀a ∈ A, (a,a) ∉ R</td>
+            <td>Tidak ada elemen yang berelasi dengan dirinya</td>
+        </tr>
+        <tr>
+            <td>Simetris</td>
+            <td>(a,b) ∈ R → (b,a) ∈ R</td>
+            <td>Hubungan dua arah</td>
+        </tr>
+        <tr>
+            <td>Antisimetris</td>
+            <td>(a,b) ∧ (b,a) → a = b</td>
+            <td>Jika dua arah terjadi, maka harus sama elemen</td>
+        </tr>
+        <tr>
+            <td>Transitif</td>
+            <td>(a,b) ∧ (b,c) → (a,c)</td>
+            <td>Hubungan berantai</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<h3>🧠 C. Relasi Khusus</h3>
+<ul>
+    <li><strong>Relasi Ekuivalensi:</strong> Refleksif + Simetris + Transitif</li>
+    <li><strong>Poset (Parsial Order):</strong> Refleksif + Antisimetris + Transitif</li>
+    <li><strong>Relasi Invers:</strong> R⁻¹ = {(b,a) | (a,b) ∈ R}</li>
+</ul>
+
+<div class="formula">
+📌 <strong>Contoh Analisis</strong><br>
+A = {1,2}, R = {(1,1),(2,2),(1,2)}<br><br>
+
+✔ Refleksif → Ya<br>
+✖ Simetris → Tidak<br>
+✔ Antisimetris → Ya<br>
+✔ Transitif → Ya
+</div>
+  </section>
+
+  <!-- 3. Kuantor & Predikat (Logika Predikat) -->
+    <section class="section-card" id="Kuantor">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Kuantor & Predikat (Logika Predikat)</h2>
+    </div>
+
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+   <p>
+    📌 <strong>Kuantor & Predikat (Relasi dan Fungsi)</strong><br><br>
+    Misalkan <strong>T</strong> adalah pohon pada graf terhubung <strong>G</strong>, maka T dapat dinyatakan dengan logika predikat sebagai berikut:<br><br>
+    ∀v ∈ V(G), v ∈ V(T) ∧ ¬∃ siklus(T)
+</p>
+    </div>
+
+     <p>Logika predikat (first-order logic) menggunakan kuantor untuk menyatakan seberapa banyak elemen dalam semesta pembicaraan (domain) yang memenuhi suatu sifat atau predikat tertentu.</p>
+<h3>📚 A. Jenis Kuantor Utama</h3>
+
+<div class="table-wrapper">
+<table class="table-mini">
+    <thead>
+        <tr>
+            <th>Simbol</th>
+            <th>Nama</th>
+            <th>Makna</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>∀</td>
+            <td>Universal</td>
+            <td>Semua elemen memenuhi</td>
+        </tr>
+        <tr>
+            <td>∃</td>
+            <td>Eksistensial</td>
+            <td>Ada minimal satu</td>
+        </tr>
+        <tr>
+            <td>∃!</td>
+            <td>Unik</td>
+            <td>Tepat satu elemen</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<hr class="divider">
+
+<h3>🔁 B. Negasi Pernyataan Berkuantor</h3>
+
+<ul>
+    <li>¬(∀x P(x)) ≡ ∃x ¬P(x) → Ingkaran "semua" adalah "ada yang tidak"</li>
+    <li>¬(∃x P(x)) ≡ ∀x ¬P(x) → Ingkaran "ada" adalah "semua tidak"</li>
+</ul>
+
+<hr class="divider">
+
+<h3>🔗 C. Kuantor Bersarang</h3>
+
+<div class="formula">
+📌 Contoh (ℝ):<br><br>
+• ∀x ∃y (x + y = 0) → Benar<br>
+• ∃y ∀x (x + y = 0) → Salah
+</div>
+
+<hr class="divider">
+
+<h3>📌 D. Simbol Logika & Himpunan</h3>
+
+<div class="table-wrapper">
+<table class="table-mini">
+    <thead>
+        <tr>
+            <th>Simbol</th>
+            <th>Makna</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>∴</td>
+            <td>Kesimpulan</td>
+        </tr>
+        <tr>
+            <td>≡</td>
+            <td>Ekivalen</td>
+        </tr>
+        <tr>
+            <td>∈ / ∉</td>
+            <td>Anggota / Bukan</td>
+        </tr>
+        <tr>
+            <td>⊆</td>
+            <td>Subset</td>
+        </tr>
+        <tr>
+            <td>|</td>
+            <td>"sedemikian hingga"</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<hr class="divider">
+
+<div class="callout">
+📌 <strong>Penting:</strong><br>
+Nilai kebenaran kuantor tergantung domain (ℤ, ℝ, dll).  
+Contoh: ∃x (x² = 2) benar di ℝ tapi salah di ℤ.
+</div>
+  </section>
+
+  <!-- 4. Fungsi (Pemetaan) -->
+  <section class="section-card" id="Fungsi">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Fungsi (Pemetaan)</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+     <p>
+📌 <strong>Fungsi (Pemetaan)</strong> adalah relasi dari himpunan A ke himpunan B yang memasangkan setiap elemen di A dengan tepat satu elemen di B, sehingga tidak ada elemen A yang memiliki lebih dari satu pasangan.
+</p>
+    </div>
+
+   <p>Fungsi <code>f</code> dari himpunan <code>A</code> ke <code>B</code> (notasi: <code>f: A → B</code>) adalah relasi khusus yang memasangkan <strong>setiap</strong> elemen pada domain ke <strong>tepat satu</strong> elemen pada kodomain.</p>
 
     <div class="formula">
         Syarat Fungsi:<br>
         1. Seluruh anggota A harus memiliki pasangan (Tidak boleh jomblo).<br>
         2. Setiap anggota A hanya boleh punya satu pasangan (Tidak boleh selingkuh).
     </div>
+    <h3>📌 A. Terminologi Dasar</h3>
 
-    <h3>A. Terminologi Dasar</h3>
-    <ul>
-        <li><strong>Domain (Daerah Asal):</strong> Himpunan <code>A</code>, yaitu semua nilai input yang mungkin.</li>
-        <li><strong>Kodomain (Daerah Kawan):</strong> Himpunan <code>B</code>, yaitu seluruh nilai yang disediakan sebagai output.</li>
-        <li><strong>Range (Daerah Hasil):</strong> Himpunan bagian dari <code>B</code> yang benar-benar menjadi pasangan elemen <code>A</code>.</li>
-        <li><strong>Bayangan (Image):</strong> Jika <code>(a, b) ∈ f</code>, maka <code>b</code> adalah bayangan dari <code>a</code>.</li>
-    </ul>
+<ul>
+    <li>📍 <strong>Domain (A):</strong> Himpunan semua input yang mungkin.</li>
+    <li>📍 <strong>Kodomain (B):</strong> Himpunan semua output yang mungkin.</li>
+    <li>📍 <strong>Range:</strong> Himpunan hasil yang benar-benar terbentuk dari pemetaan.</li>
+    <li>📍 <strong>Bayangan:</strong> Jika (a, b) ∈ f maka b adalah hasil dari a.</li>
+</ul>
 
-    <h3>B. Klasifikasi Fungsi (Jenis-Jenis Pemetaan)</h3>
-    <p>Perbedaan jenis fungsi terletak pada bagaimana elemen-elemen di domain dipasangkan ke kodomain:</p>
-    <div class="table-wrapper">
-  <table>
-        <thead>
-            <tr>
-                <th>Jenis Fungsi</th>
-                <th>Definisi Formal</th>
-                <th>Karakteristik Utama</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Injektif (Satu-ke-Satu)</strong></td>
-                <td>f(a) = f(b) → a = b</td>
-                <td>Setiap elemen di kodomain maksimal dipasangkan satu kali.</td>
-            </tr>
-            <tr>
-                <td><strong>Surjektif (Onto/Pada)</strong></td>
-                <td>∀b ∈ B, ∃a ∈ A | f(a) = b</td>
-                <td>Seluruh elemen di kodomain (B) harus memiliki pasangan (Range = Kodomain).</td>
-            </tr>
-            <tr>
-                <td><strong>Bijektif (Korespondensi)</strong></td>
-                <td>Injektif ∧ Surjektif</td>
-                <td>Setiap elemen domain dan kodomain memiliki pasangan tepat satu-satu.</td>
-            </tr>
-        </tbody>
-    </table>
-    </div>
+<hr class="divider">
 
-    <h3>C. Fungsi Khusus Lainnya</h3>
-    <ul>
-        <li><strong>Fungsi Identitas:</strong> Fungsi yang memetakan setiap elemen ke dirinya sendiri, <code>f(a) = a</code>.</li>
-        <li><strong>Fungsi Konstan:</strong> Fungsi di mana seluruh elemen domain memetakan ke satu elemen yang sama di kodomain.</li>
-        <li><strong>Fungsi Rekursif:</strong> Fungsi yang didefinisikan berdasarkan dirinya sendiri (sering digunakan dalam algoritma).</li>
-    </ul>
+<h3>⚙️ B. Klasifikasi Fungsi (Jenis Pemetaan)</h3>
 
-    <div class="answer-box">
-        <strong>Uji Garis Horisontal:</strong><br>
-        Pada grafik fungsi koordinat cartesius:<br>
-        • Jika garis horisontal memotong grafik di <strong>maksimal satu titik</strong>, maka fungsi bersifat <strong>Injektif</strong>.<br>
-        • Jika garis horisontal memotong grafik di <strong>minimal satu titik</strong>, maka fungsi bersifat <strong>Surjektif</strong>.
-    </div>
+<div class="table-wrapper">
+<table class="table-mini">
+    <thead>
+        <tr>
+            <th>Jenis</th>
+            <th>Definisi</th>
+            <th>Inti Konsep</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>🔵 Injektif</td>
+            <td>f(a)=f(b) → a=b</td>
+            <td>Tidak ada output yang sama</td>
+        </tr>
+        <tr>
+            <td>🟣 Surjektif</td>
+            <td>∀b ∈ B, ∃a ∈ A</td>
+            <td>Semua kodomain terpakai</td>
+        </tr>
+        <tr>
+            <td>🟢 Bijektif</td>
+            <td>Injektif + Surjektif</td>
+            <td>Pasangan satu-satu sempurna</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
-  <div class="card">
-    <h2>5. Komposisi & Invers</h2>
-    
-    <h3>A. Komposisi Fungsi (f ∘ g)</h3>
-    <p>Komposisi fungsi adalah penggabungan dua fungsi atau lebih secara berurutan, di mana output dari fungsi pertama menjadi input bagi fungsi kedua.</p>
-    
-    <div class="formula">
-        Definisi: (f ∘ g)(x) = f(g(x))<br>
-        Artinya: Masukkan nilai x ke fungsi g, lalu hasilnya masukkan ke fungsi f.
-    </div>
+<hr class="divider">
 
-    
+<h3>🧠 C. Fungsi Khusus</h3>
 
-[Image of composition of functions diagram]
+<ul>
+    <li>🔁 <strong>Identitas:</strong> f(a) = a</li>
+    <li>⚫ <strong>Konstan:</strong> semua input → satu output</li>
+    <li>♻️ <strong>Rekursif:</strong> didefinisikan dari dirinya sendiri</li>
+</ul>
 
+<hr class="divider">
 
-    <h3>Sifat-Sifat Komposisi:</h3>
-    <ul>
-        <li><strong>Tidak Komutatif:</strong> Secara umum, <code>(f ∘ g)(x) ≠ (g ∘ f)(x)</code>. Urutan pengerjaan sangat penting.</li>
-        <li><strong>Asosiatif:</strong> <code>f ∘ (g ∘ h) = (f ∘ g) ∘ h</code>.</li>
-        <li><strong>Elemen Identitas:</strong> Ada fungsi identitas <code>I(x) = x</code> sehingga <code>f ∘ I = I ∘ f = f</code>.</li>
-    </ul>
+<div class="callout">
+📊 <strong>Uji Garis Horizontal</strong><br><br>
 
-    <h3>B. Fungsi Invers (f⁻¹)</h3>
-    <p>Invers adalah fungsi kebalikan yang memetakan elemen dari kodomain kembali ke domain asalnya. Fungsi <code>f</code> memiliki invers jika dan hanya jika fungsi tersebut bersifat <strong>Bijektif</strong> (Injektif sekaligus Surjektif).</p>
-
-    
-
-    <h3>Syarat Keberadaan Invers:</h3>
-    <div class="table-wrapper">
-  <table>
-        <thead>
-            <tr>
-                <th>Kondisi Fungsi</th>
-                <th>Status Invers</th>
-                <th>Keterangan</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Bijektif</strong></td>
-                <td>Memiliki Invers</td>
-                <td>Setiap elemen terpetakan tepat satu-satu secara timbal balik.</td>
-            </tr>
-            <tr>
-                <td><strong>Tidak Injektif</strong></td>
-                <td>Bukan Fungsi Invers</td>
-                <td>Hasil invers akan memiliki satu input dengan banyak output (melanggar syarat fungsi).</td>
-            </tr>
-            <tr>
-                <td><strong>Tidak Surjektif</strong></td>
-                <td>Bukan Fungsi Invers</td>
-                <td>Ada elemen di kodomain yang tidak punya prapeta (hasil invers "jomblo").</td>
-            </tr>
-        </tbody>
-    </table>
-    </div>
-
-    <h3>C. Hubungan Komposisi dan Invers</h3>
-    <ul>
-        <li><strong>Identitas Invers:</strong> <code>(f ∘ f⁻¹)(x) = x</code> dan <code>(f⁻¹ ∘ f)(x) = x</code>.</li>
-        <li><strong>Invers Komposisi:</strong> <code>(f ∘ g)⁻¹ = g⁻¹ ∘ f⁻¹</code> (Urutan fungsi dibalik saat diinverskan).</li>
-    </ul>
-
-    <div class="answer-box">
-        <strong>Contoh Lanjutan:</strong><br>
-        Diketahui f(x) = x + 2 dan g(x) = 3x. Tentukan (f ∘ g)⁻¹(x)!<br><br>
-        <strong>Pembahasan:</strong><br>
-        1. Cari (f ∘ g)(x) terlebih dahulu:<br>
-        &nbsp;&nbsp; f(g(x)) = f(3x) = 3x + 2<br>
-        2. Misalkan y = 3x + 2<br>
-        3. y - 2 = 3x → x = (y - 2) / 3<br>
-        4. Jadi, <strong>(f ∘ g)⁻¹(x) = (x - 2) / 3</strong>
-    </div>
+• Jika garis horizontal memotong grafik ≤ 1 titik → <strong>Injektif</strong><br>
+• Jika semua nilai B terkena → <strong>Surjektif</strong>
 </div>
-    <div class="card">
-        <h2>Latihan Soal</h2>
-        <ol>
-            <li>Jika A = {1, 2} dan B = {3, 4}, tentukan A × B!</li>
-            <li>Apakah relasi R = {(1,1), (2,2)} pada A = {1, 2, 3} bersifat refleksif?</li>
-        </ol>
-        <div class="answer-box">
-            <strong>Kunci Jawaban:</strong>
-            <ul>
-                <li>1. A × B = {(1,3), (1,4), (2,3), (2,4)}</li>
-                <li>2. Tidak, karena (3,3) tidak ada dalam R.</li>
-            </ul>
-        </div>
+  </section>
+
+  <!-- 5. Komposisi & Invers -->
+  <section class="section-card" id="Komposisi">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Komposisi & Invers</h2>
+    </div>
+    <h3>🔗 A. Komposisi Fungsi (f ∘ g)</h3>
+
+<p>
+Komposisi fungsi adalah penggabungan dua fungsi secara berurutan, di mana output fungsi pertama menjadi input fungsi kedua.
+</p>
+
+<div class="formula">
+📌 (f ∘ g)(x) = f(g(x))<br>
+➡️ Masukkan x ke g → hasilnya masuk ke f
+</div>
+
+<div class="card">
+  <h3>🧠 Ilustrasi Konsep</h3>
+  <p>g(x) → f(g(x))</p>
+  <p style="color:#777;">(Diagram bisa ditambahkan di sini)</p>
+</div>
+
+<hr class="divider">
+
+<h3>⚙️ Sifat-Sifat Komposisi</h3>
+
+<ul>
+  <li>❌ <strong>Tidak Komutatif:</strong> (f ∘ g)(x) ≠ (g ∘ f)(x)</li>
+  <li>🔁 <strong>Asosiatif:</strong> f ∘ (g ∘ h) = (f ∘ g) ∘ h</li>
+  <li>🆔 <strong>Identitas:</strong> f ∘ I = I ∘ f = f</li>
+</ul>
+
+<hr class="divider">
+
+<h3>🔄 B. Fungsi Invers (f⁻¹)</h3>
+
+<p>
+Fungsi invers adalah fungsi kebalikan yang menukar domain dan kodomain. Hanya ada jika fungsi <strong>bijektif</strong>.
+</p>
+
+<div class="formula">
+📌 Syarat: Fungsi harus bijektif (injektif + surjektif)
+</div>
+
+<h3>📊 Syarat Keberadaan Invers</h3>
+
+<div class="table-wrapper">
+<table class="table-purple">
+  <thead>
+    <tr>
+      <th>Kondisi</th>
+      <th>Status</th>
+      <th>Keterangan</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>✔ Bijektif</td>
+      <td>Memiliki invers</td>
+      <td>1–1 dan onto</td>
+    </tr>
+    <tr>
+      <td>❌ Tidak Injektif</td>
+      <td>Tidak valid</td>
+      <td>Satu input banyak output</td>
+    </tr>
+    <tr>
+      <td>❌ Tidak Surjektif</td>
+      <td>Tidak valid</td>
+      <td>Ada elemen tidak terjangkau</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<hr class="divider">
+
+<h3>🔗 C. Hubungan Komposisi & Invers</h3>
+
+<ul>
+  <li>🧩 (f ∘ f⁻¹)(x) = x</li>
+  <li>🧩 (f⁻¹ ∘ f)(x) = x</li>
+  <li>🔁 (f ∘ g)⁻¹ = g⁻¹ ∘ f⁻¹</li>
+</ul>
+
+<div class="answer-box">
+<strong>🧠 Contoh:</strong><br><br>
+
+Diketahui:<br>
+f(x) = x + 2<br>
+g(x) = 3x<br><br>
+
+🔹 (f ∘ g)(x) = 3x + 2<br>
+🔹 y = 3x + 2 → x = (y - 2) / 3<br><br>
+
+<strong>✔ (f ∘ g)⁻¹(x) = (x - 2) / 3</strong>
+</div>
+
+<div class="callout">
+<h3>📝 Latihan Soal</h3>
+
+<div class="card">
+<ol>
+  <li>Jika A = {1,2} dan B = {3,4}, tentukan A × B!</li>
+  <li>Apakah R = {(1,1),(2,2)} refleksif?</li>
+</ol>
+
+<div class="answer-box">
+<strong>✔ Jawaban:</strong>
+<ul>
+  <li>A × B = {(1,3),(1,4),(2,3),(2,4)}</li>
+  <li>Tidak refleksif (3 tidak punya pasangan)</li>
+</ul>
+</div>
+</div>
+</div>
+  </section>
+
+  <!-- 6. Relasi Ekuivalensi-->
+  <section class="section-card" id="Ekuivalensi">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Relasi Ekuivalensi</h2>
     </div>
 
+   <p>
+Relasi ekuivalensi adalah relasi khusus pada suatu himpunan yang mengelompokkan elemen-elemen yang dianggap “setara” berdasarkan suatu aturan tertentu.
+</p>
+
+<div class="formula">
+📌 Definisi:<br>
+Relasi R pada himpunan A disebut <strong>relasi ekuivalensi</strong> jika memenuhi:
+<br><br>
+✔ Refleksif<br>
+✔ Simetris<br>
+✔ Transitif
 </div>
+
+<hr class="divider">
+
+<h3>⚙️ A. Sifat-Sifat Relasi Ekuivalensi</h3>
+
+<div class="table-wrapper">
+<table class="table-purple">
+    <thead>
+        <tr>
+            <th>Sifat</th>
+            <th>Definisi Formal</th>
+            <th>Makna Sederhana</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>🔵 Refleksif</td>
+            <td>∀a ∈ A, (a,a) ∈ R</td>
+            <td>Setiap elemen berelasi dengan dirinya sendiri</td>
+        </tr>
+        <tr>
+            <td>🟣 Simetris</td>
+            <td>(a,b) ∈ R ⇒ (b,a) ∈ R</td>
+            <td>Jika a berelasi dengan b, maka b juga dengan a</td>
+        </tr>
+        <tr>
+            <td>🟢 Transitif</td>
+            <td>(a,b) ∈ R dan (b,c) ∈ R ⇒ (a,c) ∈ R</td>
+            <td>Hubungan dapat “diteruskan”</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<hr class="divider">
+
+<h3>📚 B. Contoh Relasi Ekuivalensi</h3>
+
+<div class="card">
+<p>
+Misalkan A = {1, 2, 3, 4} dan relasi R adalah “memiliki sisa yang sama jika dibagi 2”.
+</p>
+
+<div class="formula">
+R = {(1,1),(2,2),(3,3),(4,4),(1,3),(3,1),(2,4),(4,2)}
+</div>
+
+<p>
+✔ 1 dan 3 ekuivalen (sisa 1)<br>
+✔ 2 dan 4 ekuivalen (sisa 0)
+</p>
+</div>
+
+<hr class="divider">
+
+<h3>🧠 C. Kelas Ekuivalensi</h3>
+
+<p>
+Relasi ekuivalensi membagi himpunan menjadi beberapa kelompok yang disebut <strong>kelas ekuivalensi</strong>.
+</p>
+
+<div class="formula">
+📌 Kelas ekuivalensi [a] = {x ∈ A | x berelasi dengan a}
+</div>
+
+<div class="card">
+<strong>Contoh:</strong><br><br>
+
+A = {1,2,3,4}<br>
+Relasi: “mod 2 sama”
+<br><br>
+
+✔ [1] = {1,3}<br>
+✔ [2] = {2,4}
+</div>
+
+<hr class="divider">
+
+<h3>📊 D. Partisi Himpunan</h3>
+
+<ul>
+    <li>📌 Relasi ekuivalensi selalu membentuk <strong>partisi</strong> pada himpunan A</li>
+    <li>📌 Setiap elemen hanya berada di satu kelas ekuivalensi</li>
+    <li>📌 Tidak ada irisan antar kelas</li>
+</ul>
+
+<div class="answer-box">
+<strong>💡 Intuisi:</strong><br>
+Relasi ekuivalensi = cara “mengelompokkan data” berdasarkan kesamaan tertentu.
+</div>
+
+<hr class="divider">
+
+<h3>📝 E. Kesimpulan</h3>
+
+<div class="card">
+✔ Harus refleksif<br>
+✔ Harus simetris<br>
+✔ Harus transitif<br><br>
+
+📌 Jika ketiga sifat terpenuhi → disebut Relasi Ekuivalensi
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. Partisi Himpunan -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Partisi">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Partisi Himpunan</h2>
+    </div>
+<h3>📊 Partisi Himpunan</h3>
+
+<p>
+Partisi himpunan adalah cara membagi suatu himpunan menjadi beberapa bagian (subset) yang tidak saling tumpang tindih, tetapi jika digabungkan kembali akan membentuk himpunan semula.
+</p>
+
+<div class="formula">
+📌 Definisi:<br>
+Sebuah partisi dari himpunan A adalah kumpulan subset A₁, A₂, ..., Aₙ sehingga:
+<br><br>
+✔ A₁ ∪ A₂ ∪ ... ∪ Aₙ = A<br>
+✔ Aᵢ ∩ Aⱼ = ∅ untuk i ≠ j<br>
+✔ Tidak ada subset yang kosong
+</div>
+
+<hr class="divider">
+
+<h3>⚙️ Syarat Partisi Himpunan</h3>
+
+<div class="table-wrapper">
+<table class="table-purple">
+    <thead>
+        <tr>
+            <th>Syarat</th>
+            <th>Penjelasan</th>
+            <th>Makna</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>🟢 Tidak Kosong</td>
+            <td>Setiap subset harus memiliki anggota</td>
+            <td>Tidak boleh ada himpunan kosong</td>
+        </tr>
+        <tr>
+            <td>🔵 Tidak Beririsan</td>
+            <td>Aᵢ ∩ Aⱼ = ∅</td>
+            <td>Setiap elemen hanya di satu subset</td>
+        </tr>
+        <tr>
+            <td>🟣 Menutup A</td>
+            <td>Gabungan semua subset = A</td>
+            <td>Tidak ada elemen yang hilang</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<hr class="divider">
+
+<h3>📚 Contoh Partisi Himpunan</h3>
+
+<div class="card">
+<p>
+Misalkan A = {1, 2, 3, 4, 5, 6}
+</p>
+
+<div class="formula">
+✔ A₁ = {1, 3, 5}<br>
+✔ A₂ = {2, 4, 6}
+</div>
+
+<p>
+📌 Maka {A₁, A₂} adalah partisi dari A karena:
+</p>
+
+<ul>
+  <li>✔ Tidak ada elemen yang tumpang tindih</li>
+  <li>✔ Gabungan A₁ dan A₂ = A</li>
+</ul>
+</div>
+
+<hr class="divider">
+
+<h3>🧠 Hubungan dengan Relasi Ekuivalensi</h3>
+
+<div class="answer-box">
+💡 Setiap relasi ekuivalensi pada himpunan A akan membentuk partisi A.<br><br>
+
+✔ Setiap kelas ekuivalensi adalah bagian dari partisi<br>
+✔ Tidak ada dua kelas yang saling beririsan
+</div>
+
+<hr class="divider">
+
+<h3>📌 Kesimpulan</h3>
+
+<div class="card">
+✔ Partisi = pembagian himpunan menjadi kelompok-kelompok kecil<br>
+✔ Tidak boleh ada irisan antar kelompok<br>
+✔ Gabungan semua kelompok = himpunan awal<br><br>
+
+🎯 Partisi sangat penting dalam Relasi Ekuivalensi
+</div>
+  </section>
+
+  <!-- 8. Fungsi Khusus & Sifatnya -->
+  <section class="section-card" id="Khusus">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Fungsi Khusus & Sifatnya</h2>
+    </div>
+    <h3>📌 Fungsi Khusus & Sifatnya</h3>
+
+<p>
+Fungsi khusus adalah fungsi yang memiliki pola pemetaan tertentu yang sederhana dan sering digunakan dalam matematika diskrit maupun pemrograman.
+</p>
+
+<hr class="divider">
+
+<h3>⚙️ A. Jenis-Jenis Fungsi Khusus</h3>
+
+<div class="table-wrapper">
+<table class="table-purple">
+    <thead>
+        <tr>
+            <th>Jenis Fungsi</th>
+            <th>Definisi</th>
+            <th>Ciri Utama</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>🟢 Fungsi Identitas</td>
+            <td>f(x) = x</td>
+            <td>Setiap elemen dipetakan ke dirinya sendiri</td>
+        </tr>
+        <tr>
+            <td>🟣 Fungsi Konstan</td>
+            <td>f(x) = c</td>
+            <td>Semua input punya output yang sama</td>
+        </tr>
+        <tr>
+            <td>🔵 Fungsi Linear</td>
+            <td>f(x) = ax + b</td>
+            <td>Bentuk garis lurus</td>
+        </tr>
+        <tr>
+            <td>🟠 Fungsi Kuadrat</td>
+            <td>f(x) = ax² + bx + c</td>
+            <td>Bentuk parabola</td>
+        </tr>
+        <tr>
+            <td>🟡 Fungsi Rekursif</td>
+            <td>Didefinisikan dari dirinya sendiri</td>
+            <td>Digunakan pada algoritma & deret</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<hr class="divider">
+
+<h3>🧠 B. Sifat-Sifat Fungsi</h3>
+
+<div class="table-wrapper">
+<table class="table-purple">
+    <thead>
+        <tr>
+            <th>Sifat</th>
+            <th>Definisi Formal</th>
+            <th>Makna Sederhana</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>🔵 Injektif</td>
+            <td>f(a) = f(b) ⇒ a = b</td>
+            <td>Setiap output berasal dari satu input</td>
+        </tr>
+        <tr>
+            <td>🟣 Surjektif</td>
+            <td>∀b ∈ B, ∃a ∈ A</td>
+            <td>Semua elemen kodomain terpakai</td>
+        </tr>
+        <tr>
+            <td>🟢 Bijektif</td>
+            <td>Injektif + Surjektif</td>
+            <td>Pemetaan satu-satu sempurna</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<hr class="divider">
+
+<h3>📚 C. Contoh Fungsi Khusus</h3>
+
+<div class="card">
+<strong>1. Fungsi Identitas</strong><br>
+f(x) = x<br>
+✔ Contoh: f(3) = 3
+<br><br>
+
+<strong>2. Fungsi Konstan</strong><br>
+f(x) = 5<br>
+✔ Semua input menghasilkan 5
+<br><br>
+
+<strong>3. Fungsi Linear</strong><br>
+f(x) = 2x + 1<br>
+✔ f(2) = 5
+</div>
+
+<hr class="divider">
+
+<h3>🧠 D. Kesimpulan</h3>
+
+<div class="answer-box">
+✔ Fungsi khusus memiliki pola tertentu yang mudah dikenali<br>
+✔ Sifat fungsi menentukan bagaimana pemetaan bekerja<br>
+✔ Sangat penting dalam Relasi & Fungsi Diskrit
+</div>
+  </section>
+
+ <section class="section-card" style="background: linear-gradient(135deg,#f3e8ff,#e9d5ff);">
+
+  <div class="section-header">
+    <div class="section-num" style="background:#8e44ad;">📌</div>
+    <h2 style="color:#4a235a;">Rangkuman Relasi & Fungsi</h2>
+  </div>
+
+  <table class="info-table">
+    <thead>
+      <tr>
+        <th>Topik</th>
+        <th>Poin Utama</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><strong>Relasi</strong></td>
+        <td>Hubungan antara elemen himpunan A ke B dalam bentuk pasangan berurutan</td>
+      </tr>
+
+      <tr>
+        <td><strong>Jenis Relasi</strong></td>
+        <td>Refleksif, Simetris, Antisimetris, Transitif</td>
+      </tr>
+
+      <tr>
+        <td><strong>Relasi Invers</strong></td>
+        <td>Jika R = (a,b), maka R⁻¹ = (b,a)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Relasi Ekuivalensi</strong></td>
+        <td>Relasi yang bersifat refleksif, simetris, dan transitif</td>
+      </tr>
+
+      <tr>
+        <td><strong>Partisi Himpunan</strong></td>
+        <td>Pembagian himpunan menjadi kelas ekuivalensi yang tidak saling beririsan</td>
+      </tr>
+
+      <tr>
+        <td><strong>Fungsi (Pemetaan)</strong></td>
+        <td>Relasi khusus dari A ke B, setiap elemen A punya tepat satu pasangan di B</td>
+      </tr>
+
+      <tr>
+        <td><strong>Jenis Fungsi</strong></td>
+        <td>Injektif, Surjektif, Bijektif</td>
+      </tr>
+
+      <tr>
+        <td><strong>Fungsi Khusus</strong></td>
+        <td>Identitas, Konstan, Linear, Kuadrat, Rekursif</td>
+      </tr>
+
+      <tr>
+        <td><strong>Komposisi Fungsi</strong></td>
+        <td>(f ∘ g)(x) = f(g(x)) → fungsi bertingkat</td>
+      </tr>
+
+      <tr>
+        <td><strong>Fungsi Invers</strong></td>
+        <td>Membalik pemetaan fungsi, hanya ada jika bijektif</td>
+      </tr>
+
+      <tr>
+        <td><strong>Syarat Invers</strong></td>
+        <td>Harus injektif dan surjektif (bijektif)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Aplikasi</strong></td>
+        <td>Digunakan dalam algoritma, kriptografi, database, dan pemodelan matematika</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+</section>
+    <div style="text-align:center; margin-top:24px;">
+      <a href="../../index.html?page=materi" class="btn-back" style="background:var(--accent); border-color:var(--accent2); color:#fff; font-size:1rem; padding:13px 32px;">← Kembali ke Halaman Materi</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FAB scroll to top -->
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
 
 </body>
 </html>
