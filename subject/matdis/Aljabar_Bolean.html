@@ -1,1049 +1,1528 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materi Matematika Diskrit</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aljabar Bolean — Matematika Diskrit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #666a2d;
+      --accent2: #8a9140;
+      --accent3: #e4e4b7;
+      --accent-warm: #c77c3c;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(105, 106, 45, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
 
-   
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
-            --white: #ffffff;
-            --calc-bg: #112240;
-            --calc-card: #1d2d50;
-            --calc-accent: #64ffda;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * {
-            font-family: "Times New Roman", Times, serif !important;
-        }
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
 
-        body {
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-        }
+    .hero {
+      background: linear-gradient(135deg, #40431b 0%, #676a2d 55%, #8a9140 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(226, 228, 183, 0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--white);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-        header {
-            text-align: center;
-            border-bottom: 4px solid var(--secondary-color);
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-        }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
 
-        h1, h2, h3 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 8px;
-        }
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
 
-        .section {
-            margin-bottom: 40px;
-        }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
 
-        .card {
-            margin-bottom: 25px;
-        }
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
 
-        .learning-box, .theorem-box {
-            background: #eef2f3;
-            padding: 20px;
-            border-left: 5px solid var(--secondary-color);
-            border-radius: 6px;
-            margin: 20px 0;
-        }
+    .def-box {
+      background: linear-gradient(135deg, #f5f5e9 0%, #e9ead1 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
 
-        .example-box {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .prop-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
+    .tree-visual {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .tree-visual svg { display: block; margin: 0 auto; }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
 
-        th {
-            background-color: var(--primary-color);
-            color: white;
-        }
+    .formula {
+      background: #2e2e1b;
+      color: #e1e4b7;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
 
-        .explain {
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            line-height: 1.6;
-        }
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
 
-        .ok { background: #e0ffe6; border-left: 4px solid #27ae60; }
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
 
-        .matrix-layout {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
 
-        .matrix-wrapper {
-            display: flex;
-            align-items: center;
-        }
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
 
-        .matrix-symbol {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-right: 10px;
-        }
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #43401b;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
 
-        .matrix-box {
-            position: relative;
-            display: inline-block;
-            padding: 10px 15px;
-            border-left: 2px solid #000;
-            border-right: 2px solid #000;
-        }
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #43421b;
+    }
 
-        .matrix-box::before, .matrix-box::after {
-            content: "";
-            position: absolute;
-            width: 10px;
-            height: 2px;
-            background: #000;
-        }
+    .huffman-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #676a2d;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
 
-        .matrix-box::before { top: 0; left: 0; } 
-        .matrix-box::after { bottom: 0; right: 0; }
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
 
-        .matrix-row {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
+.calculator-area {
+  padding: 20px;
+  background: linear-gradient(135deg, #fff9e6, #fff3b0);
+  border-radius: 16px;
+  margin: 20px 0;
+}
 
-        .matrix-row span {
-            display: inline-block;
-            width: 30px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
+.main-title {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #b8860b;
+}
 
-        .formula-box {
-            background: #f1f2f6;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px dashed #ccc;
-        }
+.calc-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
 
-        .formula-text {
-            font-size: 1.2em;
-            font-style: italic;
-            margin-top: 5px;
-        }
+.calc-box {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
 
-        .calculator-area {
-            background: var(--calc-bg);
-            padding: 30px;
-            border-radius: 12px;
-            margin-top: 40px;
-        }
+.calc-box:hover {
+  transform: translateY(-5px);
+}
 
-        .main-title {
-            color: var(--white) !important;
-            text-align: center;
-            border-bottom: 2px solid var(--calc-accent) !important;
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            font-size: 1.8em;
-        }
+.box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-        .calc-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            align-items: stretch;
-        }
+.box-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
 
-        .calc-box {
-            background: var(--calc-card);
-            padding: 20px;
-            border-radius: 8px;
-            width: 260px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(100, 255, 218, 0.1);
-        }
+.badge {
+  background: #f4c430;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
 
-        .box-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 10px 0;
+}
 
-        .calc-box h3 {
-            color: var(--calc-accent) !important;
-            margin: 0;
-            border: none;
-            padding: 0;
-            font-size: 1.2em;
-        }
+.input-focus {
+  margin: 10px 0;
+}
 
-        .badge {
-            background: rgba(100, 255, 218, 0.1);
-            color: var(--calc-accent);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-        }
+.m-input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 60px;
+  text-align: center;
+}
 
-        .input-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+.m-input.wide {
+  width: 100%;
+}
 
-        .m-input {
-            background: #0a192f;
-            color: var(--calc-accent);
-            border: 1px solid var(--calc-accent);
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 1em;
-            width: 100%;
-        }
+.operator-display {
+  background: #ffe066;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
 
-        .operator-display {
-            color: var(--white);
-            font-weight: bold;
-            font-size: 0.9em;
-            min-width: 40px;
-            text-align: center;
-        }
+.btn-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
 
-        .btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 10px;
-        }
+.btn-action {
+  background: #f4c430;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
 
-        .btn-action {
-            background: var(--calc-accent);
-            color: #0a192f;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            font-size: 0.9em;
-        }
+.btn-action:hover {
+  background: #ffd43b;
+  transform: scale(1.05);
+}
 
-        .btn-action:hover {
-            filter: brightness(1.2);
-        }
+.btn-action.primary {
+  width: 100%;
+  margin-top: 10px;
+}
 
-        .btn-action.primary {
-            width: 100%;
-            margin-top: 10px;
-        }
+.res-container {
+  margin-top: 12px;
+  text-align: center;
+}
 
-        .res-container {
-            margin-top: 15px;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 10px;
-        }
+.res-display {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 5px;
+  color: #b8860b;
+  transition: 0.3s;
+}
 
-        .res-container small {
-            color: #8892b0;
-            display: block;
-            margin-bottom: 5px;
-        }
+.ref-table {
+  margin-top: 10px;
+}
 
-        .res-display {
-            background: #0a192f;
-            color: var(--calc-accent);
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 1.4em;
-            font-weight: bold;
-            min-height: 30px;
-        }
+.ref-item {
+  display: flex;
+  justify-content: space-between;
+  background: #fff9e6;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
 
-        .input-focus small {
-            color: #ccd6f6;
-            display: block;
-            margin-bottom: 5px;
-        }
+.info-footer {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #777;
+}
 
-        .ref-table {
-            text-align: left;
-            font-size: 0.95em;
-            color: #ccd6f6;
-        }
+@media (max-width: 600px) {
 
-        .ref-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+  .main-title {
+    font-size: 18px;
+  }
 
-        .info-footer {
-            margin-top: 15px;
-            font-size: 0.8em;
-            color: #8892b0;
-            font-style: italic;
-        }
-        .btn-kembali {
-            display: inline-block;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #4facfe, #3498db);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-            border: 2px solid #2c3e50;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: 0.3s;
-        }
-        .btn-kembali:hover {
-          transform: scale(1.05);
-          background: linear-gradient(135deg, #3498db, #2c3e50);
-        }
-        .main-title-box {
-          text-align: center;
-          margin: 20px 0 40px 0;
-          padding-bottom: 15px;
-          border-bottom: 4px solid var(--secondary-color);
-        }
-        .main-title-box h1 {
-          font-size: 2.2em;
-          color: var(--primary-color);
-          margin: 0;
-        }
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .container { padding: 20px; }
-            h1 { font-size: 1.6em; }
-            h2 { font-size: 1.3em; }
-            h3 { font-size: 1.1em; }
+  .calc-box {
+    padding: 12px;
+  }
 
-            table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-                font-size: 0.85em;
-            }
+  .btn-action {
+    padding: 8px;
+    font-size: 12px;
+  }
 
-            .calc-wrapper {
-                flex-direction: column;
-                align-items: center;
-            }
+  .res-display {
+    font-size: 22px;
+  }
 
-            .calc-box {
-                width: 100%;
-                max-width: 320px;
-            }
+  .input-row {
+    flex-direction: column;
+  }
+
+  .operator-display {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.calculator-area {
+  max-width: 900px;  
+  margin: 40px auto; 
+  padding: 20px;
+}
+
+.calc-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  justify-content: center; 
+  gap: 20px;
+}
+
+.calc-box:last-child {
+  grid-column: 1 / -1;   
+  max-width: 500px;
+  margin: auto;          
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table-yellow {
+  width: 100%;
+  min-width: 500px; 
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-yellow thead {
+  background: #f4c430;
+  color: #222;
+}
+
+.table-yellow th,
+.table-yellow td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.table-yellow tbody tr:nth-child(even) {
+  background: #fff9e6;
+}
+
+.table-yellow tbody tr:hover {
+  background: #ffeaa7;
+}
+
+.example-box {
+  background: #fff8dc;
+  border-left: 4px solid #f4c430;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 12px 0;
+}  
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-yellow {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.table-yellow thead {
+  background: #f4c430;
+  color: #222;
+}
+
+.table-yellow th,
+.table-yellow td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.table-yellow tbody tr:nth-child(even) {
+  background: #fff9e6;
+}
+
+.table-yellow tbody tr:hover {
+  background: #ffe082;
+  transition: 0.2s;
+}
+
+.table-yellow td {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .table-yellow {
+    font-size: 13px;
+  }
+}
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .yelllow {
+        color: #636a2d;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #c77c3c;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(106, 100, 45, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
+    }
+
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 15px;
+      }
+
+      .hero {
+        padding: 40px 16px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .btn-back {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+      
+      .container {
+        padding: 24px 14px 60px;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+      }
+      
+      .section-header {
+        gap: 10px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-num {
+         width: 34px;
+         height: 34px;
+         font-size: 0.8rem;
         }
-
-        @media (max-width: 480px) {
-            .container { padding: 15px; }
-            h1 { font-size: 1.4em; }
-            h2 { font-size: 1.2em; }
-            h3 { font-size: 1em; }
-            table { font-size: 0.75em; }
-        }
-    </style>
+        
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .formula {
+        font-size: 0.8rem;
+      }
+      
+      .tree-visual {
+        overflow-x: auto;
+      }
+      
+      .tree-visual svg {
+        min-width: 400px;
+      }
+      
+      .toc-bar {
+        padding: 0 10px;
+      }
+      
+      .toc-bar a {
+        font-size: 0.75rem;
+        padding: 10px 10px;
+      }
+      
+      .fab {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-  <div class="container">
-  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
-<div class="container">
-  <header class="main-header">
-    <h1>Aljabar Boolean</h1>
+<header class="hero" id="top">
+  <span class="hero-icon">🔌</span>
+  <h1>Aljabar Bolean</h1>
+  <p>Materi lengkap Matematika Diskrit — Konsep, Aksioma, dan Aplikasi Aljabar Bolean</p>
+  <a href="../../index.html?page=materi" class="btn-back">←  Kembali ke Materi</a>
 </header>
-    <div class="section">
-        <div class="card">
-            <p>
-                Aljabar Boolean adalah cabang matematika yang sangat penting dalam ilmu komputer karena menjadi dasar dari logika digital dan perancangan sirkuit elektronik. Sistem ini hanya mengenal dua keadaan atau nilai logika, yaitu <strong>0 (False/Salah)</strong> dan <strong>1 (True/Benar)</strong>.
-            </p>
 
-            <div class="example-box" style="background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; margin: 15px 0; border-radius: 8px;">
-                <strong>Konsep Dasar:</strong>
-                <p>Dalam dunia nyata, aljabar ini dianalogikan seperti saklar lampu: hanya ada kondisi <strong>Mati (0)</strong> atau <strong>Nyala (1)</strong>. Tidak ada kondisi di antaranya. Prinsip inilah yang digunakan oleh prosesor komputer untuk memproses miliaran data setiap detiknya.</p>
-            </div>
-        </div>
+<nav class="toc-bar">
+  <a href="#Aljabar">Aljabar Boolean</a>
+  <a href="#Operator">Operator & Tabel Kebenaran</a>
+  <a href="#Penyerderhanaan">Penyederhanaan Aljabar Boolean & Karnaugh Map</a>
+  <a href="#Rangkaian">Rangkaian Sequential & Flip-Flop</a>
+  <a href="#Kombinasional">Rangkaian Kombinasional & Aplikasinya</a>
+  <a href="#Boolean">Boolean Logic Workshop</a>
+  <a href="#Kesimpulan">Kesimpulan Akhir</a>
+</nav>
 
-       <div class="card">
-    <h2>A. Operator Logika Utama</h2>
-    <p>
-        Dalam aljabar Boolean, seluruh sistem komputasi dibangun dari tiga operasi dasar. 
-        Operator ini menentukan bagaimana sinyal digital (0 dan 1) diproses dalam rangkaian elektronik.
-    </p>            
+<main class="container">
 
-    <table>
-        <thead>
-            <tr>
-                <th>Operator</th>
-                <th>Simbol</th>
-                <th>Logika Operasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>AND</strong> (Konjungsi)</td>
-                <td>A · B</td>
-                <td>Bernilai 1 hanya jika A dan B = 1</td>
-            </tr>
-            <tr>
-                <td><strong>OR</strong> (Disjungsi)</td>
-                <td>A + B</td>
-                <td>Bernilai 1 jika salah satu atau keduanya = 1</td>
-            </tr>
-            <tr>
-                <td><strong>NOT</strong> (Negasi)</td>
-                <td>A' atau ¬A</td>
-                <td>Membalik nilai: 0 → 1, 1 → 0</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h4>2. Tabel Kebenaran</h4>
-    <table>
-        <thead>
-            <tr>
-                <th>A</th>
-                <th>B</th>
-                <th>A AND B</th>
-                <th>A OR B</th>
-                <th>NOT A</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
-            <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
-            <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
-            <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
-        </tbody>
-    </table>
-
-    <div class="explain ok">
-        <strong>Analogi Dunia Nyata:</strong>
-        <p>
-            Sistem keamanan: Brankas terbuka jika (Kunci A AND Kunci B). 
-            Alarm berbunyi jika (Sensor Pintu OR Sensor Gerak aktif).
-        </p>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. Aljabar Bolean -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Aljabar">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Aljabar Boolean</h2>
     </div>
 
-    <h4>3. Hukum-Hukum Boolean</h4>
-    <ul>
-        <li><strong>Hukum Identitas:</strong> A + 0 = A, A · 1 = A</li>
-        <li><strong>Hukum Null:</strong> A + 1 = 1, A · 0 = 0</li>
-        <li><strong>Hukum Idempoten:</strong> A + A = A, A · A = A</li>
-        <li><strong>Hukum Komplemen:</strong> A + A' = 1, A · A' = 0</li>
-        <li><strong>Hukum Komutatif:</strong> A + B = B + A</li>
-        <li><strong>Hukum Asosiatif:</strong> (A + B) + C = A + (B + C)</li>
-        <li><strong>Hukum Distributif:</strong> A(B + C) = AB + AC</li>
-    </ul>
-
-    <h4>4. Gerbang Logika (Logic Gates)</h4>
-    <table>
-        <thead>
-            <tr>
-                <th>Gerbang</th>
-                <th>Simbol</th>
-                <th>Fungsi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>AND Gate</td>
-                <td>·</td>
-                <td>Output 1 jika semua input 1</td>
-            </tr>
-            <tr>
-                <td>OR Gate</td>
-                <td>+</td>
-                <td>Output 1 jika salah satu input 1</td>
-            </tr>
-            <tr>
-                <td>NOT Gate</td>
-                <td>'</td>
-                <td>Membalik sinyal</td>
-            </tr>
-            <tr>
-                <td>NAND</td>
-                <td>(A·B)'</td>
-                <td>Kebalikan AND</td>
-            </tr>
-            <tr>
-                <td>NOR</td>
-                <td>(A+B)'</td>
-                <td>Kebalikan OR</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h4>5. Contoh Soal</h4>
-    <div class="example-box">
-        <p><strong>Soal:</strong> Jika A = 1 dan B = 0, tentukan:</p>
-        <ul>
-            <li>A AND B = ?</li>
-            <li>A OR B = ?</li>
-            <li>NOT A = ?</li>
-        </ul>
-
-        <p><strong>Jawaban:</strong></p>
-        <ul>
-            <li>A AND B = 0</li>
-            <li>A OR B = 1</li>
-            <li>NOT A = 0</li>
-        </ul>
+    <div class="def-box">
+      <div class="label">Definisi Formal</div>
+     <p><strong>Aljabar Boolean</strong> adalah sistem aljabar yang digunakan untuk mengolah nilai logika 
+    <em>benar (1)</em> dan <em>salah (0)</em> menggunakan operasi seperti AND (∧), OR (∨), dan NOT (¬).</p>
     </div>
 
-    <h4>6. Implementasi dalam Kehidupan Nyata</h4>
-    <div class="example-box">
-        <p>
-            Dalam komputer dan smartphone, jutaan gerbang logika bekerja secara bersamaan. 
-            Aljabar Boolean membantu menyederhanakan rangkaian sehingga:
-        </p>
-        <ul>
-            <li>Perangkat lebih kecil</li>
-            <li>Konsumsi daya lebih rendah</li>
-            <li>Performa lebih cepat</li>
-            <li>Tidak mudah panas</li>
-        </ul>
-    </div>
+     <p>
+        Aljabar Boolean adalah cabang matematika yang sangat penting dalam ilmu komputer karena menjadi dasar dari logika digital dan perancangan sirkuit elektronik. Sistem ini hanya mengenal dua keadaan atau nilai logika, 
+        yaitu <strong>0 (False/Salah)</strong> dan <strong>1 (True/Benar)</strong>.
+    </p>
+   <h3>🔧 A. Operator Logika</h3>
+
+<div class="table-wrap">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>Operator</th>
+<th>Simbol</th>
+<th>Fungsi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔵 AND</td>
+<td>A · B</td>
+<td>Bernilai 1 jika A dan B = 1</td>
+</tr>
+<tr>
+<td>🟡 OR</td>
+<td>A + B</td>
+<td>Bernilai 1 jika salah satu = 1</td>
+</tr>
+<tr>
+<td>🔴 NOT</td>
+<td>A'</td>
+<td>Membalik nilai (0 ↔ 1)</td>
+</tr>
+</tbody>
+</table>
 </div>
-        <div class="card">
-         <h2>B. Operator & Tabel Kebenaran</h2>
-<p>
-    Operasi Boolean direalisasikan melalui <b>gerbang logika</b>. 
-    Berikut adalah perbandingan logika dasar yang paling sering digunakan dalam sirkuit digital:
+
+<h3>📊 B. Tabel Kebenaran</h3>
+
+<div class="table-wrap">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+<th>AND</th>
+<th>OR</th>
+<th>NOT A</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>📚 C. Hukum Boolean</h3>
+
+<div class="example-box">
+<ul>
+<li>✔ <strong>Identitas:</strong> A + 0 = A</li>
+<li>✔ <strong>Null:</strong> A + 1 = 1</li>
+<li>✔ <strong>Idempoten:</strong> A + A = A</li>
+<li>✔ <strong>Komplemen:</strong> A + A' = 1</li>
+<li>✔ <strong>Distributif:</strong> A(B + C) = AB + AC</li>
+</ul>
+</div>
+
+<h3>⚙️ D. Gerbang Logika</h3>
+
+<div class="table-wrap">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>Gerbang</th>
+<th>Simbol</th>
+<th>Fungsi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔵 AND</td>
+<td>·</td>
+<td>Output 1 jika semua input 1</td>
+</tr>
+<tr>
+<td>🟡 OR</td>
+<td>+</td>
+<td>Output 1 jika minimal satu 1</td>
+</tr>
+<tr>
+<td>🔴 NOT</td>
+<td>'</td>
+<td>Membalik sinyal</td>
+</tr>
+<tr>
+<td>🟣 NAND</td>
+<td>(AB)'</td>
+<td>Kebalikan AND</td>
+</tr>
+<tr>
+<td>⚫ NOR</td>
+<td>(A+B)'</td>
+<td>Kebalikan OR</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h3>🧪 E. Contoh</h3>
+
+<div class="example-box">
+<p><strong>Diketahui:</strong> A = 1, B = 0</p>
+<ul>
+<li>✔ AND = 0</li>
+<li>✔ OR = 1</li>
+<li>✔ NOT A = 0</li>
+</ul>
+</div>
+
+<h3>🚀 F. Aplikasi</h3>
+
+<div class="example-box">
+<ul>
+<li>💻 Komputer & CPU</li>
+<li>📱 Smartphone</li>
+<li>🔐 Sistem keamanan digital</li>
+<li>🤖 AI & robotika</li>
+<li>🧠 Sistem logika pada software</li>
+</ul>
+</div>      
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. Operator & Tabel Kebenaran -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Operator">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Operator & Tabel Kebenaran</h2>
+    </div>
+    <p>Dalam <strong>Aljabar Boolean</strong>, operator logika seperti <strong>AND (·)</strong>, 
+      <strong>OR (+)</strong>, dan <strong>NOT (¬)</strong> digunakan untuk mengolah nilai biner (0 dan 1).
+      Setiap operator didefinisikan melalui <strong>tabel kebenaran</strong> yang memuat semua kemungkinan kombinasi input dan outputnya.
+    </p>
+    <p>
+      Tabel kebenaran bersifat <strong>deterministik</strong>, yaitu hasilnya selalu sama untuk setiap kombinasi input tertentu. 
+      Dengan demikian, tabel kebenaran menjadi dasar dalam memahami logika digital, rangkaian elektronik, dan sistem komputer modern.
+    </p>
+<div class="container">
+
+<p>⚙️ Operasi Boolean direalisasikan melalui <strong>gerbang logika</strong>. Berikut perbandingan logika dasar:</p>
+
+<div class="table-wrap">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+<th>AND</th>
+<th>OR</th>
+<th>XOR</th>
+</tr>
+</thead>
+<tbody>
+<tr><td data-label="A">0</td><td data-label="B">0</td><td data-label="AND">0</td><td data-label="OR">0</td><td data-label="XOR">0</td></tr>
+<tr><td data-label="A">0</td><td data-label="B">1</td><td data-label="AND">0</td><td data-label="OR">1</td><td data-label="XOR">1</td></tr>
+<tr><td data-label="A">1</td><td data-label="B">0</td><td data-label="AND">0</td><td data-label="OR">1</td><td data-label="XOR">1</td></tr>
+<tr><td data-label="A">1</td><td data-label="B">1</td><td data-label="AND">1</td><td data-label="OR">1</td><td data-label="XOR">0</td></tr>
+</tbody>
+</table>
+</div>
+
+<p><small>💡 XOR = 1 jika input berbeda</small></p>
+
+<h3>🔌 Gerbang Logika Lanjutan</h3>
+
+<div class="table-wrap">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>Gerbang</th>
+<th>Rumus</th>
+<th>Keterangan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Gerbang">NAND</td>
+<td data-label="Rumus">(A·B)'</td>
+<td data-label="Keterangan">Kebalikan AND</td>
+</tr>
+<tr>
+<td data-label="Gerbang">NOR</td>
+<td data-label="Rumus">(A+B)'</td>
+<td data-label="Keterangan">Kebalikan OR</td>
+</tr>
+<tr>
+<td data-label="Gerbang">XNOR</td>
+<td data-label="Rumus">(A ⊕ B)'</td>
+<td data-label="Keterangan">1 jika sama</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h3>📊 Tabel Tambahan</h3>
+
+<div class="table-wrap">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+<th>NAND</th>
+<th>NOR</th>
+<th>XNOR</th>
+</tr>
+</thead>
+<tbody>
+<tr><td data-label="A">0</td><td data-label="B">0</td><td data-label="NAND">1</td><td data-label="NOR">1</td><td data-label="XNOR">1</td></tr>
+<tr><td data-label="A">0</td><td data-label="B">1</td><td data-label="NAND">1</td><td data-label="NOR">0</td><td data-label="XNOR">0</td></tr>
+<tr><td data-label="A">1</td><td data-label="B">0</td><td data-label="NAND">1</td><td data-label="NOR">0</td><td data-label="XNOR">0</td></tr>
+<tr><td data-label="A">1</td><td data-label="B">1</td><td data-label="NAND">0</td><td data-label="NOR">0</td><td data-label="XNOR">1</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="example-box">
+<strong>📘 Hukum Boolean:</strong><br>
+✔ Identitas: A + 0 = A<br>
+✔ Dominasi: A + 1 = 1<br>
+✔ Komplemen: A + A' = 1<br>
+✔ Absorpsi: A + (A·B) = A<br>
+✔ De Morgan: (A·B)' = A' + B'
+</div>
+
+<div class="example-box">
+<strong>💡 Contoh:</strong><br>
+F = (A · B) + C<br><br>
+👉 Lampu ON jika A & B aktif ATAU C aktif
+</div>
+
+<div class="example-box">
+<strong>🧪 Latihan:</strong><br>
+A = 1, B = 0<br><br>
+✔ NAND = 1<br>
+✔ NOR = 0<br>
+✔ XNOR = 0
+</div>
+
+<div class="example-box">
+<strong>🚀 Aplikasi:</strong>
+<ul>
+<li>💻 CPU & Komputer</li>
+<li>📱 Smartphone</li>
+<li>🔐 Sistem keamanan</li>
+<li>🤖 AI & Robotika</li>
+</ul>
+</div>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. Penyederhanaan Aljabar Boolean & Karnaugh Map -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Penyerderhanaan">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Penyederhanaan Aljabar Boolean & Karnaugh Map</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+     <p>
+  <strong>Penyederhanaan Aljabar Boolean</strong> adalah proses mengubah suatu ekspresi logika menjadi bentuk yang lebih sederhana 
+  tanpa mengubah nilai kebenarannya, dengan tujuan mengoptimalkan rangkaian digital.
 </p>
 
-<table>
-    <thead>
-        <tr>
-            <th>A</th>
-            <th>B</th>
-            <th>AND (A · B)</th>
-            <th>OR (A + B)</th>
-            <th>XOR (A ⊕ B)</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-        <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
-        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
-        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
-    </tbody>
-</table>
+<p>
+  Salah satu metode yang sering digunakan adalah <strong>Karnaugh Map (K-Map)</strong>, yaitu teknik visual berbentuk tabel 
+  untuk menyederhanakan fungsi Boolean dengan cara mengelompokkan nilai <em>1</em> atau <em>0</em> yang berdekatan.
+</p>
 
-<p><small><i>*XOR: Bernilai 1 jika input berbeda (digunakan pada rangkaian penjumlahan biner).</i></small></p>
-
-<h4>3. Gerbang Logika Lanjutan</h4>
-<table>
-    <thead>
-        <tr>
-            <th>Gerbang</th>
-            <th>Rumus</th>
-            <th>Keterangan</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>NAND</td>
-            <td>(A · B)'</td>
-            <td>Kebalikan AND</td>
-        </tr>
-        <tr>
-            <td>NOR</td>
-            <td>(A + B)'</td>
-            <td>Kebalikan OR</td>
-        </tr>
-        <tr>
-            <td>XNOR</td>
-            <td>(A ⊕ B)'</td>
-            <td>Bernilai 1 jika input sama</td>
-        </tr>
-    </tbody>
-</table>
-
-<h4>4. Tabel Tambahan (NAND, NOR, XNOR)</h4>
-<table>
-    <thead>
-        <tr>
-            <th>A</th>
-            <th>B</th>
-            <th>NAND</th>
-            <th>NOR</th>
-            <th>XNOR</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
-        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
-        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
-        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
-    </tbody>
-</table>
-
-<div class="explain ok">
-    <strong>Hukum Aljabar untuk Efisiensi Sirkuit:</strong>
-    <p>Gunakan aturan ini untuk menyederhanakan rangkaian digital:</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9em;">
-        <div>
-            • <b>Identitas:</b> A + 0 = A; A · 1 = A<br>
-            • <b>Dominasi:</b> A + 1 = 1; A · 0 = 0<br>
-            • <b>Idempoten:</b> A + A = A; A · A = A
-        </div>
-        <div>
-            • <b>Komplemen:</b> A + A' = 1; A · A' = 0<br>
-            • <b>Absorpsi:</b> A + (A · B) = A<br>
-            • <b>De Morgan:</b> (A · B)' = A' + B'
-        </div>
+<p>
+  Dengan menggunakan K-Map, ekspresi logika dapat direduksi sehingga jumlah variabel dan operasi menjadi lebih sedikit, 
+  sehingga rangkaian menjadi lebih efisien dan cepat.
+</p>
     </div>
-</div>
+<h3>🔧 1. Penyederhanaan Ekspresi Boolean</h3>
+<p>
+Penyederhanaan bertujuan mengurangi kompleksitas rangkaian logika agar lebih efisien ⚡
+(lebih sedikit gerbang, lebih cepat, dan hemat daya).
+</p>
 
-<h4>5. Contoh Implementasi Rangkaian</h4>
 <div class="example-box">
-    <p><strong>Kasus:</strong> Lampu menyala jika:</p>
-    <ul>
-        <li>Saklar A dan B aktif → AND</li>
-        <li>Atau saklar C aktif → OR</li>
-    </ul>
+<p><strong>📌 Contoh:</strong></p>
+<code>F = A·B + A·B'</code>
 
-    <p><strong>Persamaan:</strong></p>
-    <code>F = (A · B) + C</code>
-
-    <p><strong>Makna:</strong> Lampu menyala jika kedua saklar A dan B ON, atau cukup saklar C saja ON.</p>
+<p><strong>Langkah:</strong></p>
+<p>F = A(B + B')</p>
+<p>F = A(1)</p>
+<p><strong>✔ F = A</strong></p>
 </div>
 
-<h4>6. Contoh Soal Latihan</h4>
 <div class="example-box">
-    <p><strong>Diketahui:</strong> A = 1, B = 0</p>
-    <ul>
-        <li>A NAND B = ?</li>
-        <li>A NOR B = ?</li>
-        <li>A XNOR B = ?</li>
-    </ul>
-
-    <p><strong>Jawaban:</strong></p>
-    <ul>
-        <li>NAND = 1</li>
-        <li>NOR = 0</li>
-        <li>XNOR = 0</li>
-    </ul>
+💡 <strong>Intinya:</strong> Ekspresi kompleks bisa disederhanakan jadi bentuk minimal
 </div>
 
-<div class="example-box" style="margin-top: 20px;">
-    <h3>Esensi Aljabar Boolean di Era Digital</h3>
-    <ul>
-        <li><strong>Optimasi Hardware:</strong> Mengurangi jumlah transistor</li>
-        <li><strong>Pemrograman:</strong> Dasar logika <code>if-else</code></li>
-        <li><strong>Database:</strong> Query AND, OR, NOT</li>
-        <li><strong>AI:</strong> Decision tree dan logika keputusan</li>
-        <li><strong>Keamanan:</strong> Enkripsi dan autentikasi sistem</li>
-    </ul>
+<hr>
+
+<h3>🗺️ 2. Karnaugh Map (K-Map)</h3>
+<p>
+K-Map adalah metode visual untuk menyederhanakan fungsi Boolean dengan mengelompokkan nilai <strong>1</strong>.
+</p>
+
+<h4>📊 K-Map 2 Variabel</h4>
+
+<div class="table-container">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>A \ B</th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="A\B">0</td>
+<td data-label="0">0</td>
+<td data-label="1">1</td>
+</tr>
+<tr>
+<td data-label="A\B">1</td>
+<td data-label="0">1</td>
+<td data-label="1">1</td>
+</tr>
+</tbody>
+</table>
 </div>
 
+<p>📌 Kelompokkan angka <strong>1</strong> untuk mendapatkan bentuk sederhana</p>
+
+<h4>📊 K-Map 3 Variabel</h4>
+
+<div class="table-container">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>AB \ C</th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr><td data-label="AB\C">00</td><td>1</td><td>0</td></tr>
+<tr><td data-label="AB\C">01</td><td>1</td><td>1</td></tr>
+<tr><td data-label="AB\C">11</td><td>0</td><td>1</td></tr>
+<tr><td data-label="AB\C">10</td><td>1</td><td>0</td></tr>
+</tbody>
+</table>
 </div>
+
+<hr>
+
+<h3>📐 3. Aturan Pengelompokan K-Map</h3>
+<ul>
+<li>✔ Kelompok: 1, 2, 4, 8 (kelipatan 2)</li>
+<li>✔ Semakin besar kelompok → semakin sederhana</li>
+<li>✔ Boleh overlap (tumpang tindih)</li>
+<li>✔ Bentuk persegi/persegi panjang</li>
+</ul>
+
+<hr>
+
+<h3>🧪 4. Contoh Penyederhanaan K-Map</h3>
+
+<div class="example-box">
+<p><strong>F(A,B,C) = Σ(1,2,3,5)</strong></p>
+<p>Hasil setelah dikelompokkan:</p>
+<p><strong>✔ F = A'C + B'C</strong></p>
 </div>
-<div class="section">
-    <h2>C. Penyederhanaan Aljabar Boolean & Karnaugh Map</h2>
 
-    <div class="card">
-        <h3>1. Penyederhanaan Ekspresi Boolean</h3>
-        <p>
-            Penyederhanaan bertujuan untuk mengurangi kompleksitas rangkaian logika 
-            sehingga jumlah gerbang menjadi lebih sedikit, lebih cepat, dan hemat daya.
-        </p>
+<hr>
 
-        <div class="example-box">
-            <p><strong>Contoh:</strong></p>
-            <code>F = A·B + A·B'</code>
+<h3>⚙️ 5. Implementasi ke Rangkaian</h3>
 
-            <p><strong>Penyelesaian:</strong></p>
-            <p>F = A(B + B')</p>
-            <p>F = A(1)</p>
-            <p><strong>F = A</strong></p>
-        </div>
+<div class="example-box">
+<p><strong>F = A'C + B'C</strong></p>
 
-        <div class="explain ok">
-            <strong>Intinya:</strong> Ekspresi kompleks bisa disederhanakan menjadi bentuk minimal.
-        </div>
+<ul>
+<li>🔁 NOT A → A'</li>
+<li>🔁 NOT B → B'</li>
+<li>🔗 AND → A'C dan B'C</li>
+<li>➕ OR → hasil akhir</li>
+</ul>
 
-        <h3>2. Karnaugh Map (K-Map)</h3>
-        <p>
-            Karnaugh Map adalah metode visual untuk menyederhanakan fungsi Boolean 
-            dengan mengelompokkan nilai 1 dalam tabel kebenaran.
-        </p>
+<p><strong>🚀 Keuntungan:</strong></p>
+<ul>
+<li>Lebih sedikit gerbang</li>
+<li>Lebih murah</li>
+<li>Lebih cepat</li>
+</ul>
+</div>
 
-        <h4>K-Map 2 Variabel</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>A \ B</th>
-                    <th>0</th>
-                    <th>1</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>1</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                </tr>
-            </tbody>
-        </table>
+<hr>
 
-        <p><small>Kelompokkan angka 1 untuk mendapatkan bentuk sederhana.</small></p>
+<h3>📊 6. Perbandingan</h3>
 
-        <h4>K-Map 3 Variabel</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>AB \ C</th>
-                    <th>0</th>
-                    <th>1</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>00</td><td>1</td><td>0</td></tr>
-                <tr><td>01</td><td>1</td><td>1</td></tr>
-                <tr><td>11</td><td>0</td><td>1</td></tr>
-                <tr><td>10</td><td>1</td><td>0</td></tr>
-            </tbody>
-        </table>
+<div class="table-container">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>Sebelum</th>
+<th>Sesudah</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A·B + A·B'</td>
+<td>✔ A</td>
+</tr>
+<tr>
+<td>(A+B)(A+B')</td>
+<td>✔ A</td>
+</tr>
+</tbody>
+</table>
+</div>
 
-        <h3>3. Aturan Pengelompokan K-Map</h3>
-        <ul>
-            <li>Kelompok harus berisi 1, 2, 4, 8 (kelipatan 2)</li>
-            <li>Semakin besar kelompok → semakin sederhana hasil</li>
-            <li>Boleh overlap (tumpang tindih)</li>
-            <li>Harus berbentuk persegi/persegi panjang</li>
-        </ul>
+  </section>
 
-        <h3>4. Contoh Penyederhanaan dengan K-Map</h3>
-        <div class="example-box">
-            <p><strong>F(A,B,C) = Σ(1,2,3,5)</strong></p>
-            <p>
-                Setelah dikelompokkan pada K-Map, hasil sederhananya:
-            </p>
-            <p><strong>F = A'C + B'C</strong></p>
-        </div>
-
-        <h3>5. Implementasi ke Rangkaian Logika</h3>
-        <div class="example-box">
-            <p><strong>F = A'C + B'C</strong></p>
-
-            <ul>
-                <li>NOT A → menghasilkan A'</li>
-                <li>NOT B → menghasilkan B'</li>
-                <li>AND untuk A'C dan B'C</li>
-                <li>OR untuk hasil akhir</li>
-            </ul>
-
-            <p><strong>Keuntungan:</strong></p>
-            <ul>
-                <li>Jumlah gerbang lebih sedikit</li>
-                <li>Biaya produksi lebih murah</li>
-                <li>Kinerja lebih cepat</li>
-            </ul>
-        </div>
-
-        <h3>6. Perbandingan Sebelum & Sesudah Simplifikasi</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Sebelum</th>
-                    <th>Sesudah</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>A·B + A·B'</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td>(A+B)(A+B')</td>
-                    <td>A</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="section">
-    <h2>D. Rangkaian Sequential & Flip-Flop</h2>
-
-    <div class="card">
-        <h3>1. Pengertian Rangkaian Sequential</h3>
-        <p>
-            Rangkaian sequential adalah rangkaian logika yang output-nya tidak hanya 
-            bergantung pada input saat ini, tetapi juga pada <strong>state sebelumnya (memori)</strong>.
-        </p>
-
-        <div class="explain ok">
-            <strong>Perbedaan Utama:</strong>
-            <ul>
-                <li><b>Kombinasional:</b> Output hanya tergantung input saat ini</li>
-                <li><b>Sequential:</b> Output tergantung input + memori sebelumnya</li>
-            </ul>
-        </div>
-
-        <h3>2. Konsep Dasar Memori Digital</h3>
-        <p>
-            Memori dalam rangkaian digital disimpan menggunakan elemen dasar bernama 
-            <strong>Flip-Flop</strong>, yang mampu menyimpan 1 bit data (0 atau 1).
-        </p>
-
-        <h3>3. Jenis-Jenis Flip-Flop</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Jenis</th>
-                    <th>Input</th>
-                    <th>Karakteristik</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>SR Flip-Flop</td>
-                    <td>S, R</td>
-                    <td>Set (1) dan Reset (0)</td>
-                </tr>
-                <tr>
-                    <td>D Flip-Flop</td>
-                    <td>D</td>
-                    <td>Menyimpan nilai input</td>
-                </tr>
-                <tr>
-                    <td>JK Flip-Flop</td>
-                    <td>J, K</td>
-                    <td>Versi SR yang lebih stabil</td>
-                </tr>
-                <tr>
-                    <td>T Flip-Flop</td>
-                    <td>T</td>
-                    <td>Toggle (berubah tiap clock)</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>4. Tabel Kebenaran D Flip-Flop</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Clock</th>
-                    <th>D</th>
-                    <th>Q (Next State)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>↑</td><td>0</td><td>0</td></tr>
-                <tr><td>↑</td><td>1</td><td>1</td></tr>
-            </tbody>
-        </table>
-
-        <h3>5. Clock Signal</h3>
-        <p>
-            Flip-flop bekerja berdasarkan sinyal clock (denyut). Perubahan state hanya 
-            terjadi saat <strong>edge trigger</strong> (naik atau turun).
-        </p>
-
-        <div class="example-box">
-            <p><strong>Contoh:</strong></p>
-            <p>Jika D = 1 saat clock aktif → Q akan menjadi 1</p>
-        </div>
-
-        <h3>6. Aplikasi Rangkaian Sequential</h3>
-        <ul>
-            <li>Register (penyimpanan data sementara)</li>
-            <li>Counter (penghitung digital)</li>
-            <li>Shift Register</li>
-            <li>Memori RAM sederhana</li>
-        </ul>
-
-        <h3>7. Contoh Counter Sederhana</h3>
-        <div class="example-box">
-            <p>Counter 2-bit menghasilkan urutan:</p>
-            <code>00 → 01 → 10 → 11 → kembali ke 00</code>
-        </div>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. Rangkaian Sequential & Flip-Flop -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Rangkaian">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Rangkaian Sequential & Flip-Flop</h2>
     </div>
-</div>
 
-<div class="section">
-    <h2>E. Rangkaian Kombinasional & Aplikasinya</h2>
-
-    <div class="card">
-        <h3>1. Pengertian Rangkaian Kombinasional</h3>
-        <p>
-            Rangkaian yang output-nya hanya bergantung pada input saat ini tanpa memori.
-        </p>
-
-        <h3>2. Contoh Rangkaian Kombinasional</h3>
-
-        <h4>a. Half Adder</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>A</th>
-                    <th>B</th>
-                    <th>Sum</th>
-                    <th>Carry</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-                <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
-                <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
-                <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
-            </tbody>
-        </table>
-
-        <div class="example-box">
-            <p><strong>Rumus:</strong></p>
-            <code>Sum = A ⊕ B</code><br>
-            <code>Carry = A · B</code>
-        </div>
-
-        <h4>b. Full Adder</h4>
-        <p>
-            Full Adder menjumlahkan 3 bit: A, B, dan Carry-in.
-        </p>
-
-        <div class="example-box">
-            <code>Sum = A ⊕ B ⊕ Cin</code><br>
-            <code>Carry = (A·B) + (Cin·(A⊕B))</code>
-        </div>
-
-        <h4>c. Multiplexer (MUX)</h4>
-        <p>
-            Memilih satu dari beberapa input berdasarkan sinyal selektor.
-        </p>
-
-        <div class="example-box">
-            <p><strong>Contoh 2:1 MUX:</strong></p>
-            <code>F = S'·I0 + S·I1</code>
-        </div>
-
-        <h4>d. Demultiplexer (DEMUX)</h4>
-        <p>
-            Kebalikan MUX: satu input disalurkan ke banyak output.
-        </p>
-
-        <h4>e. Encoder & Decoder</h4>
-        <ul>
-            <li><b>Encoder:</b> Mengubah banyak input menjadi kode biner</li>
-            <li><b>Decoder:</b> Mengubah kode biner menjadi output tertentu</li>
-        </ul>
-
-        <h3>3. Implementasi Nyata</h3>
-        <div class="example-box">
-            <ul>
-                <li>ALU (Arithmetic Logic Unit)</li>
-                <li>CPU dan mikroprosesor</li>
-                <li>Kalkulator digital</li>
-                <li>Sistem komunikasi</li>
-            </ul>
-        </div>
-
-        <h3>4. Perbandingan Kombinasional vs Sequential</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Aspek</th>
-                    <th>Kombinasional</th>
-                    <th>Sequential</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Memori</td>
-                    <td>Tidak ada</td>
-                    <td>Ada</td>
-                </tr>
-                <tr>
-                    <td>Output</td>
-                    <td>Input saat ini</td>
-                    <td>Input + state sebelumnya</td>
-                </tr>
-                <tr>
-                    <td>Contoh</td>
-                    <td>Adder, MUX</td>
-                    <td>Counter, Register</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>5. Latihan Soal</h3>
-        <div class="example-box">
-            <p><strong>Diketahui:</strong> A=1, B=1, Cin=0</p>
-            <p><strong>Tentukan output Full Adder:</strong></p>
-
-            <p><strong>Jawaban:</strong></p>
-            <ul>
-                <li>Sum = 0</li>
-                <li>Carry = 1</li>
-            </ul>
-        </div>
-
-        <div class="explain ok">
-            <strong>Kesimpulan:</strong>
-            <p>
-                Rangkaian kombinasional dan sequential adalah fondasi utama sistem digital modern. 
-                Semua perangkat seperti komputer, smartphone, dan IoT dibangun dari kombinasi kedua jenis rangkaian ini.
-            </p>
-        </div>
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Rangkaian sequential</strong> adalah rangkaian logika di mana output-nya tidak hanya bergantung pada input saat ini, tetapi juga pada keadaan sebelumnya.</p>
     </div>
+<h3>🧠 1. Pengertian</h3>
+<p>
+Rangkaian sequential adalah rangkaian logika yang output-nya tidak hanya bergantung pada input saat ini,
+tetapi juga pada <strong>state sebelumnya (memori)</strong>.
+</p>
+
+<div class="example-box">
+<strong>⚖️ Perbedaan Utama:</strong>
+<ul>
+<li>⚡ <b>Kombinasional:</b> Output = input saat ini</li>
+<li>🔄 <b>Sequential:</b> Output = input + memori sebelumnya</li>
+</ul>
 </div>
 
-        <div class="calculator-area">
+<hr>
+
+<h3>💾 2. Konsep Memori Digital</h3>
+<p>
+Memori digital disimpan menggunakan <strong>Flip-Flop</strong>, yaitu komponen yang mampu menyimpan 
+<strong>1 bit (0 atau 1)</strong>.
+</p>
+
+<hr>
+
+<h3>📊 3. Jenis Flip-Flop</h3>
+
+<div class="table-container">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>Jenis</th>
+<th>Input</th>
+<th>Karakteristik</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Jenis">SR Flip-Flop</td>
+<td data-label="Input">S, R</td>
+<td data-label="Karakteristik">Set (1) & Reset (0)</td>
+</tr>
+<tr>
+<td data-label="Jenis">D Flip-Flop</td>
+<td data-label="Input">D</td>
+<td data-label="Karakteristik">Menyimpan nilai input</td>
+</tr>
+<tr>
+<td data-label="Jenis">JK Flip-Flop</td>
+<td data-label="Input">J, K</td>
+<td data-label="Karakteristik">Lebih stabil dari SR</td>
+</tr>
+<tr>
+<td data-label="Jenis">T Flip-Flop</td>
+<td data-label="Input">T</td>
+<td data-label="Karakteristik">Toggle tiap clock</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<hr>
+
+<h3>📈 4. Tabel Kebenaran D Flip-Flop</h3>
+
+<div class="table-container">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>Clock</th>
+<th>D</th>
+<th>Q (Next)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Clock">↑</td>
+<td data-label="D">0</td>
+<td data-label="Q">0</td>
+</tr>
+<tr>
+<td data-label="Clock">↑</td>
+<td data-label="D">1</td>
+<td data-label="Q">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<hr>
+
+<h3>⏱️ 5. Clock Signal</h3>
+<p>
+Flip-Flop bekerja berdasarkan sinyal <strong>clock</strong> (denyut). 
+Perubahan hanya terjadi saat <strong>edge trigger</strong> (naik ↑ atau turun ↓).
+</p>
+
+<div class="example-box">
+💡 <strong>Contoh:</strong><br>
+Jika D = 1 saat clock aktif → Q menjadi 1
+</div>
+
+<hr>
+
+<h3>🚀 6. Aplikasi</h3>
+<ul>
+<li>💾 Register (penyimpanan sementara)</li>
+<li>🔢 Counter (penghitung digital)</li>
+<li>🔁 Shift Register</li>
+<li>🧠 Memori sederhana (RAM dasar)</li>
+</ul>
+
+<hr>
+
+<h3>🔢 7. Contoh Counter</h3>
+
+<div class="example-box">
+<p>Counter 2-bit menghasilkan:</p>
+<code>00 → 01 → 10 → 11 → 00</code>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. Rangkaian Kombinasional & Aplikasinya -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Kombinasional">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Rangkaian Kombinasional & Aplikasinya</h2>
+    </div>
+<h3>🧠 1. Pengertian</h3>
+<p>
+Rangkaian kombinasional adalah rangkaian logika yang output-nya hanya bergantung pada 
+<strong>input saat ini</strong> tanpa memori.
+</p>
+
+<hr>
+
+<h3>🔧 2. Contoh Rangkaian</h3>
+
+<h4>➕ a. Half Adder</h4>
+
+<div class="table-container">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+<th>Sum</th>
+<th>Carry</th>
+</tr>
+</thead>
+<tbody>
+<tr><td data-label="A">0</td><td data-label="B">0</td><td data-label="Sum">0</td><td data-label="Carry">0</td></tr>
+<tr><td data-label="A">0</td><td data-label="B">1</td><td data-label="Sum">1</td><td data-label="Carry">0</td></tr>
+<tr><td data-label="A">1</td><td data-label="B">0</td><td data-label="Sum">1</td><td data-label="Carry">0</td></tr>
+<tr><td data-label="A">1</td><td data-label="B">1</td><td data-label="Sum">0</td><td data-label="Carry">1</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="example-box">
+<p><strong>📌 Rumus:</strong></p>
+<code>Sum = A ⊕ B</code><br>
+<code>Carry = A · B</code>
+</div>
+
+<hr>
+
+<h4>➕ b. Full Adder</h4>
+<p>
+Menjumlahkan 3 bit: A, B, dan Carry-in (Cin).
+</p>
+
+<div class="example-box">
+<code>Sum = A ⊕ B ⊕ Cin</code><br>
+<code>Carry = (A·B) + (Cin·(A⊕B))</code>
+</div>
+
+<hr>
+
+<h4>🔀 c. Multiplexer (MUX)</h4>
+<p>
+Memilih satu input dari beberapa pilihan berdasarkan selektor.
+</p>
+
+<div class="example-box">
+<p><strong>Contoh 2:1 MUX:</strong></p>
+<code>F = S'·I0 + S·I1</code>
+</div>
+
+<hr>
+
+<h4>🔁 d. Demultiplexer (DEMUX)</h4>
+<p>
+Kebalikan MUX: satu input disalurkan ke banyak output.
+</p>
+
+<h4>🔢 e. Encoder & Decoder</h4>
+<ul>
+<li>📥 <b>Encoder:</b> Input banyak → kode biner</li>
+<li>📤 <b>Decoder:</b> Kode biner → output tertentu</li>
+</ul>
+
+<hr>
+
+<h3>🚀 3. Implementasi Nyata</h3>
+
+<div class="example-box">
+<ul>
+<li>💻 ALU (Arithmetic Logic Unit)</li>
+<li>🧠 CPU & mikroprosesor</li>
+<li>🧮 Kalkulator digital</li>
+<li>📡 Sistem komunikasi</li>
+</ul>
+</div>
+
+<hr>
+
+<h3>⚖️ 4. Perbandingan Kombinasional vs Sequential</h3>
+
+<div class="table-container">
+<table class="table-yellow">
+<thead>
+<tr>
+<th>Aspek</th>
+<th>Kombinasional</th>
+<th>Sequential</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Aspek">Memori</td>
+<td data-label="Kombinasional">Tidak ada</td>
+<td data-label="Sequential">Ada</td>
+</tr>
+<tr>
+<td data-label="Aspek">Output</td>
+<td data-label="Kombinasional">Input saat ini</td>
+<td data-label="Sequential">Input + state sebelumnya</td>
+</tr>
+<tr>
+<td data-label="Aspek">Contoh</td>
+<td data-label="Kombinasional">Adder, MUX</td>
+<td data-label="Sequential">Counter, Register</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<hr>
+
+<h3>🧪 5. Latihan</h3>
+
+<div class="example-box">
+<p><strong>Diketahui:</strong> A = 1, B = 1, Cin = 0</p>
+
+<p><strong>Jawaban:</strong></p>
+<ul>
+<li>✔ Sum = 0</li>
+<li>✔ Carry = 1</li>
+</ul>
+</div>
+
+<hr>
+
+<h3>📌 6. Kesimpulan</h3>
+
+<div class="example-box">
+<p>
+Rangkaian kombinasional dan sequential adalah fondasi sistem digital modern.
+Semua perangkat seperti <strong>komputer, smartphone, dan IoT</strong> dibangun dari kombinasi keduanya.
+</p>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. Boolean Logic Workshop -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Boolean">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Boolean Logic Workshop</h2>
+    </div>
+    <div class="calculator-area">
             <h2 class="main-title">🧮 Boolean Logic Workshop</h2>
             
             <div class="calc-wrapper">
@@ -1150,77 +1629,195 @@
     }
 </script>
 
-<div class="section">
-    <h2>Kesimpulan Akhir</h2>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. Kesimpulan Akhir -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Kesimpulan">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Kesimpulan Akhir</h2>
+    </div>
 
     <div class="card">
-        <p>
-            Aljabar Boolean dan rangkaian logika merupakan fondasi utama dalam dunia sistem digital modern. 
-            Seluruh perangkat seperti komputer, smartphone, hingga sistem kecerdasan buatan bekerja berdasarkan 
-            prinsip logika biner (0 dan 1).
-        </p>
+<p>
+Aljabar Boolean dan rangkaian logika merupakan <strong>fondasi utama sistem digital modern</strong>. 
+Semua perangkat seperti 💻 komputer, 📱 smartphone, hingga 🤖 AI bekerja berdasarkan 
+prinsip <strong>logika biner (0 dan 1)</strong>.
+</p>
 
-        <h3>Ringkasan Inti Materi</h3>
-        <ul>
-            <li>
-                <strong>Operator Logika (AND, OR, NOT, XOR):</strong> 
-                Digunakan untuk memproses sinyal digital dan membentuk dasar pengambilan keputusan dalam sistem.
-            </li>
-            <li>
-                <strong>Tabel Kebenaran:</strong> 
-                Menunjukkan semua kemungkinan kombinasi input dan output sebagai dasar analisis logika.
-            </li>
-            <li>
-                <strong>Hukum Aljabar Boolean:</strong> 
-                Memungkinkan penyederhanaan ekspresi logika sehingga rangkaian menjadi lebih efisien.
-            </li>
-            <li>
-                <strong>Karnaugh Map (K-Map):</strong> 
-                Metode visual untuk menyederhanakan fungsi Boolean secara cepat dan akurat.
-            </li>
-            <li>
-                <strong>Rangkaian Kombinasional:</strong> 
-                Output hanya bergantung pada input saat ini (contoh: Adder, MUX).
-            </li>
-            <li>
-                <strong>Rangkaian Sequential:</strong> 
-                Memiliki memori dan bergantung pada state sebelumnya (contoh: Flip-Flop, Counter).
-            </li>
-        </ul>
+<hr>
 
-        <h3>Inti Pemahaman</h3>
-        <div class="explain ok">
-            <p>
-                Semakin sederhana suatu ekspresi Boolean, maka semakin sedikit komponen yang dibutuhkan 
-                dalam rangkaian. Hal ini berdampak langsung pada:
-            </p>
-            <ul>
-                <li>Efisiensi energi (hemat daya)</li>
-                <li>Ukuran perangkat lebih kecil</li>
-                <li>Performa lebih cepat</li>
-                <li>Biaya produksi lebih rendah</li>
-            </ul>
-        </div>
+<h3>📌 Ringkasan Inti Materi</h3>
 
-        <h3>Relevansi di Dunia Nyata</h3>
-        <div class="example-box">
-            <ul>
-                <li>CPU dan mikroprosesor bekerja dengan jutaan gerbang logika</li>
-                <li>Sistem AI menggunakan logika untuk pengambilan keputusan</li>
-                <li>Database menggunakan operasi AND, OR, NOT untuk pencarian data</li>
-                <li>Sistem keamanan digital menggunakan logika untuk autentikasi</li>
-            </ul>
-        </div>
+<ul>
+<li>⚙️ <strong>Operator Logika (AND, OR, NOT, XOR):</strong><br>
+Digunakan untuk memproses sinyal digital dan menjadi dasar pengambilan keputusan.</li>
 
-        <h3>Penutup</h3>
-        <p>
-            Dengan memahami aljabar Boolean dan rangkaian logika, kita dapat melihat bahwa 
-            seluruh teknologi modern sebenarnya dibangun dari konsep sederhana: 
-            <strong>logika benar (1) dan salah (0)</strong>. 
-            Dari dasar inilah berkembang sistem digital yang kompleks dan canggih.
-        </p>
-    </div>
+<li>📊 <strong>Tabel Kebenaran:</strong><br>
+Menampilkan semua kemungkinan kombinasi input dan output.</li>
+
+<li>📚 <strong>Hukum Aljabar Boolean:</strong><br>
+Menyederhanakan ekspresi agar rangkaian lebih efisien.</li>
+
+<li>🗺️ <strong>Karnaugh Map (K-Map):</strong><br>
+Metode visual untuk simplifikasi fungsi Boolean dengan cepat.</li>
+
+<li>🔌 <strong>Rangkaian Kombinasional:</strong><br>
+Output hanya bergantung pada input saat ini (contoh: Adder, MUX).</li>
+
+<li>🔁 <strong>Rangkaian Sequential:</strong><br>
+Memiliki memori dan bergantung pada state sebelumnya (contoh: Flip-Flop, Counter).</li>
+</ul>
+
+<hr>
+
+<h3>💡 Inti Pemahaman</h3>
+
+<div class="explain ok">
+<p>
+Semakin sederhana ekspresi Boolean, maka semakin sedikit komponen yang dibutuhkan dalam rangkaian.
+</p>
+
+<ul>
+<li>⚡ Lebih hemat energi</li>
+<li>📦 Ukuran perangkat lebih kecil</li>
+<li>🚀 Performa lebih cepat</li>
+<li>💰 Biaya produksi lebih rendah</li>
+</ul>
 </div>
+
+<hr>
+
+<h3>🌍 Relevansi di Dunia Nyata</h3>
+
+<div class="example-box">
+<ul>
+<li>💻 CPU & mikroprosesor → jutaan gerbang logika</li>
+<li>🤖 AI → pengambilan keputusan berbasis logika</li>
+<li>🗄️ Database → operasi AND, OR, NOT</li>
+<li>🔐 Sistem keamanan → autentikasi digital</li>
+</ul>
+</div>
+
+<hr>
+
+<h3>🔚 Penutup</h3>
+
+<p>
+Dengan memahami aljabar Boolean dan rangkaian logika, kita bisa melihat bahwa seluruh teknologi modern 
+dibangun dari konsep sederhana:
+</p>
+
+<div class="example-box" style="text-align:center;">
+<strong style="font-size:18px;">1 (Benar) ⚪ — 0 (Salah) ⚫</strong>
+</div>
+
+<p>
+Dari dasar sederhana ini berkembang sistem digital yang kompleks dan canggih 🚀
+</p>
+  </section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SUMMARY BOOLEAN -->
+<!-- ══════════════════════════════════════════ -->
+<section class="section-card" style="background: linear-gradient(135deg,#fff9e6,#ffeaa7);">
+  <div class="section-header">
+    <div class="section-num" style="background:#f4c430;">✓</div>
+    <h2 style="color:#7a5c00;">Rangkuman Aljabar Boolean</h2>
+  </div>
+
+  <div class="table-container">
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Topik</th>
+          <th>Poin Utama</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Definisi</strong></td>
+          <td>Sistem matematika dengan dua nilai: 0 (false) dan 1 (true)</td>
+        </tr>
+        <tr>
+          <td><strong>Operator Dasar</strong></td>
+          <td>AND (·), OR (+), NOT (') digunakan untuk operasi logika</td>
+        </tr>
+        <tr>
+          <td><strong>Operator Lanjutan</strong></td>
+          <td>XOR, NAND, NOR, XNOR sebagai kombinasi operator dasar</td>
+        </tr>
+        <tr>
+          <td><strong>Tabel Kebenaran</strong></td>
+          <td>Menampilkan semua kemungkinan kombinasi input dan output</td>
+        </tr>
+        <tr>
+          <td><strong>Hukum Boolean</strong></td>
+          <td>Identitas, Null, Idempoten, Komplemen, Distributif, De Morgan</td>
+        </tr>
+        <tr>
+          <td><strong>Penyederhanaan</strong></td>
+          <td>Mengurangi kompleksitas ekspresi untuk efisiensi rangkaian</td>
+        </tr>
+        <tr>
+          <td><strong>Karnaugh Map</strong></td>
+          <td>Metode visual untuk menyederhanakan fungsi Boolean</td>
+        </tr>
+        <tr>
+          <td><strong>Gerbang Logika</strong></td>
+          <td>Implementasi fisik: AND, OR, NOT, NAND, NOR dalam rangkaian</td>
+        </tr>
+        <tr>
+          <td><strong>Rangkaian Kombinasional</strong></td>
+          <td>Output bergantung pada input saat ini (Adder, MUX)</td>
+        </tr>
+        <tr>
+          <td><strong>Rangkaian Sequential</strong></td>
+          <td>Memiliki memori, bergantung pada state sebelumnya (Flip-Flop, Counter)</td>
+        </tr>
+        <tr>
+          <td><strong>Aplikasi</strong></td>
+          <td>Digunakan pada CPU, AI, database, dan sistem digital modern</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+    <div style="text-align:center; margin-top:24px;">
+     <a href="../../index.html?page=materi" class="btn-back" style="background:var(--accent); border-color:var(--accent2); color:#fff; font-size:1rem; padding:13px 32px;">← Kembali ke Halaman Materi</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FAB scroll to top -->
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
 
 </body>
 </html>
