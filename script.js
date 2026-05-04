@@ -461,16 +461,7 @@ function renderGame() {
 }
 
 function renderFunFacts() {
-  var filtered = factFilter === 'all' ? funFacts : funFacts.filter(function(f) { return f.category === factFilter; });
-
-  // Filter buttons
-  var btnHtml = '';
-  filterCategories.forEach(function(c) {
-    btnHtml += '<button class="filter-btn' + (factFilter===c.key?' active':'') + '" onclick="factFilter=\'' + c.key + '\';renderFunFacts()">' + c.label + '</button>';
-  });
-  document.getElementById('filterBtns').innerHTML = btnHtml;
-  document.getElementById('factCount').textContent = 'Menampilkan ' + filtered.length + ' fakta';
-
+  var filtered = funFacts;
   var html = '';
   filtered.forEach(function(f, idx) {
     var factId = 'fact-' + idx;
@@ -536,11 +527,23 @@ function renderRealLife() {
       '<span class="chevron' + (isOpen ? ' open' : '') + '">▼</span></button>' +
       '<div class="accordion-content' + (isOpen ? ' open' : '') + '">' +
       '<p>' + item.summary + '</p>' +
-      '<button onclick="openModal(\'' + item.emoji + '\',\'' + item.subtitle.replace(/'/g,"\\'") + '\',\'' + item.title.replace(/'/g,"\\'") + '\',' +
-      JSON.stringify([{icon:'⚙️',label:'Cara Kerjanya',content:item.details.howItWorks},{icon:'🧮',label:'Matematika di Baliknya',content:item.details.mathBehind},{icon:'🤯',label:'Mind Blown!',content:item.details.mindBlown}]).replace(/'/g,"\\'") + ',\'violet\')">📖 Baca cerita lengkap →</button>' +
+      '<button type="button" class="read-more-btn" data-real-id="' + item.id + '">📖 Baca cerita lengkap →</button>' +
       '</div></div>';
   });
   document.getElementById('realLifeAccordion').innerHTML = html;
+
+  document.querySelectorAll('.read-more-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var itemId = this.dataset.realId;
+      var item = realLifeItems.find(function(r) { return r.id === itemId; });
+      if (!item) return;
+      openModal(item.emoji, item.subtitle, item.title, [
+        {icon:'⚙️', label:'Cara Kerjanya', content:item.details.howItWorks},
+        {icon:'🧮', label:'Matematika di Baliknya', content:item.details.mathBehind},
+        {icon:'🤯', label:'Mind Blown!', content:item.details.mindBlown}
+      ], 'violet');
+    });
+  });
 }
 
 function toggleAccordion(id) {
