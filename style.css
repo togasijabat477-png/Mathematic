@@ -788,8 +788,8 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .accordion-btn:hover { background: hsl(var(--surface2) / .6); }
 .accordion-btn .emoji { flex-shrink: 0; font-size: 1.875rem; transition: transform .3s var(--ease-spring); }
 .accordion-item.expanded .accordion-btn .emoji { transform: scale(1.15); }
-.accordion-btn h3 { font-weight: 700; font-size: 1.0625rem; color: hsl(var(--fg)); }
-.accordion-btn .sub { margin-top: 6px; font-family: var(--font-mono); font-size: .8125rem; color: hsl(var(--fg3)); letter-spacing: .01em; }
+.accordion-btn h3 { font-weight: 700; font-size: 1.25rem; color: hsl(var(--fg)); }
+.accordion-btn .sub { margin-top: 6px; font-family: var(--font-mono); font-size: 0.95rem; color: hsl(var(--fg3)); letter-spacing: .01em; }
 .accordion-btn .chevron { flex-shrink: 0; color: hsl(var(--fg3)); transition: transform .4s var(--ease-spring); font-size: 1rem; }
 .accordion-btn .chevron.open { transform: rotate(180deg); }
 .accordion-content {
@@ -797,11 +797,11 @@ button { cursor: pointer; border: none; font-family: inherit; }
   max-height: 0; opacity: 0; overflow: hidden;
   transition: max-height .5s var(--ease-smooth), opacity .4s var(--ease-smooth), padding .4s var(--ease-smooth);
 }
-.accordion-content.open { max-height: 500px; opacity: 1; padding: 20px 24px 24px; }
-.accordion-content p { font-size: .9375rem; line-height: 1.75; color: hsl(var(--fg2)); }
+.accordion-content.open { max-height: none; opacity: 1; padding: 20px 24px 24px; }
+.accordion-content p { font-size: 1.0625rem; line-height: 1.8; color: hsl(var(--fg2)); }
 .accordion-content button {
   margin-top: 16px; background: transparent;
-  font-family: var(--font-mono); font-size: .8125rem; color: hsl(var(--violet)); font-weight: 600;
+  font-family: var(--font-mono); font-size: 0.95rem; color: hsl(var(--violet)); font-weight: 600;
   transition: color .2s, transform .2s; cursor: pointer; padding: 4px 0;
 }
 .accordion-content button:hover { color: hsl(265 65% 75%); transform: translateX(6px); }
