@@ -1,383 +1,1374 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Teori Bilangan: Modulo, Kongruen, Euclidean, Prima, Invers</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Number Theory — Matematika Diskrit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #F77F00;
+      --accent2: #F77F00;
+      --accent3: #b7e4c7;
+      --accent-warm: #F77F00;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(106, 81, 45, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(145deg, #f8fafc 0%, #eef2f5 100%);
-            color: #0f172a;
-            line-height: 1.5;
-            scroll-behavior: smooth;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
-        }
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
 
-        .hero {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 1rem 1rem;
-            border-bottom: 2px solid rgba(37, 99, 235, 0.2);
-        }
-        .hero h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #1e293b, #2563eb);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.75rem;
-        }
-        .hero p {
-            font-size: 1.2rem;
-            color: #334155;
-            max-width: 720px;
-            margin: 0 auto;
-        }
-        .badge {
-            display: inline-block;
-            background: #e0e7ff;
-            color: #1e40af;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 1rem;
-        }
+    .hero {
+      background: linear-gradient(135deg, #43361b 0%, #6a5c2d 55%, #F77F00 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(228, 212, 183, 0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
 
-        .topic-nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.75rem;
-            margin: 2rem 0 2.5rem;
-        }
-        .topic-nav a {
-            background: white;
-            padding: 0.6rem 1.3rem;
-            border-radius: 60px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #1e293b;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-            border: 1px solid #e2e8f0;
-        }
-        .topic-nav a i {
-            margin-right: 8px;
-            color: #2563eb;
-        }
-        .topic-nav a:hover {
-            background: #2563eb;
-            color: white;
-            border-color: #2563eb;
-            transform: translateY(-2px);
-        }
-        .topic-nav a:hover i {
-            color: white;
-        }
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-        .card {
-            background: #ffffff;
-            border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.02);
-            padding: 2rem;
-            margin-bottom: 2.5rem;
-            transition: all 0.2s;
-            border: 1px solid #eef2ff;
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-yellow {
+  width: 100%;
+  min-width: 500px; 
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.table-yellow thead {
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+  color: #fff;
+}
+
+.table-yellow th {
+  padding: 12px;
+  text-align: center;
+}
+
+.table-yellow td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.table-yellow tbody tr:nth-child(even) {
+  background: #fff3e0;
+}
+
+.table-yellow tbody tr:hover {
+  background: #ffe0b2;
+  transition: 0.2s;
+}
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
+
+    .def-box {
+      background: linear-gradient(135deg, #4f65b9 0%, #4466bd 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
+
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .prop-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
+
+    .tree-visual {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .tree-visual svg { display: block; margin: 0 auto; }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
+
+    .formula {
+      background: #000000;
+      color: #F77F00;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .prime-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  line-height: 1.6;
+}
+
+.prime-card .badge {
+  background: linear-gradient(135deg, #4f8cff, #6fa8ff);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.prime-card .subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+.theory-box {
+  background: #eef4ff;
+  border-left: 4px solid #4f8cff;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+}
+
+.math {
+  font-family: monospace;
+  background: #fff;
+  padding: 6px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.example-math {
+  font-weight: bold;
+  color: #333;
+}
+
+/* PRIME GRID */
+.prime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.prime-grid span {
+  background: #f1f5ff;
+  padding: 8px;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.example-box {
+  background: #fff9e6;
+  border-left: 4px solid #f4c430;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+}
+
+.example-box.highlight {
+  background: #fff3cd;
+}
+
+.info-box {
+  background: #f0f8ff;
+  border-left: 4px solid #3498db;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.fun-fact {
+  font-size: 14px;
+  color: #555;
+}   
+
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #F77F00;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #F77F00;
+    }
+
+    .huffman-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #F77F00;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .orange-highlight {
+        color: #F77F00;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #c77c3c;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(106, 90, 45, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
+    }
+
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 15px;
+      }
+
+      .hero {
+        padding: 40px 16px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .btn-back {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+      
+      .container {
+        padding: 24px 14px 60px;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+      }
+      
+      .section-header {
+        gap: 10px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-num {
+         width: 34px;
+         height: 34px;
+         font-size: 0.8rem;
         }
-        .card:hover {
-            box-shadow: 0 24px 40px -16px rgba(0,0,0,0.12);
-        }
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #0f172a;
-            border-left: 5px solid #3b82f6;
-            padding-left: 1rem;
-        }
-        .section-title i {
-            font-size: 1.8rem;
-            color: #3b82f6;
-        }
-        .subtitle {
-            font-size: 1rem;
-            color: #475569;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px dashed #cbd5e1;
-            padding-bottom: 0.5rem;
-        }
-        .theory-box {
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 1.2rem 1.5rem;
-            margin: 1.2rem 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            border-left: 4px solid #3b82f6;
-            overflow-x: auto;
-        }
-        .example {
-            background: #f1f5f9;
-            padding: 1rem 1.5rem;
-            border-radius: 20px;
-            margin: 1rem 0;
-            border: 1px solid #e2e8f0;
-        }
-        .example p {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #1e293b;
-        }
-        .math {
-            font-family: 'JetBrains Mono', monospace;
-            background: #eef2ff;
-            padding: 0.2rem 0.4rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-        .step-list {
-            padding-left: 1.5rem;
-            margin: 0.8rem 0;
-        }
-        .step-list li {
-            margin: 0.4rem 0;
-        }
-        hr {
-            margin: 1rem 0;
-            border: 0;
-            height: 1px;
-            background: linear-gradient(90deg, #cbd5e1, transparent);
-        }
-        .prime-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-        .prime-badge {
-            background: #dbeafe;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-family: monospace;
-            font-weight: 500;
-        }
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #cbd5e1;
-            color: #475569;
-            font-size: 0.85rem;
-        }
-        @media (max-width: 640px) {
-            .container {
-                padding: 1rem;
-            }
-            .hero h1 {
-                font-size: 2rem;
-            }
-            .card {
-                padding: 1.3rem;
-            }
-            .section-title {
-                font-size: 1.5rem;
-            }
-        }
-        button.copy-btn {
-            background: none;
-            border: none;
-            float: right;
-            cursor: pointer;
-            font-size: 0.7rem;
-            color: #3b82f6;
-            font-family: monospace;
-            padding: 4px 8px;
-            border-radius: 20px;
-            transition: 0.1s;
-        }
-        button.copy-btn:hover {
-            background: #e2e8f0;
-        }
-    </style>
+        
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .formula {
+        font-size: 0.8rem;
+      }
+      
+      .tree-visual {
+        overflow-x: auto;
+      }
+      
+      .tree-visual svg {
+        min-width: 400px;
+      }
+      
+      .toc-bar {
+        padding: 0 10px;
+      }
+      
+      .toc-bar a {
+        font-size: 0.75rem;
+        padding: 10px 10px;
+      }
+      
+      .fab {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-  <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
-<div class="container">
-    <div class="hero">
-        <h1>Number Theory</h1>
+
+<header class="hero" id="top">
+  <span class="hero-icon">🔢</span>
+  <h1>Number Theory</h1>
+  <p>Materi lengkap Matematika Diskrit — Teori Bilangan, Properti, dan Aplikasi</p>
+   <a href="../../index.html?page=materi" class="btn-back">←  Kembali ke Materi</a>
+</header>
+
+<!-- TOC BAR -->
+<nav class="toc-bar">
+  <a href="#Prima">Bilangan Prima</a>
+  <a href="#Modulo">Algoritma Modulo</a>
+  <a href="#Kongruen">Kongruen</a>
+  <a href="#Euclidean">Algoritma Euclidean (FPB)</a>
+  <a href="#Kombinasi">Kombinasi Linear (Linear Combination)</a>
+  <a href="#Modular">Invers Modular</a>
+  <a href="#CRT">Teorema Sisa Cina (Chinese Remainder Theorem)</a>
+</nav>
+
+<main class="container">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. Bilangan Prima -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Prima">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Bilangan Prima</h2>
     </div>
 
-    <!-- ==================== BILANGAN PRIMA (MATERI BARU) ==================== -->
-    <div id="prima" class="card">
-        <div class="section-title">
-            <span>Bilangan Prima</span>
-        </div>
-        <div class="subtitle">Atom-atom dari bilangan bulat: definisi, teorema fundamental, dan pengujian keprimaan</div>
-        <p><strong>Bilangan prima</strong> adalah bilangan bulat positif lebih besar dari 1 yang hanya memiliki dua faktor positif: 1 dan dirinya sendiri. Bilangan komposit adalah bilangan yang memiliki lebih dari dua faktor. Bilangan 2 adalah satu-satunya prima genap.</p>
-        <div class="theory-box">
-            <strong>Definisi formal:</strong> <span class="math">p > 1</span> disebut prima jika untuk setiap <span class="math">a, b ∈ ℤ</span>, jika <span class="math">p | a·b</span> maka <span class="math">p | a</span> atau <span class="math">p | b</span>.<br>
-            <strong>Teorema Fundamental Aritmetika:</strong> Setiap bilangan bulat <span class="math">n > 1</span> dapat dinyatakan secara unik sebagai hasil kali bilangan prima (tanpa memperhatikan urutan).<br>
-            Contoh: <span class="math">84 = 2^2 × 3 × 7</span>.
-        </div>
-        <div class="example">
-            <p><i class="fas fa-list-ul"></i> <strong>Bilangan prima pertama (kurang dari 50):</strong></p>
-            <div class="prime-grid">
-                <span class="prime-badge">2</span> <span class="prime-badge">3</span> <span class="prime-badge">5</span> <span class="prime-badge">7</span>
-                <span class="prime-badge">11</span> <span class="prime-badge">13</span> <span class="prime-badge">17</span> <span class="prime-badge">19</span>
-                <span class="prime-badge">23</span> <span class="prime-badge">29</span> <span class="prime-badge">31</span> <span class="prime-badge">37</span>
-                <span class="prime-badge">41</span> <span class="prime-badge">43</span> <span class="prime-badge">47</span>
-            </div>
-            <p><strong>Fakta menarik:</strong> Terdapat tak terhingga banyaknya bilangan prima (Euclid, 300 SM).</p>
-        </div>
-        <p><strong>Pengujian keprimaan sederhana:</strong> Untuk mengecek apakah <span class="math">n</span> prima, cukup coba pembagian oleh semua bilangan prima ≤ √n. Algoritma Sieve of Eratosthenes efisien untuk menghasilkan daftar prima hingga batas tertentu.</p>
-        <p><strong>Peran penting dalam teori bilangan:</strong> Bilangan prima adalah fondasi untuk kriptografi RSA, pembangkit acak, fungsi hash, dan algoritma invers modular (karena invers ada jika modulus relatif prima).</p>
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Bilangan Prima</strong> adalah bilangan asli yang lebih besar dari 1 dan hanya memiliki dua faktor, yaitu 1 dan bilangan itu sendiri.</p>
     </div>
 
-    <!-- 1. ALGORITMA MODULO -->
-    <div id="modulo" class="card">
-        <div class="section-title">
-            <span>1. Algoritma Modulo</span>
-        </div>
-        <div class="subtitle">Operasi sisa pembagian dan fondasi aritmetika modular</div>
-        <p>Operasi <strong>modulo</strong> (dinotasikan <span class="math">a mod n</span>) menghasilkan sisa dari pembagian bilangan bulat <span class="math">a</span> oleh <span class="math">n</span> (dengan <span class="math">n > 0</span>). Secara formal:  
-        <span class="math">a = q·n + r</span> dengan <span class="math">0 ≤ r < n</span>, maka <span class="math">a mod n = r</span>.</p>
-        <div class="theory-box">
-            <i class="fas fa-code"></i> <strong>Algoritma Modulo (pseudocode):</strong><br>
-            <span style="font-family: monospace;">function modulo(a, n):<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;return a - n * floor(a / n)</span><br>
-            <small>Dalam pemrograman: operator <code>%</code>.</small>
-        </div>
-        <div class="example">
-            <p><i class="fas fa-lightbulb"></i> <strong>Contoh:</strong></p>
-            <ul class="step-list">
-                <li><span class="math">17 mod 5 = 2</span> karena 17 = 3·5 + 2.</li>
-                <li><span class="math">100 mod 7 = 2</span> (100 = 14·7 + 2).</li>
-                <li><span class="math">-8 mod 3</span> ≡ 1 (menurut definisi sisa non-negatif).</li>
-            </ul>
+    <p>Bilangan prima merupakan konsep dasar dalam teori bilangan dan memiliki peran penting dalam berbagai bidang matematika dan ilmu komputer.</p>
+<div class="card prime-card">
+
+    <div class="header">
+        <span class="badge">🔢 Bilangan Prima</span>
+        <div class="subtitle">
+            Atom-atom bilangan bulat: definisi, teorema fundamental, dan pengujian keprimaan
         </div>
     </div>
 
-    <!-- 2. KONGRUEN -->
-    <div id="kongruen" class="card">
-        <div class="section-title">
-            <span>2. Kongruen (Modular Congruence)</span>
-        </div>
-        <div class="subtitle">Dua bilangan dikatakan kongruen modulo n jika memiliki sisa yang sama</div>
-        <p>Notasi: <span class="math">a ≡ b (mod n)</span> artinya <span class="math">n | (a - b)</span>. Sifat ekuivalen: <span class="math">a mod n = b mod n</span>.</p>
-        <div class="theory-box">
-            <strong>Definisi formal:</strong> <span class="math">a ≡ b (mod n) ⇔ n | (a-b)</span><br>
-            Contoh: <span class="math">25 ≡ 10 (mod 5)</span> karena 25-10 = 15 habis dibagi 5.<br>
-            Relasi kongruen bersifat refleksif, simetris, transitif.
-        </div>
-        <div class="example">
-            <p><strong>Contoh penerapan:</strong></p>
-            <ul class="step-list">
-                <li>Jam analog: 14:00 ≡ 2:00 (mod 12).</li>
-                <li>Bilangan genap: <span class="math">a ≡ 0 (mod 2)</span>.</li>
-            </ul>
-        </div>
+    <p>
+        <strong>Bilangan prima</strong> adalah bilangan bulat positif lebih besar dari 1 
+        yang hanya memiliki dua faktor: <strong>1</strong> dan dirinya sendiri.
+        <br>
+        ⚠️ Bilangan komposit memiliki lebih dari dua faktor, dan 
+        <strong>2</strong> adalah satu-satunya prima genap.
+    </p>
+
+    <div class="theory-box">
+        <p><strong>📘 Definisi Formal:</strong></p>
+        <p class="math">
+            p > 1 disebut prima jika untuk setiap a, b ∈ ℤ,<br>
+            jika p | (a·b) maka p | a atau p | b
+        </p>
+
+        <p><strong>📐 Teorema Fundamental Aritmetika:</strong></p>
+        <p>
+            Setiap bilangan bulat n > 1 dapat ditulis secara unik sebagai hasil kali bilangan prima.
+        </p>
+
+        <p class="example-math">
+            ✨ Contoh: 84 = 2² × 3 × 7
+        </p>
     </div>
 
-    <!-- 3. ALGORITMA EUCLIDEAN (FPB) -->
-    <div id="euclidean" class="card">
-        <div class="section-title">
-            <span>3. Algoritma Euclidean</span>
+    <div class="example-box">
+        <p><strong>📋 Bilangan Prima < 50:</strong></p>
+
+        <div class="prime-grid">
+            <span>2</span><span>3</span><span>5</span><span>7</span>
+            <span>11</span><span>13</span><span>17</span><span>19</span>
+            <span>23</span><span>29</span><span>31</span><span>37</span>
+            <span>41</span><span>43</span><span>47</span>
         </div>
-        <div class="subtitle">Metode efisien untuk mencari FPB (Pembagi Persekutuan Terbesar)</div>
-        <p>Berdasarkan fakta: <span class="math">gcd(a, b) = gcd(b, a mod b)</span>. Ulangi sampai sisa = 0.</p>
-        <div class="theory-box">
-            <strong>Pseudocode:</strong><br>
-            <span style="font-family: monospace;">function gcd(a, b):<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;while b ≠ 0:<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temp = b; b = a mod b; a = temp<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;return a</span>
-        </div>
-        <div class="example">
-            <p><strong>Contoh: gcd(252, 105)</strong> → 252 mod 105 = 42 → gcd(105,42) → 105 mod 42 = 21 → gcd(42,21) → 42 mod 21 = 0 → gcd=21.</p>
-        </div>
+
+        <p class="fun-fact">
+            💡 Fakta: Bilangan prima tidak terbatas jumlahnya (dibuktikan oleh Euclid)
+        </p>
     </div>
 
-    <!-- 4. KOMBINASI LINEAR (LINEAR COMBINATION) -->
-    <div id="linear" class="card">
-        <div class="section-title">
-            <span>4. Kombinasi Linear & Identitas Bézout</span>
-        </div>
-        <div class="subtitle">Menyatakan FPB sebagai kombinasi linear dari dua bilangan</div>
-        <p>Teorema Bézout: terdapat bilangan bulat x, y sehingga <span class="math">a·x + b·y = gcd(a,b)</span>.</p>
-        <div class="theory-box">
-            🔹 Contoh: gcd(48,18)=6, dan 6 = 48·(-1) + 18·3.<br>
-            🔹 Metode: Extended Euclidean Algorithm.
-        </div>
-        <div class="example">
-            <p>Ilustrasi: gcd(30,12)=6 → 6 = 30·1 + 12·(-2).</p>
-        </div>
+    <!-- TESTING -->
+    <div class="info-box">
+        <p><strong>🔍 Pengujian Keprimaan:</strong></p>
+        <p>
+            Untuk mengecek apakah n prima, cukup uji pembagian oleh bilangan prima ≤ √n.
+        </p>
+        <p>
+            ⚙️ Metode populer: <strong>Sieve of Eratosthenes</strong>
+        </p>
     </div>
 
-    <!-- 5. INVERS MODULAR -->
-    <div id="invers" class="card">
-        <div class="section-title">
-            <span>5. Invers Modular</span>
-        </div>
-        <div class="subtitle">Mencari x sehingga a·x ≡ 1 (mod m)</div>
-        <p>Invers modular <span class="math">a^{-1} mod m</span> ada <strong>jika dan hanya jika</strong> <span class="math">gcd(a, m) = 1</span>. Bilangan prima memainkan peran kunci karena setiap bilangan yang tidak habis dibagi prima p memiliki invers modulo p.</p>
-        <div class="theory-box">
-            <strong>Mencari invers dengan Extended Euclidean:</strong><br>
-            Cari (x,y) sehingga a·x + m·y = 1, maka x mod m adalah invers.
-        </div>
-        <div class="example">
-            <p><strong>Contoh: invers dari 3 modulo 7</strong> → 3·5 = 15 ≡ 1 (mod 7) → invers = 5.</p>
-            <p><strong>Kaitannya dengan prima:</strong> Jika modulus adalah bilangan prima p, maka setiap a (1 ≤ a < p) memiliki invers. Invers digunakan dalam RSA dan kriptografi kurva eliptik.</p>
-        </div>
+    <!-- APPLICATION -->
+    <div class="example-box highlight">
+        <p><strong>🚀 Peran dalam Dunia Nyata:</strong></p>
+        <ul>
+            <li>🔐 Kriptografi (RSA)</li>
+            <li>🎲 Pembangkit bilangan acak</li>
+            <li>📦 Fungsi hash</li>
+            <li>⚡ Invers modular dalam sistem keamanan</li>
+        </ul>
     </div>
 
-<!-- Script copy untuk setiap theory-box -->
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. Algoritma Modulo -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Modulo">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Algoritma Modulo</h2>
+    </div>
+  <p>
+🔢 Misalkan terdapat dua bilangan bulat <strong>a</strong> dan <strong>m</strong> dengan <strong>m > 0</strong>. 
+Dalam <strong>algoritma modulo</strong>, kita mencari sisa pembagian dari <strong>a</strong> terhadap <strong>m</strong>.
+</p>
+
+<p>
+Operasi ditulis:
+<br>
+<strong>a mod m = r</strong>, dengan <strong>0 ≤ r < m</strong>
+</p>
+
+<div class="theory-box">
+<strong>📘 Definisi:</strong>
+<p>
+a ≡ r (mod m) ⇔ m | (a − r)
+</p>
+</div>
+
+<div class="example-box">
+
+<strong>💡 Pernyataan Ekuivalen:</strong>
+
+<ul class="nice-list">
+    <li><span>✔</span> a mod m = r</li>
+    <li><span>✔</span> a = m · q + r</li>
+    <li><span>✔</span> a ≡ r (mod m)</li>
+    <li><span>✔</span> m | (a − r)</li>
+</ul>
+
+</div>
+
+<div class="example-box">
+<strong>🧪 Contoh:</strong><br><br>
+17 mod 5 = 2<br>
+17 = 5 × 3 + 2<br><br>
+
+✔ 17 ≡ 2 (mod 5)<br>
+✔ 5 | (17 − 2)
+</div>
+
+<div class="theory-box">
+<strong>📘 Rumus:</strong><br>
+<span class="math">a mod n = a - n ⌊a/n⌋</span><br>
+<small>Gunakan operator <code>%</code> di pemrograman</small>
+</div>
+
+<div class="example-box">
+<strong>🧪 Contoh Tambahan:</strong>
+<ul>
+<li>17 mod 5 = 2</li>
+<li>100 mod 7 = 2</li>
+<li>-8 mod 3 = 1</li>
+</ul>
+</div>
+
+<div class="info-box">
+<strong>⚙️ Kegunaan:</strong>
+<ul>
+<li>🔐 Kriptografi</li>
+<li>🧮 Aritmetika modular</li>
+<li>⏱️ Sistem waktu</li>
+<li>💻 Pemrograman</li>
+</ul>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. Kongruen -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Kongruen">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Kongruen</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Kongruen</strong> adalah hubungan antara dua bilangan bulat yang memiliki sisa pembagian yang sama ketika dibagi oleh bilangan bulat positif yang sama.</p>
+    </div>
+
+    <p>Notasi kongruen:</p>
+    <p><strong>a ≡ b (mod m)</strong></p>
+    <p>Artinya: <strong>m | (a − b)</strong></p>
+
+    <div class="example-box">
+      <strong>🧪 Contoh:</strong><br><br>
+      17 ≡ 2 (mod 5) karena 5 | (17 − 2)<br>
+      10 ≡ 1 (mod 3) karena 3 | (10 − 1)
+    </div>
+    <h3>🔢 Kongruen (Modular Arithmetic)</h3>
+
+<p>
+Dua bilangan dikatakan <strong>kongruen modulo n</strong> jika memiliki sisa pembagian yang sama.
+</p>
+
+<p style="font-size:15px;">
+<span class="math">a ≡ b (mod n)</span> ⟺ 
+<span class="math">a mod n = b mod n</span>
+</p>
+
+<hr>
+
+<h4>📘 Konsep Dasar</h4>
+<p>
+Kongruen berarti selisih dua bilangan habis dibagi oleh <strong>n</strong>.
+</p>
+
+<p>
+<span class="math">a ≡ b (mod n)</span> ⟺ 
+<span class="math">n | (a - b)</span>
+</p>
+
+<p><strong>Contoh:</strong></p>
+<p>
+<span class="math">25 ≡ 10 (mod 5)</span><br>
+karena <span class="math">25 - 10 = 15</span> dan 15 habis dibagi 5.
+</p>
+
+<hr>
+
+<h4>⚙️ Sifat-Sifat</h4>
+<ul>
+<li>a ≡ a (refleksif)</li>
+<li>Jika a ≡ b maka b ≡ a (simetris)</li>
+<li>Jika a ≡ b dan b ≡ c maka a ≡ c (transitif)</li>
+</ul>
+
+<hr>
+
+<h4>➕ Operasi</h4>
+<ul>
+<li>a ≡ b → a + c ≡ b + c (mod n)</li>
+<li>a ≡ b → a × c ≡ b × c (mod n)</li>
+<li>a ≡ b → a² ≡ b² (mod n)</li>
+</ul>
+
+<hr>
+
+<h4>🧪 Contoh Cepat</h4>
+<p>
+<span class="math">7 ≡ 2 (mod 5)</span><br>
+→ 7 + 3 ≡ 0 (mod 5)<br>
+→ 7 × 2 ≡ 4 (mod 5)
+</p>
+
+<hr>
+
+<h4>🌍 Aplikasi</h4>
+<ul>
+<li>Jam (14 ≡ 2 mod 12)</li>
+<li>Bilangan genap/ganjil</li>
+<li>Kriptografi</li>
+<li>Pemrograman & hashing</li>
+</ul>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. Algoritma Euclidean (FPB) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Euclidean">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Algoritma Euclidean (FPB)</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Algoritma Euclidean</strong> adalah algoritma untuk mencari <strong>Faktor Persekutuan Terbesar (FPB)</strong> dari dua bilangan bulat.</p>
+    </div>
+
+    <p>Algoritma ini didasarkan pada prinsip bahwa FPB dari dua bilangan sama dengan FPB dari bilangan kedua dan sisa pembagian pertama dengan kedua.</p>
+    <h3>🧮 Algoritma Euclidean (FPB)</h3>
+
+<p class="subtitle">
+Metode efisien untuk mencari FPB (Pembagi Persekutuan Terbesar)
+</p>
+
+<p>
+Algoritma ini berdasarkan sifat:
+<br>
+<span class="math">gcd(a, b) = gcd(b, a mod b)</span>
+</p>
+
+<p>
+Proses dilakukan berulang sampai sisa pembagian menjadi <strong>0</strong>.
+</p>
+
+<hr>
+
+<h4>⚙️ Langkah-Langkah</h4>
+<ol>
+<li>Bagi a dengan b → dapatkan sisa</li>
+<li>Ganti a = b, b = sisa</li>
+<li>Ulangi sampai sisa = 0</li>
+<li>Nilai terakhir a adalah FPB</li>
+</ol>
+
+<hr>
+
+<h4>💻 Pseudocode</h4>
+<pre style="background:#f5f5f5;padding:10px;border-radius:8px;overflow-x:auto;">
+function gcd(a, b):
+    while b ≠ 0:
+        temp = b
+        b = a mod b
+        a = temp
+    return a
+</pre>
+
+<hr>
+
+  <div class="example-box"
+<h4>🧪 Contoh</h4>
+<p>
+gcd(252, 105):
+</p>
+
+<ul>
+<li>252 mod 105 = 42 → gcd(105, 42)</li>
+<li>105 mod 42 = 21 → gcd(42, 21)</li>
+<li>42 mod 21 = 0 → berhenti</li>
+</ul>
+
+<p><strong>Hasil: gcd = 21</strong></p>
+  </div>
+
+<hr>
+
+<h4>➕ Sifat Penting</h4>
+<ul>
+<li><span class="math">gcd(a, 0) = a</span></li>
+<li><span class="math">gcd(a, b) = gcd(b, a)</span></li>
+<li><span class="math">gcd(a, b) = gcd(a - b, b)</span></li>
+</ul>
+
+<hr>
+
+<h4>🚀 Kegunaan</h4>
+<ul>
+<li>Menyederhanakan pecahan</li>
+<li>Dasar algoritma kriptografi</li>
+<li>Mencari invers modular</li>
+<li>Masalah matematika diskrit</li>
+</ul>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. Kombinasi Linear (Linear Combination) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Kombinasi">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Kombinasi Linear (Linear Combination)</h2>
+    </div>
+
+  <p>
+Dalam teori bilangan, <strong>Kombinasi Linear (Linear Combination)</strong> adalah bentuk 
+penjumlahan beberapa bilangan yang masing-masing dikalikan dengan bilangan bulat.
+</p>
+
+<p>
+Secara umum, kombinasi linear dari dua bilangan <strong>a</strong> dan <strong>b</strong> ditulis sebagai:
+<br>
+<span class="math">ax + by</span>, dengan <strong>x, y ∈ ℤ</strong>
+</p>
+
+<p>
+Artinya, kita mencari nilai <strong>x</strong> dan <strong>y</strong> sehingga ekspresi tersebut menghasilkan suatu nilai tertentu.
+</p>
+<p class="subtitle">
+Menyatakan FPB sebagai kombinasi linear dari dua bilangan
+</p>
+
+<p>
+Dalam teori bilangan, setiap FPB dari dua bilangan dapat dituliskan sebagai kombinasi linear:
+<br>
+<span class="math">a·x + b·y = gcd(a,b)</span>
+</p>
+
+<p>
+Di mana <strong>x</strong> dan <strong>y</strong> adalah bilangan bulat. Pernyataan ini dikenal sebagai 
+<strong>Teorema Bézout</strong>.
+</p>
+
+<hr>
+
+<h4>📘 Contoh</h4>
+<p>
+<span class="math">gcd(48,18) = 6</span><br>
+Salah satu bentuk kombinasi linear:
+<br>
+<span class="math">6 = 48(-1) + 18(3)</span>
+</p>
+
+<p>
+<span class="math">gcd(30,12) = 6</span><br>
+<span class="math">6 = 30(1) + 12(-2)</span>
+</p>
+
+<hr>
+
+<h4>⚙️ Cara Menentukan x dan y</h4>
+<p>
+Gunakan <strong>Extended Euclidean Algorithm</strong>, yaitu pengembangan dari algoritma Euclidean 
+untuk melacak nilai x dan y.
+</p>
+
+<hr>
+
+<div class="example-box">
+<h4>➕ Sifat Penting</h4>
+<ul>
+<li>FPB selalu dapat ditulis sebagai kombinasi linear</li>
+<li>Nilai x dan y tidak tunggal (bisa banyak solusi)</li>
+<li>Jika <span class="math">d = gcd(a,b)</span>, maka semua kombinasi linear adalah kelipatan d</li>
+</ul>
+</div>
+
+<hr>
+
+<div class="example-box">
+<h4>🚀 Kegunaan</h4>
+<ul>
+<li>Mencari invers modular</li>
+<li>Menyelesaikan persamaan Diofantin</li>
+<li>Kriptografi (RSA)</li>
+<li>Dasar aritmetika modular</li>
+</ul>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. Invers Modular -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Modular">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Invers Modular</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Invers Modular</strong> adalah bilangan bulat x yang memenuhi persamaan:</p>
+      <p><span class="math">a·x ≡ 1 (mod m)</span></p>
+    </div>
+<div id="invers" class="card">
+    <p>
+        Invers modular adalah bilangan <strong>x</strong> yang memenuhi:
+        <br>
+        <span class="math">a · x ≡ 1 (mod m)</span>
+    </p>
+
+    <p>
+        Artinya, jika <strong>a</strong> dikalikan dengan <strong>x</strong>, hasilnya akan setara dengan 1 dalam modulo <strong>m</strong>.
+    </p>
+
+    <div class="theory-box">
+        <strong>📘 Syarat penting:</strong><br>
+        Invers modular <strong>ada jika dan hanya jika</strong>:
+        <br><br>
+        <span class="math">gcd(a, m) = 1</span>
+        <br><br>
+        (artinya a dan m harus relatif prima)
+    </div>
+
+    <div class="theory-box">
+        <strong>⚙️ Cara mencari invers:</strong><br>
+        Gunakan <strong>Extended Euclidean Algorithm</strong>
+        <br><br>
+        Cari nilai <span class="math">x</span> dan <span class="math">y</span> sehingga:
+        <br>
+        <span class="math">a·x + m·y = 1</span>
+        <br><br>
+        Maka:
+        <br>
+        <strong>x mod m = invers modular</strong>
+    </div>
+
+    <div class="example-box">
+        <strong>🧪 Contoh:</strong><br><br>
+
+        Invers dari <strong>3 modulo 7</strong>:
+        <br><br>
+
+        <span class="math">3 · 5 = 15 ≡ 1 (mod 7)</span>
+        <br><br>
+
+        Jadi:
+        <br>
+        <strong>3⁻¹ mod 7 = 5</strong>
+    </div>
+
+    <div class="example-box">
+        <strong>💡 Fakta penting:</strong>
+        <ul>
+            <li>Jika modulus adalah bilangan prima <strong>p</strong></li>
+            <li>Maka semua <strong>1 ≤ a < p</strong> punya invers</li>
+        </ul>
+    </div>
+
+    <div class="example-box">
+        <strong>🚀 Kegunaan Invers Modular:</strong>
+        <ul>
+            <li>🔐 Kriptografi (RSA, keamanan digital)</li>
+            <li>💻 Algoritma hashing</li>
+            <li>🧮 Aritmetika modular</li>
+            <li>📡 Sistem komunikasi & enkripsi data</li>
+        </ul>
+    </div>
+
+</div>
 <script>
-    document.querySelectorAll('.theory-box').forEach((box) => {
-        let btn = document.createElement('button');
-        btn.innerHTML = '<i class="far fa-copy"></i> salin';
-        btn.className = 'copy-btn';
-        btn.style.float = 'right';
-        btn.style.background = 'transparent';
-        btn.style.border = 'none';
-        btn.style.cursor = 'pointer';
-        btn.style.fontSize = '0.7rem';
-        btn.style.padding = '4px 8px';
-        btn.style.borderRadius = '20px';
-        btn.style.color = '#2563eb';
-        btn.onclick = () => {
-            let textToCopy = box.innerText.replace('salin', '').trim();
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                btn.innerHTML = '<i class="fas fa-check"></i> tersalin';
-                setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i> salin'; }, 1500);
-            }).catch(() => alert("Gagal menyalin teks"));
-        };
-        box.style.position = 'relative';
-        box.insertBefore(btn, box.firstChild);
-    });
+document.querySelectorAll('.theory-box').forEach((box) => {
+    let btn = document.createElement('button');
+    btn.innerText = 'salin';
+    btn.className = 'copy-btn';
+
+    btn.style.position = 'absolute';
+    btn.style.top = '8px';
+    btn.style.right = '10px';
+    btn.style.background = '#f4c430';
+    btn.style.border = 'none';
+    btn.style.padding = '3px 8px';
+    btn.style.fontSize = '11px';
+    btn.style.borderRadius = '20px';
+    btn.style.cursor = 'pointer';
+
+    btn.onclick = () => {
+        let text = box.innerText.replace('salin', '').trim();
+        navigator.clipboard.writeText(text);
+
+        btn.innerText = '✔';
+        setTimeout(() => btn.innerText = 'salin', 1200);
+    };
+
+    box.style.position = 'relative';
+    box.appendChild(btn);
+});
 </script>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. Teorema Sisa Cina (Chinese Remainder Theorem) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="CRT">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Teorema Sisa Cina (Chinese Remainder Theorem)</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Teorema Sisa Cina</strong> adalah teorema dalam aritmetika modular yang menyatakan bahwa jika kita memiliki sistem kongruensi linear dengan modulus yang saling prima, maka ada solusi unik modulo hasil kali semua modulus.</p>
+    </div>
+
+    <p>Teorema ini sangat berguna dalam menyelesaikan sistem persamaan kongruensi dan memiliki aplikasi dalam kriptografi dan teori bilangan.</p>
+<div class="card">
+
+    <div class="section-title">
+    </div>
+
+    <div class="subtitle">
+        Menentukan solusi unik dari sistem kongruensi dengan modulus berbeda
+    </div>
+
+    <p>
+        Teorema Sisa Cina digunakan untuk mencari bilangan <strong>x</strong> yang memenuhi beberapa
+        persamaan kongruensi sekaligus, dengan syarat bahwa semua modulus saling relatif prima.
+    </p>
+
+    <div class="theory-box">
+        <strong>📘 Bentuk Umum:</strong><br><br>
+
+        x ≡ a₁ (mod m₁)<br>
+        x ≡ a₂ (mod m₂)<br>
+        ...<br>
+        x ≡ aₙ (mod mₙ)<br><br>
+
+        <strong>Syarat:</strong> gcd(mᵢ, mⱼ) = 1 untuk i ≠ j<br>
+        <strong>Hasil:</strong> Solusi unik modulo M = m₁·m₂·...·mₙ
+    </div>
+
+    <h4>🔧 Langkah Penyelesaian</h4>
+    <ul>
+        <li>Hitung M = m₁ × m₂ × ... × mₙ</li>
+        <li>Hitung Mᵢ = M / mᵢ</li>
+        <li>Cari invers modular dari Mᵢ terhadap mᵢ</li>
+        <li>Gunakan rumus: x = Σ (aᵢ · Mᵢ · yᵢ)</li>
+        <li>Ambil hasil akhir: x mod M</li>
+    </ul>
+
+    <div class="example-box">
+        <strong>🧪 Contoh:</strong><br><br>
+
+        x ≡ 2 (mod 3)<br>
+        x ≡ 3 (mod 5)<br>
+        x ≡ 2 (mod 7)<br><br>
+
+        M = 3×5×7 = 105<br><br>
+
+        ✔ Solusi akhirnya:<br>
+        <strong>x ≡ 23 (mod 105)</strong>
+    </div>
+
+    <h4>📊 Tabel Perhitungan Singkat</h4>
+    <div class="table-container">
+        <table class="table-yellow">
+            <thead>
+                <tr>
+                    <th>i</th>
+                    <th>aᵢ</th>
+                    <th>mᵢ</th>
+                    <th>Mᵢ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>35</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>21</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>7</td>
+                    <td>15</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="example-box">
+        <strong>💡 Inti Konsep:</strong>
+        <ul>
+            <li>Beberapa kongruensi bisa digabung jadi satu solusi</li>
+            <li>Solusi selalu ada jika modulus saling prima</li>
+            <li>Solusi bersifat unik dalam modulo M</li>
+        </ul>
+    </div>
+
+    <div class="info-box">
+        <strong>⚙️ Kegunaan CRT:</strong>
+        <ul>
+            <li>🔐 Kriptografi (RSA, keamanan data)</li>
+            <li>💻 Optimasi perhitungan komputer</li>
+            <li>🧮 Sistem bilangan modular</li>
+            <li>⏱️ Sinkronisasi sistem periodik</li>
+        </ul>
+    </div>
+
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SUMMARY -->
+  <!-- ══════════════════════════════════════════ -->
+ <section class="section-card" style="background: linear-gradient(135deg,#eef2ff,#dbeafe);">
+  <div class="section-header">
+    <div class="section-num" style="background:#3b82f6;">✓</div>
+    <h2 style="color:#1e3a8a;">Rangkuman Number Theory</h2>
+  </div>
+
+  <div class="table-container">
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Topik</th>
+          <th>Poin Utama</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Bilangan Prima</strong></td>
+          <td>Bilangan > 1 yang hanya punya dua faktor (1 dan dirinya); dasar kriptografi</td>
+        </tr>
+        <tr>
+          <td><strong>Algoritma Modulo</strong></td>
+          <td>Sisa pembagian: a mod n = r dengan 0 ≤ r &lt; n</td>
+        </tr>
+        <tr>
+          <td><strong>Kongruensi</strong></td>
+          <td>a ≡ b (mod n) jika n membagi (a − b); dasar aritmetika modular</td>
+        </tr>
+        <tr>
+          <td><strong>Algoritma Euclidean</strong></td>
+          <td>Mencari FPB dengan gcd(a,b) = gcd(b, a mod b)</td>
+        </tr>
+        <tr>
+          <td><strong>Kombinasi Linear</strong></td>
+          <td>Bentuk ax + by = gcd(a,b); dikenal sebagai Identitas Bézout</td>
+        </tr>
+        <tr>
+          <td><strong>Invers Modular</strong></td>
+          <td>a⁻¹ mod m ada jika gcd(a,m)=1; digunakan dalam kriptografi</td>
+        </tr>
+        <tr>
+          <td><strong>Teorema Sisa Cina</strong></td>
+          <td>Menyelesaikan sistem kongruensi dengan solusi unik modulo hasil kali modulus</td>
+        </tr>
+        <tr>
+          <td><strong>Faktorisasi Prima</strong></td>
+          <td>Setiap bilangan dapat diuraikan menjadi perkalian bilangan prima</td>
+        </tr>
+        <tr>
+          <td><strong>Relatif Prima</strong></td>
+          <td>Dua bilangan dikatakan relatif prima jika FPB = 1</td>
+        </tr>
+        <tr>
+          <td><strong>Aplikasi</strong></td>
+          <td>Kriptografi (RSA), keamanan data, hashing, sistem waktu & komputasi</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+    <div style="text-align:center; margin-top:24px;">
+      <a href="../../index.html?page=materi" class="btn-back" style="background:var(--accent); border-color:var(--accent2); color:#fff; font-size:1rem; padding:13px 32px;">← Kembali ke Halaman Materi</a>
+  </section>
+
+</main>
+</section>
+
+<!-- FAB scroll to top -->
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
 </body>
 </html>
