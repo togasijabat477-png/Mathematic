@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Matriks — Matematika Diskrit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #4338ca;
+      --accent2: #4338ca;;
+      --accent3: #b7b7e4;
+      --accent-warm: #c77c3c;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(45, 106, 79, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1e1b43 0%, #322d6a 55%, #404091 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(183, 185, 228, 0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
+
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
+
+    .def-box {
+      background: linear-gradient(135deg, #e9e9f5 0%, #d2d1ea 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
+
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .prop-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
+
+    .tree-visual {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .tree-visual svg { display: block; margin: 0 auto; }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
+
+    .formula {
+      background: #1b1f2e;
+      color: #b7e4c7;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+.matrix-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 25px 0;
+    gap: 8px;
+}
+
+.matrix-box {
+    padding: 10px 14px;
+    font-family: "Times New Roman", serif;
+    font-size: 18px;
+    line-height: 1.8;
+    text-align: center;
+    color: #1f2937;
+}
+
+.matrix-bracket {
+    width: 12px;
+    height: 100%;
+    min-height: 90px;
+    border: 2px solid #1f2937;
+}
+
+.matrix-bracket.left {
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+}
+
+.matrix-bracket.right {
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+}
+
+.matrix-symbol {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 5px;
+    color: #374151;
+}
+
+.matrix-box:hover {
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+@media (max-width: 600px) {
+    .matrix-box {
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 8px;
+    }
+
+    .matrix-bracket {
+        min-height: 70px;
+    }
+
+    .matrix-symbol {
+        font-size: 16px;
+    }
+}
+ 
+.matrix-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-family: "Times New Roman", serif;
+}
+
+.matrix-label {
+    font-size: 1.3rem;
+    font-weight: bold;
+    font-style: italic;
+    margin-right: 10px;
+}
+
+.matrix-box {
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    padding: 10px 20px;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    border-radius: 25px; 
+}
+
+.matrix-box::before, .matrix-box::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 6px;
+    background: white;
+}
+
+.matrix-box::before { top: -3px; }
+.matrix-box::after { bottom: -3px; }
+
+.matrix-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px; 
+}
+
+.matrix-row span {
+    font-size: 1.2rem;
+    min-width: 25px;
+    text-align: center;
+    padding: 4px 0;
+}
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #1b2143;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #1e1b43;
+    }
+
+    .huffman-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #322d6a;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .blue {
+        color: #2d2d6a;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #c77c3c;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
+      /* Container Utama agar di Tengah */
+.matrix-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    font-family: "Times New Roman", serif;
+}
+
+.label {
+    font-size: 22px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.matrix {
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    padding: 10px 22px; 
+    border-left: 1.5px solid black;
+    border-right: 1.5px solid black;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+
+.matrix::before, .matrix::after {
+    content: "";
+    position: absolute;
+    left: 15px; 
+    right: 15px;
+    height: 5px;
+    background: white; 
+}
+
+.matrix::before { top: -2px; }
+.matrix::after { bottom: -2px; }
+
+.matrix-row {
+    display: flex;
+    justify-content: center;
+    gap: 25px; 
+}
+
+.matrix-row span {
+    font-size: 20px;
+    min-width: 20px;
+    text-align: center;
+    padding: 5px 0;
+}
+
+/* Responsif HP */
+@media (max-width: 480px) {
+    .matrix-row { gap: 15px; }
+    .matrix-row span { font-size: 18px; }
+    .label { font-size: 18px; }
+}
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(45, 49, 106, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
+    }
+
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 15px;
+      }
+
+      .hero {
+        padding: 40px 16px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .btn-back {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+      
+      .container {
+        padding: 24px 14px 60px;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+      }
+      
+      .section-header {
+        gap: 10px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-num {
+         width: 34px;
+         height: 34px;
+         font-size: 0.8rem;
+        }
+        
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .formula {
+        font-size: 0.8rem;
+      }
+      
+      .tree-visual {
+        overflow-x: auto;
+      }
+      
+      .tree-visual svg {
+        min-width: 400px;
+      }
+      
+      .toc-bar {
+        padding: 0 10px;
+      }
+      
+      .toc-bar a {
+        font-size: 0.75rem;
+        padding: 10px 10px;
+      }
+      
+      .fab {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="hero" id="top">
+  <span class="hero-icon">📊</span>
+  <h1>Matriks</h1>
+ <p>Materi lengkap Matematika Diskrit — Matriks, Representasi, Operasi, dan Aplikasinya</p>
+ <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
+</header>
+
+<nav class="toc-bar">
+  <a href="#Defenisi">Definisi & Notasi</a>
+  <a href="#Jenis">Jenis-Jenis Matriks</a>
+  <a href="#Operasi">Operasi Matriks</a>
+  <a href="#Sifat">Sifat & Teorema</a>
+  <a href="#Polinomial">Matriks Polinomial</a>
+  <a href="#Invers">Invers Matriks</a>
+  <a href="#Aplikasi">Aplikasi Matriks</a>
+</nav>
+
+<main class="container">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. Defenisi & Notasi -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Defenisi">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Defenisi & Notasi</h2>
+    </div>
+    <div class="card">
+
+<h3>📊 Definisi Matriks</h3>
+
+<p>
+<strong>Matriks</strong> adalah susunan bilangan (biasanya bilangan real) 
+yang disusun dalam bentuk <strong>baris</strong> dan <strong>kolom</strong>.
+</p>
+
+<div class="example-box">
+📌 Bentuk umum:
+<div class="rumus">
+A = [ a<sub>ij</sub> ]
+</div>
+
+Keterangan:<br>
+🔹 i = baris<br>
+🔹 j = kolom
+</div>
+
+<p>
+Ukuran suatu matriks disebut <strong>ordo</strong>, ditulis sebagai:
+</p>
+
+<div class="example-box">
+📐 <strong>Ordo matriks:</strong>
+<div class="rumus">
+m × n
+</div>
+m = jumlah baris<br>
+n = jumlah kolom
+</div>
+
+<hr>
+
+<h3>🔢 Contoh Matriks</h3>
+
+<div class="example-box">
+
+<div class="matrix-wrapper">
+
+    <div class="matrix-label">A =</div>
+
+    <div class="matrix-box">
+        <div class="matrix-row">
+            <span>2</span>
+            <span>4</span>
+            <span>6</span>
+        </div>
+        <div class="matrix-row">
+            <span>1</span>
+            <span>3</span>
+            <span>5</span>
+        </div>
+    </div>
+
+</div>
+</div>
+
+📌 Matriks di atas berordo <strong>2 × 3</strong>
+
+</div>
+
+<hr>
+
+<h3>✨ Elemen Matriks</h3>
+
+<p>
+Setiap angka dalam matriks disebut <strong>elemen</strong>.
+</p>
+
+<div class="example-box">
+🔢 Elemen ditulis sebagai:
+<div class="rumus">
+a<sub>ij</sub>
+</div>
+
+Contoh:<br>
+a<sub>12</sub> = elemen baris ke-1 kolom ke-2
+</div>
+
+<hr>
+
+<div class="explain ok">
+💡 <strong>Intinya:</strong><br>
+Matriks adalah cara menyusun data dalam bentuk terstruktur 
+sehingga mudah dihitung, dianalisis, dan digunakan dalam berbagai bidang seperti SPL, grafik, dan komputer.
+</div>
+
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. Jenis-Jenis Matriks -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Jenis">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Jenis-Jenis Matriks</h2>
+    </div>
+
+    <p>
+Dalam matematika, <strong>matriks</strong> memiliki berbagai jenis berdasarkan 
+bentuk, isi, dan sifat-sifatnya. Setiap jenis matriks memiliki karakteristik 
+tersendiri yang digunakan untuk tujuan tertentu dalam perhitungan dan analisis.
+</p>
+
+<p>
+Matriks merupakan salah satu konsep penting dalam matematika diskrit dan aljabar linear. 
+Berdasarkan bentuk, sifat, dan elemen penyusunnya, matriks dibagi menjadi beberapa jenis.
+Berikut adalah jenis-jenis matriks beserta penjelasan dan contohnya.
+</p>
+
+<p>
+Berikut adalah beberapa <strong>jenis-jenis matriks</strong> yang umum digunakan 
+dalam matematika:
+</p>
+
+<hr>
+<h3>1. ✨ Matriks Baris</h3>
+<p>📌 Matriks yang hanya memiliki satu baris (ordo 1 × n).</p>
+
+<div class="matrix-wrapper">
+    <div class="label">A =</div>
+    <div class="matrix">
+        <div class="matrix-row">
+            <span>2</span><span>4</span><span>6</span><span>8</span>
+        </div>
+    </div>
+</div>
+
+<p><b>💡 Ordo:</b> 1 × 4</p>
+
+<hr>
+
+<h3>2. 📊 Matriks Kolom</h3>
+<p>📌 Matriks yang hanya memiliki satu kolom (ordo m × 1).</p>
+
+<div class="matrix-wrapper">
+    <div class="label">B =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>3</span></div>
+        <div class="matrix-row"><span>5</span></div>
+        <div class="matrix-row"><span>7</span></div>
+    </div>
+</div>
+
+<p><b>💡 Ordo:</b> 3 × 1</p>
+
+<hr>
+
+<h3>3. 🔲 Matriks Persegi</h3>
+<p>📌 Matriks yang jumlah baris dan kolomnya sama (ordo n × n).</p>
+
+<div class="matrix-wrapper">
+    <div class="label">C =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>1</span><span>2</span></div>
+        <div class="matrix-row"><span>3</span><span>4</span></div>
+    </div>
+</div>
+
+<p><b>💡 Ordo:</b> 2 × 2</p>
+
+<hr>
+
+<h3>4. ⚪ Matriks Nol</h3>
+<p>📌 Semua elemennya bernilai 0.</p>
+
+<div class="matrix-wrapper">
+    <div class="label">O =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>0</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>0</span></div>
+    </div>
+</div>
+
+<p>💡 Digunakan sebagai identitas dalam penjumlahan matriks</p>
+
+<hr>
+
+<h3>5. 🆔 Matriks Identitas</h3>
+<p>📌 Diagonal utama = 1, lainnya = 0.</p>
+
+<div class="matrix-wrapper">
+    <div class="label">I =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>1</span><span>0</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>1</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>0</span><span>1</span></div>
+    </div>
+</div>
+
+<p>💡 Tidak mengubah hasil perkalian matriks</p>
+
+<hr>
+
+<h3>6. 🔷 Matriks Diagonal</h3>
+<p>📌 Elemen di luar diagonal utama = 0.</p>
+
+<div class="matrix-wrapper">
+    <div class="label">D =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>3</span><span>0</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>5</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>0</span><span>7</span></div>
+    </div>
+</div>
+
+<p>💡 Hanya diagonal utama yang bernilai bebas</p>
+
+<hr>
+
+<h3>7. 🔺 Matriks Segitiga Atas</h3>
+<p>📌 Elemen di bawah diagonal utama = 0.</p>
+
+<div class="matrix-wrapper">
+    <div class="label">E =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>2</span><span>4</span><span>6</span></div>
+        <div class="matrix-row"><span>0</span><span>3</span><span>5</span></div>
+        <div class="matrix-row"><span>0</span><span>0</span><span>1</span></div>
+    </div>
+</div>
+
+<p>💡 Banyak digunakan dalam eliminasi Gauss</p>
+
+<hr>
+
+<h3>8. 🔻 Matriks Segitiga Bawah</h3>
+<p>📌 Elemen di atas diagonal utama = 0.</p>
+
+<div class="matrix-wrapper">
+    <div class="label">F =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>4</span><span>0</span><span>0</span></div>
+        <div class="matrix-row"><span>2</span><span>5</span><span>0</span></div>
+        <div class="matrix-row"><span>1</span><span>3</span><span>6</span></div>
+    </div>
+</div>
+
+<p>💡 Digunakan dalam metode substitusi maju</p>
+
+<hr>
+
+<h3>9. 🔁 Matriks Simetris</h3>
+<p>📌 Memenuhi A = A<sup>T</sup></p>
+
+<div class="matrix-wrapper">
+    <div class="label">G =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>1</span><span>2</span><span>3</span></div>
+        <div class="matrix-row"><span>2</span><span>4</span><span>5</span></div>
+        <div class="matrix-row"><span>3</span><span>5</span><span>6</span></div>
+    </div>
+</div>
+
+<p>💡 Elemen atas = elemen bawah (simetris)</p>
+
+<hr>
+
+<h3>10. 📐 Matriks Persegi Panjang</h3>
+<p>📌 Jumlah baris ≠ jumlah kolom</p>
+
+<div class="matrix-wrapper">
+    <div class="label">H =</div>
+    <div class="matrix">
+        <div class="matrix-row"><span>1</span><span>2</span><span>3</span></div>
+        <div class="matrix-row"><span>4</span><span>5</span><span>6</span></div>
+    </div>
+</div>
+
+<p><b>💡 Ordo:</b> 2 × 3</p>
+
+<hr>
+
+<h3>📌 Kesimpulan</h3>
+<p>
+    Jenis-jenis matriks dibedakan berdasarkan bentuk, ukuran (ordo), serta pola elemen di dalamnya.
+</p>
+
+<p>
+    💡 Pemahaman ini sangat penting untuk operasi matriks seperti:
+</p>
+
+<ul>
+    <li>✔ Penjumlahan</li>
+    <li>✔ Perkalian</li>
+    <li>✔ Determinan</li>
+    <li>✔ Invers</li>
+</ul>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. Operasi Matriks -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Operasi">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Operasi Matriks</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Operasi matriks</strong> adalah perhitungan yang dilakukan pada matriks, seperti penjumlahan, pengurangan, perkalian, dan lainnya.</p>
+    </div>
+<p>
+Operasi matriks adalah proses perhitungan antar matriks untuk menghasilkan matriks baru.
+Operasi ini meliputi penjumlahan, pengurangan, perkalian, skalar, dan transpose.
+</p>
+
+<hr>
+
+<h3>➕ 1. Penjumlahan Matriks</h3>
+<p>Syarat: Ordo harus sama</p>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>1</span><span>2</span></div>
+        <div class="matrix-row"><span>3</span><span>4</span></div>
+    </div>
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">B =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>5</span><span>6</span></div>
+        <div class="matrix-row"><span>7</span><span>8</span></div>
+    </div>
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A + B =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>6</span><span>8</span></div>
+        <div class="matrix-row"><span>10</span><span>12</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>➖ 2. Pengurangan Matriks</h3>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A - B =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>-4</span><span>-4</span></div>
+        <div class="matrix-row"><span>-4</span><span>-4</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>✖️ 3. Perkalian Matriks</h3>
+<p>Syarat: Kolom A = Baris B</p>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A × B =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>4</span><span>4</span></div>
+        <div class="matrix-row"><span>10</span><span>8</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>🔢 4. Perkalian Skalar</h3>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">2A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>4</span></div>
+        <div class="matrix-row"><span>6</span><span>8</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>🔁 5. Transpose Matriks</h3>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">Aᵀ =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>1</span><span>3</span></div>
+        <div class="matrix-row"><span>2</span><span>4</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>📊 Sifat-Sifat Matriks</h3>
+<ul>
+<li>A + B = B + A (komutatif)</li>
+<li>(A + B) + C = A + (B + C)</li>
+<li>A × B ≠ B × A</li>
+<li>A × I = A</li>
+<li>A + 0 = A</li>
+</ul>
+
+<hr>
+
+<h3>🧠 Contoh Soal</h3>
+<p>Hitung A × B</p>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>1</span></div>
+        <div class="matrix-row"><span>0</span><span>3</span></div>
+    </div>
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">B =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>1</span><span>4</span></div>
+        <div class="matrix-row"><span>2</span><span>5</span></div>
+    </div>
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">Hasil =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>4</span><span>13</span></div>
+        <div class="matrix-row"><span>6</span><span>15</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>📌 Kesimpulan</h3>
+<p>
+Operasi matriks sangat penting dalam matematika diskrit dan aljabar linear.
+Digunakan dalam sistem persamaan, komputer, AI, dan teknik.
+</p>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. Sifat & Teorema -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Sifat">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h3>Sifat & Teorema</h3>
+    </div>
+
+<div class="def-box">
+  <div class="label">Sifat & Teorema Matriks</div>
+  <p><strong>Matriks</strong> memiliki sifat utama seperti asosiatif, distributif, dan identitas dalam operasi penjumlahan serta perkalian. Selain itu, transpose memenuhi (AB)ᵀ = BᵀAᵀ dan matriks berinvers memenuhi A·A⁻¹ = I.</p>
+</div>
+<div class="section">
+
+    <div class="label">📌 Pengertian Matriks</div>
+    <p>
+      Matriks adalah susunan bilangan berbentuk baris dan kolom yang disusun dalam bentuk persegi panjang.
+      Matriks digunakan untuk menyederhanakan perhitungan aljabar linear, sistem persamaan linear, transformasi geometri, dan pemrosesan data.
+    </p>
+
+    <p>Contoh matriks ordo 2×2:</p>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">A =</div>
+        <div class="matrix-box">
+            <div class="matrix-row">
+                <span>1</span><span>2</span>
+            </div>
+            <div class="matrix-row">
+                <span>3</span><span>4</span>
+            </div>
+        </div>
+    </div>
+
+  </div>
+
+<hr>
+
+    <div class="label">⚙️ Jenis-Jenis Matriks</div>
+    <ul>
+      <li><b>Matriks Baris:</b> hanya 1 baris</li>
+      <li><b>Matriks Kolom:</b> hanya 1 kolom</li>
+      <li><b>Matriks Persegi:</b> jumlah baris = kolom</li>
+      <li><b>Matriks Nol:</b> semua elemen 0</li>
+      <li><b>Matriks Identitas:</b> diagonal utama bernilai 1</li>
+    </ul>
+
+    <p>Contoh Matriks Identitas 3×3:</p>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">I =</div>
+        <div class="matrix-box">
+            <div class="matrix-row">
+                <span>1</span><span>0</span><span>0</span>
+            </div>
+            <div class="matrix-row">
+                <span>0</span><span>1</span><span>0</span>
+            </div>
+            <div class="matrix-row">
+                <span>0</span><span>0</span><span>1</span>
+            </div>
+        </div>
+    </div>
+
+  </div>
+
+<hr>
+
+    <div class="label">📐 Sifat Penjumlahan Matriks</div>
+    <ul>
+      <li>A + B = B + A (Komutatif)</li>
+      <li>(A + B) + C = A + (B + C) (Asosiatif)</li>
+      <li>A + 0 = A (Identitas)</li>
+      <li>A + (−A) = 0 (Invers aditif)</li>
+    </ul>
+
+    <p>Contoh:</p>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">A =</div>
+        <div class="matrix-box">
+            <div class="matrix-row"><span>1</span><span>2</span></div>
+            <div class="matrix-row"><span>3</span><span>4</span></div>
+        </div>
+    </div>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">B =</div>
+        <div class="matrix-box">
+            <div class="matrix-row"><span>5</span><span>6</span></div>
+            <div class="matrix-row"><span>7</span><span>8</span></div>
+        </div>
+    </div>
+
+  </div>
+
+<hr>
+
+    <div class="label">📦 Sifat Perkalian Matriks</div>
+    <ul>
+      <li>(AB)C = A(BC) (Asosiatif)</li>
+      <li>A(B + C) = AB + AC (Distributif kiri)</li>
+      <li>(A + B)C = AC + BC (Distributif kanan)</li>
+      <li>AB ≠ BA (Tidak komutatif)</li>
+    </ul>
+
+    <p>Contoh perkalian matriks:</p>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">A =</div>
+        <div class="matrix-box">
+            <div class="matrix-row"><span>1</span><span>2</span></div>
+            <div class="matrix-row"><span>3</span><span>4</span></div>
+        </div>
+    </div>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">B =</div>
+        <div class="matrix-box">
+            <div class="matrix-row"><span>2</span><span>0</span></div>
+            <div class="matrix-row"><span>1</span><span>2</span></div>
+        </div>
+    </div>
+
+  </div>
+
+<hr>
+
+    <div class="label">🔄 Transpose Matriks</div>
+    <p>Transpose diperoleh dengan menukar baris menjadi kolom.</p>
+
+    <p>Contoh:</p>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">A =</div>
+        <div class="matrix-box">
+            <div class="matrix-row"><span>1</span><span>2</span><span>3</span></div>
+            <div class="matrix-row"><span>4</span><span>5</span><span>6</span></div>
+        </div>
+    </div>
+
+    <p>Hasil transpose Aᵀ:</p>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">Aᵀ =</div>
+        <div class="matrix-box">
+            <div class="matrix-row"><span>1</span><span>4</span></div>
+            <div class="matrix-row"><span>2</span><span>5</span></div>
+            <div class="matrix-row"><span>3</span><span>6</span></div>
+        </div>
+    </div>
+
+  </div>
+
+<hr>
+
+    <div class="label">📊 Determinan Matriks</div>
+    <p>
+      Determinan adalah nilai yang digunakan untuk menentukan apakah matriks memiliki invers.
+    </p>
+
+    <p>Contoh matriks 2×2:</p>
+
+    <div class="matrix-wrapper">
+        <div class="matrix-label">A =</div>
+        <div class="matrix-box">
+            <div class="matrix-row"><span>a</span><span>b</span></div>
+            <div class="matrix-row"><span>c</span><span>d</span></div>
+        </div>
+    </div>
+
+    <p>Rumus determinan:</p>
+    <p>det(A) = ad − bc</p>
+
+  </div>
+
+<hr>
+
+    <div class="label">🔄 Invers Matriks</div>
+    <p>
+      Invers matriks A adalah matriks A⁻¹ sehingga A·A⁻¹ = I.
+    </p>
+
+    <p>Contoh syarat:</p>
+    <ul>
+      <li>det(A) ≠ 0 → memiliki invers</li>
+      <li>det(A) = 0 → tidak memiliki invers</li>
+    </ul>
+
+  </div>
+
+
+  <div class="def-box">
+    <div class="label">🚀 Kesimpulan</div>
+    <p>
+      Matriks memiliki sifat penting seperti penjumlahan, perkalian, transpose, determinan, dan invers.
+      Semua konsep ini menjadi dasar dalam matematika modern, teknik, komputer, dan data science.
+    </p>
+  </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. Matriks Polinomial -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Polinomial">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Matriks Polinomial</h2>
+    </div>
+    
+<h3>📌 Pengertian Matriks <span class="badge">Basic</span></h3>
+<p>
+✨ Matriks adalah susunan bilangan dalam baris dan kolom yang membentuk struktur persegi panjang.
+Digunakan untuk menyelesaikan sistem persamaan linear, transformasi, dan komputasi modern.
+</p>
+
+<p><b>Contoh matriks 2×2:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>1</span><span>2</span></div>
+    <div class="matrix-row"><span>3</span><span>4</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>⚙️ Jenis-Jenis Matriks <span class="badge">Types</span></h3>
+<ul>
+  <li>🔵 Matriks Baris → 1 baris saja</li>
+  <li>🟢 Matriks Kolom → 1 kolom saja</li>
+  <li>🟡 Matriks Persegi → baris = kolom</li>
+  <li>⚫ Matriks Nol → semua elemen 0</li>
+  <li>🟣 Matriks Identitas → diagonal utama = 1</li>
+</ul>
+
+<p><b>Contoh Matriks Identitas:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">I =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>1</span><span>0</span><span>0</span></div>
+    <div class="matrix-row"><span>0</span><span>1</span><span>0</span></div>
+    <div class="matrix-row"><span>0</span><span>0</span><span>1</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>📐 Sifat Penjumlahan Matriks <span class="badge">Add</span></h3>
+<p>💡 Operasi penjumlahan memiliki sifat berikut:</p>
+<ul>
+  <li>➕ Komutatif → A + B = B + A</li>
+  <li>🔁 Asosiatif → (A + B) + C = A + (B + C)</li>
+  <li>🧩 Identitas → A + 0 = A</li>
+  <li>❌ Invers → A + (−A) = 0</li>
+</ul>
+
+<p><b>Contoh:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>1</span><span>2</span></div>
+    <div class="matrix-row"><span>3</span><span>4</span></div>
+  </div>
+</div>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">B =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>5</span><span>6</span></div>
+    <div class="matrix-row"><span>7</span><span>8</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>📦 Sifat Perkalian Matriks <span class="badge">Multiply</span></h3>
+<ul>
+  <li>🔁 Asosiatif → (AB)C = A(BC)</li>
+  <li>📦 Distributif kiri → A(B + C) = AB + AC</li>
+  <li>📦 Distributif kanan → (A + B)C = AC + BC</li>
+  <li>❗ Tidak komutatif → AB ≠ BA</li>
+</ul>
+
+<p><b>Contoh:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>1</span><span>2</span></div>
+    <div class="matrix-row"><span>3</span><span>4</span></div>
+  </div>
+</div>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">B =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>2</span><span>0</span></div>
+    <div class="matrix-row"><span>1</span><span>2</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>🔄 Transpose Matriks <span class="badge">Flip</span></h3>
+<p>✨ Transpose adalah menukar baris menjadi kolom.</p>
+
+<p><b>Contoh:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>1</span><span>2</span><span>3</span></div>
+    <div class="matrix-row"><span>4</span><span>5</span><span>6</span></div>
+  </div>
+</div>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">Aᵀ =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>1</span><span>4</span></div>
+    <div class="matrix-row"><span>2</span><span>5</span></div>
+    <div class="matrix-row"><span>3</span><span>6</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>📊 Determinan Matriks <span class="badge">Value</span></h3>
+<p>
+🔎 Determinan digunakan untuk menentukan apakah matriks memiliki invers.
+</p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>a</span><span>b</span></div>
+    <div class="matrix-row"><span>c</span><span>d</span></div>
+  </div>
+</div>
+
+<p><b>Rumus:</b> det(A) = ad − bc</p>
+
+<hr>
+
+
+<h3>🔄 Invers Matriks <span class="badge">Inverse</span></h3>
+<p>
+⚡ Invers matriks A adalah A⁻¹ sehingga A × A⁻¹ = I.
+</p>
+
+<ul>
+  <li>✔️ det(A) ≠ 0 → punya invers</li>
+  <li>❌ det(A) = 0 → tidak punya invers</li>
+</ul>
+
+<hr>
+
+
+<h3>🚀 Kesimpulan <span class="badge">End</span></h3>
+<p>
+Matriks memiliki banyak sifat penting seperti penjumlahan, perkalian, transpose, determinan, dan invers.
+Semua ini menjadi dasar matematika modern, teknik, dan komputasi.
+</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. Invers Matriks -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Invers">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Invers Matriks</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Invers matriks</strong> adalah matriks yang jika dikalikan dengan matriks asli menghasilkan matriks identitas.</p>
+    </div>
+
+    <p>Invers matriks hanya dapat ditemukan jika determinan dari matriks tersebut tidak sama dengan nol.</p>
+    
+<h3>🔄 Invers Matriks <span class="badge">Konsep Utama</span></h3>
+
+<p>
+✨ <b>Invers matriks</b> adalah matriks yang merupakan kebalikan dari suatu matriks A, sehingga jika dikalikan menghasilkan matriks identitas.
+</p>
+
+<p>
+📌 Notasi: A⁻¹ disebut invers dari A
+</p>
+
+<p>
+📍 Sifat utama:
+<b>A · A⁻¹ = A⁻¹ · A = I</b>
+</p>
+
+<hr>
+
+
+<h3>📌 Syarat Invers Matriks <span class="badge">Wajib</span></h3>
+
+<ul>
+  <li>✔️ Matriks harus berbentuk persegi (n × n)</li>
+  <li>✔️ Determinan tidak boleh nol (det(A) ≠ 0)</li>
+  <li>❌ Jika det(A) = 0 → matriks disebut singular (tidak punya invers)</li>
+</ul>
+
+<hr>
+
+
+<h3>📊 Determinan dan Hubungannya <span class="badge">Important</span></h3>
+
+<p>
+🔎 Determinan sangat penting karena menentukan apakah invers ada atau tidak.
+</p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>a</span><span>b</span></div>
+    <div class="matrix-row"><span>c</span><span>d</span></div>
+  </div>
+</div>
+
+<p>
+📌 Rumus determinan:
+<b>det(A) = ad − bc</b>
+</p>
+
+<hr>
+
+
+<h3>🧮 Rumus Invers Matriks 2×2 <span class="badge">Formula</span></h3>
+
+<p>
+Untuk matriks:
+</p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>a</span><span>b</span></div>
+    <div class="matrix-row"><span>c</span><span>d</span></div>
+  </div>
+</div>
+
+<p>
+📌 Maka inversnya:
+</p>
+
+<p>
+<b>A⁻¹ = 1/(ad − bc) ×</b>
+</p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label"></div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>d</span><span>-b</span></div>
+    <div class="matrix-row"><span>-c</span><span>a</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>📌 Langkah-Langkah Mencari Invers <span class="badge">Step</span></h3>
+
+<ul>
+  <li>1️⃣ Hitung determinan matriks</li>
+  <li>2️⃣ Tukar elemen diagonal utama</li>
+  <li>3️⃣ Ubah tanda elemen lainnya</li>
+  <li>4️⃣ Kalikan dengan 1/det(A)</li>
+</ul>
+
+<hr>
+
+
+<h3>📊 Contoh Soal Lengkap <span class="badge">Example</span></h3>
+
+<p><b>Diketahui:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>2</span><span>1</span></div>
+    <div class="matrix-row"><span>5</span><span>3</span></div>
+  </div>
+</div>
+
+<p><b>Langkah 1: Determinan</b></p>
+<p>det(A) = (2×3) − (1×5) = 6 − 5 = 1</p>
+
+<p><b>Langkah 2: Tukar diagonal</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">Step 2 =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>3</span><span>1</span></div>
+    <div class="matrix-row"><span>5</span><span>2</span></div>
+  </div>
+</div>
+
+<p><b>Langkah 3: Ubah tanda</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">Adj(A) =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>3</span><span>-1</span></div>
+    <div class="matrix-row"><span>-5</span><span>2</span></div>
+  </div>
+</div>
+
+<p><b>Langkah 4: Hasil akhir</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A⁻¹ =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>3</span><span>-1</span></div>
+    <div class="matrix-row"><span>-5</span><span>2</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>⚠️ Catatan Penting <span class="badge">Warning</span></h3>
+
+<ul>
+  <li>💡 Tidak semua matriks memiliki invers</li>
+  <li>💡 Matriks singular tidak punya invers</li>
+  <li>💡 Invers hanya berlaku pada matriks persegi</li>
+</ul>
+
+<hr>
+
+
+<h3>🚀 Aplikasi Invers Matriks <span class="badge">Use Case</span></h3>
+
+<ul>
+  <li>💻 Pemrograman komputer</li>
+  <li>📊 Sistem persamaan linear</li>
+  <li>🤖 Machine learning</li>
+  <li>🎮 Grafika komputer</li>
+  <li>🏗️ Teknik & fisika</li>
+</ul>
+
+<hr>
+
+
+<h3>🏁 Kesimpulan <span class="badge">Final</span></h3>
+
+<p>
+Invers matriks adalah konsep penting dalam aljabar linear yang digunakan untuk menyelesaikan berbagai masalah matematika.
+Syarat utamanya adalah matriks harus persegi dan memiliki determinan tidak sama dengan nol.
+</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. Aplikasi Matriks -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Aplikasi">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Aplikasi Matriks</h2>
+    </div>
+    
+<h3>📌 Aplikasi Matriks <span class="badge">Overview</span></h3>
+
+<p>
+✨ Matriks tidak hanya digunakan dalam matematika teori, tetapi juga memiliki banyak aplikasi dalam kehidupan nyata seperti komputer, teknik, ekonomi, dan data science.
+</p>
+
+<hr>
+
+
+<h3>💻 1. Aplikasi di Ilmu Komputer <span class="badge">IT</span></h3>
+
+<p>
+Matriks digunakan untuk merepresentasikan data dalam bentuk tabel dan array, serta dalam pemrosesan grafis komputer.
+</p>
+
+<p><b>Contoh representasi pixel gambar (matriks):</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">G =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>0</span><span>255</span><span>0</span></div>
+    <div class="matrix-row"><span>255</span><span>0</span><span>255</span></div>
+    <div class="matrix-row"><span>0</span><span>255</span><span>0</span></div>
+  </div>
+</div>
+
+<p>
+📌 Setiap angka merepresentasikan warna pixel.
+</p>
+
+<hr>
+
+
+<h3>📊 2. Sistem Persamaan Linear <span class="badge">SPL</span></h3>
+
+<p>
+Matriks digunakan untuk menyelesaikan sistem persamaan linear dengan lebih cepat menggunakan metode eliminasi atau invers matriks.
+</p>
+
+<p><b>Contoh sistem:</b></p>
+<p>
+2x + y = 5  
+<br>
+3x + 2y = 8
+</p>
+
+<p><b>Dalam bentuk matriks:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">A =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>2</span><span>1</span></div>
+    <div class="matrix-row"><span>3</span><span>2</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>🏗️ 3. Aplikasi di Teknik & Fisika <span class="badge">Engineering</span></h3>
+
+<p>
+Matriks digunakan untuk menghitung gaya, tegangan, dan transformasi struktur dalam teknik sipil dan mesin.
+</p>
+
+<p><b>Contoh transformasi gaya:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">F =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>10</span><span>5</span></div>
+    <div class="matrix-row"><span>3</span><span>8</span></div>
+  </div>
+</div>
+
+<p>
+📌 Digunakan untuk analisis gaya dalam dua arah (x dan y).
+</p>
+
+<hr>
+
+
+<h3>📈 4. Ekonomi & Bisnis <span class="badge">Economy</span></h3>
+
+<p>
+Matriks digunakan untuk menghitung hubungan antar sektor ekonomi seperti input-output produksi.
+</p>
+
+<p><b>Contoh matriks produksi:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">P =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>100</span><span>50</span></div>
+    <div class="matrix-row"><span>80</span><span>120</span></div>
+  </div>
+</div>
+
+<p>
+📌 Menunjukkan hubungan produksi antar dua sektor.
+</p>
+
+<hr>
+
+
+<h3>🤖 5. Machine Learning & AI <span class="badge">AI</span></h3>
+
+<p>
+Dalam AI, matriks digunakan untuk menyimpan data, bobot neural network, dan perhitungan algoritma.
+</p>
+
+<p><b>Contoh bobot jaringan:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">W =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>0.2</span><span>0.8</span></div>
+    <div class="matrix-row"><span>0.5</span><span>0.3</span></div>
+  </div>
+</div>
+
+<hr>
+
+
+<h3>🎮 6. Grafika Komputer <span class="badge">Graphics</span></h3>
+
+<p>
+Matriks digunakan untuk rotasi, translasi, dan skala objek dalam animasi dan game.
+</p>
+
+<p><b>Contoh transformasi objek:</b></p>
+
+<div class="matrix-wrapper">
+  <div class="matrix-label">T =</div>
+  <div class="matrix-box">
+    <div class="matrix-row"><span>1</span><span>0</span></div>
+    <div class="matrix-row"><span>0</span><span>1</span></div>
+  </div>
+</div>
+
+<p>
+📌 Matriks identitas → objek tidak berubah.
+</p>
+
+<hr>
+
+
+<h3>🚀 Kesimpulan <span class="badge">Final</span></h3>
+
+<p>
+Matriks memiliki banyak aplikasi penting di dunia nyata seperti komputer, teknik, ekonomi, AI, dan grafika komputer.
+Tanpa matriks, banyak teknologi modern tidak dapat bekerja dengan efisien.
+</p>
+  </section>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SUMMARY -->
+  <!-- ══════════════════════════════════════════ -->
+   <section class="section-card" style="background: linear-gradient(135deg,#eaf2ff,#d6e4ff);">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--accent-warm);">✓</div>
+    <h2 style="color:#1b2a4a;">Rangkuman Materi Matriks</h2>
+  </div>
+
+  <table class="info-table">
+    <thead>
+      <tr>
+        <th>Topik</th>
+        <th>Poin Utama</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td><strong>Definisi Matriks</strong></td>
+        <td>Susunan bilangan dalam baris dan kolom; digunakan untuk menyederhanakan perhitungan matematika</td>
+      </tr>
+
+      <tr>
+        <td><strong>Ordo Matriks</strong></td>
+        <td>Ukuran matriks berbentuk m × n (baris × kolom)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Jenis Matriks</strong></td>
+        <td>Matriks baris, kolom, persegi, nol, diagonal, identitas</td>
+      </tr>
+
+      <tr>
+        <td><strong>Operasi Penjumlahan</strong></td>
+        <td>Dilakukan jika ordo sama; bersifat komutatif dan asosiatif</td>
+      </tr>
+
+      <tr>
+        <td><strong>Operasi Perkalian</strong></td>
+        <td>Tidak komutatif; (AB) ≠ (BA) secara umum</td>
+      </tr>
+
+      <tr>
+        <td><strong>Transpose Matriks</strong></td>
+        <td>Menukar baris menjadi kolom, ditulis Aᵀ</td>
+      </tr>
+
+      <tr>
+        <td><strong>Determinan</strong></td>
+        <td>Nilai skalar matriks persegi; syarat invers (det ≠ 0)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Invers Matriks</strong></td>
+        <td>Matriks A⁻¹ dengan sifat A·A⁻¹ = I</td>
+      </tr>
+
+      <tr>
+        <td><strong>Sifat Matriks</strong></td>
+        <td>Asosiatif, distributif, identitas, dan tidak selalu komutatif</td>
+      </tr>
+
+      <tr>
+        <td><strong>Sistem Persamaan Linear</strong></td>
+        <td>Dapat diselesaikan menggunakan metode matriks (invers / eliminasi)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Aplikasi Matriks</strong></td>
+        <td>Komputer, AI, grafika, ekonomi, teknik, dan kriptografi</td>
+      </tr>
+
+      <tr>
+        <td><strong>Kriptografi</strong></td>
+        <td>Matriks digunakan dalam enkripsi dan dekripsi pesan (Hill Cipher)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Transformasi Linear</strong></td>
+        <td>Matriks merepresentasikan rotasi, skala, dan translasi objek</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+<selection>
+    <div style="text-align:center; margin-top:24px;">
+      <a href="../../index.html?page=materi&tab=aljabar" class="btn-back" style="background:var(--accent); border-color:var(--accent2); color:#fff; font-size:1rem; padding:13px 32px;">← Kembali ke Halaman Materi</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FAB scroll to top -->
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
