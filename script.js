@@ -119,7 +119,7 @@ var materiData = {
   aljabar: [{
     icon:"λ", title:"Aljabar Linear",
     items:[
-      {num:"01",title:"Sistem Persamaan Linear",description:"Operasi SPL",tag:"Learn",file:"subject/aljali/Aljali_BAB1.html"},
+      {num:"01",title:"Sistem Persamaan Linear",description:"Operasi SPL",tag:"Learn",file:"subject/aljali/Sistem Persamaan Linear.html"},
       {num:"02",title:"Matriks",description:"Operasi matriks, determinan, dan invers",tag:"Learn",file:"subject/aljali/Aljali_BAB2.html"},
       {num:"03",title:"Determinan",description:"Eliminasi Gauss dan metode penyelesaian",tag:"Learn",file:"subject/aljali/Aljali_BAB3.html"},
       {num:"04",title:"Nilai Eigen Dan Vektor Eigen",description:"Pemetaan linear dan representasi matriks",tag:"Learn",file:"subject/aljali/eigen vektor & value.html"},
