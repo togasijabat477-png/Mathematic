@@ -1,1405 +1,1576 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BAB 3: DETERMINAN - Digital Learning</title>
-    <style>
-:root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
-    --bg-color: #f4f7f6;
-    --text-color: #333;
-    --white: #ffffff;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Determinan — Matematika Diskrit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #ff758f;
+      --accent2: #ff758f;  
+      --accent3: #b7e4c7;
+      --accent-warm: #c73c9b;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(45, 106, 79, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
 
-body {
-    font-family: "Times New Roman", Times, serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--bg-color);
-    margin: 0;
-    padding: 15px;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: var(--white);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
 
-header {
-    text-align: center;
-    border-bottom: 4px solid var(--secondary-color);
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-}
+    .hero {
+      background: linear-gradient(135deg, #ff758f 0%, #ff758f 55%, #ff758f 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(228, 183, 212, 0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
 
-h1, h2, h3 {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--secondary-color);
-    padding-bottom: 6px;
-}
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-.section {
-    margin-bottom: 30px;
-}
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
 
-.step-list,
-.learning-box,
-.theorem-box {
-    background: #eef2f3;
-    padding: 15px;
-    border-left: 5px solid var(--secondary-color);
-    border-radius: 6px;
-    margin: 15px 0;
-}
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
 
-.example-box {
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 20px 0;
-    position: relative;
-}
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
 
-.example-box::before {
-    content: "CONTOH";
-    position: absolute;
-    top: -12px;
-    left: 15px;
-    background: var(--secondary-color);
-    color: white;
-    padding: 2px 12px;
-    font-size: 0.75em;
-    font-weight: bold;
-    border-radius: 10px;
-}
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
 
-.math-block, pre {
-    font-family: 'Times New Roman', serif;
-    background: #f8fafc;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    text-align: center;
-    overflow-x: auto;
-    font-size: 18px;
-}
+    .def-box {
+      background: linear-gradient(135deg, #f5e9f4 0%, #ead1e6 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .prop-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-}
+    .tree-visual {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .tree-visual svg { display: block; margin: 0 auto; }
 
-th {
-    background-color: var(--primary-color);
-    color: white;
-}
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
 
-.matrix-section {
-    background: #f3f6fb;
-    border: 1px solid #dbe4f0;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px 0;
-}
+    .formula {
+      background: #2e1b2b;
+      color: #b7e4c7;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
 
-.matrix-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin: 25px 0;
-    flex-wrap: wrap;
-}
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
 
-.label {
-    font-size: 18px;
-}
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
 
-.matrix {
-    border-left: 2px solid #2c3e50;
-    border-right: 2px solid #2c3e50;
-    padding: 12px 16px;
-    font-size: 16px;
-    text-align: center;
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #431b3d;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+
+    .theorem-card {
     background: white;
-    border-radius: 10px;
-    letter-spacing: 6px;
-    line-height: 2.2;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+    border-left: 6px solid #2d6a4f;
 }
 
-.matrix.nice {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    padding: 15px;
-    font-size: 16px;
+.theorem-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #1b4332;
 }
 
 .formula-box {
-    text-align: center;
-    margin: 20px auto;
-    padding: 12px;
-    max-width: 100%;
-    background: #ffffff;
+    background: #e9f5ee;
+    padding: 10px;
     border-radius: 10px;
-    border: 1px solid #e0e6ed;
+    font-weight: bold;
+    margin: 10px 0;
 }
 
-.calculator-area {
-    background: var(--primary-color);
-    color: white;
+.explain {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.matrix-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-family: "Times New Roman", serif;
+}
+
+.matrix-label {
+    font-size: 1.3rem;
+    font-weight: bold;
+    font-style: italic;
+    margin-right: 10px;
+}
+
+.matrix-box {
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    padding: 10px 20px;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    border-radius: 25px;
+}
+
+.matrix-box::before, .matrix-box::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 6px;
+    background: white; 
+}
+
+.matrix-box::before { top: -3px; }
+.matrix-box::after { bottom: -3px; }
+
+.matrix-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px; 
+}
+
+.matrix-row span {
+    font-size: 1.2rem;
+    min-width: 25px;
+    text-align: center;
+    padding: 4px 0;
+}
+
+.calc-card {
+    background: white;
     padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+
+.calc-title {
+    font-size: 20px;
+    color: #1b4332;
+    margin-bottom: 10px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    margin: 20px 0;
+    box-shadow: 0 6px 15px rgba(255,105,180,0.2);
+    border-left: 6px solid #ec407a;
+}
+
+.formula-box {
+    background: linear-gradient(135deg,#fce4ec,#f8bbd0);
+    padding: 12px;
     border-radius: 12px;
-    margin: 30px 0;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    color: #880e4f;
+}
+
+.explain {
+    background: #fdf2f8;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 10px;
 }
 
 .calc-grid {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin: 8px 0;
+    gap: 10px;
+    margin: 5px;
 }
 
 .m-input {
-    width: 55px;
-    padding: 8px;
-    border-radius: 4px;
-    border: none;
+    width: 60px;
+    height: 40px;
     text-align: center;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 .btn-action {
-    background: var(--accent-color);
-    color: white;
+    margin: 10px;
+    padding: 10px 15px;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 10px;
+    background: #2d6a4f;
+    color: white;
     cursor: pointer;
-    display: block;
-    margin: 15px auto;
+    transition: 0.3s;
+}
+
+.btn-action:hover {
+    background: #1b4332;
+    transform: scale(1.05);
 }
 
 .result-display {
-    background: rgba(255,255,255,0.2);
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.btn-kembali {
-    display: inline-block;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, #4facfe, #3498db);
-    color: white;
-    padding: 10px 18px;
+    margin-top: 10px;
+    padding: 10px;
+    background: #e9f5ee;
     border-radius: 10px;
-    text-decoration: none;
     font-weight: bold;
+}
+
+.step-box {
+    margin-top: 10px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
     font-size: 14px;
-    border: 2px solid #2c3e50;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: 0.3s;
 }
- .btn-kembali:hover {
-    transform: scale(1.05);
-    background: linear-gradient(135deg, #3498db, #2c3e50);
-}
-
-@media (max-width: 768px) {
-
-    body {
-        padding: 10px;
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #431b36;
     }
 
-    .container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 22px;
-    }
-
-    h2 {
-        font-size: 18px;
-    }
-
-    h3 {
-        font-size: 16px;
-    }
-
-    p, li {
-        font-size: 14px;
-    }
-
-    .matrix {
-        font-size: 14px;
-        letter-spacing: 4px;
-        line-height: 2;
-        padding: 10px;
-    }
-
-    .matrix.nice {
+    .huffman-item {
+        display: flex;
         gap: 10px;
-        font-size: 14px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #6a2d59;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .pink {
+        color: #6a2d5b;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #c77c3c;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(106, 45, 101, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
     }
 
-    .label {
-        font-size: 14px;
-    }
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 15px;
+      }
 
-    .math-block, pre {
-        font-size: 14px;
+      .hero {
+        padding: 40px 16px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .btn-back {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+      
+      .container {
+        padding: 24px 14px 60px;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+      }
+      
+      .section-header {
+        gap: 10px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-num {
+         width: 34px;
+         height: 34px;
+         font-size: 0.8rem;
+        }
+        
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .formula {
+        font-size: 0.8rem;
+      }
+      
+      .tree-visual {
+        overflow-x: auto;
+      }
+      
+      .tree-visual svg {
+        min-width: 400px;
+      }
+      
+      .toc-bar {
+        padding: 0 10px;
+      }
+      
+      .toc-bar a {
+        font-size: 0.75rem;
+        padding: 10px 10px;
+      }
+      
+      .fab {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        bottom: 20px;
+        right: 20px;
+      }
     }
-
-    .m-input {
-        width: 40px;
-        font-size: 14px;
-    }
-
-    .btn-action {
-        padding: 8px 15px;
-        font-size: 14px;
-    }
-}
-</style>
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">Kembali ke Materi</button>
-<div class="container">
-    <header>
-        <h1>DETERMINAN</h1>
-    </header>
+<!-- HERO -->
+<header class="hero" id="top">
+  <span class="hero-icon">🧮</span>
+  <h1>Determinan</h1>
+  <p>Materi lengkap Matematika Diskrit — Determinan, Konsep Dasar, Perhitungan, dan Aplikasi</p>
+  <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
+</header>
 
-    <h2>1. Konsep Dasar</h2>
-    <p>
-        Determinan adalah suatu nilai skalar (bilangan tunggal) yang diperoleh dari sebuah matriks persegi.
-        Matriks persegi adalah matriks yang memiliki jumlah baris dan kolom yang sama,
-        misalnya 2x2, 3x3, dan seterusnya.
-    </p>
+<!-- TOC BAR -->
+<nav class="toc-bar">
+  <a href="#Konsep">Konsep Dasar Determinan</a>
+  <a href="#Teorema">Teorema Penting</a>
+  <a href="#Teknik">Teknik Perhitungan</a>
+  <a href="#Ekspansi">Ekspansi Kofaktor</a>
+  <a href="#Aturan">Aturan Cramer (Cramer's Rule)</a>
+  <a href="#Sifat">Sifat-Sifat Determinan</a>
+  <a href="#Aplikasi">Aplikasi Determinan</a>
+</nav>
 
-    <h2>A. Pengertian Determinan</h2>
-    <p>
-        Determinan biasanya ditulis dengan notasi det(A) atau |A|.
-        Nilai determinan memiliki peranan penting dalam aljabar linear,
-        terutama untuk menentukan apakah suatu matriks memiliki invers
-        serta untuk menyelesaikan sistem persamaan linear.
-    </p>
+<main class="container">
 
-    <p>
-        Jika det(A) ≠ 0, maka matriks memiliki invers (non-singular).
-        Jika det(A) = 0, maka matriks tidak memiliki invers (singular).
-    </p>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. Konsep Dasar Determinan -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Konsep">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Konsep Dasar Determinan</h2>
+    </div>
 
-    <h2>B. Determinan Matriks Ordo 2x2</h2>
-    <p>
-        Untuk matriks:
-    </p>
-<div class="matrix-container">
-    <div class="label">O =</div>
-    <div class="matrix">
-        a b<br>
-        c d
+    <div class="def-box">
+      <div class="label">Definisi Formal</div>
+      <p><strong>Determinan</strong> adalah nilai skalar yang dapat dihitung dari elemen-elemen matriks persegi dan memberikan informasi penting tentang sifat matriks tersebut.</p>
+    </div>
+<div class="section">
+    <p>🎯 <b>Determinan</b> adalah nilai skalar (bilangan tunggal) yang diperoleh dari matriks persegi (jumlah baris = kolom).</p>
+    
+    <div style="background:#eef7f1; padding:10px; border-radius:10px;">
+        📌 Contoh: matriks 2x2, 3x3, dan seterusnya.
     </div>
 </div>
 
-    <p>
-        Rumus determinannya adalah:
-    </p>
+<hr>
 
-    <pre>
-det(A) = ad - bc
-    </pre>
+<div class="section">
+<h3>🧠 A. Pengertian Determinan</h3>
 
-    <p>
-        Contoh:
-    </p>
+<p>Determinan dinotasikan sebagai <b>det(A)</b> atau <b>|A|</b>.</p>
 
-        <div class="matrix-container">
-            <div class="label">A =</div>
-    <div class="matrix">
-        3 2<br>
-        1 4
-        
-    </div>
+<p>💡 Digunakan untuk:
+<ul>
+<li>Menentukan apakah matriks memiliki invers</li>
+<li>Menyelesaikan sistem persamaan linear</li>
+</ul>
+</p>
+
+<div style="margin-top:10px;">
+    <p>✨ <b>det(A) ≠ 0</b> → Matriks memiliki invers (non-singular)</p>
+    <p>❌ <b>det(A) = 0</b> → Matriks tidak memiliki invers (singular)</p>
+</div>
 </div>
 
-det(A) = (3)(4) - (2)(1) = 12 - 2 = 10
-    </pre>
+<hr>
 
-    <h2>C. Determinan Matriks Ordo 3x3</h2>
-    <p>
-        Untuk matriks 3x3, determinan dapat dihitung menggunakan metode Sarrus
-        atau ekspansi kofaktor.
-    </p>
+<div class="section">
+<h3>📐 B. Determinan Matriks 2x2</h3>
 
-<div class="matrix-container">
-    <div class="label">A =</div>
-
-    <div class="matrix nice">
-        <span>a</span><span>b</span><span>c</span>
-        <span>d</span><span>e</span><span>f</span>
-        <span>g</span><span>h</span><span>i</span>
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>a</span><span>b</span></div>
+        <div class="matrix-row"><span>c</span><span>d</span></div>
     </div>
 </div>
 
 <div class="formula-box">
-    det(A) = a(ei − fh) − b(di − fg) + c(dh − eg)
+📌 det(A) = ad - bc
 </div>
 
-    <h2>D. Minor dan Kofaktor</h2>
-    
-    <p>
-       Pengertian Minor
-Minor dari elemen 𝑎𝑖𝑗 adalah determinan matriks yang diperoleh dengan menghapus baris ke-i dan kolom ke-j dari matriks asal.
-Minor dilambangkan dengan:𝑀𝑖𝑗
-<div class="matrix-container">
-    <div class="matrix">
-       𝑀𝑖𝑗 
+<p>🧮 <b>Contoh:</b></p>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>3</span><span>2</span></div>
+        <div class="matrix-row"><span>1</span><span>4</span></div>
     </div>
 </div>
-    </p>
 
-    <p>
-        Kofaktor adalah minor yang dikalikan dengan tanda (-1)^(i+j),
-        di mana i adalah nomor baris dan j adalah nomor kolom.
-    </p>
+<div style="background:#f9f9f9; padding:10px; border-radius:10px;">
+    💡 det(A) = (3×4) - (2×1) = 12 - 2 = <b>10</b>
+</div>
+</div>
 
-    <h2>E. Sifat-Sifat Determinan</h2>
-    <ul>
-        <li>Jika dua baris atau dua kolom sama, maka determinan bernilai 0.</li>
-        <li>Jika satu baris atau kolom semuanya nol, maka determinan bernilai 0.</li>
-        <li>Jika dua baris ditukar, tanda determinan berubah.</li>
-        <li>Jika satu baris dikalikan k, maka determinan ikut dikalikan k.</li>
-        <li>det(AB) = det(A) × det(B).</li>
-        <li>Determinan matriks identitas adalah 1.</li>
-    </ul>
+<hr>
 
-    <h2>F. Makna Geometris Determinan</h2>
-    <p>
-        Pada matriks 2x2, nilai absolut determinan menunjukkan luas jajargenjang
-        yang dibentuk oleh dua vektor.
-    </p>
+<div class="section">
+<h3>📊 C. Determinan Matriks 3x3</h3>
 
-    <p>
-        Pada matriks 3x3, nilai absolut determinan menunjukkan volume bangun ruang
-        yang dibentuk oleh tiga vektor.
-    </p>
-
-    <h2>G . Peranan Determinan dalam Sistem Persamaan Linear</h2>
-    <p>
-        Determinan digunakan dalam Metode Cramer untuk menentukan solusi
-        sistem persamaan linear.
-    </p>
-
-    <p>
-        Jika determinan matriks koefisien tidak sama dengan nol,
-        maka sistem memiliki satu solusi unik.
-        Jika determinan sama dengan nol,
-        maka sistem tidak memiliki solusi atau memiliki banyak solusi.
-    </p>
-
-    <h2>Kesimpulan</h2>
-    <p>
-        Determinan adalah konsep dasar dalam aljabar linear yang digunakan
-        untuk menentukan invers matriks, menyelesaikan sistem persamaan linear,
-        serta memahami transformasi geometri seperti perubahan luas dan volume.
-    </p>
-</body>
-    <p>Fungsi determinan dinotasikan sebagai <b>det(A)</b> atau <b>|A|</b>. Untuk matriks 2x2:</p>
-    <div class="math-block">
-        det(A) = ad - bc
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>a</span><span>b</span><span>c</span></div>
+        <div class="matrix-row"><span>d</span><span>e</span><span>f</span></div>
+        <div class="matrix-row"><span>g</span><span>h</span><span>i</span></div>
     </div>
-    
+</div>
 
-    <h2>2. Teorema Penting</h2>
-     <h1>Teorema-Teorema Penting Determinan</h1>
+<div class="formula-box">
+📌 det(A) = a(ei − fh) − b(di − fg) + c(dh − eg)
+</div>
 
-    <p>
-        Determinan memiliki peranan penting dalam aljabar linear karena
-        berhubungan langsung dengan sifat matriks, sistem persamaan linear,
-        serta transformasi linear. Berikut adalah teorema-teorema penting
-        yang berkaitan dengan determinan beserta penjelasan singkatnya.
-    </p>
+<p>⚡ Bisa dihitung dengan metode Sarrus atau Kofaktor.</p>
+</div>
 
-   <h2>A. Teorema Keberadaan Invers</h2>
+<hr>
+
+<div class="section">
+<h3>🔍 D. Minor & Kofaktor</h3>
+
+<div style="background:#eef5ff; padding:10px; border-radius:10px;">
+    <p><b>Minor (M<sub>ij</sub>)</b> → determinan setelah menghapus baris ke-i dan kolom ke-j.</p>
+</div>
+
+<p style="margin-top:10px;">
+    ⚡ <b>Kofaktor</b> = (-1)<sup>i+j</sup> × Minor
+</p>
+</div>
+
+<div class="section">
+<h3>📌 E. Sifat Determinan</h3>
+
+<ul>
+<li>✔ Dua baris/kolom sama → determinan = 0</li>
+<li>✔ Ada baris nol → determinan = 0</li>
+<li>✔ Tukar baris → tanda berubah</li>
+<li>✔ Dikalikan k → determinan ikut dikali k</li>
+<li>✔ det(AB) = det(A) × det(B)</li>
+<li>✔ det(I) = 1</li>
+</ul>
+</div>
+
+<hr>
+
+<div class="section">
+<h3>📏 F. Makna Geometris</h3>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+    <div style="background:#e9f5ee; padding:10px; border-radius:10px;">
+        📐 Matriks 2x2 → luas jajargenjang
+    </div>
+
+    <div style="background:#fff4e6; padding:10px; border-radius:10px;">
+        📦 Matriks 3x3 → volume bangun ruang
+    </div>
+</div>
+</div>
+
+<hr>
+
+<div class="section">
+<h3>⚙️ G. Peranan dalam SPL</h3>
+
+<p>Digunakan dalam <b>Metode Cramer</b> untuk menentukan solusi.</p>
+
+<div style="margin-top:10px;">
+    <p>✅ det ≠ 0 → solusi tunggal</p>
+    <p>⚠️ det = 0 → tidak ada / banyak solusi</p>
+</div>
+</div>
+
+<div class="section">
+<h3>🎯 Kesimpulan</h3>
+
+<p>Determinan memiliki peranan penting dalam aljabar linear:</p>
+
+<ul>
+<li>📌 Menentukan invers matriks</li>
+<li>📌 Menyelesaikan sistem persamaan linear</li>
+<li>📌 Menjelaskan transformasi geometri</li>
+</ul>
+</div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. Teorema Penting -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Teorema">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Teorema Penting</h2>
+    </div>
+<div class="section">
 <p>
-    Suatu matriks persegi A memiliki invers jika dan hanya jika
-    determinannya tidak sama dengan nol. Determinan nol menunjukkan
-    bahwa matriks tersebut singular dan tidak dapat dibalik.
+🎯 Determinan memiliki peranan penting dalam aljabar linear karena berkaitan dengan:
 </p>
 
-<p>
-    Secara matematis, hubungan ini ditulis sebagai:
-</p>
+<ul>
+<li>✔ Sifat matriks</li>
+<li>✔ Sistem persamaan linear</li>
+<li>✔ Transformasi linear</li>
+</ul>
+</div>
 
-<pre>
-det(A) ≠ 0  ⇔  A memiliki invers (non-singular)
-det(A) = 0  ⇔  A tidak memiliki invers (singular)
-</pre>
+<div class="section">
+<h3>🧠 A. Teorema Keberadaan Invers</h3>
 
-<p>
-    Teorema ini sangat penting karena menentukan apakah suatu matriks
-    dapat digunakan untuk menyelesaikan sistem persamaan linear secara unik.
-    Jika determinan tidak sama dengan nol, maka matriks memiliki invers A⁻¹
-    sehingga sistem persamaan Ax = b dapat diselesaikan dengan:
-</p>
+<div class="formula-box">
+det(A) ≠ 0 ⇔ A memiliki invers  
+det(A) = 0 ⇔ A tidak memiliki invers
+</div>
 
-<pre>
-x = A⁻¹b
-</pre>
+<p>💡 Jika determinan ≠ 0 → solusi unik</p>
+<p>⚠️ Jika determinan = 0 → tidak ada / banyak solusi</p>
 
-<p>
-    Sebaliknya, jika determinan sama dengan nol, maka matriks tidak memiliki
-    invers karena terdapat ketergantungan linear antar baris atau kolomnya.
-    Dalam kondisi ini, sistem persamaan linear bisa tidak memiliki solusi
-    atau memiliki banyak solusi.
-</p>
+<div style="background:#eef7f1; padding:10px; border-radius:10px;">
+📌 Rumus: x = A⁻¹b
+</div>
+</div>
 
-<p>
-    Secara geometris, determinan yang bernilai nol menunjukkan bahwa
-    transformasi linear yang diwakili matriks tersebut meratakan ruang
-    ke dimensi yang lebih rendah, misalnya dari bidang menjadi garis,
-    sehingga tidak dapat dikembalikan ke bentuk semula.
-</p>
+<div class="section">
+<h3>📊 B. Teorema Perkalian Matriks</h3>
 
-    <h2>B. Teorema Perkalian Matriks</h2>
-<p>
-    Determinan dari hasil perkalian dua matriks persegi A dan B
-    sama dengan hasil kali determinan masing-masing matriks tersebut.
-    Teorema ini berlaku untuk semua matriks persegi yang berordo sama.
-</p>
-
-<pre>
+<div class="formula-box">
 det(AB) = det(A) × det(B)
-</pre>
+</div>
 
-<p>
-    Sifat ini disebut sebagai sifat multiplikatif determinan.
-    Artinya, nilai determinan berperilaku seperti perkalian bilangan biasa
-    ketika matriks dikalikan. Teorema ini sangat penting dalam
-    pembahasan transformasi linear dan teori matriks.
-</p>
+<p>✔ Bersifat multiplikatif</p>
+<p>✔ Jika salah satu = 0 → hasil juga 0</p>
 
-<p>
-    Jika det(A) ≠ 0 dan det(B) ≠ 0, maka det(AB) juga ≠ 0,
-    sehingga matriks AB pasti memiliki invers.
-    Sebaliknya, jika salah satu determinan bernilai nol,
-    maka det(AB) = 0 dan hasil perkalian menjadi matriks singular.
-</p>
+<div style="background:#fff4e6; padding:10px; border-radius:10px;">
+💡 det(A⁻¹) = 1 / det(A)
+</div>
+</div>
 
-<p>
-    Teorema ini juga mendukung sifat invers matriks, karena
-    jika A memiliki invers A⁻¹, maka berlaku:
-</p>
+<div class="section">
+<h3>🔁 C. Teorema Transpose</h3>
 
-<pre>
-det(A⁻¹) = 1 / det(A)
-</pre>
-
-<p>
-    Selain itu, dalam konteks geometri, jika suatu matriks
-    merepresentasikan transformasi linear, maka determinan
-    menyatakan faktor skala perubahan luas atau volume.
-    Oleh karena itu, perkalian dua matriks berarti
-    menggabungkan dua transformasi, dan faktor skalanya
-    akan dikalikan sesuai dengan teorema ini.
-</p>
-
-    <h2>C. Teorema Determinan Matriks Transpose</h2>
-
-<p>
-    Teorema Determinan Matriks Transpose menyatakan bahwa
-    determinan suatu matriks persegi A sama dengan determinan
-    dari matriks transposenya. Transpose matriks A,
-    yang dilambangkan dengan Aᵀ, diperoleh dengan cara
-    menukar setiap baris menjadi kolom dan setiap kolom menjadi baris.
-</p>
-
-<pre>
+<div class="formula-box">
 det(Aᵀ) = det(A)
-</pre>
+</div>
 
-<p>
-    Teorema ini berlaku untuk semua matriks persegi berordo n × n.
-    Meskipun posisi elemen-elemen dalam matriks berubah,
-    nilai determinannya tetap sama. Hal ini menunjukkan bahwa
-    determinan tidak bergantung pada apakah perhitungan dilakukan
-    berdasarkan baris atau berdasarkan kolom.
-</p>
+<p>📌 Baris ↔ kolom tidak mengubah nilai determinan</p>
+</div>
 
-<p>
-    Secara perhitungan, determinan dapat dihitung menggunakan
-    ekspansi kofaktor pada sembarang baris atau kolom.
-    Karena proses ekspansi tersebut memberikan hasil yang sama,
-    maka ketika baris dan kolom dipertukarkan melalui operasi transpose,
-    nilai determinannya tidak mengalami perubahan.
-</p>
+<div class="section">
+<h3>🔄 D. Pertukaran Dua Baris</h3>
 
-<p>
-    Secara konseptual, teorema ini menegaskan bahwa dalam matriks persegi,
-    baris dan kolom memiliki kedudukan yang setara.
-    Semua sifat determinan yang berlaku untuk baris
-    juga berlaku untuk kolom, termasuk sifat pertukaran,
-    kombinasi linear, dan faktor skalar.
-</p>
+<div class="formula-box">
+Tukar baris → det berubah tanda
+</div>
 
-<p>
-    Dalam konteks geometri dan transformasi linear,
-    transpose matriks sering muncul dalam pembahasan
-    tentang transformasi ortogonal dan matriks simetris.
-    Teorema ini memastikan bahwa perubahan orientasi baris ke kolom
-    tidak mengubah faktor skala luas atau volume
-    yang diwakili oleh nilai determinan.
-</p>
+<p>💡 det baru = - det lama</p>
+<p>✔ Dua kali tukar → kembali seperti semula</p>
+</div>
 
-<p>
-    Oleh karena itu, Teorema Determinan Matriks Transpose
-    menjadi dasar penting dalam berbagai pembuktian
-    dan manipulasi aljabar matriks,
-    karena memberikan fleksibilitas dalam memilih bentuk matriks
-    tanpa memengaruhi nilai determinannya.
-</p>
-    <p>
-        Determinan suatu matriks sama dengan determinan dari matriks transposenya.
-    
-    </p>
-    <pre>
-det(Aᵀ) = det(A)
-    </pre>
+<div class="section">
+<h3>📏 E. Perkalian Skalar</h3>
 
-    <h2>D. Teorema Pertukaran Dua Baris</h2>
+<div class="formula-box">
+Jika satu baris dikali k → det = k × det(A)
+</div>
 
-<p>
-    Teorema Pertukaran Dua Baris menyatakan bahwa jika dua baris
-    dalam suatu matriks persegi ditukar posisinya,
-    maka nilai determinan matriks tersebut akan berubah tanda.
-    Artinya, jika determinan semula bernilai k,
-    maka setelah pertukaran dua baris menjadi -k.
-</p>
-
-<pre>
-Jika dua baris ditukar → det baru = - det lama
-</pre>
-
-<p>
-    Sifat ini menunjukkan bahwa determinan sangat sensitif
-    terhadap urutan baris dalam matriks. Perubahan posisi baris
-    memengaruhi orientasi sistem koordinat yang direpresentasikan
-    oleh matriks tersebut.
-</p>
-
-<p>
-    Jika pertukaran dilakukan sebanyak dua kali,
-    maka tanda determinan akan kembali seperti semula,
-    karena (-1) × (-1) = 1. Secara umum,
-    setiap satu kali pertukaran dua baris akan mengalikan
-    determinan dengan -1.
-</p>
-
-<p>
-    Teorema ini memiliki konsekuensi penting.
-    Jika suatu matriks memiliki dua baris yang identik,
-    maka dengan menukar kedua baris tersebut,
-    matriks tetap sama, tetapi berdasarkan teorema ini
-    determinannya harus berubah tanda.
-    Satu-satunya kemungkinan agar kondisi ini terpenuhi adalah
-    determinan tersebut bernilai nol.
-</p>
-
-<p>
-    Dalam metode eliminasi Gauss,
-    pertukaran baris sering dilakukan untuk menyederhanakan matriks.
-    Oleh karena itu, teorema ini penting untuk memastikan
-    bahwa setiap pertukaran baris dicatat
-    karena akan memengaruhi hasil akhir determinan.
-</p>
-
-<p>
-    Secara geometris, pertukaran dua baris dapat diartikan
-    sebagai perubahan orientasi ruang.
-    Jika sebelumnya transformasi mempertahankan orientasi,
-    maka setelah pertukaran orientasinya terbalik,
-    yang ditunjukkan oleh perubahan tanda determinan.
-</p>
-
-<p>
-    Dengan demikian, Teorema Pertukaran Dua Baris
-    menegaskan bahwa determinan tidak hanya mencerminkan
-    besar skala transformasi, tetapi juga arah atau orientasi
-    dari transformasi tersebut.
-</p>
-
-    <h2>E. Teorema Perkalian Skalar pada Baris</h2>
-
-<p>
-    Teorema Perkalian Skalar pada Baris menyatakan bahwa
-    jika satu baris dalam suatu matriks persegi dikalikan
-    dengan suatu bilangan skalar k, maka nilai determinan
-    matriks tersebut juga akan dikalikan dengan k.
-</p>
-
-<pre>
-Jika satu baris dikali k → det baru = k × det lama
-</pre>
-
-<p>
-    Sifat ini menunjukkan bahwa determinan bersifat linear
-    terhadap setiap baris secara terpisah.
-    Artinya, perubahan skala pada satu baris
-    secara langsung memengaruhi nilai determinan
-    dengan faktor yang sama.
-</p>
-
-<p>
-    Jika lebih dari satu baris dikalikan dengan skalar,
-    maka faktor pengali determinan adalah hasil kali
-    dari semua skalar tersebut.
-    Secara umum, jika seluruh elemen matriks berordo n × n
-    dikalikan dengan bilangan k,
-    maka determinannya menjadi:
-</p>
-
-<pre>
+<div class="formula-box">
 det(kA) = kⁿ × det(A)
-</pre>
+</div>
 
-<p>
-    Hal ini terjadi karena setiap baris menyumbang
-    satu faktor k terhadap determinan.
-    Oleh karena itu, pada matriks berordo n,
-    akan muncul faktor k sebanyak n kali.
-</p>
+<p>📌 n = ordo matriks</p>
+</div>
 
-<p>
-    Teorema ini sangat penting dalam proses perhitungan determinan,
-    khususnya saat menggunakan metode eliminasi baris.
-    Jika suatu baris dibagi atau dikalikan dengan suatu bilangan
-    untuk menyederhanakan perhitungan,
-    maka perubahan tersebut harus diperhitungkan
-    dalam nilai akhir determinan.
-</p>
+<div class="section">
+<h3>🚫 F. Baris / Kolom Nol</h3>
 
-<p>
-    Secara geometris, jika matriks merepresentasikan
-    suatu transformasi linear,
-    maka mengalikan satu baris dengan k
-    berarti mengubah skala pada satu arah vektor,
-    sehingga luas atau volume yang dihasilkan
-    ikut berubah sebesar faktor k.
-</p>
+<div class="formula-box">
+Jika ada baris nol → det(A) = 0
+</div>
 
-<p>
-    Dengan demikian, Teorema Perkalian Skalar pada Baris
-    menegaskan bahwa determinan tidak hanya bergantung
-    pada susunan angka dalam matriks,
-    tetapi juga sangat dipengaruhi oleh faktor skala
-    pada setiap barisnya.
-</p>
+<p>💡 Tidak perlu hitung → langsung 0</p>
+</div>
 
-    <h2>F. Teorema Baris atau Kolom Nol</h2>
-    <p>
-    Teorema Baris atau Kolom Nol menyatakan bahwa
-    jika suatu matriks persegi memiliki satu baris
-    atau satu kolom yang seluruh elemennya bernilai nol,
-    maka determinan matriks tersebut sama dengan nol.
-</p>
+<div class="section">
+<h3>👯 G. Dua Baris Identik</h3>
 
-<pre>
-Jika terdapat satu baris/kolom nol → det(A) = 0
-</pre>
+<div class="formula-box">
+Baris/kolom sama → det(A) = 0
+</div>
 
-<p>
-    Hal ini terjadi karena dalam proses perhitungan determinan,
-    baik menggunakan metode ekspansi kofaktor maupun metode lainnya,
-    setiap suku dalam perhitungan akan melibatkan elemen
-    dari baris atau kolom tersebut.
-    Jika seluruh elemennya nol, maka semua hasil perkalian
-    dalam ekspansi determinan juga bernilai nol.
-</p>
+<p>📌 Karena ketergantungan linear</p>
+</div>
 
-<p>
-    Secara aljabar, baris atau kolom nol menunjukkan bahwa
-    terdapat ketergantungan linear yang sangat jelas,
-    karena baris tersebut tidak memberikan kontribusi
-    terhadap pembentukan ruang vektor.
-</p>
+<div class="section">
+<h3>🧩 H. Kombinasi Linear</h3>
 
-<p>
-    Dalam konteks sistem persamaan linear,
-    keberadaan baris nol pada matriks koefisien
-    dapat menyebabkan sistem tidak memiliki solusi unik.
-    Hal ini karena determinan nol menandakan
-    bahwa matriks tersebut tidak memiliki invers.
-</p>
+<div class="formula-box">
+Jika satu baris = kombinasi baris lain → det = 0
+</div>
 
-<p>
-    Secara geometris, jika matriks merepresentasikan
-    suatu transformasi linear,
-    maka adanya baris atau kolom nol berarti
-    transformasi tersebut meratakan ruang
-    ke dimensi yang lebih rendah,
-    sehingga luas atau volume hasil transformasi menjadi nol.
-</p>
+<p>💡 Menandakan tidak bebas linear</p>
+</div>
 
-<p>
-    Dengan demikian, Teorema Baris atau Kolom Nol
-    menegaskan bahwa keberadaan satu baris atau kolom
-    yang seluruhnya nol langsung menyebabkan
-    determinan matriks bernilai nol,
-    tanpa perlu dilakukan perhitungan lebih lanjut.
-</p>
-    <p>
-        Jika terdapat satu baris atau satu kolom yang seluruh elemennya nol,
-        maka determinan matriks tersebut bernilai nol.
-    </p>
+<div class="section">
+<h3>📐 I. Matriks Segitiga</h3>
 
-    <h2>G. Teorema Dua Baris atau Kolom Identik</h2>
-    <p>
-    Teorema Dua Baris atau Kolom Identik menyatakan bahwa
-    jika suatu matriks persegi memiliki dua baris
-    atau dua kolom yang sama persis,
-    maka determinan matriks tersebut bernilai nol.
-</p>
+<div class="formula-box">
+det(A) = a₁₁ × a₂₂ × ... × aₙₙ
+</div>
 
-<pre>
-Jika terdapat dua baris/kolom identik → det(A) = 0
-</pre>
+<p>✔ Berlaku untuk segitiga atas & bawah</p>
+</div>
 
-<p>
-    Hal ini terjadi karena adanya ketergantungan linear
-    antara baris atau kolom tersebut.
-    Jika dua baris identik, maka salah satunya
-    dapat dianggap sebagai kombinasi linear
-    dari yang lainnya dengan faktor pengali 1.
-    Kondisi ini langsung menyebabkan determinan bernilai nol.
-</p>
+<div class="section">
+<h3>🧮 J. Ekspansi Kofaktor</h3>
 
-<p>
-    Teorema ini juga dapat dijelaskan melalui
-    Teorema Pertukaran Dua Baris.
-    Jika dua baris identik ditukar,
-    matriks tetap tidak berubah.
-    Namun menurut teorema pertukaran,
-    determinan harus berubah tanda.
-    Satu-satunya nilai yang memenuhi kondisi ini
-    adalah nol.
-</p>
+<div class="formula-box">
+det(A) = a₁₁C₁₁ + a₁₂C₁₂ + ... + a₁ₙC₁ₙ
+</div>
 
-<p>
-    Dalam konteks sistem persamaan linear,
-    keberadaan dua baris identik pada matriks koefisien
-    menunjukkan bahwa terdapat dua persamaan
-    yang sebenarnya sama.
-    Akibatnya, sistem tidak memiliki solusi unik
-    karena matriks tidak memiliki invers.
-</p>
-
-<p>
-    Secara geometris, dua baris atau kolom identik
-    berarti dua vektor berada pada arah yang sama.
-    Hal ini menyebabkan ruang yang dibentuk
-    menjadi berdimensi lebih rendah,
-    sehingga luas atau volume yang dihasilkan
-    oleh transformasi tersebut menjadi nol.
-</p>
-
-<p>
-    Dengan demikian, Teorema Dua Baris atau Kolom Identik
-    menegaskan bahwa kebebasan linear antar baris atau kolom
-    merupakan syarat mutlak agar determinan
-    bernilai tidak nol.
-</p>
-    <p>
-        Jika suatu matriks memiliki dua baris atau dua kolom yang sama,
-        maka determinannya bernilai nol karena terjadi ketergantungan linear.
-    </p>
-
-    <h2>H. Teorema Kombinasi Linear</h2>
-    <p>
-    Teorema Kombinasi Linear menyatakan bahwa jika satu baris
-    (atau satu kolom) dalam suatu matriks persegi
-    dapat dinyatakan sebagai kombinasi linear
-    dari baris-baris (atau kolom-kolom) lainnya,
-    maka determinan matriks tersebut bernilai nol.
-</p>
-
-<pre>
-Jika salah satu baris = k1(B1) + k2(B2) + ... + kn(Bn)
-maka det(A) = 0
-</pre>
-
-<p>
-    Kombinasi linear berarti suatu baris dapat dituliskan
-    sebagai penjumlahan beberapa baris lain
-    yang masing-masing dikalikan dengan konstanta tertentu.
-    Kondisi ini menunjukkan adanya ketergantungan linear
-    antar baris dalam matriks tersebut.
-</p>
-
-<p>
-    Secara aljabar, determinan mengukur apakah
-    baris-baris matriks saling bebas secara linear.
-    Jika terdapat ketergantungan linear,
-    maka matriks tidak memiliki rank penuh,
-    sehingga determinannya pasti bernilai nol.
-</p>
-
-<p>
-    Teorema ini merupakan bentuk umum
-    dari Teorema Dua Baris Identik.
-    Jika dua baris sama persis,
-    maka salah satunya merupakan kombinasi linear
-    dari yang lain dengan faktor 1,
-    sehingga determinannya juga nol.
-</p>
-
-<p>
-    Dalam perhitungan menggunakan eliminasi Gauss,
-    jika suatu baris dapat diubah menjadi baris nol
-    melalui operasi kombinasi linear,
-    maka hal tersebut menunjukkan bahwa
-    determinan matriks sama dengan nol.
-</p>
-
-<p>
-    Dalam konteks sistem persamaan linear,
-    kondisi ini menunjukkan bahwa sistem
-    tidak memiliki solusi tunggal.
-    Sistem bisa memiliki tak hingga solusi
-    atau tidak memiliki solusi sama sekali,
-    karena matriks koefisiennya tidak dapat dibalik.
-</p>
-
-<p>
-    Secara geometris, jika matriks merepresentasikan
-    transformasi linear,
-    maka ketergantungan linear antar baris
-    berarti vektor-vektor tersebut
-    berada dalam satu bidang atau garis yang sama.
-    Akibatnya, luas atau volume yang dibentuk
-    oleh vektor-vektor tersebut menjadi nol.
-</p>
-
-<p>
-    Dengan demikian, Teorema Kombinasi Linear
-    menegaskan bahwa kebebasan linear antar baris atau kolom
-    merupakan syarat utama agar determinan
-    bernilai tidak nol dan matriks memiliki invers.
-</p>
-    <p>
-        Jika satu baris merupakan kombinasi linear dari baris lainnya,
-        maka determinan matriks tersebut sama dengan nol.
-    </p>
-
-    <h2>I. Teorema Matriks Segitiga</h2>
-    <p>
-    Teorema Kombinasi Linear menyatakan bahwa
-    jika satu baris (atau satu kolom) dalam suatu matriks persegi
-    dapat dinyatakan sebagai kombinasi linear dari baris-baris
-    (atau kolom-kolom) lainnya, maka determinan matriks tersebut
-    bernilai nol.
-</p>
-
-<pre>
-Jika salah satu baris = kombinasi linear baris lain → det(A) = 0
-</pre>
-
-<p>
-    Kombinasi linear berarti suatu baris dapat dituliskan
-    sebagai penjumlahan dari baris lain yang masing-masing
-    dikalikan dengan suatu konstanta.
-    Kondisi ini menunjukkan adanya ketergantungan linear
-    di antara baris-baris matriks tersebut.
-</p>
-
-<p>
-    Secara aljabar, determinan bernilai nol karena
-    baris-baris matriks tidak lagi bebas secara linear.
-    Ketergantungan linear menyebabkan ruang yang dibentuk
-    oleh vektor-vektor baris menjadi berdimensi lebih rendah
-    dari yang seharusnya.
-</p>
-
-<p>
-    Teorema ini merupakan perluasan dari teorema
-    dua baris identik. Jika dua baris sama,
-    maka jelas salah satunya merupakan kombinasi linear
-    dari yang lain dengan faktor 1,
-    sehingga determinannya juga nol.
-</p>
-
-<p>
-    Dalam konteks sistem persamaan linear,
-    kondisi ini menunjukkan bahwa sistem tidak memiliki
-    solusi tunggal. Sistem bisa memiliki banyak solusi
-    atau bahkan tidak memiliki solusi,
-    karena matriks koefisiennya tidak memiliki invers.
-</p>
-
-<p>
-    Secara geometris, jika matriks merepresentasikan
-    suatu transformasi linear,
-    maka ketergantungan linear antar baris
-    berarti transformasi tersebut meratakan ruang
-    ke dimensi yang lebih rendah,
-    sehingga luas atau volume hasil transformasi menjadi nol.
-</p>
-
-<p>
-    Dengan demikian, Teorema Kombinasi Linear
-    menegaskan bahwa kebebasan linear antar baris atau kolom
-    merupakan syarat utama agar determinan bernilai tidak nol.
-</p>
-    <p>
-        Jika matriks berbentuk segitiga atas atau segitiga bawah,
-        maka determinannya adalah hasil kali elemen-elemen diagonal utama.
-    </p>
-    <pre>
-det(A) = a11 × a22 × a33 × ... × ann
-    </pre>
-
-    <h2>J. Teorema Ekspansi Kofaktor</h2>
-    <p>
-    Teorema Ekspansi Kofaktor menyatakan bahwa determinan
-    suatu matriks persegi dapat dihitung dengan melakukan
-    ekspansi terhadap sembarang baris atau sembarang kolom.
-    Hasil perhitungan akan tetap sama,
-    tidak bergantung pada baris atau kolom yang dipilih.
-</p>
-
-<pre>
-det(A) = a11C11 + a12C12 + ... + a1nC1n
-</pre>
-
-<p>
-    Di dalam rumus tersebut, Cij adalah kofaktor
-    dari elemen aij yang didefinisikan sebagai:
-</p>
-
-<pre>
+<div class="formula-box">
 Cij = (-1)^(i+j) × Mij
-</pre>
+</div>
 
-<p>
-    Mij adalah minor, yaitu determinan dari matriks
-    yang diperoleh dengan menghapus baris ke-i
-    dan kolom ke-j dari matriks A.
-</p>
+<p>💡 Bisa dari baris atau kolom mana saja</p>
+</div>
 
-<p>
-    Teorema ini sangat penting karena memberikan
-    metode umum untuk menghitung determinan
-    matriks berordo lebih besar dari 2 × 2.
-    Dengan cara ini, determinan matriks berordo n
-    dapat direduksi menjadi determinan
-    matriks berordo (n - 1).
-</p>
+<div class="section">
+<h3>⚙️ K. Teorema Cramer</h3>
 
-<p>
-    Salah satu keunggulan ekspansi kofaktor adalah
-    kita bebas memilih baris atau kolom
-    yang memiliki banyak elemen nol,
-    sehingga perhitungan menjadi lebih sederhana.
-</p>
-
-<p>
-    Teorema ini juga menjadi dasar dalam
-    pembentukan matriks adjoin (adj(A))
-    yang digunakan untuk mencari invers matriks,
-    dengan rumus:
-</p>
-
-<pre>
-A⁻¹ = (1 / det(A)) × adj(A)
-</pre>
-
-<p>
-    Secara konseptual, ekspansi kofaktor menunjukkan
-    bahwa determinan dibangun dari kombinasi
-    hasil perkalian elemen-elemen matriks
-    yang disusun secara sistematis
-    dengan pola tanda positif dan negatif.
-</p>
-
-<p>
-    Dengan demikian, Teorema Ekspansi Kofaktor
-    merupakan salah satu teorema fundamental
-    dalam teori determinan,
-    karena menyediakan prosedur umum,
-    sistematis, dan konsisten
-    untuk menghitung determinan matriks
-    berordo berapa pun.
-</p>
-    <p>
-        Determinan dapat dihitung dengan ekspansi kofaktor
-        pada sembarang baris atau kolom dan hasilnya tetap sama.
-    </p>
-
-    <h2>K. Teorema Cramer</h2>
-    <p>
-    Teorema Cramer menyatakan bahwa suatu sistem persamaan linear
-    dengan jumlah persamaan sama dengan jumlah variabel
-    memiliki solusi tunggal jika dan hanya jika
-    determinan matriks koefisiennya tidak sama dengan nol.
-</p>
-
-<pre>
-Jika det(A) ≠ 0 → sistem memiliki solusi unik
-Jika det(A) = 0 → sistem tidak memiliki solusi unik
-</pre>
-
-<p>
-    Misalkan diberikan sistem persamaan linear dalam bentuk matriks:
-</p>
-
-<pre>
-Ax = b
-</pre>
-
-<p>
-    dengan A adalah matriks koefisien berordo n × n,
-    x adalah vektor variabel, dan b adalah vektor konstanta.
-    Jika det(A) ≠ 0, maka setiap variabel xi
-    dapat dihitung menggunakan rumus:
-</p>
-
-<pre>
+<div class="formula-box">
 xi = det(Ai) / det(A)
-</pre>
+</div>
 
-<p>
-    Di mana Ai adalah matriks yang diperoleh
-    dengan mengganti kolom ke-i pada matriks A
-    dengan vektor konstanta b.
-</p>
+<p>✔ det(A) ≠ 0 → solusi unik</p>
+<p>⚠️ det(A) = 0 → tidak unik</p>
+</div>
 
-<p>
-    Teorema ini menunjukkan bahwa determinan
-    berperan langsung dalam menentukan keberadaan
-    dan keunikan solusi suatu sistem persamaan linear.
-    Jika determinan bernilai nol,
-    maka matriks tidak memiliki invers,
-    sehingga sistem bisa memiliki banyak solusi
-    atau bahkan tidak memiliki solusi sama sekali.
-</p>
+<div class="section">
+<h3>🎯 Kesimpulan</h3>
 
-<p>
-    Secara geometris, determinan yang tidak nol
-    menunjukkan bahwa vektor-vektor koefisien
-    membentuk ruang berdimensi penuh,
-    sehingga titik potong antar persamaan
-    hanya terjadi di satu titik.
-</p>
+<div class="theorem-box">
+<ul>
+<li>✔ det(A) menentukan invers matriks</li>
+<li>✔ det(A) = 0 → tidak invertible</li>
+<li>✔ det(AB) = det(A)det(B)</li>
+<li>✔ det(A) = det(Aᵀ)</li>
+<li>✔ Determinan berkaitan dengan luas & volume</li>
+</ul>
+</div>
+</div>
+  </section>
 
-<p>
-    Meskipun metode Cramer kurang efisien
-    untuk sistem berukuran besar,
-    teorema ini sangat penting secara teoritis
-    karena menegaskan hubungan langsung
-    antara determinan dan solusi sistem linear.
-</p>
-    <p>
-        Jika determinan matriks koefisien dalam sistem persamaan linear
-        tidak sama dengan nol, maka sistem memiliki solusi tunggal
-        yang dapat dicari menggunakan aturan Cramer.
-    </p>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. Teknik Perhitungan -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Teknik">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Teknik Perhitungan</h2>
+    </div>
+<h3 class="calc-title">🧠 A. Metode Sarrus (3x3)</h3>
 
-    <h2>Kesimpulan</h2>
-    <p>
-        Teorema-teorema determinan menunjukkan bahwa determinan tidak hanya
-        bernilai numerik, tetapi juga mencerminkan sifat penting matriks
-        seperti keberadaan invers, ketergantungan linear,
-        serta perubahan luas dan volume dalam transformasi linear.
-    </p>
-    <div class="theorem-box">
-        <ul>
-            <li>Jika satu baris/kolom berisi nol, maka <b>det(A) = 0</b>.</li>
-            <li><b>det(A) = det(Aᵀ)</b>.</li>
-            <li>Matriks Segitiga/Diagonal: Det adalah hasil kali elemen diagonal utama.</li>
-            <li><b>det(AB) = det(A)det(B)</b>.</li>
-            <li>A memiliki invers (invertible) jika dan hanya jika <b>det(A) ≠ 0</b>.</li>
-        </ul>
+<p>📌 Tambahkan dua kolom pertama, lalu hitung diagonal turun dan naik.</p>
+
+<div style="text-align:center;">
+    <div class="calc-grid">
+        <input type="number" id="m11" class="m-input" value="0">
+        <input type="number" id="m12" class="m-input" value="0">
+        <input type="number" id="m13" class="m-input" value="0">
+    </div>
+    <div class="calc-grid">
+        <input type="number" id="m21" class="m-input" value="0">
+        <input type="number" id="m22" class="m-input" value="0">
+        <input type="number" id="m23" class="m-input" value="0">
+    </div>
+    <div class="calc-grid">
+        <input type="number" id="m31" class="m-input" value="0">
+        <input type="number" id="m32" class="m-input" value="0">
+        <input type="number" id="m33" class="m-input" value="0">
     </div>
 
-    <h2>3. Teknik Perhitungan</h2>
-    <h3>A. Metode Sarrus (3x3)</h3>
-    <p>Menambahkan dua kolom pertama di sebelah kanan matriks dan menghitung jumlah perkalian diagonal.</p>
-    
+    <button class="btn-action" onclick="calculateDet3x3()">🧮 Hitung</button>
+    <button class="btn-action" onclick="randomMatrix()">🎲 Random</button>
+    <button class="btn-action" onclick="resetMatrix()">🧹 Reset</button>
 
-    <div class="calculator-area">
-        <h2 style="color: white; border: none; text-align: center;">🧮 Kalkulator Determinan 3x3</h2>
-        <div style="text-align: center;">
-            <div class="calc-grid">
-                <input type="number" id="m11" class="m-input" value="0">
-                <input type="number" id="m12" class="m-input" value="0">
-                <input type="number" id="m13" class="m-input" value="0">
-            </div>
-            <div class="calc-grid">
-                <input type="number" id="m21" class="m-input" value="0">
-                <input type="number" id="m22" class="m-input" value="0">
-                <input type="number" id="m23" class="m-input" value="0">
-            </div>
-            <div class="calc-grid">
-                <input type="number" id="m31" class="m-input" value="0">
-                <input type="number" id="m32" class="m-input" value="0">
-                <input type="number" id="m33" class="m-input" value="0">
-            </div>
-            <button class="btn-action" onclick="calculateDet3x3()">Hitung Determinan</button>
-            <div id="detResult" class="result-display">Hasil akan muncul di sini...</div>
-        </div>
-    </div>
-
-    <h3>B. Reduksi Baris (OBE)</h3>
-    <p>Mengubah matriks menjadi bentuk segitiga atas. Aturannya:</p>
-    <ul>
-        <li>Tukar dua baris: Det menjadi <b>-det</b>.</li>
-        <li>Kalikan satu baris dengan skalar k: Det menjadi <b>k det</b>.</li>
-        <li>Tambah kelipatan baris lain: Det <b>tetap sama</b>.</li>
-    </ul>
-
-    <h2>4. Ekspansi Kofaktor</h2>
-    <p>
-Ekspansi kofaktor adalah metode untuk menghitung determinan suatu matriks dengan
-cara mengembangkan determinan berdasarkan baris atau kolom tertentu. Setiap elemen
-pada baris atau kolom tersebut dikalikan dengan kofaktornya kemudian hasilnya dijumlahkan.
-Metode ini sering digunakan dalam aljabar linear untuk menentukan determinan matriks
-berordo lebih besar seperti matriks 3×3, 4×4, atau yang lebih besar.
-</p>
-
-<h2>Determinan Matriks</h2>
-<p>
-Determinan adalah suatu nilai skalar yang diperoleh dari matriks persegi.
-Determinan biasanya ditulis dengan notasi:
-</p>
-
-<p><b>det(A)</b> atau <b>|A|</b></p>
-
-<p>Contoh matriks:</p>
-
-<div class="matrix-container">
-     <div class="label">A =</div>
-<div class="matrix">
-a11  a12  a13<br>
-a21  a22  a23<br>
-a31  a32  a33
+    <div id="detResult" class="result-display">Hasil akan muncul di sini...</div>
+    <div id="steps" class="step-box"></div>
 </div>
 </div>
 
-<h2>Minor Matriks</h2>
-<p>
-Minor dari suatu elemen matriks diperoleh dengan cara menghapus baris dan kolom
-tempat elemen tersebut berada. Minor biasanya dilambangkan dengan Mij.
-</p>
+<hr>
 
-<p>Contoh matriks:</p>
+<h3 class="calc-title">🔄 B. Reduksi Baris (OBE)</h3>
 
-<div class="matrix-container">
-     <div class="label">A =</div>
-<div class="matrix">
-2  3  1<br>
-4  5  6<br>
-7  8  9
+<ul>
+<li>🔁 Tukar dua baris → det = <b>-det</b></li>
+<li>📏 Kali baris dengan k → det = <b>k det</b></li>
+<li>➕ Tambah kelipatan baris → det <b>tetap</b></li>
+</ul>
+
+<div class="step-box">
+💡 Gunakan metode ini untuk menyederhanakan matriks menjadi segitiga atas.
 </div>
-</div>
-
-<p>
-Untuk mencari minor dari elemen a11, maka baris pertama dan kolom pertama dihapus.
-</p>
-
-<div class="matrix-container">
-     <div class="label">M 11=</div>
-<div class="matrix">
-5  6<br>
-8  9
-</div>
-</div>
-
-<p>
-Perhitungan minor:
-</p>
-
-<p>
-M11 = (5 × 9) − (6 × 8)
-</p>
-
-<p>
-M11 = 45 − 48
-</p>
-
-<p>
-M11 = −3
-</p>
-
-<h2>Kofaktor Matriks</h2>
-
-<p>
-Kofaktor adalah minor yang telah dikalikan dengan tanda positif atau negatif
-sesuai dengan posisinya di dalam matriks.
-</p>
-
-<p>Rumus kofaktor:</p>
-
-<p>
-Cij = (-1)<sup>i+j</sup> × Mij
-</p>
-
-<p>Pola tanda kofaktor:</p>
-
-<div class="matrix-container">
-<div class="matrix">
-+  −  +<br>
-−  +  −<br>
-+  −  +
-</div>
-</div>
-
-<h2>Ekspansi Kofaktor</h2>
-
-<p>
-Ekspansi kofaktor dilakukan dengan cara mengalikan setiap elemen pada baris
-atau kolom tertentu dengan kofaktornya kemudian menjumlahkan semua hasilnya.
-</p>
-
-<p>Rumus ekspansi pada baris pertama:</p>
-
-<p>
-|A| = a11C11 + a12C12 + a13C13
-</p>
-
- <div class="example-box" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd;">
-        <strong>Contoh Perhitungan</strong> <p>Matriks A:</p>
-
-<div class="matrix-container">
-     <div class="label">A =</div>
-<div class="matrix">
-2  3  1<br>
-4  5  6<br>
-7  8  9
-</div>
-</div>
-
-<p>Langkah pertama menghitung minor:</p>
-
-<p>
-M11 = (5 × 9) − (6 × 8) = −3
-</p>
-
-<p>
-M12 = (4 × 9) − (6 × 7) = −6
-</p>
-
-<p>
-M13 = (4 × 8) − (5 × 7) = −3
-</p>
-
-<p>Langkah berikutnya menghitung kofaktor:</p>
-
-<p>
-C11 = +M11 = −3
-</p>
-
-<p>
-C12 = −M12 = 6
-</p>
-
-<p>
-C13 = +M13 = −3
-</p>
-
-<p>Perhitungan determinan:</p>
-
-<p>
-|A| = (2 × −3) + (3 × 6) + (1 × −3)
-</p>
-
-<p>
-|A| = −6 + 18 − 3
-</p>
-
-<p>
-|A| = 9
-</p>
-
-    </div>
-
-<h2>Keuntungan Ekspansi Kofaktor</h2>
-
-<p>
-Metode ekspansi kofaktor memiliki beberapa keuntungan dalam perhitungan determinan
-matriks. Metode ini dapat digunakan untuk berbagai ukuran matriks, dapat dilakukan
-pada baris atau kolom mana saja, dan sangat memudahkan perhitungan apabila terdapat
-banyak elemen bernilai nol dalam suatu baris atau kolom.
-</p>
-
-<h2>Kesimpulan</h2>
-
-<p>
-Ekspansi kofaktor merupakan metode penting dalam perhitungan determinan matriks
-dalam aljabar linear. Metode ini dilakukan dengan cara mengalikan setiap elemen
-matriks dengan kofaktornya kemudian menjumlahkan hasilnya. Dengan memahami konsep
-minor, kofaktor, dan pola tanda, perhitungan determinan matriks dapat dilakukan
-dengan lebih sistematis dan terstruktur.
-</p>
-    <p>Minor (Mᵢⱼ) adalah determinan submatriks setelah baris i dan kolom j dihilangkan. Kofaktor (Cᵢⱼ) didefinisikan sebagai:</p>
-    <div class="math-block">
-        Cᵢⱼ = (-1)ⁱ⁺ʲ Mᵢⱼ
-    </div>
-    
-    <h2>5. Aturan Cramer (Cramer's Rule)</h2>
-    <p>Digunakan untuk mencari solusi SPL Ax = B. Nilai variabel ke-i ditemukan dengan:</p>
-    <div class="math-block">
-        xᵢ = det(Aᵢ) / det(A)
-    </div>
-    <p>Di mana Aᵢ adalah matriks A dengan kolom ke-i diganti oleh matriks B.</p>
-    
-
 </div>
 
 <script>
-    function calculateDet3x3() {
-        const a = parseFloat(document.getElementById('m11').value);
-        const b = parseFloat(document.getElementById('m12').value);
-        const c = parseFloat(document.getElementById('m13').value);
-        const d = parseFloat(document.getElementById('m21').value);
-        const e = parseFloat(document.getElementById('m22').value);
-        const f = parseFloat(document.getElementById('m23').value);
-        const g = parseFloat(document.getElementById('m31').value);
-        const h = parseFloat(document.getElementById('m32').value);
-        const i = parseFloat(document.getElementById('m33').value);
+function getMatrix() {
+    return [
+        [Number(m11.value), Number(m12.value), Number(m13.value)],
+        [Number(m21.value), Number(m22.value), Number(m23.value)],
+        [Number(m31.value), Number(m32.value), Number(m33.value)]
+    ];
+}
 
-        const part1 = (a * e * i) + (b * f * g) + (c * d * h);
-        const part2 = (c * e * g) + (a * f * h) + (b * d * i);
-        const det = part1 - part2;
+function calculateDet3x3() {
+    let m = getMatrix();
 
-        const resultDiv = document.getElementById('detResult');
-        resultDiv.innerHTML = `
-            <strong>Determinan (A) = ${det}</strong><br>
-            <small>Penyelesaian: (${part1}) - (${part2})</small>
-        `;
+    let d1 = m[0][0]*m[1][1]*m[2][2];
+    let d2 = m[0][1]*m[1][2]*m[2][0];
+    let d3 = m[0][2]*m[1][0]*m[2][1];
 
-        if (det === 0) {
-            resultDiv.style.color = "#ff7675";
-            resultDiv.innerHTML += "<br>Matriks Singular (Tidak memiliki invers)";
-        } else {
-            resultDiv.style.color = "#55efc4";
-        }
-    }
+    let u1 = m[0][2]*m[1][1]*m[2][0];
+    let u2 = m[0][0]*m[1][2]*m[2][1];
+    let u3 = m[0][1]*m[1][0]*m[2][2];
+
+    let det = (d1 + d2 + d3) - (u1 + u2 + u3);
+
+    document.getElementById("detResult").innerHTML =
+        "🎯 Determinan = " + det;
+
+    document.getElementById("steps").innerHTML =
+        "📉 Diagonal turun: " + d1 + " + " + d2 + " + " + d3 +
+        "<br>📈 Diagonal naik: " + u1 + " + " + u2 + " + " + u3 +
+        "<br><b>Hasil = (" + (d1+d2+d3) + ") - (" + (u1+u2+u3) + ")</b>";
+}
+
+function randomMatrix() {
+    let inputs = document.querySelectorAll(".m-input");
+    inputs.forEach(i => i.value = Math.floor(Math.random()*10));
+}
+
+function resetMatrix() {
+    let inputs = document.querySelectorAll(".m-input");
+    inputs.forEach(i => i.value = 0);
+    detResult.innerHTML = "Hasil akan muncul di sini...";
+    steps.innerHTML = "";
+}
+</script>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. Ekspansi Kofaktor -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Ekspansi">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Ekspansi Kofaktor</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Ekspansi Kofaktor</strong> adalah metode untuk menghitung determinan matriks dengan mengembangkan elemen-elemen baris atau kolom tertentu.</p>
+    </div>
+
+    <p>Ekspansi kofaktor memungkinkan kita untuk menghitung determinan matriks dengan memecahnya menjadi sub-matriks yang lebih kecil. Ini sangat berguna untuk matriks berukuran besar.</p>
+    class="explain">
+Ekspansi kofaktor adalah metode menghitung determinan dengan mengalikan elemen
+dengan kofaktornya lalu menjumlahkannya.
+</div>
+<h3>📊 Contoh Matriks</h3>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>3</span><span>1</span></div>
+        <div class="matrix-row"><span>4</span><span>5</span><span>6</span></div>
+        <div class="matrix-row"><span>7</span><span>8</span><span>9</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>🔍 Minor</h3>
+
+<div class="formula-box">
+M₁₁ = (5 × 9) − (6 × 8)
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">M₁₁ =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>5</span><span>6</span></div>
+        <div class="matrix-row"><span>8</span><span>9</span></div>
+    </div>
+</div>
+
+<div class="explain">
+M₁₁ = 45 − 48 = <b>-3</b>
+</div>
+</div>
+
+<hr>
+
+<h3>⚡ Kofaktor</h3>
+
+<div class="formula-box">
+Cᵢⱼ = (-1)<sup>i+j</sup> × Mᵢⱼ
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-box">
+        <div class="matrix-row"><span>+</span><span>−</span><span>+</span></div>
+        <div class="matrix-row"><span>−</span><span>+</span><span>−</span></div>
+        <div class="matrix-row"><span>+</span><span>−</span><span>+</span></div>
+    </div>
+</div>
+
+<div class="explain">
+Contoh: C₁₁ = +(-3) = <b>-3</b>
+</div>
+
+<hr>
+
+<h3>🧮 Ekspansi Kofaktor</h3>
+
+<div class="formula-box">
+(A) = a₁₁C₁₁ + a₁₂C₁₂ + a₁₃C₁₃
+</div>
+
+<div class="example-box">
+(A) = (2×-3) + (3×6) + (1×-3)  
+<br><b>= 9</b>
+</div>
+</div>
+
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+
+<div class="explain">
+Dengan menggunakan minor dan kofaktor, determinan matriks dapat dihitung
+secara sistematis menggunakan ekspansi kofaktor.
+</div>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. Aturan Cramer (Cramer's Rule) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Aturan">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Aturan Cramer (Cramer's Rule)</h2>
+    </div>
+</div>
+<p>
+Aturan Cramer adalah metode untuk menyelesaikan sistem persamaan linear (SPL) menggunakan determinan matriks.
+</p>
+
+<div class="card">
+<h3>📐 Rumus</h3>
+
+<div class="formula-box">
+xᵢ = det(Aᵢ) / det(A)
+</div>
+
+<div class="explain">
+Aᵢ = matriks A dengan kolom ke-i diganti B
+</div>
+</div>
+
+<h3>📊 Contoh Soal</h3>
+
+<div class="explain">
+2x + y = 5 <br>
+x + 3y = 6
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>1</span></div>
+        <div class="matrix-row"><span>1</span><span>3</span></div>
+    </div>
+</div>
+
+<div class="formula-box">det(A) = (2×3) - (1×1) = 5</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A₁ =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>5</span><span>1</span></div>
+        <div class="matrix-row"><span>6</span><span>3</span></div>
+    </div>
+</div>
+
+<div class="formula-box">det(A₁) = 9</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A₂ =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>5</span></div>
+        <div class="matrix-row"><span>1</span><span>6</span></div>
+    </div>
+</div>
+
+<div class="formula-box">det(A₂) = 7</div>
+
+<div class="formula-box">
+x = 9/5 , y = 7/5
+</div>
+
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+
+<div class="explain">
+Jika det(A) ≠ 0 maka solusi bisa dicari dengan Cramer.
+</div>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. Sifat-Sifat Determinan -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Sifat">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Sifat-Sifat Determinan</h2>
+    </div>
+    <div class="def-box">
+  <div class="label">Sifat-Sifat Determinan</div>
+  <p>
+    Beberapa sifat penting determinan:Jika dua baris/kolom sama → determinan = 0,Jika ada baris/kolom nol → determinan = 0
+    , Tukar dua baris → tanda determinan berubah, Dikalikan skalar k → determinan ikut dikali k, det(AB) = det(A) × det(B), det(I) = 1
+  </p>
+</div>
+<div class="box">
+✨ Sifat-sifat determinan adalah aturan-aturan yang berlaku pada determinan matriks
+yang membantu dalam perhitungan dan analisis matriks.
+</div>
+</div>
+
+<div class="card">
+<h3>1. 🔁 Baris/Kolom Sama</h3>
+<div class="box">
+Jika dua baris atau dua kolom dalam matriks sama, maka determinan = 0 ❌
+</div>
+</div>
+
+<div class="card">
+<h3>2. ⛔ Baris/Kolom Nol</h3>
+<div class="box">
+Jika terdapat satu baris atau kolom yang semua elemennya nol, maka determinan = 0
+</div>
+</div>
+
+<div class="card">
+<h3>3. 🔄 Pertukaran Baris</h3>
+<div class="box">
+Jika dua baris ditukar, maka determinan berubah tanda (±)
+</div>
+</div>
+
+<div class="card">
+<h3>4. ✖️ Perkalian Skalar</h3>
+<div class="box">
+Jika satu baris dikalikan dengan k, maka determinan ikut dikalikan k
+</div>
+</div>
+
+<div class="card">
+<h3>5. ➕ Kombinasi Linear</h3>
+<div class="box">
+Menambahkan kelipatan suatu baris ke baris lain tidak mengubah determinan ✔️
+</div>
+</div>
+
+<div class="card">
+<h3>6. 🔗 Perkalian Matriks</h3>
+<div class="box">
+det(AB) = det(A) × det(B)
+</div>
+</div>
+
+<div class="card">
+<h3>7. 🧱 Matriks Identitas</h3>
+<div class="box">
+det(I) = 1
+</div>
+</div>
+
+<div class="card">
+<h3>8. 🔃 Matriks Transpose</h3>
+<div class="box">
+det(Aᵀ) = det(A)
+</div>
+</div>
+
+<div class="card">
+<h3>9. 📐 Matriks Segitiga</h3>
+<div class="box">
+Jika matriks berbentuk segitiga, maka determinan adalah hasil kali elemen diagonal utama
+</div>
+</div>
+
+<div class="card">
+<h3>10. 🧩 Ketergantungan Linear</h3>
+<div class="box">
+Jika satu baris merupakan kombinasi linear dari baris lain, maka determinan = 0 ❌
+</div>
+</div>
+
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+<div class="box">
+Sifat-sifat determinan mempermudah perhitungan dan membantu memahami apakah
+suatu matriks memiliki invers serta hubungan antar baris atau kolom 📊
+</div>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. Aplikasi Determinan -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Aplikasi">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Aplikasi Determinan</h2>
+    </div>
+    <!-- PENGERTIAN -->
+<div class="card">
+<h3>🧠 Pengertian</h3>
+<div class="box">
+Determinan tidak hanya digunakan dalam perhitungan matriks, tetapi juga memiliki
+banyak aplikasi penting dalam matematika dan bidang lainnya.
+</div>
+</div>
+
+<h3>1. 📊 Menentukan Invers Matriks</h3>
+<div class="box">
+Determinan digunakan untuk mengetahui apakah suatu matriks memiliki invers atau tidak.
+</div>
+
+<div class="formula">
+det(A) ≠ 0 → memiliki invers<br>
+det(A) = 0 → tidak memiliki invers
+</div>
+
+<hr>
+
+<h3>2. 🧮 Menyelesaikan SPL (Cramer)</h3>
+<div class="box">
+Determinan digunakan dalam Aturan Cramer untuk mencari solusi sistem persamaan linear.
+</div>
+
+<div class="formula">
+xᵢ = det(Aᵢ) / det(A)
+</div>
+
+<hr>
+
+<h3>3. 📐 Menghitung Luas</h3>
+<div class="box">
+Pada matriks 2×2, determinan digunakan untuk menghitung luas jajargenjang.
+</div>
+
+<div class="formula">
+Luas = |det(A)|
+</div>
+
+<hr>
+
+<h3>4. 📦 Menghitung Volume</h3>
+<div class="box">
+Pada matriks 3×3, determinan digunakan untuk menghitung volume bangun ruang.
+</div>
+
+<div class="formula">
+Volume = |det(A)|
+</div>
+
+<hr>
+
+<h3>5. 🔄 Transformasi Linear</h3>
+<div class="box">
+Determinan menunjukkan faktor perubahan skala pada transformasi linear
+(luas atau volume bisa membesar atau mengecil).
+</div>
+
+<hr>
+
+
+<h3>6. 🧩 Mengecek Ketergantungan Linear</h3>
+<div class="box">
+Determinan digunakan untuk mengetahui apakah vektor saling bebas atau tidak.
+</div>
+
+<div class="formula">
+det(A) = 0 → bergantung linear<br>
+det(A) ≠ 0 → bebas linear
+</div>
+
+<hr>
+
+<h3>7. 📈 Bidang Ilmu Lain</h3>
+<div class="box">
+Determinan digunakan dalam berbagai bidang seperti:
+<ul>
+<li>Fisika ⚛️ (transformasi koordinat)</li>
+<li>Ekonomi 💰 (model linear)</li>
+<li>Teknik ⚙️ (grafika & sistem kontrol)</li>
+</ul>
+</div>
+
+<hr>
+
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+<div class="box">
+Determinan memiliki banyak aplikasi penting seperti menentukan invers,
+menyelesaikan SPL, serta menghitung luas dan volume.
+</div>
+</div>
+  </section>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SUMMARY -->
+  <!-- ══════════════════════════════════════════ -->
+ <section class="section-card" style="background: linear-gradient(135deg,#ffe4ec,#f8bbd0);">
+  <div class="section-header">
+    <div class="section-num" style="background:#ec407a; color:white;">✓</div>
+    <h2 style="color:#ad1457;">Rangkuman Materi Determinan</h2>
+  </div>
+
+  <table class="info-table">
+    <thead>
+      <tr>
+        <th>Topik</th>
+        <th>Poin Utama</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><strong>Pengertian</strong></td>
+        <td>Determinan adalah nilai skalar dari matriks persegi (n × n)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Notasi</strong></td>
+        <td>Ditulis sebagai det(A) atau |A|</td>
+      </tr>
+
+      <tr>
+        <td><strong>Determinan 2×2</strong></td>
+        <td>det(A) = ad − bc</td>
+      </tr>
+
+      <tr>
+        <td><strong>Determinan 3×3</strong></td>
+        <td>Menggunakan metode Sarrus atau ekspansi kofaktor</td>
+      </tr>
+
+      <tr>
+        <td><strong>Minor</strong></td>
+        <td>Determinan submatriks setelah menghapus baris & kolom tertentu</td>
+      </tr>
+
+      <tr>
+        <td><strong>Kofaktor</strong></td>
+        <td>Cᵢⱼ = (-1)<sup>i+j</sup> × Mᵢⱼ</td>
+      </tr>
+
+      <tr>
+        <td><strong>Sifat Determinan</strong></td>
+        <td>
+          • Baris sama → det = 0<br>
+          • Tukar baris → tanda berubah<br>
+          • det(AB) = det(A)det(B)
+        </td>
+      </tr>
+
+      <tr>
+        <td><strong>Makna Geometris</strong></td>
+        <td>Menunjukkan luas (2×2) dan volume (3×3)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Invers Matriks</strong></td>
+        <td>det(A) ≠ 0 → matriks memiliki invers</td>
+      </tr>
+
+      <tr>
+        <td><strong>Aturan Cramer</strong></td>
+        <td>Menyelesaikan SPL dengan rumus xᵢ = det(Aᵢ)/det(A)</td>
+      </tr>
+
+      <tr>
+        <td><strong>Aplikasi</strong></td>
+        <td>Digunakan dalam SPL, transformasi linear, fisika, ekonomi, dll</td>
+      </tr>
+
+    </tbody>
+  </table>
+    <div style="text-align:center; margin-top:24px;">
+     <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FAB scroll to top -->
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
 </script>
 
 </body>
