@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sistem Persamaan Linear — Matematika Diskrit</title>
+  <title>Determinan — Matematika Diskrit</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --bg: #f9f6f0;
       --surface: #ffffff;
       --surface2: #f3ede4;
-      --accent: #22c55e;
-      --accent2: #22c55e;
+      --accent: #ff758f;
+      --accent2: #ff758f;  
       --accent3: #b7e4c7;
-      --accent-warm: #c77c3c;
+      --accent-warm: #c73c9b;
       --text: #1a1a1a;
       --text-muted: #5c5c5c;
       --border: #d9cfc2;
-      --shadow: rgba(45, 106, 66, 0.12);
+      --shadow: rgba(45, 106, 79, 0.12);
       --radius: 14px;
       --radius-sm: 8px;
     }
@@ -33,7 +33,7 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #22c55e 0%, #22c55e 55%, #22c55e 100%);
+      background: linear-gradient(135deg, #ff758f 0%, #ff758f 55%, #ff758f 100%);
       color: #fff;
       padding: 60px 24px 80px;
       text-align: center;
@@ -44,7 +44,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 70% 30%, rgba(183,228,199,.18) 0%, transparent 65%);
+      background: radial-gradient(ellipse at 70% 30%, rgba(228, 183, 212, 0.18) 0%, transparent 65%);
       pointer-events: none;
     }
     .hero-icon {
@@ -177,7 +177,7 @@
     em { color: var(--accent-warm); font-style: italic; }
 
     .def-box {
-      background: linear-gradient(135deg, #e9f5ee 0%, #d1ead9 100%);
+      background: linear-gradient(135deg, #f5e9f4 0%, #ead1e6 100%);
       border-left: 5px solid var(--accent);
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       padding: 18px 22px;
@@ -225,24 +225,6 @@
       margin: 20px 0;
       font-size: 0.93rem;
     }
-
-    .table-green {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table-green th,
-.table-green td {
-    border: 1px solid #bbf7d0;
-    padding: 10px;
-    text-align: center;
-}
-
-.table-green th {
-    background: #86efac;
-    color: #14532d;
-}
-
     .info-table th {
       background: var(--accent);
       color: #fff;
@@ -255,7 +237,7 @@
     .info-table tr:nth-child(even) td { background: var(--surface2); }
 
     .formula {
-      background: #22c55e;
+      background: #2e1b2b;
       color: #b7e4c7;
       border-radius: var(--radius-sm);
       padding: 16px 20px;
@@ -264,116 +246,6 @@
       margin: 16px 0;
       overflow-x: auto;
     }
-
-.matrix-classic {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 30px 0;
-}
-
-.matrix-content {
-    text-align: center;
-    font-family: "Times New Roman", serif;
-    font-size: 18px;
-    line-height: 2;
-    padding: 0 15px;
-    color: #000;
-}
-
-.bracket {
-    width: 12px;
-    height: 140px;
-    border: 2px solid #000;
-}
-
-.bracket.left {
-    border-right: none;
-    border-radius: 15px 0 0 15px;
-}
-
-.bracket.right {
-    border-left: none;
-    border-radius: 0 15px 15px 0;
-}
-
-@media (max-width: 600px) {
-    .matrix-content {
-        font-size: 14px;
-        line-height: 1.8;
-    }
-
-    .bracket {
-        height: 110px;
-    }
-}
-@media (max-width: 600px) {
-    .matrix-content {
-        font-size: 14px;
-        padding: 10px 15px;
-    }
-
-    .matrix-bracket {
-        height: 110px;
-    }
-}
-
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.table-green {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 300px;
-    background: #ffffff;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.table-green th {
-    background: linear-gradient(135deg, #81c784, #66bb6a);
-    color: white;
-    padding: 12px;
-    text-align: left;
-}
-
-.table-green td {
-    padding: 10px;
-    border-bottom: 1px solid #e0f2f1;
-}
-
-.table-green tr:hover {
-    background: #f1f8f4;
-}
-
-@media (max-width: 600px) {
-    .matrix {
-        font-size: 13px;
-        gap: 6px;
-        padding: 15px;
-    }
-
-    .table-green th,
-    .table-green td {
-        padding: 8px;
-        font-size: 12px;
-    }
-}
-.matrix-box {
-    background: linear-gradient(135deg, #e8f5e9, #f1f8f4);
-}
-
-.rumus.big {
-    font-size: 18px;
-    line-height: 1.8;
-}
-
-.note {
-    font-size: 0.9rem;
-    color: #555;
-}
 
     .steps {
       counter-reset: step;
@@ -417,7 +289,7 @@
     .badge {
       display: inline-block;
       background: var(--accent3);
-      color: #22c55e;
+      color: #431b3d;
       padding: 2px 10px;
       border-radius: 50px;
       font-size: 0.78rem;
@@ -434,58 +306,171 @@
       border-radius: 2px;
     }
 
+    .theorem-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+    border-left: 6px solid #2d6a4f;
+}
+
+.theorem-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #1b4332;
+}
+
+.formula-box {
+    background: #e9f5ee;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.explain {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.matrix-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-family: "Times New Roman", serif;
+}
+
+.matrix-label {
+    font-size: 1.3rem;
+    font-weight: bold;
+    font-style: italic;
+    margin-right: 10px;
+}
+
+.matrix-box {
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    padding: 10px 20px;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    border-radius: 25px;
+}
+
+.matrix-box::before, .matrix-box::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 6px;
+    background: white; 
+}
+
+.matrix-box::before { top: -3px; }
+.matrix-box::after { bottom: -3px; }
+
+.matrix-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px; 
+}
+
+.matrix-row span {
+    font-size: 1.2rem;
+    min-width: 25px;
+    text-align: center;
+    padding: 4px 0;
+}
+
+.calc-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+
+.calc-title {
+    font-size: 20px;
+    color: #1b4332;
+    margin-bottom: 10px;
+}
+
 .card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 18px;
-  margin: 20px 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  line-height: 1.6;
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    margin: 20px 0;
+    box-shadow: 0 6px 15px rgba(255,105,180,0.2);
+    border-left: 6px solid #ec407a;
 }
 
-.card h2 {
-  margin-top: 20px;
-  color: #1f2937;
-  border-left: 5px solid #22c55e;
-  padding-left: 10px;
+.formula-box {
+    background: linear-gradient(135deg,#fce4ec,#f8bbd0);
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    color: #880e4f;
 }
 
-.rumus {
-  background: #f0fdf4;
-  border-left: 4px solid #22c55e;
-  padding: 12px;
-  margin: 12px 0;
-  border-radius: 8px;
-  font-family: "Courier New", monospace;
-  text-align: center;
-  font-size: 16px;
+.explain {
+    background: #fdf2f8;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 10px;
 }
 
-.soal {
-  background: #f9fafb;
-  border-left: 4px solid #3b82f6;
-  padding: 14px;
-  border-radius: 10px;
-  margin: 15px 0;
+.calc-grid {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 5px;
 }
 
-.soal:hover {
-  background: #eef2ff;
-  transition: 0.2s;
+.m-input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
-.card p {
-  margin: 10px 0;
-  color: #374151;
+.btn-action {
+    margin: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    background: #2d6a4f;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-@media (max-width: 600px) {
-  .card {
-    padding: 14px;
-  }
-  .rumus {
+.btn-action:hover {
+    background: #1b4332;
+    transform: scale(1.05);
+}
+
+.result-display {
+    margin-top: 10px;
+    padding: 10px;
+    background: #e9f5ee;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.step-box {
+    margin-top: 10px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
     font-size: 14px;
-  }
 }
     
     .huffman-box {
@@ -498,7 +483,7 @@
     .huffman-box h3 {
       font-size: 1rem;
       margin-bottom: 12px;
-      color: #1b4332;
+      color: #431b36;
     }
 
     .huffman-item {
@@ -514,7 +499,7 @@
       .num {
         min-width: 28px;
         height: 28px;
-        background: #2d6a4f;
+        background: #6a2d59;
         color: white;
         font-size: 0.85rem;
         border-radius: 50%;
@@ -530,8 +515,8 @@
         line-height: 1.4;
       }
 
-      .green {
-        color: #2d6a4f;
+      .pink {
+        color: #6a2d5b;
         font-weight: 600;
       }
 
@@ -557,7 +542,7 @@
       border-radius: 50%;
       font-size: 1.3rem;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(45,106,79,.45);
+      box-shadow: 0 4px 14px rgba(106, 45, 101, 0.45);
       display: flex; align-items: center; justify-content: center;
       transition: transform .2s, background .2s;
       z-index: 200;
@@ -657,1037 +642,907 @@
 
 <!-- HERO -->
 <header class="hero" id="top">
-  <span class="hero-icon">📐</span>
-  <h1>Sistem Persamaan Linear</h1>
- <p>Sistem Persamaan Linear dalam Matematika Diskrit — konsep dasar, teknik penyelesaian, representasi matriks, dan implementasi nyata</p>
- <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
+  <span class="hero-icon">🧮</span>
+  <h1>Determinan</h1>
+  <p>Materi lengkap Matematika Diskrit — Determinan, Konsep Dasar, Perhitungan, dan Aplikasi</p>
+  <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
 </header>
 
 <!-- TOC BAR -->
 <nav class="toc-bar">
-  <a href="#Persamaan"> Persamaan Linear</a>
-  <a href="#Unsur">Unsur Penyusun Persamaan Linear</a>
-  <a href="#Sistem">Sistem Persamaan Linear</a>
-  <a href="#Metode">Metode Penyelesaian</a>
-  <a href="#Matriks">Representasi Matriks</a>
-  <a href="#JenisSolusi">Jenis-Jenis Solusi</a>
-  <a href="#Aplikasi">Aplikasi SPL</a>
+  <a href="#Konsep">Konsep Dasar Determinan</a>
+  <a href="#Teorema">Teorema Penting</a>
+  <a href="#Teknik">Teknik Perhitungan</a>
+  <a href="#Ekspansi">Ekspansi Kofaktor</a>
+  <a href="#Aturan">Aturan Cramer (Cramer's Rule)</a>
+  <a href="#Sifat">Sifat-Sifat Determinan</a>
+  <a href="#Aplikasi">Aplikasi Determinan</a>
 </nav>
 
 <main class="container">
 
   <!-- ══════════════════════════════════════════ -->
-  <!-- 1. Persamaan Linear -->
+  <!-- 1. Konsep Dasar Determinan -->
   <!-- ══════════════════════════════════════════ -->
-  <section class="section-card" id="Persamaan">
+  <section class="section-card" id="Konsep">
     <div class="section-header">
       <div class="section-num">1</div>
-      <h2>Persamaan Linear</h2>
+      <h2>Konsep Dasar Determinan</h2>
     </div>
 
     <div class="def-box">
       <div class="label">Definisi Formal</div>
-      <p><strong>Persamaan Linear</strong> adalah persamaan yang memiliki variabel-variabel berpangkat satu.</p>
+      <p><strong>Determinan</strong> adalah nilai skalar yang dapat dihitung dari elemen-elemen matriks persegi dan memberikan informasi penting tentang sifat matriks tersebut.</p>
+    </div>
+<div class="section">
+    <p>🎯 <b>Determinan</b> adalah nilai skalar (bilangan tunggal) yang diperoleh dari matriks persegi (jumlah baris = kolom).</p>
+    
+    <div style="background:#eef7f1; padding:10px; border-radius:10px;">
+        📌 Contoh: matriks 2x2, 3x3, dan seterusnya.
+    </div>
+</div>
+
+<hr>
+
+<div class="section">
+<h3>🧠 A. Pengertian Determinan</h3>
+
+<p>Determinan dinotasikan sebagai <b>det(A)</b> atau <b>|A|</b>.</p>
+
+<p>💡 Digunakan untuk:
+<ul>
+<li>Menentukan apakah matriks memiliki invers</li>
+<li>Menyelesaikan sistem persamaan linear</li>
+</ul>
+</p>
+
+<div style="margin-top:10px;">
+    <p>✨ <b>det(A) ≠ 0</b> → Matriks memiliki invers (non-singular)</p>
+    <p>❌ <b>det(A) = 0</b> → Matriks tidak memiliki invers (singular)</p>
+</div>
+</div>
+
+<hr>
+
+<div class="section">
+<h3>📐 B. Determinan Matriks 2x2</h3>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>a</span><span>b</span></div>
+        <div class="matrix-row"><span>c</span><span>d</span></div>
+    </div>
+</div>
+
+<div class="formula-box">
+📌 det(A) = ad - bc
+</div>
+
+<p>🧮 <b>Contoh:</b></p>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>3</span><span>2</span></div>
+        <div class="matrix-row"><span>1</span><span>4</span></div>
+    </div>
+</div>
+
+<div style="background:#f9f9f9; padding:10px; border-radius:10px;">
+    💡 det(A) = (3×4) - (2×1) = 12 - 2 = <b>10</b>
+</div>
+</div>
+
+<hr>
+
+<div class="section">
+<h3>📊 C. Determinan Matriks 3x3</h3>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>a</span><span>b</span><span>c</span></div>
+        <div class="matrix-row"><span>d</span><span>e</span><span>f</span></div>
+        <div class="matrix-row"><span>g</span><span>h</span><span>i</span></div>
+    </div>
+</div>
+
+<div class="formula-box">
+📌 det(A) = a(ei − fh) − b(di − fg) + c(dh − eg)
+</div>
+
+<p>⚡ Bisa dihitung dengan metode Sarrus atau Kofaktor.</p>
+</div>
+
+<hr>
+
+<div class="section">
+<h3>🔍 D. Minor & Kofaktor</h3>
+
+<div style="background:#eef5ff; padding:10px; border-radius:10px;">
+    <p><b>Minor (M<sub>ij</sub>)</b> → determinan setelah menghapus baris ke-i dan kolom ke-j.</p>
+</div>
+
+<p style="margin-top:10px;">
+    ⚡ <b>Kofaktor</b> = (-1)<sup>i+j</sup> × Minor
+</p>
+</div>
+
+<div class="section">
+<h3>📌 E. Sifat Determinan</h3>
+
+<ul>
+<li>✔ Dua baris/kolom sama → determinan = 0</li>
+<li>✔ Ada baris nol → determinan = 0</li>
+<li>✔ Tukar baris → tanda berubah</li>
+<li>✔ Dikalikan k → determinan ikut dikali k</li>
+<li>✔ det(AB) = det(A) × det(B)</li>
+<li>✔ det(I) = 1</li>
+</ul>
+</div>
+
+<hr>
+
+<div class="section">
+<h3>📏 F. Makna Geometris</h3>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+    <div style="background:#e9f5ee; padding:10px; border-radius:10px;">
+        📐 Matriks 2x2 → luas jajargenjang
     </div>
 
-    <p>Persamaan linear merupakan konsep dasar dalam aljabar dan sangat penting dalam memahami sistem persamaan linear. Persamaan linear dapat ditulis dalam bentuk umum:</p>
-<div class="card">
-<p>
-Persamaan linear adalah persamaan yang mengandung satu atau lebih variabel 
-(x₁, x₂, ..., xₙ) dan dapat dituliskan dalam bentuk aljabar sebagai berikut:
-</p>
-
-<div class="rumus">
-a₁x₁ + a₂x₂ = 0 &nbsp; atau &nbsp; ax + by = 0
+    <div style="background:#fff4e6; padding:10px; border-radius:10px;">
+        📦 Matriks 3x3 → volume bangun ruang
+    </div>
+</div>
 </div>
 
-<div class="rumus">
-a₁x₁ + a₂x₂ + a₃x₃ + ... + aₙxₙ = 0 
+<hr>
+
+<div class="section">
+<h3>⚙️ G. Peranan dalam SPL</h3>
+
+<p>Digunakan dalam <b>Metode Cramer</b> untuk menentukan solusi.</p>
+
+<div style="margin-top:10px;">
+    <p>✅ det ≠ 0 → solusi tunggal</p>
+    <p>⚠️ det = 0 → tidak ada / banyak solusi</p>
+</div>
 </div>
 
-<p>
-<strong>Keterangan:</strong><br>
-a₁, a₂, a₃ → konstanta<br>
-x₁, x₂, x₃ → variabel
-</p>
+<div class="section">
+<h3>🎯 Kesimpulan</h3>
 
-<h2>🧪 Contoh Soal</h2>
+<p>Determinan memiliki peranan penting dalam aljabar linear:</p>
 
-<div class="soal">
-<p><strong>1.</strong> Harga 1 kg cabai dan 1 kg tomat adalah Rp27.000.  
-Harga 2 kg cabai dan 3 kg tomat adalah Rp33.000.  
-Tentukan harga masing-masing.</p>
-
-<p><strong>2.</strong> Harga 5 kg gula + 30 kg beras = Rp410.000  
-Harga 2 kg gula + 60 kg beras = Rp740.000  
-Tentukan harga 2 kg gula dan 5 kg beras.</p>
+<ul>
+<li>📌 Menentukan invers matriks</li>
+<li>📌 Menyelesaikan sistem persamaan linear</li>
+<li>📌 Menjelaskan transformasi geometri</li>
+</ul>
 </div>
 
-<div class="soal">
-<p><strong>3.</strong> Perbandingan spidol biru : merah = 3 : 4  
-Merah : hitam = 4 : 5  
-Total = 430 buah  
-Buat model SPL.</p>
-
-<p><strong>4.</strong>  
-Anggiat: 10 buku + 4 pulpen = Rp36.000  
-Uli: 5 buku + 8 pulpen = Rp27.000  
-Tentukan harga satuan.</p>
-</div>
-
-<h2>📘 Penjelasan</h2>
-
-<p>
-Persamaan dengan dua variabel disebut <strong>2 dimensi</strong> (x, y).
-</p>
-
-<p>
-Persamaan dengan tiga variabel disebut <strong>3 dimensi</strong> (x, y, z).
-</p>
-
-</div>
   </section>
 
   <!-- ══════════════════════════════════════════ -->
-  <!-- 2. Unsur Penyusun Persamaan Linear -->
+  <!-- 2. Teorema Penting -->
   <!-- ══════════════════════════════════════════ -->
-  <section class="section-card" id="Unsur">
+  <section class="section-card" id="Teorema">
     <div class="section-header">
       <div class="section-num">2</div>
-      <h2>Unsur Penyusun Persamaan Linear</h2>
+      <h2>Teorema Penting</h2>
     </div>
-
-  <p>
-Dalam persamaan linear, terdapat beberapa unsur penting yang menyusun bentuk aljabarnya. 
-Unsur-unsur ini saling berkaitan dan menentukan bentuk serta solusi dari persamaan tersebut.
-</p>
-
+<div class="section">
 <p>
-Misalkan suatu persamaan linear dituliskan dalam bentuk umum:
+🎯 Determinan memiliki peranan penting dalam aljabar linear karena berkaitan dengan:
 </p>
 
-<div class="rumus">
-a₁x₁ + a₂x₂ + ... + aₙxₙ = b
+<ul>
+<li>✔ Sifat matriks</li>
+<li>✔ Sistem persamaan linear</li>
+<li>✔ Transformasi linear</li>
+</ul>
 </div>
-    <div class="section-title">
-        <span>📦 Unsur Penyusun Persamaan Linear</span>
-    </div>
 
-    <p class="subtitle">
-        Memahami komponen dasar agar lebih mudah menyusun dan menyelesaikan persamaan
-    </p>
+<div class="section">
+<h3>🧠 A. Teorema Keberadaan Invers</h3>
 
-    <div class="highlight-box">
-        <ul>
-            <li><strong>Variabel:</strong> nilai yang belum diketahui (x₁, x₂, ...)</li>
-            <li><strong>Koefisien:</strong> bilangan pengali variabel (a₁, a₂, ...)</li>
-            <li><strong>Konstanta:</strong> nilai tetap</li>
-            <li><strong>Operator:</strong> penghubung (+, −)</li>
-            <li><strong>Suku:</strong> bagian persamaan</li>
-        </ul>
-    </div>
+<div class="formula-box">
+det(A) ≠ 0 ⇔ A memiliki invers  
+det(A) = 0 ⇔ A tidak memiliki invers
+</div>
 
-    <div class="example-box glow">
-        <h3>🔤 Variabel</h3>
-        <p>Simbol yang mewakili nilai yang belum diketahui.</p>
+<p>💡 Jika determinan ≠ 0 → solusi unik</p>
+<p>⚠️ Jika determinan = 0 → tidak ada / banyak solusi</p>
 
-        <div class="mini-box">
-            x = durian<br>
-            y = rambutan<br>
-            z = mangga
-        </div>
+<div style="background:#eef7f1; padding:10px; border-radius:10px;">
+📌 Rumus: x = A⁻¹b
+</div>
+</div>
 
-        <div class="rumus">
-            7x + 3y + 10z
-        </div>
-    </div>
+<div class="section">
+<h3>📊 B. Teorema Perkalian Matriks</h3>
 
-    <div class="example-box glow">
-        <h3>🔢 Koefisien</h3>
-        <p>Bilangan yang mengalikan variabel.</p>
+<div class="formula-box">
+det(AB) = det(A) × det(B)
+</div>
 
-        <div class="rumus">
-            7x + 3y + 10z
-        </div>
+<p>✔ Bersifat multiplikatif</p>
+<p>✔ Jika salah satu = 0 → hasil juga 0</p>
 
-        <p>Koefisien: <strong>7, 3, 10</strong></p>
-    </div>
+<div style="background:#fff4e6; padding:10px; border-radius:10px;">
+💡 det(A⁻¹) = 1 / det(A)
+</div>
+</div>
 
-    <div class="example-box glow">
-        <h3>📌 Konstanta</h3>
-        <p>Bilangan tetap tanpa variabel.</p>
+<div class="section">
+<h3>🔁 C. Teorema Transpose</h3>
 
-        <div class="rumus">
-            7x + 3y + 10z + 23 = 0
-        </div>
+<div class="formula-box">
+det(Aᵀ) = det(A)
+</div>
 
-        <p>Konstanta: <strong>23</strong></p>
-    </div>
+<p>📌 Baris ↔ kolom tidak mengubah nilai determinan</p>
+</div>
 
-    <div class="example-box modern">
-        <h3>📐 Persamaan Linear</h3>
-        <p>
-            Persamaan dengan variabel berpangkat satu dan tanpa perkalian antar variabel.
-        </p>
+<div class="section">
+<h3>🔄 D. Pertukaran Dua Baris</h3>
 
-        <div class="rumus highlight">
-            ax + by = c
-        </div>
-    </div>
+<div class="formula-box">
+Tukar baris → det berubah tanda
+</div>
 
-    <div class="example-box danger modern">
-        <h3>❌ Bukan Persamaan Linear</h3>
+<p>💡 det baru = - det lama</p>
+<p>✔ Dua kali tukar → kembali seperti semula</p>
+</div>
 
-        <div class="rumus">
-            x² + 4x + 4 = 0 <br>
-            tan x + cos y = 0 <br>
-            16x + √y = 25 <br>
-            2 log x + xy + z = 10
-        </div>
-    </div>
+<div class="section">
+<h3>📏 E. Perkalian Skalar</h3>
 
-    <div class="info-box">
-        <strong>📘 Ciri Persamaan Linear:</strong>
-        <ul>
-            <li>Pangkat variabel = 1</li>
-            <li>Tidak ada akar variabel</li>
-            <li>Tidak ada fungsi trigonometri/log</li>
-        </ul>
-    </div>
+<div class="formula-box">
+Jika satu baris dikali k → det = k × det(A)
+</div>
+
+<div class="formula-box">
+det(kA) = kⁿ × det(A)
+</div>
+
+<p>📌 n = ordo matriks</p>
+</div>
+
+<div class="section">
+<h3>🚫 F. Baris / Kolom Nol</h3>
+
+<div class="formula-box">
+Jika ada baris nol → det(A) = 0
+</div>
+
+<p>💡 Tidak perlu hitung → langsung 0</p>
+</div>
+
+<div class="section">
+<h3>👯 G. Dua Baris Identik</h3>
+
+<div class="formula-box">
+Baris/kolom sama → det(A) = 0
+</div>
+
+<p>📌 Karena ketergantungan linear</p>
+</div>
+
+<div class="section">
+<h3>🧩 H. Kombinasi Linear</h3>
+
+<div class="formula-box">
+Jika satu baris = kombinasi baris lain → det = 0
+</div>
+
+<p>💡 Menandakan tidak bebas linear</p>
+</div>
+
+<div class="section">
+<h3>📐 I. Matriks Segitiga</h3>
+
+<div class="formula-box">
+det(A) = a₁₁ × a₂₂ × ... × aₙₙ
+</div>
+
+<p>✔ Berlaku untuk segitiga atas & bawah</p>
+</div>
+
+<div class="section">
+<h3>🧮 J. Ekspansi Kofaktor</h3>
+
+<div class="formula-box">
+det(A) = a₁₁C₁₁ + a₁₂C₁₂ + ... + a₁ₙC₁ₙ
+</div>
+
+<div class="formula-box">
+Cij = (-1)^(i+j) × Mij
+</div>
+
+<p>💡 Bisa dari baris atau kolom mana saja</p>
+</div>
+
+<div class="section">
+<h3>⚙️ K. Teorema Cramer</h3>
+
+<div class="formula-box">
+xi = det(Ai) / det(A)
+</div>
+
+<p>✔ det(A) ≠ 0 → solusi unik</p>
+<p>⚠️ det(A) = 0 → tidak unik</p>
+</div>
+
+<div class="section">
+<h3>🎯 Kesimpulan</h3>
+
+<div class="theorem-box">
+<ul>
+<li>✔ det(A) menentukan invers matriks</li>
+<li>✔ det(A) = 0 → tidak invertible</li>
+<li>✔ det(AB) = det(A)det(B)</li>
+<li>✔ det(A) = det(Aᵀ)</li>
+<li>✔ Determinan berkaitan dengan luas & volume</li>
+</ul>
+</div>
+</div>
   </section>
 
   <!-- ══════════════════════════════════════════ -->
-  <!-- 3. Sistem Persamaan Linear -->
+  <!-- 3. Teknik Perhitungan -->
   <!-- ══════════════════════════════════════════ -->
-  <section class="section-card" id="Sistem">
+  <section class="section-card" id="Teknik">
     <div class="section-header">
       <div class="section-num">3</div>
-      <h2>Sistem Persamaan Linear</h2>
+      <h2>Teknik Perhitungan</h2>
+    </div>
+<h3 class="calc-title">🧠 A. Metode Sarrus (3x3)</h3>
+
+<p>📌 Tambahkan dua kolom pertama, lalu hitung diagonal turun dan naik.</p>
+
+<div style="text-align:center;">
+    <div class="calc-grid">
+        <input type="number" id="m11" class="m-input" value="0">
+        <input type="number" id="m12" class="m-input" value="0">
+        <input type="number" id="m13" class="m-input" value="0">
+    </div>
+    <div class="calc-grid">
+        <input type="number" id="m21" class="m-input" value="0">
+        <input type="number" id="m22" class="m-input" value="0">
+        <input type="number" id="m23" class="m-input" value="0">
+    </div>
+    <div class="calc-grid">
+        <input type="number" id="m31" class="m-input" value="0">
+        <input type="number" id="m32" class="m-input" value="0">
+        <input type="number" id="m33" class="m-input" value="0">
     </div>
 
-    <div class="def-box">
-      <div class="label">Definisi</div>
-      <p><strong>Sistem persamaan linear</strong> adalah kumpulan persamaan linear yang memiliki variabel-variabel yang sama.</p>
-    </div>
+    <button class="btn-action" onclick="calculateDet3x3()">🧮 Hitung</button>
+    <button class="btn-action" onclick="randomMatrix()">🎲 Random</button>
+    <button class="btn-action" onclick="resetMatrix()">🧹 Reset</button>
 
-    <p class="subtitle">
-        Kumpulan dua atau lebih persamaan linear yang memiliki solusi bersama
-    </p>
-        <p>
-            SPL terdiri dari beberapa persamaan seperti:
-        </p>
-        <ul>
-            <li>L₁ → Persamaan pertama</li>
-            <li>L₂ → Persamaan kedua</li>
-            <li>L₃ → Persamaan ketiga</li>
-        </ul>
-    </div>
-
-    <div class="example-box">
-        <h3>📐 Bentuk Umum SPL</h3>
-
-        <div class="rumus big">
-            a₁₁x₁ + a₁₂x₂ + ... + a₁ₙxₙ = k₁ <br>
-            a₂₁x₁ + a₂₂x₂ + ... + a₂ₙxₙ = k₂ <br>
-            ... <br>
-            aₘ₁x₁ + aₘ₂x₂ + ... + aₘₙxₙ = kₘ
-        </div>
-    </div>
-
-    <div class="example-box matrix-box">
-        <h3>🔢 Representasi Matriks</h3>
-
-       <div class="matrix-wrapper">
-  <div class="matrix-bracket left"></div>
-
-<div class="matrix-classic">
-    <div class="bracket left"></div>
-
-    <div class="matrix-content">
-        <div>a<sup>11</sup> &nbsp; a<sup>12</sup> &nbsp; ... &nbsp; a<sup>1n</sup> &nbsp; k<sup>1</sup></div>
-        <div>a<sup>21</sup> &nbsp; a<sup>22</sup> &nbsp; ... &nbsp; a<sup>2n</sup> &nbsp; k<sup>2</sup></div>
-        <div>⋮</div>
-        <div>a<sup>m1</sup> &nbsp; a<sup>m2</sup> &nbsp; ... &nbsp; a<sup>mn</sup> &nbsp; k<sup>m</sup></div>
-    </div>
-
-    <div class="bracket right"></div>
+    <div id="detResult" class="result-display">Hasil akan muncul di sini...</div>
+    <div id="steps" class="step-box"></div>
 </div>
 </div>
-        <p class="note">
-            Bentuk ini disebut <strong>matriks augmented</strong> dan digunakan untuk menyelesaikan SPL dengan metode matriks.
-        </p>
-    </div>
-    <div class="example-box modern">
-        <h3>📌 Bentuk Sederhana</h3>
-        <div class="rumus highlight">
-            Ax = b
-        </div>
-        <p>
-            A = matriks koefisien, x = variabel, b = konstanta
-        </p>
-    </div>
 
-    <div class="example-box">
+<hr>
 
-   <div class="example-box">
+<h3 class="calc-title">🔄 B. Reduksi Baris (OBE)</h3>
 
-    <h3>🔹 Sistem Homogen</h3>
-    <div class="table-container">
-        <table class="table-green">
-            <thead>
-                <tr>
-                    <th>Persamaan 1</th>
-                    <th>Persamaan 2</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2x + 3y = 0</td>
-                    <td>6x + 9y = 0</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <h3 style="margin-top:20px;">🔸 Sistem Non-Homogen</h3>
-    <div class="table-container">
-        <table class="table-green">
-            <thead>
-                <tr>
-                    <th>Persamaan 1</th>
-                    <th>Persamaan 2</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>10x + 4y = 6</td>
-                    <td>5x + 3y = 12</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-</div>
-
-</div>
-    <div class="example-box">
-        <h3>⚖️ Jenis SPL</h3>
-
-        <div class="table-container">
-            <table class="table-green">
-                <thead>
-                    <tr>
-                        <th>Jenis</th>
-                        <th>Bentuk</th>
-                        <th>Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Homogen</td>
-                        <td>2x + 3y = 0</td>
-                        <td>Semua konstanta = 0</td>
-                    </tr>
-                    <tr>
-                        <td>Non-Homogen</td>
-                        <td>2x + 3y = 5</td>
-                        <td>Ada konstanta ≠ 0</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="example-box">
-        <h3>🧪 Contoh SPL</h3>
-
-        <div class="table-container">
-            <table class="table-green">
-                <tbody>
-                    <tr><td>10x + 4y = 6</td></tr>
-                    <tr><td>5x + 3y = 12</td></tr>
-                </tbody>
-              </table>
-</div>
-  </section>
-
-  <!-- ══════════════════════════════════════════ -->
-  <!-- 4. Metode Penyelesaian -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="section-card" id="Metode">
-    <div class="section-header">
-      <div class="section-num">4</div>
-      <h2>Metode Penyelesaian</h2>
-    </div>
-
-    <div class="def-box">
-      <div class="label">Definisi</div>
-     <p><strong>Metode penyelesaian sistem persamaan linear</strong> adalah cara yang digunakan untuk menentukan nilai variabel-variabel yang memenuhi seluruh persamaan dalam suatu sistem, seperti metode substitusi, eliminasi, atau menggunakan matriks.</p>
-    </div>
-   <p>Metode penyelesaian dalam <strong>Sistem Persamaan Linear (SPL)</strong> digunakan untuk menemukan nilai variabel yang memenuhi semua persamaan secara bersamaan. 
-    Beberapa metode yang umum digunakan antara lain metode <strong>substitusi</strong>, <strong>eliminasi</strong>, dan <strong>metode matriks</strong>. 
-    Metode-metode ini sangat berguna dalam berbagai bidang seperti ekonomi, teknik, dan ilmu komputer untuk memodelkan dan menyelesaikan permasalahan nyata.
-  </p>
-    
-    <h3>🔹 1. Metode Substitusi</h3>
-    <p>
-        Metode substitusi dilakukan dengan cara menyatakan salah satu variabel 
-        dalam bentuk variabel lain, kemudian menggantinya ke persamaan lain.
-    </p>
-
-    <div class="example-box">
-        <strong>Contoh:</strong><br>
-        x + y = 5 <br>
-        x - y = 1 <br><br>
-
-        Dari persamaan kedua:<br>
-        x = y + 1 <br><br>
-
-        Substitusi ke persamaan pertama:<br>
-        (y + 1) + y = 5 → 2y = 4 → y = 2 <br>
-        x = y + 1 = 3 <br><br>
-
-        <strong>Hasil:</strong> x = 3, y = 2
-    </div>
-
-    <h3>🔸 2. Metode Eliminasi</h3>
-    <p>
-        Metode eliminasi dilakukan dengan menghilangkan salah satu variabel 
-        dengan cara menjumlahkan atau mengurangkan dua persamaan.
-    </p>
-
-    <div class="example-box">
-        <strong>Contoh:</strong><br>
-        2x + y = 7 <br>
-        x + y = 5 <br><br>
-
-        Kurangkan kedua persamaan:<br>
-        (2x + y) - (x + y) = 7 - 5 <br>
-        x = 2 <br><br>
-
-        Substitusi:<br>
-        x + y = 5 → 2 + y = 5 → y = 3 <br><br>
-
-        <strong>Hasil:</strong> x = 2, y = 3
-    </div>
-
-    <h3>🔹 3. Metode Eliminasi + Substitusi</h3>
-    <p>
-        Metode ini menggabungkan eliminasi dan substitusi untuk mempermudah perhitungan.
-    </p>
-
-    <div class="example-box">
-        <strong>Contoh:</strong><br>
-        3x + 2y = 12 <br>
-        x + y = 5 <br><br>
-
-        Eliminasi:<br>
-        x + y = 5 → x = 5 - y <br><br>
-
-        Substitusi:<br>
-        3(5 - y) + 2y = 12 <br>
-        15 - 3y + 2y = 12 <br>
-        15 - y = 12 → y = 3 <br>
-        x = 2 <br>
-    </div>
-
-    <h3>🔸 4. Metode Grafik</h3>
-    <p>
-        Metode grafik dilakukan dengan menggambar kedua persamaan pada bidang kartesius. 
-        Titik potong kedua garis merupakan solusi SPL.
-    </p>
-
-    <div class="example-box">
-        <strong>Contoh:</strong><br>
-        x + y = 4 <br>
-        x - y = 2 <br><br>
-
-        Gambar kedua garis → titik potong = (3,1)<br>
-        <strong>Hasil:</strong> x = 3, y = 1
-    </div>
-
-    <h3>🔹 5. Metode Matriks</h3>
-    <p>
-        SPL dapat ditulis dalam bentuk matriks: <strong>Ax = b</strong>.
-        Penyelesaian dapat dilakukan menggunakan invers matriks atau eliminasi Gauss.
-    </p>
-
-    <div class="example-box">
-        <strong>Bentuk Matriks:</strong><br>
-        [A] [x] = [b]
-    </div>
-
-    <h3>🔸 6. Metode Eliminasi Gauss</h3>
-    <p>
-        Metode ini menggunakan operasi baris elementer untuk mengubah matriks 
-        menjadi bentuk segitiga sehingga mudah diselesaikan.
-    </p>
-
-    <div class="example-box">
-        <strong>Langkah umum:</strong>
-        <ul>
-            <li>Membuat matriks augmented</li>
-            <li>Mengubah ke bentuk segitiga</li>
-            <li>Melakukan substitusi balik</li>
-        </ul>
-    </div>
-
-    <h3>🔹 Jenis-Jenis Solusi SPL</h3>
-    <div class="example-box">
-        <ul>
-            <li><strong>Solusi Tunggal:</strong> satu solusi unik</li>
-            <li><strong>Tak Hingga Solusi:</strong> banyak solusi</li>
-            <li><strong>Tidak Ada Solusi:</strong> sistem tidak konsisten</li>
-        </ul>
-    </div>
-
-    <div class="explain ok">
-        <strong>Kesimpulan:</strong>
-        <p>
-            Metode penyelesaian SPL sangat penting dalam matematika dan kehidupan nyata. 
-            Pemilihan metode tergantung pada bentuk persamaan dan kemudahan perhitungan. 
-            Untuk soal sederhana gunakan eliminasi atau substitusi, sedangkan untuk sistem besar gunakan metode matriks.
-        </p>
-    </div>
-
-</div>
-  </section>
-
-  <!-- ══════════════════════════════════════════ -->
-  <!-- 5. Representasi Matriks  -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="section-card" id="Matriks">
-    <div class="section-header">
-      <div class="section-num">5</div>
-      <h2>Representasi Matriks</h2>
-    </div>
-    <p>
-Sistem Persamaan Linear (SPL) dapat ditulis dalam bentuk matriks agar lebih 
-ringkas dan mudah dihitung, terutama jika jumlah variabel banyak.
-</p>
-
-<div class="example-box">
-<strong>Bentuk umum SPL:</strong><br><br>
-
-a₁₁x₁ + a₁₂x₂ + a₁₃x₃ = b₁ <br>
-a₂₁x₁ + a₂₂x₂ + a₂₃x₃ = b₂ <br>
-a₃₁x₁ + a₃₂x₂ + a₃₃x₃ = b₃
-</div>
-
-<p>
-Bentuk tersebut dapat ditulis dalam bentuk matriks:
-<strong>Ax = b</strong>
-</p>
-
-<!-- MATRIX UTAMA -->
-<div class="matrix-classic">
-
-    <div class="bracket left"></div>
-    <div class="matrix-content">
-        a₁₁&nbsp;&nbsp;a₁₂&nbsp;&nbsp;a₁₃ <br>
-        a₂₁&nbsp;&nbsp;a₂₂&nbsp;&nbsp;a₂₃ <br>
-        a₃₁&nbsp;&nbsp;a₃₂&nbsp;&nbsp;a₃₃
-    </div>
-    <div class="bracket right"></div>
-
-    <div style="margin: 0 12px;">×</div>
-
-    <div class="bracket left"></div>
-    <div class="matrix-content">
-        x₁ <br>
-        x₂ <br>
-        x₃
-    </div>
-    <div class="bracket right"></div>
-
-    <div style="margin: 0 12px;">=</div>
-
-    <div class="bracket left"></div>
-    <div class="matrix-content">
-        b₁ <br>
-        b₂ <br>
-        b₃
-    </div>
-    <div class="bracket right"></div>
-
-</div>
-
-<!-- PENJELASAN -->
-<div class="example-box">
-<strong>Keterangan:</strong>
 <ul>
-<li><b>A</b> = matriks koefisien</li>
-<li><b>x</b> = matriks variabel</li>
-<li><b>b</b> = matriks konstanta</li>
+<li>🔁 Tukar dua baris → det = <b>-det</b></li>
+<li>📏 Kali baris dengan k → det = <b>k det</b></li>
+<li>➕ Tambah kelipatan baris → det <b>tetap</b></li>
 </ul>
+
+<div class="step-box">
+💡 Gunakan metode ini untuk menyederhanakan matriks menjadi segitiga atas.
 </div>
-
-<!-- CONTOH -->
-<h3>🔸 Contoh Nyata</h3>
-
-<div class="example-box">
-
-<p><strong>Diketahui:</strong></p>
-
-2x + y + z = 9 <br>
-x + 3y + 2z = 13 <br>
-3x + y + 4z = 17
-
-<p><strong>Bentuk Matriks:</strong></p>
-
-<div class="matrix-classic">
-
-    <div class="bracket left"></div>
-    <div class="matrix-content">
-        2&nbsp;&nbsp;1&nbsp;&nbsp;1 <br>
-        1&nbsp;&nbsp;3&nbsp;&nbsp;2 <br>
-        3&nbsp;&nbsp;1&nbsp;&nbsp;4
-    </div>
-    <div class="bracket right"></div>
-
-    <div style="margin: 0 12px;">×</div>
-
-    <div class="bracket left"></div>
-    <div class="matrix-content">
-        x <br>
-        y <br>
-        z
-    </div>
-    <div class="bracket right"></div>
-
-    <div style="margin: 0 12px;">=</div>
-
-    <div class="bracket left"></div>
-    <div class="matrix-content">
-        9 <br>
-        13 <br>
-        17
-    </div>
-    <div class="bracket right"></div>
-
-</div>
-
-</div>
-
-<!-- AUGMENTED -->
-<h3>🔹 Matriks Augmented</h3>
-
-<div class="example-box">
-
-<p>
-Untuk mempermudah penyelesaian (misalnya metode eliminasi Gauss), digunakan 
-<strong>matriks augmented</strong>:
-</p>
-
-<div class="matrix-classic">
-
-    <div class="bracket left"></div>
-    <div class="matrix-content">
-        2&nbsp;&nbsp;1&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;9 <br>
-        1&nbsp;&nbsp;3&nbsp;&nbsp;2&nbsp;&nbsp;|&nbsp;&nbsp;13 <br>
-        3&nbsp;&nbsp;1&nbsp;&nbsp;4&nbsp;&nbsp;|&nbsp;&nbsp;17
-    </div>
-    <div class="bracket right"></div>
-
-</div>
-
-</div>
-
-<!-- KEUNTUNGAN -->
-<h3>✨ Keuntungan Matriks</h3>
-
-<div class="example-box">
-<ul>
-<li>Lebih ringkas dibanding bentuk biasa</li>
-<li>Mudah digunakan dalam metode Gauss</li>
-<li>Cocok untuk sistem besar</li>
-<li>Digunakan dalam komputer dan AI</li>
-</ul>
-</div>
-
-<!-- KESIMPULAN -->
-<div class="explain ok">
-<strong>Kesimpulan:</strong>
-<p>
-Representasi matriks membuat sistem persamaan linear lebih terstruktur 
-dan mudah diselesaikan, baik secara manual maupun menggunakan komputer.
-</p>
-</div>
-  </section>
-
-  <!-- ══════════════════════════════════════════ -->
-  <!-- 6. Jenis-Jenis Solusi -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="section-card" id="JenisSolusi">
-    <div class="section-header">
-      <div class="section-num">6</div>
-      <h2>Jenis - Jenis Solusi </h2>
-    </div>
-<p>
-Sistem Persamaan Linear (SPL) bisa punya berbagai kemungkinan solusi tergantung hubungan antar persamaan.
-Mari kita lihat jenis-jenisnya 👇
-</p>
-
-<h3>🔹 1. Solusi Tunggal 🎯</h3>
-
-<p>
-Sistem memiliki <strong>satu solusi pasti</strong>.
-</p>
-
-<div class="example-box">
-📘 <strong>Contoh:</strong><br><br>
-x + y = 5 <br>
-x - y = 1 <br><br>
-
-✅ Hasil: x = 3, y = 2
-</div>
-
-<div class="example-box">
-🔍 <strong>Ciri:</strong>
-<ul>
-<li>🎯 Satu solusi</li>
-<li>📈 Garis berpotongan</li>
-<li>✔ Sistem konsisten</li>
-</ul>
-</div>
-
-<h3>🔸 2. Tak Hingga Solusi ♾️</h3>
-
-<p>
-Sistem memiliki <strong>banyak solusi</strong> (tak terbatas).
-</p>
-
-<div class="example-box">
-📘 <strong>Contoh:</strong><br><br>
-x + y = 4 <br>
-2x + 2y = 8 <br><br>
-
-♾️ Kedua persamaan sama
-</div>
-
-<div class="example-box">
-🔍 <strong>Ciri:</strong>
-<ul>
-<li>♾️ Solusi tak terbatas</li>
-<li>📉 Garis berhimpit</li>
-<li>✔ Sistem konsisten</li>
-</ul>
-</div>
-
-<h3>🔹 3. Tidak Ada Solusi ❌</h3>
-
-<p>
-Sistem tidak memiliki solusi karena saling bertentangan.
-</p>
-
-<div class="example-box">
-📘 <strong>Contoh:</strong><br><br>
-x + y = 4 <br>
-x + y = 6 <br><br>
-
-❌ Tidak mungkin benar bersamaan
-</div>
-
-<div class="example-box">
-🔍 <strong>Ciri:</strong>
-<ul>
-<li>❌ Tidak ada solusi</li>
-<li>📏 Garis sejajar</li>
-<li>🚫 Tidak konsisten</li>
-</ul>
-</div>
-
-<h3>🧠💡 Cek Cepat Jenis Solusi</h3>
-
-<div class="example-box">
-<p>Pilih kondisi sistem:</p>
-
-<select id="cekSolusi" class="m-input">
-<option value="">-- pilih --</option>
-<option value="1">Berpotongan</option>
-<option value="2">Berhimpit</option>
-<option value="3">Sejajar</option>
-</select>
-
-<button class="btn-action primary" onclick="cekJenis()">Cek 🔍</button>
-
-<p id="hasilCek" style="margin-top:10px; font-weight:bold;"></p>
-</div>
-
-
-
-<h3>🏷️ Status Sistem</h3>
-
-<div class="example-box">
-<span class="badge">✔ Konsisten</span>
-<span class="badge">♾️ Dependen</span>
-<span class="badge">❌ Tidak Konsisten</span>
-</div>
-
-<h3>🧪 Mini Quiz</h3>
-
-<div class="example-box">
-<p>Jika dua garis sejajar, maka solusinya adalah?</p>
-
-<button class="btn-action" onclick="quiz('A')">🎯 Satu</button>
-<button class="btn-action" onclick="quiz('B')">♾️ Banyak</button>
-<button class="btn-action" onclick="quiz('C')">❌ Tidak ada</button>
-
-<p id="quizRes" style="margin-top:10px;"></p>
-</div>
-
-<div class="explain ok">
-<strong>🚀 Kesimpulan:</strong>
-<p>
-Dengan memahami jenis solusi SPL, kita bisa langsung mengetahui apakah suatu sistem memiliki solusi atau tidak tanpa harus menyelesaikan semuanya.
-</p>
-</div>
-
 </div>
 
 <script>
-function cekJenis() {
-    let val = document.getElementById("cekSolusi").value;
-    let res = document.getElementById("hasilCek");
-
-    if(val == "1") res.innerText = "🎯 Solusi Tunggal";
-    else if(val == "2") res.innerText = "♾️ Tak Hingga Solusi";
-    else if(val == "3") res.innerText = "❌ Tidak Ada Solusi";
-    else res.innerText = "";
+function getMatrix() {
+    return [
+        [Number(m11.value), Number(m12.value), Number(m13.value)],
+        [Number(m21.value), Number(m22.value), Number(m23.value)],
+        [Number(m31.value), Number(m32.value), Number(m33.value)]
+    ];
 }
 
-function quiz(ans) {
-    let res = document.getElementById("quizRes");
+function calculateDet3x3() {
+    let m = getMatrix();
 
-    if(ans == "C") {
-        res.innerText = "✔ Benar! Garis sejajar tidak punya solusi";
-    } else {
-        res.innerText = "❌ Salah, coba lagi!";
-    }
+    let d1 = m[0][0]*m[1][1]*m[2][2];
+    let d2 = m[0][1]*m[1][2]*m[2][0];
+    let d3 = m[0][2]*m[1][0]*m[2][1];
+
+    let u1 = m[0][2]*m[1][1]*m[2][0];
+    let u2 = m[0][0]*m[1][2]*m[2][1];
+    let u3 = m[0][1]*m[1][0]*m[2][2];
+
+    let det = (d1 + d2 + d3) - (u1 + u2 + u3);
+
+    document.getElementById("detResult").innerHTML =
+        "🎯 Determinan = " + det;
+
+    document.getElementById("steps").innerHTML =
+        "📉 Diagonal turun: " + d1 + " + " + d2 + " + " + d3 +
+        "<br>📈 Diagonal naik: " + u1 + " + " + u2 + " + " + u3 +
+        "<br><b>Hasil = (" + (d1+d2+d3) + ") - (" + (u1+u2+u3) + ")</b>";
+}
+
+function randomMatrix() {
+    let inputs = document.querySelectorAll(".m-input");
+    inputs.forEach(i => i.value = Math.floor(Math.random()*10));
+}
+
+function resetMatrix() {
+    let inputs = document.querySelectorAll(".m-input");
+    inputs.forEach(i => i.value = 0);
+    detResult.innerHTML = "Hasil akan muncul di sini...";
+    steps.innerHTML = "";
 }
 </script>
   </section>
 
   <!-- ══════════════════════════════════════════ -->
-  <!-- 7. Aplikasi SPL -->
+  <!-- 4. Ekspansi Kofaktor -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Ekspansi">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Ekspansi Kofaktor</h2>
+    </div>
+
+    <div class="def-box">
+      <div class="label">Definisi</div>
+      <p><strong>Ekspansi Kofaktor</strong> adalah metode untuk menghitung determinan matriks dengan mengembangkan elemen-elemen baris atau kolom tertentu.</p>
+    </div>
+
+    <p>Ekspansi kofaktor memungkinkan kita untuk menghitung determinan matriks dengan memecahnya menjadi sub-matriks yang lebih kecil. Ini sangat berguna untuk matriks berukuran besar.</p>
+    class="explain">
+Ekspansi kofaktor adalah metode menghitung determinan dengan mengalikan elemen
+dengan kofaktornya lalu menjumlahkannya.
+</div>
+<h3>📊 Contoh Matriks</h3>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>3</span><span>1</span></div>
+        <div class="matrix-row"><span>4</span><span>5</span><span>6</span></div>
+        <div class="matrix-row"><span>7</span><span>8</span><span>9</span></div>
+    </div>
+</div>
+
+<hr>
+
+<h3>🔍 Minor</h3>
+
+<div class="formula-box">
+M₁₁ = (5 × 9) − (6 × 8)
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">M₁₁ =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>5</span><span>6</span></div>
+        <div class="matrix-row"><span>8</span><span>9</span></div>
+    </div>
+</div>
+
+<div class="explain">
+M₁₁ = 45 − 48 = <b>-3</b>
+</div>
+</div>
+
+<hr>
+
+<h3>⚡ Kofaktor</h3>
+
+<div class="formula-box">
+Cᵢⱼ = (-1)<sup>i+j</sup> × Mᵢⱼ
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-box">
+        <div class="matrix-row"><span>+</span><span>−</span><span>+</span></div>
+        <div class="matrix-row"><span>−</span><span>+</span><span>−</span></div>
+        <div class="matrix-row"><span>+</span><span>−</span><span>+</span></div>
+    </div>
+</div>
+
+<div class="explain">
+Contoh: C₁₁ = +(-3) = <b>-3</b>
+</div>
+
+<hr>
+
+<h3>🧮 Ekspansi Kofaktor</h3>
+
+<div class="formula-box">
+(A) = a₁₁C₁₁ + a₁₂C₁₂ + a₁₃C₁₃
+</div>
+
+<div class="example-box">
+(A) = (2×-3) + (3×6) + (1×-3)  
+<br><b>= 9</b>
+</div>
+</div>
+
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+
+<div class="explain">
+Dengan menggunakan minor dan kofaktor, determinan matriks dapat dihitung
+secara sistematis menggunakan ekspansi kofaktor.
+</div>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. Aturan Cramer (Cramer's Rule) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Aturan">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Aturan Cramer (Cramer's Rule)</h2>
+    </div>
+</div>
+<p>
+Aturan Cramer adalah metode untuk menyelesaikan sistem persamaan linear (SPL) menggunakan determinan matriks.
+</p>
+
+<div class="card">
+<h3>📐 Rumus</h3>
+
+<div class="formula-box">
+xᵢ = det(Aᵢ) / det(A)
+</div>
+
+<div class="explain">
+Aᵢ = matriks A dengan kolom ke-i diganti B
+</div>
+</div>
+
+<h3>📊 Contoh Soal</h3>
+
+<div class="explain">
+2x + y = 5 <br>
+x + 3y = 6
+</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>1</span></div>
+        <div class="matrix-row"><span>1</span><span>3</span></div>
+    </div>
+</div>
+
+<div class="formula-box">det(A) = (2×3) - (1×1) = 5</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A₁ =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>5</span><span>1</span></div>
+        <div class="matrix-row"><span>6</span><span>3</span></div>
+    </div>
+</div>
+
+<div class="formula-box">det(A₁) = 9</div>
+
+<div class="matrix-wrapper">
+    <div class="matrix-label">A₂ =</div>
+    <div class="matrix-box">
+        <div class="matrix-row"><span>2</span><span>5</span></div>
+        <div class="matrix-row"><span>1</span><span>6</span></div>
+    </div>
+</div>
+
+<div class="formula-box">det(A₂) = 7</div>
+
+<div class="formula-box">
+x = 9/5 , y = 7/5
+</div>
+
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+
+<div class="explain">
+Jika det(A) ≠ 0 maka solusi bisa dicari dengan Cramer.
+</div>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. Sifat-Sifat Determinan -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Sifat">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Sifat-Sifat Determinan</h2>
+    </div>
+    <div class="def-box">
+  <div class="label">Sifat-Sifat Determinan</div>
+  <p>
+    Beberapa sifat penting determinan:Jika dua baris/kolom sama → determinan = 0,Jika ada baris/kolom nol → determinan = 0
+    , Tukar dua baris → tanda determinan berubah, Dikalikan skalar k → determinan ikut dikali k, det(AB) = det(A) × det(B), det(I) = 1
+  </p>
+</div>
+<div class="box">
+✨ Sifat-sifat determinan adalah aturan-aturan yang berlaku pada determinan matriks
+yang membantu dalam perhitungan dan analisis matriks.
+</div>
+</div>
+
+<div class="card">
+<h3>1. 🔁 Baris/Kolom Sama</h3>
+<div class="box">
+Jika dua baris atau dua kolom dalam matriks sama, maka determinan = 0 ❌
+</div>
+</div>
+
+<div class="card">
+<h3>2. ⛔ Baris/Kolom Nol</h3>
+<div class="box">
+Jika terdapat satu baris atau kolom yang semua elemennya nol, maka determinan = 0
+</div>
+</div>
+
+<div class="card">
+<h3>3. 🔄 Pertukaran Baris</h3>
+<div class="box">
+Jika dua baris ditukar, maka determinan berubah tanda (±)
+</div>
+</div>
+
+<div class="card">
+<h3>4. ✖️ Perkalian Skalar</h3>
+<div class="box">
+Jika satu baris dikalikan dengan k, maka determinan ikut dikalikan k
+</div>
+</div>
+
+<div class="card">
+<h3>5. ➕ Kombinasi Linear</h3>
+<div class="box">
+Menambahkan kelipatan suatu baris ke baris lain tidak mengubah determinan ✔️
+</div>
+</div>
+
+<div class="card">
+<h3>6. 🔗 Perkalian Matriks</h3>
+<div class="box">
+det(AB) = det(A) × det(B)
+</div>
+</div>
+
+<div class="card">
+<h3>7. 🧱 Matriks Identitas</h3>
+<div class="box">
+det(I) = 1
+</div>
+</div>
+
+<div class="card">
+<h3>8. 🔃 Matriks Transpose</h3>
+<div class="box">
+det(Aᵀ) = det(A)
+</div>
+</div>
+
+<div class="card">
+<h3>9. 📐 Matriks Segitiga</h3>
+<div class="box">
+Jika matriks berbentuk segitiga, maka determinan adalah hasil kali elemen diagonal utama
+</div>
+</div>
+
+<div class="card">
+<h3>10. 🧩 Ketergantungan Linear</h3>
+<div class="box">
+Jika satu baris merupakan kombinasi linear dari baris lain, maka determinan = 0 ❌
+</div>
+</div>
+
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+<div class="box">
+Sifat-sifat determinan mempermudah perhitungan dan membantu memahami apakah
+suatu matriks memiliki invers serta hubungan antar baris atau kolom 📊
+</div>
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. Aplikasi Determinan -->
   <!-- ══════════════════════════════════════════ -->
   <section class="section-card" id="Aplikasi">
     <div class="section-header">
       <div class="section-num">7</div>
-      <h2>Aplikasi SPL</h2>
+      <h2>Aplikasi Determinan</h2>
     </div>
-<h3>🌍📊 Aplikasi Sistem Persamaan Linear (SPL)</h3>
-
-<p>
-Sistem Persamaan Linear (SPL) tidak hanya digunakan dalam matematika, 
-tetapi juga memiliki banyak aplikasi dalam kehidupan sehari-hari dan dunia teknologi.
-</p>
-
-<h3>💰 1. Bidang Ekonomi</h3>
-
-<p>
-SPL digunakan untuk menentukan harga barang, keuntungan, dan perencanaan keuangan.
-</p>
-
-<div class="example-box">
-<strong>Contoh:</strong><br><br>
-
-2 buku + 1 pensil = Rp5.000 <br>
-1 buku + 3 pensil = Rp7.000 <br><br>
-
-📌 Misalkan:
-b = buku, p = pensil <br><br>
-
-➡ SPL:
-2b + p = 5000 <br>
-b + 3p = 7000
+    <!-- PENGERTIAN -->
+<div class="card">
+<h3>🧠 Pengertian</h3>
+<div class="box">
+Determinan tidak hanya digunakan dalam perhitungan matriks, tetapi juga memiliki
+banyak aplikasi penting dalam matematika dan bidang lainnya.
+</div>
 </div>
 
-<!-- TEKNIK -->
-<h3>⚙️ 2. Bidang Teknik</h3>
-
-<p>
-Digunakan dalam perhitungan rangkaian listrik, gaya, dan sistem mekanik.
-</p>
-
-<div class="example-box">
-<strong>Contoh:</strong><br>
-Menentukan arus listrik pada beberapa cabang rangkaian menggunakan hukum Kirchhoff.
+<h3>1. 📊 Menentukan Invers Matriks</h3>
+<div class="box">
+Determinan digunakan untuk mengetahui apakah suatu matriks memiliki invers atau tidak.
 </div>
 
-<h3>💻 3. Ilmu Komputer</h3>
+<div class="formula">
+det(A) ≠ 0 → memiliki invers<br>
+det(A) = 0 → tidak memiliki invers
+</div>
 
-<p>
-SPL digunakan dalam grafika komputer, kecerdasan buatan, dan pengolahan data.
-</p>
+<hr>
 
-<div class="example-box">
+<h3>2. 🧮 Menyelesaikan SPL (Cramer)</h3>
+<div class="box">
+Determinan digunakan dalam Aturan Cramer untuk mencari solusi sistem persamaan linear.
+</div>
+
+<div class="formula">
+xᵢ = det(Aᵢ) / det(A)
+</div>
+
+<hr>
+
+<h3>3. 📐 Menghitung Luas</h3>
+<div class="box">
+Pada matriks 2×2, determinan digunakan untuk menghitung luas jajargenjang.
+</div>
+
+<div class="formula">
+Luas = |det(A)|
+</div>
+
+<hr>
+
+<h3>4. 📦 Menghitung Volume</h3>
+<div class="box">
+Pada matriks 3×3, determinan digunakan untuk menghitung volume bangun ruang.
+</div>
+
+<div class="formula">
+Volume = |det(A)|
+</div>
+
+<hr>
+
+<h3>5. 🔄 Transformasi Linear</h3>
+<div class="box">
+Determinan menunjukkan faktor perubahan skala pada transformasi linear
+(luas atau volume bisa membesar atau mengecil).
+</div>
+
+<hr>
+
+
+<h3>6. 🧩 Mengecek Ketergantungan Linear</h3>
+<div class="box">
+Determinan digunakan untuk mengetahui apakah vektor saling bebas atau tidak.
+</div>
+
+<div class="formula">
+det(A) = 0 → bergantung linear<br>
+det(A) ≠ 0 → bebas linear
+</div>
+
+<hr>
+
+<h3>7. 📈 Bidang Ilmu Lain</h3>
+<div class="box">
+Determinan digunakan dalam berbagai bidang seperti:
 <ul>
-<li>🎮 Animasi dan game (transformasi objek)</li>
-<li>🤖 AI dan machine learning</li>
-<li>📊 Analisis data</li>
+<li>Fisika ⚛️ (transformasi koordinat)</li>
+<li>Ekonomi 💰 (model linear)</li>
+<li>Teknik ⚙️ (grafika & sistem kontrol)</li>
 </ul>
 </div>
 
-<h3>🚗 4. Transportasi</h3>
+<hr>
 
-<p>
-Digunakan untuk menghitung kecepatan, jarak, dan waktu perjalanan.
-</p>
-
-<div class="example-box">
-<strong>Contoh:</strong><br>
-Dua kendaraan bergerak dengan kecepatan berbeda → digunakan SPL untuk menentukan titik pertemuan.
+<div class="card">
+<h3>🎯 Kesimpulan</h3>
+<div class="box">
+Determinan memiliki banyak aplikasi penting seperti menentukan invers,
+menyelesaikan SPL, serta menghitung luas dan volume.
 </div>
-
-<h3>🧪 5. Bidang Kimia</h3>
-
-<p>
-SPL digunakan untuk menyeimbangkan persamaan reaksi kimia.
-</p>
-
-<div class="example-box">
-<strong>Contoh:</strong><br>
-Menentukan koefisien reaksi agar jumlah atom seimbang.
 </div>
-
-<h3>📈 6. Dunia Bisnis</h3>
-
-<p>
-Digunakan dalam analisis produksi dan distribusi barang.
-</p>
-
-<div class="example-box">
-<ul>
-<li>📦 Menentukan jumlah produksi</li>
-<li>💸 Menghitung biaya dan keuntungan</li>
-<li>📊 Perencanaan strategi bisnis</li>
-</ul>
-</div>
-
-<h3>🧠💡 Simulasi Sederhana</h3>
-
-<div class="example-box">
-<p>Pilih bidang penggunaan SPL:</p>
-
-<select id="aplikasiSPL" class="m-input">
-<option value="">-- pilih --</option>
-<option value="ekonomi">Ekonomi</option>
-<option value="teknik">Teknik</option>
-<option value="komputer">Komputer</option>
-<option value="transportasi">Transportasi</option>
-</select>
-
-<button class="btn-action primary" onclick="cekAplikasi()">Tampilkan 🔍</button>
-
-<p id="hasilAplikasi" style="margin-top:10px;"></p>
-</div>
-
-<div class="explain ok">
-<strong>🚀 Kesimpulan:</strong>
-<p>
-SPL merupakan alat penting yang digunakan di berbagai bidang kehidupan. 
-Dengan memahami SPL, kita dapat menyelesaikan banyak masalah nyata secara sistematis dan efisien.
-</p>
-</div>
-
-</div>
-
-<script>
-function cekAplikasi() {
-    let val = document.getElementById("aplikasiSPL").value;
-    let res = document.getElementById("hasilAplikasi");
-
-    if(val == "ekonomi") res.innerText = "💰 Digunakan untuk menghitung harga dan keuntungan";
-    else if(val == "teknik") res.innerText = "⚙️ Digunakan dalam analisis sistem teknik";
-    else if(val == "komputer") res.innerText = "💻 Digunakan dalam AI dan grafika komputer";
-    else if(val == "transportasi") res.innerText = "🚗 Digunakan untuk menghitung jarak dan waktu";
-    else res.innerText = "";
-}
-</script>
   </section>
   <!-- ══════════════════════════════════════════ -->
   <!-- SUMMARY -->
   <!-- ══════════════════════════════════════════ -->
- <section class="section-card" style="background: linear-gradient(135deg,#e9f5ee,#d1ead9);">
-    <div class="section-header">
-        <div class="section-num" style="background:var(--accent-warm);">✓</div>
-        <h2 style="color:#1b4332;">Rangkuman Materi SPL</h2>
-    </div>
+ <section class="section-card" style="background: linear-gradient(135deg,#ffe4ec,#f8bbd0);">
+  <div class="section-header">
+    <div class="section-num" style="background:#ec407a; color:white;">✓</div>
+    <h2 style="color:#ad1457;">Rangkuman Materi Determinan</h2>
+  </div>
 
-    <table class="info-table">
-        <thead>
-            <tr>
-                <th>Topik</th>
-                <th>Poin Utama</th>
-            </tr>
-        </thead>
-        <tbody>
+  <table class="info-table">
+    <thead>
+      <tr>
+        <th>Topik</th>
+        <th>Poin Utama</th>
+      </tr>
+    </thead>
+    <tbody>
 
-            <tr>
-                <td><strong>Pengertian SPL</strong></td>
-                <td>Kumpulan dua atau lebih persamaan linear yang memiliki solusi bersama</td>
-            </tr>
+      <tr>
+        <td><strong>Pengertian</strong></td>
+        <td>Determinan adalah nilai skalar dari matriks persegi (n × n)</td>
+      </tr>
 
-            <tr>
-                <td><strong>Bentuk Umum</strong></td>
-                <td>ax + by = c (2 variabel), ax + by + cz = d (3 variabel)</td>
-            </tr>
+      <tr>
+        <td><strong>Notasi</strong></td>
+        <td>Ditulis sebagai det(A) atau |A|</td>
+      </tr>
 
-            <tr>
-                <td><strong>Unsur SPL</strong></td>
-                <td>Variabel, koefisien, konstanta, dan operator</td>
-            </tr>
+      <tr>
+        <td><strong>Determinan 2×2</strong></td>
+        <td>det(A) = ad − bc</td>
+      </tr>
 
-            <tr>
-                <td><strong>Representasi Matriks</strong></td>
-                <td>Dapat ditulis dalam bentuk Ax = b untuk mempermudah perhitungan</td>
-            </tr>
+      <tr>
+        <td><strong>Determinan 3×3</strong></td>
+        <td>Menggunakan metode Sarrus atau ekspansi kofaktor</td>
+      </tr>
 
-            <tr>
-                <td><strong>Metode Substitusi</strong></td>
-                <td>Mengganti satu variabel dengan ekspresi dari persamaan lain</td>
-            </tr>
+      <tr>
+        <td><strong>Minor</strong></td>
+        <td>Determinan submatriks setelah menghapus baris & kolom tertentu</td>
+      </tr>
 
-            <tr>
-                <td><strong>Metode Eliminasi</strong></td>
-                <td>Menghilangkan satu variabel dengan operasi penjumlahan/pengurangan</td>
-            </tr>
+      <tr>
+        <td><strong>Kofaktor</strong></td>
+        <td>Cᵢⱼ = (-1)<sup>i+j</sup> × Mᵢⱼ</td>
+      </tr>
 
-            <tr>
-                <td><strong>Metode Grafik</strong></td>
-                <td>Solusi diperoleh dari titik potong grafik persamaan</td>
-            </tr>
+      <tr>
+        <td><strong>Sifat Determinan</strong></td>
+        <td>
+          • Baris sama → det = 0<br>
+          • Tukar baris → tanda berubah<br>
+          • det(AB) = det(A)det(B)
+        </td>
+      </tr>
 
-            <tr>
-                <td><strong>Metode Matriks</strong></td>
-                <td>Menggunakan invers matriks atau eliminasi Gauss</td>
-            </tr>
+      <tr>
+        <td><strong>Makna Geometris</strong></td>
+        <td>Menunjukkan luas (2×2) dan volume (3×3)</td>
+      </tr>
 
-            <tr>
-                <td><strong>Jenis Solusi</strong></td>
-                <td>Solusi tunggal, tak hingga solusi, atau tidak ada solusi</td>
-            </tr>
+      <tr>
+        <td><strong>Invers Matriks</strong></td>
+        <td>det(A) ≠ 0 → matriks memiliki invers</td>
+      </tr>
 
-            <tr>
-                <td><strong>SPL Homogen</strong></td>
-                <td>Semua konstanta = 0 (selalu punya solusi trivial)</td>
-            </tr>
+      <tr>
+        <td><strong>Aturan Cramer</strong></td>
+        <td>Menyelesaikan SPL dengan rumus xᵢ = det(Aᵢ)/det(A)</td>
+      </tr>
 
-            <tr>
-                <td><strong>SPL Non-Homogen</strong></td>
-                <td>Memiliki konstanta ≠ 0</td>
-            </tr>
+      <tr>
+        <td><strong>Aplikasi</strong></td>
+        <td>Digunakan dalam SPL, transformasi linear, fisika, ekonomi, dll</td>
+      </tr>
 
-            <tr>
-                <td><strong>Aplikasi SPL</strong></td>
-                <td>Ekonomi, teknik, komputer, transportasi, dan ilmu lainnya</td>
-            </tr>
-
-        </tbody>
-    </table>
-</section>
+    </tbody>
+  </table>
     <div style="text-align:center; margin-top:24px;">
-     <a href="../../index.html?page=materi" class="btn-back" style="background:var(--accent); border-color:var(--accent2); color:#fff; font-size:1rem; padding:13px 32px;">← Kembali ke Halaman Materi</a>
+     <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
     </div>
   </section>
 
