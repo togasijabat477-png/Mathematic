@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Crypto Escape Room — Kriptografi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ── Variables (match Mathematic site) ── */
+:root {
+  --bg:    hsl(220,18%,7%);
+  --bg2:   hsl(220,15%,10%);
+  --bg3:   hsl(220,14%,13%);
+  --fg:    hsl(210,25%,92%);
+  --fg2:   hsl(210,15%,70%);
+  --fg3:   hsl(210,12%,50%);
+  --card:  hsl(220,13%,16%);
+  --border: hsl(220,12%,22%);
+  --border-hi: hsl(220,12%,30%);
+  --teal:  hsl(174,72%,52%);
+  --amber: hsl(38,95%,58%);
+  --red:   hsl(0,72%,58%);
+  --green: hsl(142,70%,45%);
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out: cubic-bezier(0,0,0.2,1);
+  --r: 12px;
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Playfair Display', serif;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { overflow-x:hidden; background:var(--bg); color:var(--fg); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
+
+/* Grid pattern background */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: linear-gradient(hsl(220,15%,14%,.5) 1px, transparent 1px),
+                    linear-gradient(90deg, hsl(220,15%,14%,.5) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+
+/* ── Layout ── */
+#app { position:relative; z-index:1; min-height:100vh; }
+
+/* ── Back Button ── */
+.back-btn {
+  position:fixed; top:16px; left:16px; z-index:200;
+  display:flex; align-items:center; gap:8px;
+  background:hsl(220,13%,16%,.9); border:1px solid var(--border-hi);
+  color:var(--fg2); padding:8px 16px; border-radius:99px;
+  font-family:var(--font-mono); font-size:.8rem; cursor:pointer;
+  backdrop-filter:blur(12px);
+  transition:all .3s var(--ease-spring);
+}
+.back-btn:hover { color:var(--teal); border-color:var(--teal); transform:translateX(-3px); }
+
+/* ── HUD ── */
+.hud {
+  position:fixed; top:16px; right:16px; z-index:200;
+  display:flex; align-items:center; gap:10px;
+}
+.hud-box {
+  background:hsl(220,13%,16%,.9); border:1px solid var(--border-hi);
+  padding:8px 16px; border-radius:99px; font-family:var(--font-mono);
+  font-size:.8rem; backdrop-filter:blur(12px);
+  display:flex; align-items:center; gap:6px;
+}
+.hud-timer { color:var(--amber); font-weight:700; font-size:.95rem; }
+.hud-timer.danger { color:var(--red); animation:timerPulse .6s ease-in-out infinite; }
+.hud-score { color:var(--teal); font-weight:700; }
+.hud-level { color:var(--fg3); }
+
+/* ── Screens ── */
+.screen { display:none; min-height:100vh; }
+.screen.active { display:flex; flex-direction:column; }
+
+/* ── Intro Screen ── */
+#intro {
+  align-items:center; justify-content:center; text-align:center;
+  padding:80px 20px;
+}
+.intro-glow {
+  position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 60% 50% at 50% 30%, hsl(174,72%,52%,.08), transparent 70%);
+}
+.intro-icon {
+  font-size:4.5rem; margin-bottom:24px;
+  animation:float 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 30px hsl(174,72%,52%,.4));
+}
+.intro h1 {
+  font-family:var(--font-display); font-size:clamp(2.5rem,6vw,4rem);
+  font-weight:900; letter-spacing:-.02em; margin-bottom:12px;
+}
+.intro h1 span { color:var(--teal); }
+.intro p { font-size:1.1rem; color:var(--fg2); max-width:500px; line-height:1.7; margin:0 auto 40px; }
+.intro-rooms { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-bottom:40px; }
+.intro-room-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 24px; width:min(180px,100%); text-align:center; cursor:pointer;
+  transition:all .35s var(--ease-spring);
+}
+.intro-room-card:hover { border-color:var(--teal); transform:translateY(-6px); box-shadow:0 12px 32px hsl(174,72%,52%,.15); }
+.intro-room-card .icon { font-size:2rem; margin-bottom:10px; }
+.intro-room-card h3 { font-weight:700; font-size:.95rem; margin-bottom:4px; }
+.intro-room-card p { font-size:.8rem; color:var(--fg3); }
+.btn-start {
+  background:var(--teal); color:hsl(220,18%,7%); border:none;
+  padding:16px 48px; border-radius:var(--r); font-size:1.1rem; font-weight:700;
+  font-family:var(--font-body); cursor:pointer;
+  box-shadow:0 8px 32px hsl(174,72%,52%,.3);
+  transition:all .35s var(--ease-spring);
+  position:relative; overflow:hidden;
+}
+.btn-start::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,.15));
+  opacity:0; transition:opacity .3s;
+}
+.btn-start:hover { transform:translateY(-4px); box-shadow:0 14px 48px hsl(174,72%,52%,.4); }
+.btn-start:hover::before { opacity:1; }
+.btn-start:active { transform:translateY(-1px) scale(.98); }
+
+/* ── Game Screen ── */
+#game { flex-direction:column; padding:80px 20px 40px; align-items:center; }
+.room-header {
+  text-align:center; margin-bottom:32px; max-width:700px; width:100%;
+}
+.room-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  border:1px solid var(--teal); background:hsl(174,72%,52%,.1);
+  padding:4px 14px; border-radius:99px; font-family:var(--font-mono);
+  font-size:.75rem; color:var(--teal); margin-bottom:16px;
+}
+.room-header h2 {
+  font-family:var(--font-display); font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:900; letter-spacing:-.02em; margin-bottom:10px;
+}
+.room-header p { color:var(--fg2); font-size:.95rem; line-height:1.6; }
+
+/* ── Story Box ── */
+.story-box {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 24px; margin-bottom:24px; max-width:700px; width:100%;
+  border-left:3px solid var(--amber); position:relative; overflow:hidden;
+}
+.story-box::after {
+  content:''; position:absolute; top:0; right:0; bottom:0; width:40%;
+  background:linear-gradient(90deg, transparent, hsl(38,95%,58%,.04));
+  pointer-events:none;
+}
+.story-box p { font-size:.9rem; color:var(--fg2); line-height:1.8; }
+.story-box p span.highlight { color:var(--amber); font-weight:600; }
+
+/* ── Puzzle Area ── */
+.puzzle-area { max-width:700px; width:100%; }
+.puzzle-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+  padding:28px; margin-bottom:20px;
+  transition:border-color .3s;
+  position:relative; overflow:hidden;
+}
+.puzzle-card.solved { border-color:var(--green); }
+.puzzle-card.solved::before {
+  content:'✓'; position:absolute; top:12px; right:16px;
+  color:var(--green); font-size:1.2rem; font-weight:700;
+}
+.puzzle-title {
+  font-family:var(--font-mono); font-size:.75rem; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--fg3); margin-bottom:12px;
+}
+.puzzle-question { font-weight:600; color:var(--fg); margin-bottom:16px; line-height:1.5; }
+
+/* Clue display */
+.clue-box {
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  padding:16px; margin-bottom:16px; font-family:var(--font-mono); font-size:.9rem;
+  color:var(--amber); word-break:break-all; letter-spacing:.05em;
+  position:relative;
+}
+.clue-box .clue-label { font-size:.7rem; color:var(--fg3); display:block; margin-bottom:6px; }
+
+/* Input area */
+.input-row { display:flex; gap:10px; align-items:stretch; }
+.answer-input {
+  flex:1; background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:8px; padding:12px 16px; font-family:var(--font-mono);
+  font-size:.95rem; color:var(--fg); outline:none;
+  transition:border-color .3s, box-shadow .3s;
+}
+.answer-input::placeholder { color:var(--fg3); }
+.answer-input:focus { border-color:var(--teal); box-shadow:0 0 0 3px hsl(174,72%,52%,.12); }
+.answer-input.wrong { border-color:var(--red); animation:shake .4s ease; }
+.answer-input.correct { border-color:var(--green); }
+
+.btn-check {
+  background:var(--teal); color:hsl(220,18%,7%); border:none;
+  padding:12px 22px; border-radius:8px; font-weight:700; cursor:pointer;
+  font-family:var(--font-body); font-size:.9rem;
+  transition:all .3s var(--ease-spring);
+}
+.btn-check:hover { filter:brightness(1.1); transform:translateY(-2px); }
+.btn-check:active { transform:translateY(0) scale(.97); }
+.btn-check:disabled { opacity:.5; cursor:default; transform:none; }
+
+/* Hint button */
+.hint-btn {
+  margin-top:12px; background:transparent; border:1px solid var(--border);
+  color:var(--fg3); padding:8px 16px; border-radius:8px;
+  font-size:.8rem; cursor:pointer; font-family:var(--font-mono);
+  transition:all .3s;
+}
+.hint-btn:hover { border-color:var(--amber); color:var(--amber); }
+.hint-text {
+  margin-top:12px; background:hsl(38,95%,58%,.08); border:1px solid hsl(38,95%,58%,.2);
+  border-radius:8px; padding:12px; font-size:.85rem; color:var(--amber);
+  animation:fadeIn .4s ease;
+}
+
+/* Feedback */
+.feedback {
+  margin-top:10px; font-size:.85rem; font-weight:600; padding:8px 14px;
+  border-radius:6px; animation:fadeIn .3s ease;
+}
+.feedback.success { background:hsl(142,70%,45%,.15); color:var(--green); }
+.feedback.error { background:hsl(0,72%,58%,.15); color:var(--red); }
+
+/* ── Stegano Canvas ── */
+.stegano-container { margin-bottom:16px; }
+.stegano-img-wrap {
+  border-radius:8px; overflow:hidden; border:1px solid var(--border);
+  background:var(--bg2); position:relative; cursor:crosshair;
+}
+.stegano-img-wrap canvas { display:block; max-width:100%; }
+.pixel-tooltip {
+  position:absolute; background:var(--card); border:1px solid var(--border-hi);
+  padding:6px 10px; border-radius:6px; font-family:var(--font-mono); font-size:.75rem;
+  color:var(--teal); pointer-events:none; white-space:nowrap;
+  box-shadow:0 4px 16px rgba(0,0,0,.4); z-index:10;
+  opacity:0; transition:opacity .15s;
+}
+.stegano-controls { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.btn-reveal {
+  background:hsl(265,65%,65%,.2); border:1px solid hsl(265,65%,65%,.4);
+  color:hsl(265,65%,80%); padding:8px 16px; border-radius:8px;
+  font-size:.8rem; cursor:pointer; font-family:var(--font-mono);
+  transition:all .3s; flex-shrink:0;
+}
+.btn-reveal:hover { background:hsl(265,65%,65%,.35); }
+
+/* ── Hash puzzle bits ── */
+.hash-display {
+  background:var(--bg2); border-radius:8px; padding:16px;
+  font-family:var(--font-mono); font-size:.78rem; color:var(--fg2);
+  word-break:break-all; letter-spacing:.04em; margin-bottom:16px;
+  border:1px solid var(--border); line-height:1.8;
+}
+.hash-display span { color:var(--teal); }
+.hash-options { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-bottom:16px; }
+.hash-opt {
+  background:var(--bg2); border:1.5px solid var(--border); border-radius:8px;
+  padding:12px; text-align:center; cursor:pointer; font-family:var(--font-mono);
+  font-size:.8rem; color:var(--fg2); transition:all .3s var(--ease-spring);
+}
+.hash-opt:hover { border-color:var(--teal); color:var(--teal); transform:translateY(-3px); }
+.hash-opt.selected-right { border-color:var(--green); background:hsl(142,70%,45%,.1); color:var(--green); }
+.hash-opt.selected-wrong { border-color:var(--red); background:hsl(0,72%,58%,.1); color:var(--red); }
+
+/* ── Door & Victory ── */
+.door-section {
+  text-align:center; max-width:700px; width:100%; margin-top:24px;
+}
+.door-visual {
+  position:relative; width:160px; height:240px; margin:0 auto 24px;
+  cursor:pointer;
+}
+.door-frame {
+  position:absolute; inset:0; border:3px solid var(--border-hi);
+  border-radius:8px 8px 0 0; background:var(--card);
+  transition:all .4s;
+}
+.door-body {
+  position:absolute; inset:4px;
+  background:linear-gradient(135deg,hsl(220,14%,18%),hsl(220,14%,12%));
+  border-radius:4px 4px 0 0;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:8px;
+  transition:all 1s var(--ease-spring);
+  transform-origin:left center;
+}
+.door-body.open { transform:perspective(500px) rotateY(-70deg); }
+.door-icon { font-size:2.5rem; filter:drop-shadow(0 0 12px hsl(174,72%,52%,.4)); }
+.door-keyhole {
+  width:12px; height:20px; border-radius:6px 6px 0 0;
+  background:var(--bg2); border:2px solid var(--border-hi); margin-top:8px;
+}
+.door-lock-status { font-family:var(--font-mono); font-size:.75rem; color:var(--fg3); margin-top:6px; }
+.door-lock-status.unlocked { color:var(--green); }
+
+.password-row { display:flex; gap:10px; justify-content:center; margin-bottom:16px; }
+.pw-input {
+  background:var(--bg2); border:2px solid var(--border); border-radius:8px;
+  padding:14px 20px; font-family:var(--font-mono); font-size:1.1rem;
+  color:var(--fg); outline:none; text-align:center; width:min(280px,100%);
+  letter-spacing:.15em; transition:border-color .3s, box-shadow .3s;
+}
+.pw-input:focus { border-color:var(--teal); box-shadow:0 0 0 4px hsl(174,72%,52%,.12); }
+.pw-input.unlocked { border-color:var(--green); }
+.btn-enter {
+  background:linear-gradient(135deg,var(--teal),hsl(174,60%,38%));
+  color:hsl(220,18%,7%); border:none; padding:14px 28px;
+  border-radius:8px; font-weight:700; cursor:pointer;
+  font-family:var(--font-body); font-size:1rem;
+  transition:all .35s var(--ease-spring);
+  box-shadow:0 6px 24px hsl(174,72%,52%,.25);
+}
+.btn-enter:hover { transform:translateY(-3px); box-shadow:0 10px 36px hsl(174,72%,52%,.35); }
+.btn-enter:active { transform:translateY(0) scale(.97); }
+
+/* ── Victory Screen ── */
+#victory {
+  align-items:center; justify-content:center; text-align:center;
+  padding:80px 20px;
+}
+.victory-glow {
+  position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 60% 50% at 50% 40%, hsl(38,95%,58%,.1), transparent 70%);
+}
+.confetti-burst { font-size:3rem; margin-bottom:20px; animation:confettiBurst 1s var(--ease-spring); }
+.victory h1 {
+  font-family:var(--font-display); font-size:clamp(2.5rem,6vw,4rem);
+  font-weight:900; letter-spacing:-.02em; color:var(--amber); margin-bottom:12px;
+}
+.victory-stats {
+  display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:32px 0;
+}
+.v-stat {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 32px; min-width:130px;
+}
+.v-stat .val { font-family:var(--font-display); font-size:2rem; font-weight:900; color:var(--teal); }
+.v-stat .lbl { font-size:.8rem; color:var(--fg3); font-family:var(--font-mono); margin-top:4px; }
+.summary-cards { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:32px; max-width:600px; }
+.sum-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+  padding:16px; text-align:left; width:min(260px,100%);
+}
+.sum-card h4 { font-size:.85rem; font-weight:700; color:var(--fg); margin-bottom:4px; }
+.sum-card p { font-size:.78rem; color:var(--fg2); line-height:1.6; }
+.btn-restart {
+  background:var(--card); border:1.5px solid var(--border); color:var(--fg2);
+  padding:12px 32px; border-radius:var(--r); font-size:.9rem; font-weight:600;
+  cursor:pointer; font-family:var(--font-body);
+  transition:all .3s var(--ease-spring); margin:0 8px;
+}
+.btn-restart:hover { border-color:var(--teal); color:var(--teal); transform:translateY(-3px); }
+.btn-home {
+  background:var(--teal); color:hsl(220,18%,7%); border:none;
+  padding:14px 36px; border-radius:var(--r); font-size:1rem; font-weight:700;
+  cursor:pointer; font-family:var(--font-body);
+  transition:all .35s var(--ease-spring); margin:0 8px;
+  box-shadow:0 6px 24px hsl(174,72%,52%,.25);
+}
+.btn-home:hover { transform:translateY(-4px); box-shadow:0 12px 40px hsl(174,72%,52%,.35); }
+
+/* ── Progress bar (room steps) ── */
+.progress-strip {
+  display:flex; gap:6px; justify-content:center; margin-bottom:28px;
+}
+.ps-step {
+  height:4px; border-radius:99px; background:var(--border);
+  transition:background .5s, width .5s;
+  flex:1; max-width:100px;
+}
+.ps-step.done { background:var(--green); }
+.ps-step.active { background:var(--teal); }
+
+/* ── Ambient effects ── */
+.scanline {
+  position:fixed; inset:0; pointer-events:none; z-index:500;
+  background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+}
+.vignette {
+  position:fixed; inset:0; pointer-events:none; z-index:1;
+  background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.5) 100%);
+}
+
+/* ── Particle/Glow ── */
+.particle {
+  position:fixed; border-radius:50%; pointer-events:none;
+  animation:particleDrift linear infinite;
+  opacity:0;
+}
+
+/* ── Animations ── */
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+@keyframes timerPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes confettiBurst { 0%{transform:scale(0) rotate(-30deg);opacity:0} 60%{transform:scale(1.3) rotate(10deg);opacity:1} 100%{transform:scale(1) rotate(0);opacity:1} }
+@keyframes glowPop { 0%{box-shadow:0 0 0 0 hsl(174,72%,52%,.5)} 100%{box-shadow:0 0 0 20px hsl(174,72%,52%,0)} }
+@keyframes particleDrift {
+  0%{transform:translateY(100vh) translateX(0);opacity:0}
+  10%{opacity:.6}
+  90%{opacity:.4}
+  100%{transform:translateY(-100px) translateX(40px);opacity:0}
+}
+@keyframes slideIn { from{opacity:0;transform:translateY(30px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes lockOpen { 0%{transform:rotate(0)} 50%{transform:rotate(-15deg)} 100%{transform:rotate(0) scale(1.2)} }
+@keyframes doorSwing { from{transform:perspective(500px) rotateY(0)} to{transform:perspective(500px) rotateY(-70deg)} }
+@keyframes winGlow { 0%,100%{text-shadow:0 0 20px hsl(38,95%,58%,.4)} 50%{text-shadow:0 0 50px hsl(38,95%,58%,.8)} }
+.room-header h2 { animation:slideIn .6s var(--ease-spring); }
+.story-box { animation:slideIn .6s var(--ease-spring) .1s both; }
+.puzzle-card:nth-child(1) { animation:slideIn .6s var(--ease-spring) .15s both; }
+.puzzle-card:nth-child(2) { animation:slideIn .6s var(--ease-spring) .25s both; }
+.puzzle-card:nth-child(3) { animation:slideIn .6s var(--ease-spring) .35s both; }
+#victory h1 { animation:winGlow 2s ease-in-out infinite; }
+
+/* ── Responsive ── */
+@media(max-width:640px) {
+  .hud { gap:6px; }
+  .hud-box { padding:6px 12px; font-size:.75rem; }
+  .intro h1 { font-size:2rem; }
+  .btn-start { padding:14px 36px; }
+  .puzzle-card { padding:20px; }
+  .input-row { flex-direction:column; }
+  .btn-check { width:100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient FX -->
+<div class="scanline"></div>
+<div class="vignette"></div>
+<div id="particles"></div>
+
+<!-- Back Button -->
+<button class="back-btn" onclick="goBack()">&#9664; Kembali</button>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="hud-box">
+    <span>&#9201;</span>
+    <span class="hud-timer" id="timerDisplay">20:00</span>
+  </div>
+  <div class="hud-box">
+    <span style="color:var(--teal)">&#9733;</span>
+    <span class="hud-score" id="scoreDisplay">0</span>
+  </div>
+  <div class="hud-box">
+    <span id="roomIndicator" style="color:var(--fg3)">Room 1/3</span>
+  </div>
+</div>
+
+<div id="app">
+
+<!-- ════════════════════════════════════
+     INTRO SCREEN
+════════════════════════════════════ -->
+<div class="screen active" id="intro">
+  <div class="intro-glow"></div>
+  <div class="intro-icon">🔐</div>
+  <h1>Crypto<br/><span>Escape Room</span></h1>
+  <p>Kamu terkunci di dalam ruangan misterius. Satu-satunya jalan keluar: pecahkan puzzle kriptografi dan buka pintu sebelum waktu habis!</p>
+
+  <div class="intro-rooms">
+    <div class="intro-room-card">
+      <div class="icon">🔑</div>
+      <h3>Room 1</h3>
+      <p>Hashing &amp; MD5</p>
+    </div>
+    <div class="intro-room-card">
+      <div class="icon">🔤</div>
+      <h3>Room 2</h3>
+      <p>Caesar &amp; Vigenère Cipher</p>
+    </div>
+    <div class="intro-room-card">
+      <div class="icon">🖼️</div>
+      <h3>Room 3</h3>
+      <p>Steganografi</p>
+    </div>
+  </div>
+
+  <button class="btn-start" onclick="startGame()">Mulai Petualangan &#10148;</button>
+
+  <p style="margin-top:24px;font-size:.8rem;color:var(--fg3);font-family:var(--font-mono)">
+    Waktu: 20 Menit &nbsp;|&nbsp; 3 Ruangan &nbsp;|&nbsp; Tingkat Kesulitan Meningkat
+  </p>
+</div>
+
+<!-- ════════════════════════════════════
+     GAME SCREEN
+════════════════════════════════════ -->
+<div class="screen" id="game">
+  <!-- Progress Strip -->
+  <div class="progress-strip" id="progressStrip">
+    <div class="ps-step active" id="ps1"></div>
+    <div class="ps-step" id="ps2"></div>
+    <div class="ps-step" id="ps3"></div>
+  </div>
+
+  <!-- Room Header (filled by JS) -->
+  <div class="room-header" id="roomHeader"></div>
+
+  <!-- Story (filled by JS) -->
+  <div class="story-box" id="storyBox"></div>
+
+  <!-- Puzzle Area (filled by JS) -->
+  <div class="puzzle-area" id="puzzleArea"></div>
+
+  <!-- Door Section -->
+  <div class="door-section" id="doorSection">
+    <div class="door-visual" id="doorVisual">
+      <div class="door-frame"></div>
+      <div class="door-body" id="doorBody">
+        <div class="door-icon" id="doorIcon">🔒</div>
+        <div class="door-keyhole"></div>
+      </div>
+    </div>
+    <div class="door-lock-status" id="doorLockStatus">Selesaikan semua puzzle untuk membuka kunci</div>
+    <div id="doorPasswordArea"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     VICTORY SCREEN
+════════════════════════════════════ -->
+<div class="screen" id="victory">
+  <div class="victory-glow"></div>
+  <div class="confetti-burst">🎉</div>
+  <h1>Berhasil Kabur!</h1>
+  <p style="color:var(--fg2);font-size:1.1rem;margin-bottom:16px">Kamu telah menguasai dasar-dasar kriptografi!</p>
+
+  <div class="victory-stats">
+    <div class="v-stat">
+      <div class="val" id="finalScore">0</div>
+      <div class="lbl">SKOR</div>
+    </div>
+    <div class="v-stat">
+      <div class="val" id="finalTime">0:00</div>
+      <div class="lbl">SISA WAKTU</div>
+    </div>
+    <div class="v-stat">
+      <div class="val" id="finalHints">0</div>
+      <div class="lbl">HINT DIPAKAI</div>
+    </div>
+  </div>
+
+  <div class="summary-cards">
+    <div class="sum-card">
+      <h4>🔑 Hashing</h4>
+      <p>Hash (seperti MD5/SHA) adalah fungsi satu arah — mudah dihitung, mustahil dibalik tanpa rainbow table.</p>
+    </div>
+    <div class="sum-card">
+      <h4>🔤 Cipher</h4>
+      <p>Caesar menggeser alfabet; Vigenère menggunakan kunci kata. Keduanya adalah cipher substitusi klasik.</p>
+    </div>
+    <div class="sum-card">
+      <h4>🖼️ Steganografi</h4>
+      <p>Menyembunyikan pesan di dalam gambar/media lain — berbeda dari enkripsi yang menyamarkan isi pesan.</p>
+    </div>
+  </div>
+
+  <div>
+    <button class="btn-restart" onclick="restartGame()">&#8635; Main Lagi</button>
+    <button class="btn-home" onclick="goBack()">&#8592; Kembali ke Platform</button>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<script>
+/* ═════════════════════════════════════════════════════════
+   CRYPTO ESCAPE ROOM — Game Logic
+   Rooms: Hashing → Cipher → Steganography
+   ═════════════════════════════════════════════════════════ */
+
+/* ── State ── */
+var state = {
+  room: 0,           // 0=not started, 1/2/3=room
+  score: 0,
+  hintsUsed: 0,
+  timeLeft: 1200,    // 20 min in seconds
+  timerInterval: null,
+  puzzlesSolved: [false, false, false], // per-room puzzle status (up to 2 each)
+  totalPuzzles: [2, 2, 1],
+  roomPasswords: ['SHA256', 'DELTA', 'STEGANO'],
+  roomStartTimes: [0,0,0],
+  audioCtx: null,
+};
+
+/* ── Audio (Web Audio API — no external files needed) ── */
+function initAudio() {
+  try { state.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+}
+
+function playSound(type) {
+  if (!state.audioCtx) return;
+  var ctx = state.audioCtx;
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  if (type === 'success') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(523, ctx.currentTime);
+    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.18, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    osc.start(); osc.stop(ctx.currentTime + 0.6);
+  } else if (type === 'error') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(200, ctx.currentTime);
+    osc.frequency.setValueAtTime(150, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    osc.start(); osc.stop(ctx.currentTime + 0.3);
+  } else if (type === 'unlock') {
+    [440, 554, 659, 880].forEach(function(freq, i) {
+      var o2 = ctx.createOscillator();
+      var g2 = ctx.createGain();
+      o2.connect(g2); g2.connect(ctx.destination);
+      o2.type = 'sine'; o2.frequency.setValueAtTime(freq, ctx.currentTime + i*0.12);
+      g2.gain.setValueAtTime(0.2, ctx.currentTime + i*0.12);
+      g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.12 + 0.4);
+      o2.start(ctx.currentTime + i*0.12); o2.stop(ctx.currentTime + i*0.12 + 0.4);
+    });
+  } else if (type === 'hint') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(350, ctx.currentTime);
+    osc.frequency.setValueAtTime(420, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    osc.start(); osc.stop(ctx.currentTime + 0.3);
+  } else if (type === 'tick') {
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(600, ctx.currentTime);
+    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+    osc.start(); osc.stop(ctx.currentTime + 0.05);
+  } else if (type === 'alarm') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(); osc.stop(ctx.currentTime + 0.4);
+  }
+}
+
+/* ── Particles ── */
+function spawnParticles() {
+  var container = document.getElementById('particles');
+  container.innerHTML = '';
+  var colors = ['hsl(174,72%,52%)', 'hsl(38,95%,58%)', 'hsl(265,65%,65%)'];
+  for (var i = 0; i < 12; i++) {
+    var p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = [
+      'left:' + (Math.random()*100) + 'vw',
+      'width:' + (2 + Math.random()*3) + 'px',
+      'height:' + (2 + Math.random()*3) + 'px',
+      'background:' + colors[Math.floor(Math.random()*colors.length)],
+      'animation-duration:' + (8 + Math.random()*12) + 's',
+      'animation-delay:' + (Math.random()*8) + 's',
+    ].join(';');
+    container.appendChild(p);
+  }
+}
+
+/* ── Timer ── */
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(function() {
+    state.timeLeft--;
+    updateHUD();
+    if (state.timeLeft <= 60) {
+      playSound('tick');
+      document.querySelector('.hud-timer').classList.add('danger');
+    }
+    if (state.timeLeft <= 30 && state.timeLeft % 5 === 0) playSound('alarm');
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timerInterval);
+      showTimeUp();
+    }
+  }, 1000);
+}
+
+function formatTime(s) {
+  var m = Math.floor(s / 60);
+  var sec = s % 60;
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+function updateHUD() {
+  document.getElementById('timerDisplay').textContent = formatTime(state.timeLeft);
+  document.getElementById('scoreDisplay').textContent = state.score;
+  document.getElementById('roomIndicator').textContent = 'Room ' + state.room + '/3';
+}
+
+/* ── Navigation ── */
+function goBack() {
+  clearInterval(state.timerInterval);
+  history.back();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+/* ── Start Game ── */
+function startGame() {
+  initAudio();
+  spawnParticles();
+  state.room = 1;
+  state.score = 0;
+  state.hintsUsed = 0;
+  state.timeLeft = 1200;
+  state.puzzlesSolved = [[false, false], [false, false], [false]];
+  document.querySelector('.hud-timer').classList.remove('danger');
+  showScreen('game');
+  renderRoom(1);
+  startTimer();
+  updateHUD();
+}
+
+function restartGame() {
+  startGame();
+}
+
+/* ── Progress Strip ── */
+function updateProgress(room) {
+  for (var i = 1; i <= 3; i++) {
+    var el = document.getElementById('ps' + i);
+    if (i < room) el.className = 'ps-step done';
+    else if (i === room) el.className = 'ps-step active';
+    else el.className = 'ps-step';
+  }
+}
+
+/* ─────────────────────────────────────────
+   ROOM DEFINITIONS
+───────────────────────────────────────── */
+
+var rooms = {
+  1: {
+    badge: 'ROOM 1 — HASHING',
+    title: 'Ruangan Pengawal Hash',
+    desc: 'Di ruangan ini tersimpan pesan yang diamankan dengan fungsi hash. Kamu harus mengidentifikasi jenis hash dan menemukan preimage-nya.',
+    story: 'Kamu memasuki ruangan gelap. Di dinding tergantung papan dengan barisan karakter hex aneh. Sebuah terminal menyala redup dengan tulisan: <span class="highlight">"HASH CANNOT LIE. BUT CAN YOU READ IT?"</span> Di sudut lain, ada lemari besi dengan petunjuk tentang MD5.',
+    puzzles: [
+      {
+        id: 'p1_1',
+        title: 'PUZZLE 1.1 — IDENTIFIKASI HASH',
+        question: 'Perhatikan output hash berikut. Setiap algoritma hash menghasilkan digest dengan panjang berbeda. Identifikasi jenis hash dari panjang karakternya:',
+        type: 'hash_identify',
+        hashes: [
+          { val: '5d41402abc4b2a76b9719d911017c592', label: '32 karakter hex', answer: 'MD5' },
+          { val: 'aaf4c61ddcc5e8a2dabede0f3b482cd9efad1', label: '40 karakter hex', answer: 'SHA1' },
+          { val: 'b94f6f125c79e3a5ffaa826f584c10d52ada669e6762351b', label: '64 karakter hex', answer: 'SHA256' },
+        ],
+        correctMapping: { '5d41402abc4b2a76b9719d911017c592': 'MD5', 'aaf4c61ddcc5e8a2dabede0f3b482cd9efad1': 'SHA1', 'b94f6f125c79e3a5ffaa826f584c10d52ada669e6762351b': 'SHA256' },
+        hints: [
+          'MD5 = 128 bit = 32 hex chars. SHA-1 = 160 bit = 40 chars.',
+          'SHA-256 = 256 bit = 64 chars. Hitung saja jumlah karakter hex!'
+        ],
+        answer: 'MD5',
+        explanation: 'MD5 menghasilkan hash 128-bit (32 hex chars). SHA-1 = 40 chars. SHA-256 = 64 chars.'
+      },
+      {
+        id: 'p1_2',
+        title: 'PUZZLE 1.2 — HASH LOOKUP',
+        question: 'Hash MD5 di bawah ini ditemukan di catatan tersembunyi. Gunakan pengetahuanmu: MD5("hello") = 5d41402abc4b2a76b9719d911017c592. Kata apa yang menghasilkan hash ini?',
+        type: 'hash_lookup',
+        displayHash: '5d41402abc4b2a76b9719d911017c592',
+        options: ['world', 'hello', 'crypto', 'secret'],
+        correctOption: 'hello',
+        hints: [
+          'Hash ini sangat terkenal di komunitas keamanan siber.',
+          'Kata yang paling sederhana dan umum... hanya 5 huruf.'
+        ],
+        answer: 'hello',
+        explanation: 'MD5("hello") = 5d41402abc4b2a76b9719d911017c592. Hash tidak bisa dibalik, tapi bisa dicari di rainbow table!'
+      }
+    ],
+    password: 'SHA256',
+    passwordHint: 'Nama algoritma hash paling populer saat ini (6 karakter + angka)',
+    doorQuestion: 'Masukkan nama algoritma hash modern yang menghasilkan digest 256-bit:'
+  },
+
+  2: {
+    badge: 'ROOM 2 — CIPHER',
+    title: 'Ruangan Perpustakaan Rahasia',
+    desc: 'Buku-buku tua berserakan. Setiap halaman berisi pesan terenkripsi. Kamu harus mendekripsi pesan menggunakan Caesar Cipher dan Vigenère Cipher.',
+    story: 'Rak buku berdebu memenuhi ruangan. Sebuah amplop tersegel jatuh dari rak — bertuliskan <span class="highlight">"JANGAN BUKA TANPA KUNCI"</span>. Di dalam amplop ada dua lembar kertas dengan pesan terenkripsi. Jam dinding tua berdetak keras...',
+    puzzles: [
+      {
+        id: 'p2_1',
+        title: 'PUZZLE 2.1 — CAESAR CIPHER',
+        question: 'Pesan berikut dienkripsi dengan Caesar Cipher (ROT-3). Dekripsi untuk menemukan kata sandi tersembunyi:',
+        type: 'text_input',
+        ciphertext: 'NKSWRQ FHUSK',
+        correctAnswer: 'KHOTO ERPHA',
+        actualAnswer: 'khoto erpha',
+        hints: [
+          'Caesar Cipher geser huruf sebesar N posisi. ROT-3 berarti setiap huruf digeser 3 ke belakang.',
+          'N→K, K→H, S→P, W→T... coba geser setiap huruf 3 posisi mundur di alfabet!'
+        ],
+        answerDisplay: 'KHOTO ERPHA',
+        explanation: 'Caesar ROT-3: setiap huruf mundur 3 posisi. N→K, K→H, S→P, W→T, Q→N... dst.'
+      },
+      {
+        id: 'p2_2',
+        title: 'PUZZLE 2.2 — VIGENÈRE CIPHER',
+        question: 'Pesan ini dienkripsi dengan Vigenère Cipher menggunakan kunci "KEY". Dekripsi untuk menemukan jawabannya:',
+        type: 'text_input',
+        ciphertext: 'RIJVS',
+        correctAnswer: 'HELLO',
+        actualAnswer: 'hello',
+        hints: [
+          'Vigenère: untuk setiap huruf, kurangi nilai kunci (K=10, E=4, Y=24). Jika ada sisa negatif, tambah 26.',
+          'R-K = R(17)-K(10) = 7 = H. I-E = I(8)-E(4) = 4 = E. J-Y = J(9)-Y(24)+26 = 11 = L...'
+        ],
+        explanation: 'Vigenère: ciphertext[i] - key[i % keyLen] mod 26. Lebih aman dari Caesar karena kunci bervariasi!'
+      }
+    ],
+    password: 'DELTA',
+    passwordHint: 'Alfabet NATO untuk huruf D (5 huruf)',
+    doorQuestion: 'Alfabet NATO: A=ALPHA, B=BRAVO, C=CHARLIE, D=_____'
+  },
+
+  3: {
+    badge: 'ROOM 3 — STEGANOGRAFI',
+    title: 'Ruangan Galeri Misterius',
+    desc: 'Gambar-gambar di ruangan ini menyimpan pesan tersembunyi. Steganografi menyembunyikan data di dalam media lain tanpa terlihat oleh mata biasa.',
+    story: 'Galeri kecil dengan lukisan-lukisan abstrak. Namun ada sesuatu yang aneh — <span class="highlight">beberapa pixel tampak sedikit "off"</span>. Di balik setiap gambar tersembunyi pesan rahasia menggunakan teknik LSB (Least Significant Bit).',
+    puzzles: [
+      {
+        id: 'p3_1',
+        title: 'PUZZLE 3.1 — STEGANOGRAFI LSB',
+        question: 'Gambar di bawah menggunakan teknik LSB (Least Significant Bit) steganografi. Bit terakhir setiap pixel R,G,B menyembunyikan pesan. Klik "Ekstrak Pesan" untuk menganalisis gambar dan temukan kata tersembunyi:',
+        type: 'steganography',
+        hiddenMessage: 'EXIT',
+        hints: [
+          'LSB steganografi: bit terakhir setiap channel warna (R,G,B) menyimpan 1 bit pesan.',
+          'Kumpulkan bit dari channel R pixel 1,2,3,4,5,6,7,8 untuk mendapat 1 byte = 1 karakter.'
+        ],
+        explanation: 'Steganografi menyembunyikan pesan di media (gambar/audio) tanpa mengubah tampilan signifikan. LSB: bit paling kecil tidak terlihat oleh mata manusia!'
+      }
+    ],
+    password: 'STEGANO',
+    passwordHint: 'Nama teknik menyembunyikan pesan di dalam media (7 huruf)',
+    doorQuestion: 'Nama ilmu menyembunyikan pesan di dalam media lain:'
+  }
+};
+
+/* ─────────────────────────────────────────
+   RENDER ROOM
+───────────────────────────────────────── */
+function renderRoom(roomNum) {
+  state.room = roomNum;
+  updateProgress(roomNum);
+  updateHUD();
+
+  var r = rooms[roomNum];
+
+  // Header
+  document.getElementById('roomHeader').innerHTML =
+    '<div class="room-badge">' + r.badge + '</div>' +
+    '<h2>' + r.title + '</h2>' +
+    '<p>' + r.desc + '</p>';
+
+  // Story
+  document.getElementById('storyBox').innerHTML = '<p>' + r.story + '</p>';
+
+  // Puzzles
+  var area = document.getElementById('puzzleArea');
+  area.innerHTML = '';
+  r.puzzles.forEach(function(puzzle, idx) {
+    area.appendChild(buildPuzzleCard(puzzle, idx, roomNum));
+  });
+
+  // Door
+  updateDoor(roomNum);
+}
+
+/* ─────────────────────────────────────────
+   BUILD PUZZLE CARDS
+───────────────────────────────────────── */
+function buildPuzzleCard(puzzle, idx, roomNum) {
+  var card = document.createElement('div');
+  card.className = 'puzzle-card';
+  card.id = 'card_' + puzzle.id;
+
+  var inner = '<div class="puzzle-title">' + puzzle.title + '</div>';
+  inner += '<div class="puzzle-question">' + puzzle.question + '</div>';
+
+  if (puzzle.type === 'hash_identify') {
+    inner += buildHashIdentifyPuzzle(puzzle);
+  } else if (puzzle.type === 'hash_lookup') {
+    inner += buildHashLookupPuzzle(puzzle);
+  } else if (puzzle.type === 'text_input') {
+    inner += buildTextInputPuzzle(puzzle, idx, roomNum);
+  } else if (puzzle.type === 'steganography') {
+    inner += buildSteganoPuzzle(puzzle, idx, roomNum);
+  }
+
+  inner += '<button class="hint-btn" onclick="showHint(\'' + puzzle.id + '\',0)">&#128161; Hint</button>';
+  inner += '<div class="hint-text" id="hint_' + puzzle.id + '" style="display:none"></div>';
+  inner += '<div class="feedback" id="fb_' + puzzle.id + '" style="display:none"></div>';
+
+  card.innerHTML = inner;
+  return card;
+}
+
+function buildHashIdentifyPuzzle(puzzle) {
+  var html = '<div style="margin-bottom:16px">';
+  puzzle.hashes.forEach(function(h) {
+    html += '<div class="hash-display" style="margin-bottom:10px">' +
+      '<span style="font-size:.7rem;color:var(--fg3);display:block;margin-bottom:4px">' + h.label + '</span>' +
+      '<span>' + h.val + '</span></div>';
+  });
+  html += '</div>';
+  html += '<div style="margin-bottom:8px;font-size:.85rem;color:var(--fg2)">MD5 menghasilkan hash berapa karakter hex?</div>';
+  html += '<div class="hash-options" id="opts_' + puzzle.id + '">';
+  ['32 karakter (MD5)', '40 karakter (SHA-1)', '64 karakter (SHA-256)', '128 karakter (SHA-512)'].forEach(function(opt, i) {
+    html += '<div class="hash-opt" onclick="checkHashIdentify(\'' + puzzle.id + '\', ' + i + ', this)">' + opt + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildHashLookupPuzzle(puzzle) {
+  var html = '<div class="clue-box"><span class="clue-label">MD5 Hash yang ditemukan:</span>' + puzzle.displayHash + '</div>';
+  html += '<div class="hash-options" id="opts_' + puzzle.id + '">';
+  puzzle.options.forEach(function(opt) {
+    html += '<div class="hash-opt" onclick="checkHashLookup(\'' + puzzle.id + '\', \'' + opt + '\', this)">' + opt + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildTextInputPuzzle(puzzle, idx, roomNum) {
+  var html = '<div class="clue-box"><span class="clue-label">Ciphertext:</span>' + puzzle.ciphertext + '</div>';
+  html += '<div class="input-row">' +
+    '<input class="answer-input" id="inp_' + puzzle.id + '" placeholder="Ketik hasil dekripsi..." spellcheck="false" autocomplete="off" onkeydown="if(event.key===\'Enter\')checkTextInput(\'' + puzzle.id + '\',' + idx + ',' + roomNum + ')">' +
+    '<button class="btn-check" onclick="checkTextInput(\'' + puzzle.id + '\',' + idx + ',' + roomNum + ')">Cek</button>' +
+    '</div>';
+  return html;
+}
+
+function buildSteganoPuzzle(puzzle, idx, roomNum) {
+  var html = '<div class="stegano-container">' +
+    '<div class="stegano-img-wrap" id="stegImgWrap_' + puzzle.id + '">' +
+    '<canvas id="stegCanvas_' + puzzle.id + '" width="400" height="200"></canvas>' +
+    '<div class="pixel-tooltip" id="pixTip_' + puzzle.id + '"></div>' +
+    '</div>' +
+    '<div class="stegano-controls">' +
+    '<button class="btn-reveal" onclick="extractStegano(\'' + puzzle.id + '\')">&#128065; Ekstrak Pesan LSB</button>' +
+    '<button class="btn-reveal" onclick="highlightLSB(\'' + puzzle.id + '\')">&#128161; Tampilkan LSB</button>' +
+    '</div>' +
+    '</div>';
+
+  html += '<div id="stegOutput_' + puzzle.id + '" style="display:none">' +
+    '<div class="clue-box" id="stegResult_' + puzzle.id + '"><span class="clue-label">Pesan tersembunyi ditemukan:</span><span id="stegMsg_' + puzzle.id + '">...</span></div>' +
+    '<div class="input-row">' +
+    '<input class="answer-input" id="inp_' + puzzle.id + '" placeholder="Masukkan pesan tersembunyi..." spellcheck="false" autocomplete="off" onkeydown="if(event.key===\'Enter\')checkStegano(\'' + puzzle.id + '\',' + idx + ',' + roomNum + ')">' +
+    '<button class="btn-check" onclick="checkStegano(\'' + puzzle.id + '\',' + idx + ',' + roomNum + ')">Konfirmasi</button>' +
+    '</div></div>';
+
+  // Draw canvas after DOM update
+  setTimeout(function() { drawStegannoCanvas(puzzle.id, puzzle.hiddenMessage); }, 100);
+  return html;
+}
+
+/* ─────────────────────────────────────────
+   STEGANOGRAPHY CANVAS
+───────────────────────────────────────── */
+function drawStegannoCanvas(pid, message) {
+  var canvas = document.getElementById('stegCanvas_' + pid);
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+
+  // Draw a colourful noise image
+  var imgData = ctx.createImageData(w, h);
+  var d = imgData.data;
+
+  // Generate base pixels (nice gradient + noise)
+  for (var i = 0; i < d.length; i += 4) {
+    var pixelIdx = i / 4;
+    var x = pixelIdx % w;
+    var y = Math.floor(pixelIdx / w);
+    // Gradient base
+    d[i]   = Math.round(30 + (x/w)*80 + Math.random()*30);  // R
+    d[i+1] = Math.round(40 + (y/h)*60 + Math.random()*25);  // G
+    d[i+2] = Math.round(60 + (x/w)*40 + Math.random()*35);  // B
+    d[i+3] = 255; // A
+  }
+
+  // Embed message using LSB (R channel of sequential pixels)
+  var bits = [];
+  for (var ci = 0; ci < message.length; ci++) {
+    var code = message.charCodeAt(ci);
+    for (var bi = 7; bi >= 0; bi--) {
+      bits.push((code >> bi) & 1);
+    }
+  }
+  // Null terminator
+  for (var ni = 0; ni < 8; ni++) bits.push(0);
+
+  for (var bi2 = 0; bi2 < bits.length; bi2++) {
+    var pixBase = bi2 * 4;
+    if (pixBase < d.length) {
+      d[pixBase] = (d[pixBase] & 0xFE) | bits[bi2]; // clear LSB then set
+    }
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+
+  // Add some decorative text/shapes on top
+  ctx.fillStyle = 'rgba(174, 230, 220, 0.1)';
+  ctx.font = '12px Space Mono';
+  ctx.fillText('[ CLASSIFIED IMAGE — MATHEMATIC LAB ]', 20, h-16);
+
+  // Mouse hover pixel inspector
+  var wrap = document.getElementById('stegImgWrap_' + pid);
+  var tip = document.getElementById('pixTip_' + pid);
+  if (wrap) {
+    wrap.addEventListener('mousemove', function(e) {
+      var rect = canvas.getBoundingClientRect();
+      var sx = Math.floor((e.clientX - rect.left) * (w / rect.width));
+      var sy = Math.floor((e.clientY - rect.top) * (h / rect.height));
+      if (sx >= 0 && sx < w && sy >= 0 && sy < h) {
+        var data = ctx.getImageData(sx, sy, 1, 1).data;
+        tip.style.opacity = '1';
+        tip.style.left = (e.clientX - rect.left + 12) + 'px';
+        tip.style.top = (e.clientY - rect.top - 20) + 'px';
+        tip.textContent = 'R:' + data[0] + ' G:' + data[1] + ' B:' + data[2] +
+          ' | LSB-R:' + (data[0] & 1);
+      }
+    });
+    wrap.addEventListener('mouseleave', function() { tip.style.opacity = '0'; });
+  }
+}
+
+function extractStegano(pid) {
+  var canvas = document.getElementById('stegCanvas_' + pid);
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var d = imgData.data;
+
+  var bits = [];
+  var chars = [];
+  for (var i = 0; i < d.length; i += 4) {
+    bits.push(d[i] & 1); // LSB of R channel
+    if (bits.length === 8) {
+      var code = 0;
+      for (var b = 0; b < 8; b++) code = (code << 1) | bits[b];
+      if (code === 0) break; // null terminator
+      chars.push(String.fromCharCode(code));
+      bits = [];
+    }
+  }
+
+  var msg = chars.join('');
+  document.getElementById('stegMsg_' + pid).textContent = msg || '(tidak ada pesan)';
+  document.getElementById('stegOutput_' + pid).style.display = 'block';
+  playSound('success');
+}
+
+function highlightLSB(pid) {
+  var canvas = document.getElementById('stegCanvas_' + pid);
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var d = imgData.data;
+  var newData = ctx.createImageData(canvas.width, canvas.height);
+  var nd = newData.data;
+
+  for (var i = 0; i < d.length; i += 4) {
+    var lsb = d[i] & 1;
+    nd[i]   = lsb ? 255 : 20;  // R: bright if LSB=1
+    nd[i+1] = lsb ? 210 : 20;  // G
+    nd[i+2] = lsb ? 120 : 20;  // B
+    nd[i+3] = 255;
+  }
+  ctx.putImageData(newData, 0, 0);
+
+  // Redraw after 2s
+  setTimeout(function() { drawStegannoCanvas(pid, 'EXIT'); }, 2000);
+  playSound('hint');
+}
+
+/* ─────────────────────────────────────────
+   CHECK ANSWERS
+───────────────────────────────────────── */
+function checkHashIdentify(pid, optIdx, el) {
+  var correct = optIdx === 0; // 32 karakter (MD5)
+  var opts = document.querySelectorAll('#opts_' + pid + ' .hash-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; });
+  el.className = 'hash-opt ' + (correct ? 'selected-right' : 'selected-wrong');
+  if (!correct) opts[0].className = 'hash-opt selected-right';
+
+  if (correct) {
+    markPuzzleSolved(pid, 0, state.room);
+    playSound('success');
+    showFeedback(pid, 'success', '✓ Benar! ' + rooms[state.room].puzzles[0].explanation);
+  } else {
+    playSound('error');
+    showFeedback(pid, 'error', '✗ Salah. MD5 = 32 hex chars = 128 bit.');
+  }
+}
+
+function checkHashLookup(pid, opt, el) {
+  var puz = getPuzzleById(pid);
+  var correct = opt === puz.correctOption;
+  var opts = document.querySelectorAll('#opts_' + pid + ' .hash-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; });
+  el.className = 'hash-opt ' + (correct ? 'selected-right' : 'selected-wrong');
+  if (!correct) {
+    opts.forEach(function(o) {
+      if (o.textContent.toLowerCase() === puz.correctOption) o.className = 'hash-opt selected-right';
+    });
+  }
+
+  if (correct) {
+    markPuzzleSolved(pid, 1, state.room);
+    playSound('success');
+    showFeedback(pid, 'success', '✓ Benar! ' + puz.explanation);
+  } else {
+    playSound('error');
+    showFeedback(pid, 'error', '✗ Salah! Hash tidak bisa dibalik secara langsung, tapi rainbow table bisa membantu.');
+  }
+}
+
+function checkTextInput(pid, idx, roomNum) {
+  var input = document.getElementById('inp_' + pid);
+  var val = input.value.trim().toUpperCase();
+  var puz = getPuzzleById(pid);
+  var correct = val === puz.correctAnswer || val === puz.correctAnswer.toUpperCase();
+
+  if (correct) {
+    input.className = 'answer-input correct';
+    markPuzzleSolved(pid, idx, roomNum);
+    playSound('success');
+    showFeedback(pid, 'success', '✓ Tepat! ' + puz.explanation);
+    input.disabled = true;
+    document.querySelector('[onclick*="checkTextInput(\'' + pid + '\'"]').disabled = true;
+  } else {
+    input.className = 'answer-input wrong';
+    playSound('error');
+    showFeedback(pid, 'error', '✗ Belum tepat. Coba lagi!');
+    setTimeout(function() { input.className = 'answer-input'; }, 600);
+  }
+}
+
+function checkStegano(pid, idx, roomNum) {
+  var input = document.getElementById('inp_' + pid);
+  var val = input.value.trim().toUpperCase();
+  var puz = getPuzzleById(pid);
+  var correct = val === puz.hiddenMessage.toUpperCase();
+
+  if (correct) {
+    input.className = 'answer-input correct';
+    markPuzzleSolved(pid, idx, roomNum);
+    playSound('success');
+    showFeedback(pid, 'success', '✓ Benar! ' + puz.explanation);
+    input.disabled = true;
+  } else {
+    input.className = 'answer-input wrong';
+    playSound('error');
+    showFeedback(pid, 'error', '✗ Salah. Ekstrak lagi menggunakan tombol di atas!');
+    setTimeout(function() { input.className = 'answer-input'; }, 600);
+  }
+}
+
+/* ─────────────────────────────────────────
+   MARK PUZZLE SOLVED
+───────────────────────────────────────── */
+function markPuzzleSolved(pid, idx, roomNum) {
+  var card = document.getElementById('card_' + pid);
+  if (card) card.classList.add('solved');
+
+  // Track which puzzle index solved (room puzzles are idx 0, 1, etc.)
+  if (!state.puzzlesSolved[roomNum - 1]) state.puzzlesSolved[roomNum - 1] = [];
+  state.puzzlesSolved[roomNum - 1][idx] = true;
+
+  // Add score
+  var timeBonus = Math.floor(state.timeLeft / 60);
+  var basePoints = 100;
+  state.score += basePoints + timeBonus * 5;
+  updateHUD();
+
+  // Check if all puzzles in room are done
+  var allSolved = true;
+  var r = rooms[roomNum];
+  r.puzzles.forEach(function(_, i) {
+    if (!state.puzzlesSolved[roomNum - 1][i]) allSolved = false;
+  });
+
+  if (allSolved) {
+    setTimeout(function() { unlockDoor(roomNum); }, 600);
+  }
+}
+
+/* ─────────────────────────────────────────
+   DOOR LOGIC
+───────────────────────────────────────── */
+function updateDoor(roomNum) {
+  var r = rooms[roomNum];
+  document.getElementById('doorLockStatus').textContent = 'Selesaikan semua puzzle untuk membuka kunci';
+  document.getElementById('doorLockStatus').className = 'door-lock-status';
+  document.getElementById('doorIcon').textContent = '🔒';
+  document.getElementById('doorBody').classList.remove('open');
+
+  document.getElementById('doorPasswordArea').innerHTML =
+    '<p style="color:var(--fg3);font-size:.85rem;margin-bottom:16px">' + r.doorQuestion + '</p>' +
+    '<div class="password-row">' +
+    '<input class="pw-input" id="pwInput" placeholder="PASSWORD..." spellcheck="false" autocomplete="off" ' +
+    'onkeydown="if(event.key===\'Enter\')tryPassword(' + roomNum + ')" disabled>' +
+    '<button class="btn-enter" id="pwBtn" onclick="tryPassword(' + roomNum + ')" disabled>Buka 🔓</button>' +
+    '</div>' +
+    '<p style="color:var(--fg3);font-size:.78rem;font-family:var(--font-mono)">💡 ' + r.passwordHint + '</p>' +
+    '<div id="pwFeedback" style="margin-top:12px"></div>';
+}
+
+function unlockDoor(roomNum) {
+  var pwInput = document.getElementById('pwInput');
+  var pwBtn = document.getElementById('pwBtn');
+  if (pwInput) { pwInput.disabled = false; pwInput.focus(); }
+  if (pwBtn) pwBtn.disabled = false;
+
+  document.getElementById('doorLockStatus').textContent = '🔓 Puzzle selesai! Masukkan password pintu';
+  document.getElementById('doorLockStatus').className = 'door-lock-status';
+  document.getElementById('doorIcon').textContent = '🗝️';
+  playSound('unlock');
+}
+
+function tryPassword(roomNum) {
+  var input = document.getElementById('pwInput');
+  if (!input || input.disabled) return;
+  var val = input.value.trim().toUpperCase();
+  var correct = val === rooms[roomNum].password;
+
+  if (correct) {
+    input.className = 'pw-input unlocked';
+    input.disabled = true;
+    document.getElementById('pwBtn').disabled = true;
+    document.getElementById('doorIcon').textContent = '🚪';
+    document.getElementById('doorBody').classList.add('open');
+    document.getElementById('doorLockStatus').textContent = '✓ Pintu terbuka!';
+    document.getElementById('doorLockStatus').className = 'door-lock-status unlocked';
+
+    var fb = document.getElementById('pwFeedback');
+    if (fb) { fb.innerHTML = '<div class="feedback success">✓ Password benar! Pintu terbuka...</div>'; }
+
+    playSound('unlock');
+    state.score += 200;
+    updateHUD();
+
+    setTimeout(function() {
+      if (roomNum < 3) {
+        renderRoom(roomNum + 1);
+      } else {
+        showVictory();
+      }
+    }, 1800);
+  } else {
+    input.className = 'pw-input';
+    input.style.animation = 'shake .4s ease';
+    setTimeout(function() { input.style.animation = ''; }, 500);
+    var fb = document.getElementById('pwFeedback');
+    if (fb) { fb.innerHTML = '<div class="feedback error">✗ Password salah. Coba lagi!</div>'; }
+    playSound('error');
+
+    // Deduct points
+    state.score = Math.max(0, state.score - 10);
+    updateHUD();
+  }
+}
+
+/* ─────────────────────────────────────────
+   HINTS
+───────────────────────────────────────── */
+var hintIndex = {};
+function showHint(pid, idx) {
+  var puz = getPuzzleById(pid);
+  if (!puz || !puz.hints) return;
+  if (!hintIndex[pid]) hintIndex[pid] = 0;
+  var hi = hintIndex[pid];
+  var el = document.getElementById('hint_' + pid);
+  el.textContent = '💡 ' + puz.hints[hi];
+  el.style.display = 'block';
+  if (hi < puz.hints.length - 1) hintIndex[pid]++;
+  state.hintsUsed++;
+  state.score = Math.max(0, state.score - 15);
+  updateHUD();
+  playSound('hint');
+}
+
+/* ─────────────────────────────────────────
+   FEEDBACK
+───────────────────────────────────────── */
+function showFeedback(pid, type, msg) {
+  var el = document.getElementById('fb_' + pid);
+  if (el) {
+    el.className = 'feedback ' + type;
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+/* ─────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────── */
+function getPuzzleById(pid) {
+  for (var rk in rooms) {
+    var r = rooms[rk];
+    for (var i = 0; i < r.puzzles.length; i++) {
+      if (r.puzzles[i].id === pid) return r.puzzles[i];
+    }
+  }
+  return null;
+}
+
+/* ─────────────────────────────────────────
+   VICTORY
+───────────────────────────────────────── */
+function showVictory() {
+  clearInterval(state.timerInterval);
+  showScreen('victory');
+
+  document.getElementById('finalScore').textContent = state.score;
+  document.getElementById('finalTime').textContent = formatTime(state.timeLeft);
+  document.getElementById('finalHints').textContent = state.hintsUsed;
+
+  playSound('unlock');
+  spawnParticles();
+}
+
+function showTimeUp() {
+  // Allow player to continue but display time's up banner
+  var banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:hsl(0,72%,20%);border:1px solid hsl(0,72%,45%);color:hsl(0,72%,75%);padding:12px 28px;border-radius:8px;font-family:var(--font-mono);font-size:.85rem;z-index:999;text-align:center';
+  banner.innerHTML = '&#9888; Waktu habis! Kamu bisa lanjut, tapi skor sudah 0.';
+  document.body.appendChild(banner);
+  setTimeout(function() { banner.remove(); }, 5000);
+  state.timeLeft = 0;
+  state.score = 0;
+  updateHUD();
+  playSound('alarm');
+}
+
+/* ── Init ── */
+(function() {
+  spawnParticles();
+})();
+</script>
+</body>
+</html>
