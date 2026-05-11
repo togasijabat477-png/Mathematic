@@ -195,23 +195,20 @@ var filterCategories = [
 
 var stats = [
   {
-    icon:'orbit',
-    target:999,
-    display:'∞',
+    icon:'🧠',
+    target:'∞',
     label:'Eksplorasi Konsep',
     desc:'matematika modern dan visual'
   },
   {
-    icon:'network',
-    target:3,
-    display:'3',
+    icon:'🔗',
+    target:'3',
     label:'Cabang Utama',
     desc:'diskrit, linear, kriptografi'
   },
   {
-    icon:'zap',
-    target:24,
-    display:'24/7',
+    icon:'⚡',
+    target:'24/7',
     label:'Akses Pembelajaran',
     desc:'belajar kapan saja'
   }
