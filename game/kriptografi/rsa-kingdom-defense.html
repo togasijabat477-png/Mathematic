@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RSA Kingdom Defense</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap"/>
+<style>
+/* ════ DESIGN SYSTEM (site-consistent) ════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:220 18% 7%;--bg2:220 15% 10%;--bg3:220 14% 13%;
+  --fg:210 25% 92%;--fg2:210 15% 70%;--fg3:210 12% 50%;
+  --surface:220 13% 16%;--surface2:220 12% 20%;
+  --teal:174 72% 52%;--teal-dim:174 50% 32%;
+  --amber:38 95% 58%;--violet:265 65% 65%;--violet-dim:265 50% 40%;
+  --border:220 12% 22%;--border-hi:220 12% 30%;
+  --radius:.75rem;
+  --font-display:'Playfair Display',serif;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ease-smooth:cubic-bezier(.4,0,.2,1);
+  --ease-out:cubic-bezier(0,0,.2,1);
+  /* Game colours */
+  --green:142 71% 45%;--red:0 80% 60%;--gold:45 95% 55%;
+  --castle:#2dd4bf;--enemy-basic:#f87171;--enemy-hacker:#a78bfa;
+  --enemy-boss:#fb923c;
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--font-body);
+  background:hsl(var(--bg));color:hsl(var(--fg));
+  -webkit-font-smoothing:antialiased;
+  user-select:none;
+}
+
+/* ═══ KEYFRAMES ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blobFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(20px,-20px) scale(1.04)}66%{transform:translate(-10px,15px) scale(.97)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glowPulse{0%{box-shadow:0 0 0 0 hsl(var(--teal)/.4)}50%{box-shadow:0 0 20px 6px hsl(var(--teal)/.15)}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes popIn{0%{transform:scale(0) rotate(-10deg);opacity:0}70%{transform:scale(1.15) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes damageFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1.4)}}
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+@keyframes binaryRain{0%{transform:translateY(-20px);opacity:0}10%{opacity:.7}90%{opacity:.7}100%{transform:translateY(100vh);opacity:0}}
+@keyframes castleShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes enemyWalk{0%{transform:scaleX(-1) translateX(0)}100%{transform:scaleX(-1) translateX(-4px)}}
+@keyframes flameFlicker{0%,100%{transform:scaleY(1) rotate(-2deg)}50%{transform:scaleY(1.2) rotate(2deg)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes projectileFly{0%{opacity:1}100%{opacity:0}}
+@keyframes healthPulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.6)}}
+@keyframes typeChar{from{opacity:0}to{opacity:1}}
+
+/* ═══ SCREENS ═══ */
+.screen{display:none;position:absolute;inset:0;z-index:1}
+.screen.active{display:flex;flex-direction:column}
+
+/* ═══ BG GRID ═══ */
+.bg-grid{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(hsl(220 15% 14%/.4) 1px,transparent 1px),
+    linear-gradient(90deg,hsl(220 15% 14%/.4) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+
+/* ═══ BINARY RAIN ═══ */
+#binaryCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.04}
+
+/* ═══ NAVBAR ═══ */
+.navbar{
+  position:relative;z-index:50;
+  border-bottom:1px solid hsl(var(--border));
+  background:hsl(var(--bg)/.9);
+  backdrop-filter:blur(24px);
+  padding:0 1.5rem;flex-shrink:0;
+}
+.nav-inner{height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nav-logo{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:1.1rem;font-weight:800}
+.nav-logo-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,hsl(var(--teal)),hsl(var(--violet)));
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.grad-text{background:linear-gradient(135deg,hsl(var(--teal)) 20%,hsl(var(--violet)) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-amber{background:linear-gradient(135deg,hsl(var(--amber)),hsl(38 95% 78%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-right{display:flex;align-items:center;gap:8px}
+.btn{
+  border:none;border-radius:var(--radius);cursor:pointer;
+  font-family:var(--font-body);font-weight:600;
+  transition:all .25s var(--ease-spring);
+}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.btn-primary{background:hsl(var(--teal));color:hsl(220 18% 7%)}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 6px 20px hsl(var(--teal)/.3)}
+.btn-outline{background:transparent;color:hsl(var(--fg));border:1px solid hsl(var(--border-hi));padding:6px 14px;font-size:.8rem}
+.btn-outline:hover{border-color:hsl(var(--teal)/.5);background:hsl(var(--teal)/.08);transform:translateY(-1px)}
+.btn-amber{background:hsl(var(--amber));color:hsl(220 18% 7%)}
+.btn-amber:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.btn-danger{background:hsl(var(--red));color:#fff}
+.btn-violet{background:hsl(var(--violet));color:#fff}
+.btn-violet:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.btn-lg{padding:14px 32px;font-size:1rem}
+
+/* ═══════════════════════════════════════
+   HOME SCREEN
+═══════════════════════════════════════ */
+#screen-home{
+  background:hsl(var(--bg));
+  align-items:center;justify-content:center;
+  text-align:center;overflow:hidden;
+}
+.home-blob{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+.home-blob1{width:500px;height:500px;background:hsl(var(--teal)/.08);top:-100px;right:-100px;animation:blobFloat 20s ease-in-out infinite}
+.home-blob2{width:400px;height:400px;background:hsl(var(--violet)/.08);bottom:-80px;left:-80px;animation:blobFloat 20s ease-in-out infinite;animation-delay:-7s}
+.home-blob3{width:300px;height:300px;background:hsl(var(--amber)/.05);top:40%;left:50%;transform:translate(-50%,-50%);animation:blobFloat 15s ease-in-out infinite;animation-delay:-3s}
+.home-content{position:relative;z-index:2;max-width:680px;padding:2rem}
+.home-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:hsl(var(--amber)/.1);border:1px solid hsl(var(--amber)/.3);
+  color:hsl(var(--amber));padding:6px 16px;border-radius:999px;
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:.06em;
+  margin-bottom:28px;animation:fadeUp .6s var(--ease-out) both;
+}
+.home-title{
+  font-family:var(--font-display);font-size:clamp(2.5rem,7vw,4.5rem);
+  font-weight:900;letter-spacing:-.03em;line-height:1.05;
+  margin-bottom:20px;animation:fadeUp .6s var(--ease-out) .1s both;
+}
+.home-desc{
+  font-size:1.05rem;color:hsl(var(--fg2));line-height:1.7;
+  margin-bottom:36px;animation:fadeUp .6s var(--ease-out) .2s both;
+}
+.home-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s var(--ease-out) .3s both;margin-bottom:48px}
+.feature-pills{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .6s var(--ease-out) .4s both;
+}
+.pill{
+  background:hsl(var(--surface));border:1px solid hsl(var(--border));
+  border-radius:999px;padding:7px 16px;font-size:.8rem;color:hsl(var(--fg2));
+  display:flex;align-items:center;gap:6px;
+}
+
+/* Castle preview in home */
+.castle-preview{
+  font-size:4rem;animation:blobFloat 4s ease-in-out infinite;
+  display:block;margin-bottom:12px;
+}
+
+/* ═══════════════════════════════════════
+   KEY FORGE SCREEN (RSA Setup)
+═══════════════════════════════════════ */
+#screen-keyforge{
+  background:hsl(var(--bg));overflow-y:auto;
+}
+.keyforge-body{
+  max-width:820px;margin:0 auto;padding:2rem;
+  animation:fadeUp .5s var(--ease-out) both;
+}
+.kf-section{
+  background:hsl(var(--surface));border:1px solid hsl(var(--border));
+  border-radius:var(--radius);padding:24px;margin-bottom:20px;
+}
+.kf-section h3{font-family:var(--font-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3));margin-bottom:16px}
+.prime-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.prime-btn{
+  background:hsl(var(--surface2));border:1.5px solid hsl(var(--border));
+  border-radius:8px;padding:10px;font-family:var(--font-mono);font-size:.9rem;
+  font-weight:700;color:hsl(var(--fg));cursor:pointer;
+  transition:all .2s var(--ease-spring);text-align:center;
+}
+.prime-btn:hover{border-color:hsl(var(--teal)/.6);transform:translateY(-2px);color:hsl(var(--teal))}
+.prime-btn.selected-p{border-color:hsl(var(--teal));background:hsl(var(--teal)/.15);color:hsl(var(--teal))}
+.prime-btn.selected-q{border-color:hsl(var(--violet));background:hsl(var(--violet)/.15);color:hsl(var(--violet))}
+.prime-btn.used{opacity:.3;cursor:not-allowed;pointer-events:none}
+.rsa-display{
+  background:hsl(220 18% 5%);border:1px solid hsl(var(--teal)/.2);
+  border-radius:var(--radius);padding:20px;
+  font-family:var(--font-mono);font-size:.85rem;line-height:2;
+}
+.rsa-line{display:flex;gap:12px;align-items:baseline}
+.rsa-label{color:hsl(var(--fg3));min-width:180px}
+.rsa-val{color:hsl(var(--teal));font-weight:700}
+.rsa-val.violet{color:hsl(var(--violet))}
+.rsa-val.amber{color:hsl(var(--amber))}
+.rsa-val.green{color:hsl(142 71% 50%)}
+.rsa-step{
+  border-left:2px solid hsl(var(--teal)/.3);padding-left:16px;margin-bottom:12px;
+}
+.rsa-step-label{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--teal));margin-bottom:4px}
+.rsa-step-val{font-family:var(--font-mono);font-size:.9rem;color:hsl(var(--fg))}
+.edu-box{
+  background:hsl(var(--teal)/.06);border:1px solid hsl(var(--teal)/.2);
+  border-radius:calc(var(--radius) - 2px);padding:14px 16px;
+  font-size:.82rem;line-height:1.65;color:hsl(var(--fg2));margin-top:12px;
+}
+.edu-box strong{color:hsl(var(--teal))}
+.phi-input{
+  background:hsl(var(--surface2));border:2px solid hsl(var(--border));
+  border-radius:8px;padding:8px 12px;color:hsl(var(--fg));
+  font-family:var(--font-mono);font-size:.9rem;width:100px;
+  text-align:center;outline:none;transition:border-color .2s;
+}
+.phi-input:focus{border-color:hsl(var(--teal))}
+.phi-input.correct{border-color:hsl(142 71% 45%)}
+.phi-input.wrong{border-color:hsl(var(--red));animation:shake .3s var(--ease-smooth)}
+.key-display{
+  display:flex;gap:16px;flex-wrap:wrap;
+}
+.key-card{
+  flex:1;min-width:200px;
+  background:hsl(var(--bg3));border:1.5px solid hsl(var(--border));
+  border-radius:var(--radius);padding:20px;text-align:center;
+}
+.key-card.public{border-color:hsl(var(--teal)/.4)}
+.key-card.private{border-color:hsl(var(--violet)/.4)}
+.key-icon{font-size:2rem;margin-bottom:8px}
+.key-label{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3));margin-bottom:6px}
+.key-value{font-family:var(--font-mono);font-size:1.1rem;font-weight:700}
+.key-value.teal{color:hsl(var(--teal))}
+.key-value.violet{color:hsl(var(--violet))}
+
+/* ═══════════════════════════════════════
+   GAME SCREEN
+═══════════════════════════════════════ */
+#screen-game{background:hsl(220 18% 5%);overflow:hidden}
+.game-layout{display:flex;height:calc(100% - 56px);gap:0;position:relative}
+
+/* ─ Game Canvas Area ─ */
+.game-canvas-wrap{flex:1;position:relative;overflow:hidden}
+#gameCanvas{display:block;width:100%;height:100%}
+
+/* ─ Side Panel ─ */
+.side-panel{
+  width:260px;flex-shrink:0;
+  background:hsl(var(--bg));border-left:1px solid hsl(var(--border));
+  display:flex;flex-direction:column;overflow-y:auto;
+  z-index:10;
+}
+.panel-section{padding:14px;border-bottom:1px solid hsl(var(--border))}
+.panel-title{
+  font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;
+  letter-spacing:.1em;color:hsl(var(--fg3));margin-bottom:10px;
+}
+
+/* Castle HP */
+.castle-hp-wrap{margin-bottom:8px}
+.castle-hp-bar{height:10px;background:hsl(var(--surface2));border-radius:999px;overflow:hidden}
+.castle-hp-fill{
+  height:100%;border-radius:999px;
+  background:linear-gradient(90deg,hsl(142 71% 45%),hsl(174 72% 52%));
+  transition:width .5s var(--ease-smooth);
+}
+.castle-hp-fill.warn{background:linear-gradient(90deg,hsl(38 95% 58%),hsl(38 95% 72%))}
+.castle-hp-fill.danger{background:linear-gradient(90deg,hsl(0 80% 50%),hsl(0 80% 68%))}
+.castle-hp-text{font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--fg2));margin-top:4px}
+
+/* Wave info */
+.wave-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:hsl(var(--violet)/.15);border:1px solid hsl(var(--violet)/.3);
+  color:hsl(var(--violet));padding:4px 10px;border-radius:999px;
+  font-family:var(--font-mono);font-size:.72rem;font-weight:700;
+}
+.enemy-queue{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.enemy-dot{width:18px;height:18px;border-radius:4px;font-size:10px;display:flex;align-items:center;justify-content:center}
+.enemy-dot.basic{background:hsl(0 80% 50%/.2);border:1px solid hsl(0 80% 50%/.5)}
+.enemy-dot.hacker{background:hsl(265 65% 65%/.2);border:1px solid hsl(265 65% 65%/.5)}
+.enemy-dot.boss{background:hsl(38 95% 58%/.2);border:1px solid hsl(38 95% 58%/.5);width:24px;height:24px}
+
+/* Towers */
+.tower-list{display:flex;flex-direction:column;gap:8px}
+.tower-item{
+  background:hsl(var(--surface));border:1.5px solid hsl(var(--border));
+  border-radius:calc(var(--radius) - 2px);padding:10px;cursor:pointer;
+  transition:all .2s var(--ease-spring);position:relative;
+}
+.tower-item:hover:not(.locked){border-color:hsl(var(--teal)/.5);transform:translateX(2px)}
+.tower-item.selected{border-color:hsl(var(--teal));background:hsl(var(--teal)/.08)}
+.tower-item.locked{opacity:.45;cursor:not-allowed}
+.tower-item.no-afford{opacity:.6;cursor:not-allowed}
+.tower-row{display:flex;align-items:center;gap:8px}
+.tower-icon{font-size:1.4rem;flex-shrink:0}
+.tower-info{flex:1;min-width:0}
+.tower-name{font-size:.82rem;font-weight:700}
+.tower-stats{font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3));margin-top:2px}
+.tower-cost{
+  font-family:var(--font-mono);font-size:.72rem;font-weight:700;
+  color:hsl(var(--amber));white-space:nowrap;
+}
+.tower-lock-badge{
+  position:absolute;top:4px;right:4px;
+  background:hsl(var(--surface2));border:1px solid hsl(var(--border));
+  border-radius:4px;padding:2px 6px;font-size:.6rem;font-family:var(--font-mono);
+  color:hsl(var(--fg3));
+}
+
+/* Upgrade panel */
+.upgrade-panel{
+  background:hsl(var(--surface));border:1px solid hsl(var(--teal)/.3);
+  border-radius:calc(var(--radius) - 2px);padding:12px;
+}
+.upgrade-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px;background:hsl(var(--surface2));border-radius:6px;
+  margin-bottom:6px;
+}
+.upgrade-name{font-size:.78rem;font-weight:600}
+.upgrade-level{font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--teal))}
+
+/* HUD stats */
+.hud-row{display:flex;justify-content:space-between;align-items:center}
+.hud-stat-g{text-align:center}
+.hud-num{font-family:var(--font-mono);font-size:1rem;font-weight:700;color:hsl(var(--teal))}
+.hud-num.amber{color:hsl(var(--amber))}
+.hud-num.violet{color:hsl(var(--violet))}
+.hud-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3))}
+
+/* Score floats */
+.score-float{
+  position:absolute;pointer-events:none;z-index:200;
+  font-family:var(--font-display);font-weight:900;font-size:1.2rem;
+  animation:damageFloat .9s var(--ease-out) forwards;
+  text-shadow:0 2px 8px currentColor;
+}
+
+/* Wave button */
+.wave-btn{
+  width:100%;padding:10px;border:none;border-radius:var(--radius);
+  font-weight:700;font-size:.85rem;cursor:pointer;
+  font-family:var(--font-mono);transition:all .2s var(--ease-spring);
+  background:linear-gradient(135deg,hsl(var(--teal)),hsl(var(--violet)));
+  color:hsl(220 18% 7%);
+}
+.wave-btn:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.wave-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
+.wave-btn.in-progress{background:linear-gradient(135deg,hsl(var(--amber)),hsl(38 95% 75%));pointer-events:none}
+
+/* Selected tower info */
+.selected-tower-info{
+  background:hsl(var(--bg3));border:1px solid hsl(var(--teal)/.3);
+  border-radius:var(--radius);padding:14px;margin:0 14px 12px;
+}
+.sti-name{font-weight:700;font-size:.9rem;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.sti-desc{font-size:.75rem;color:hsl(var(--fg2));line-height:1.5;margin-bottom:10px}
+.sti-upgrades{display:flex;flex-direction:column;gap:6px}
+.sti-upg-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  background:hsl(var(--surface2));border:1px solid hsl(var(--border));
+  border-radius:6px;padding:7px 10px;cursor:pointer;
+  transition:all .2s var(--ease-spring);
+}
+.sti-upg-btn:hover:not(:disabled){border-color:hsl(var(--amber)/.6);background:hsl(var(--amber)/.08)}
+.sti-upg-btn:disabled{opacity:.4;cursor:not-allowed}
+.sti-upg-name{font-size:.75rem;font-weight:600}
+.sti-upg-cost{font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--amber))}
+.sti-upg-level{font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--teal))}
+.remove-tower-btn{
+  width:100%;padding:6px;border:1px solid hsl(var(--red)/.4);border-radius:6px;
+  background:hsl(var(--red)/.08);color:hsl(var(--red));font-size:.75rem;
+  cursor:pointer;margin-top:8px;font-family:var(--font-body);font-weight:600;
+  transition:all .2s;
+}
+.remove-tower-btn:hover{background:hsl(var(--red)/.2)}
+
+/* Selling refund */
+.sell-val{color:hsl(var(--amber));font-family:var(--font-mono);font-size:.7rem}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  background:hsl(220 18% 3%/.8);backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{
+  background:hsl(var(--surface));border:1.5px solid hsl(var(--border));
+  border-radius:calc(var(--radius)*1.5);padding:36px;
+  max-width:520px;width:92%;text-align:center;
+  animation:modalIn .45s var(--ease-spring) both;
+}
+.modal-emoji{font-size:3.5rem;margin-bottom:12px}
+.modal-title{font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:8px}
+.modal-desc{color:hsl(var(--fg2));margin-bottom:28px;line-height:1.65;font-size:.95rem}
+.modal-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px}
+.ms{background:hsl(var(--surface2));border-radius:var(--radius);padding:14px}
+.ms-val{font-family:var(--font-mono);font-size:1.3rem;font-weight:700;color:hsl(var(--teal))}
+.ms-lbl{font-size:.7rem;color:hsl(var(--fg3));margin-top:3px}
+.modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* ═══ FEEDBACK TOAST ═══ */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:hsl(var(--surface));border:1px solid hsl(var(--border));
+  border-radius:var(--radius);padding:10px 20px;
+  font-family:var(--font-mono);font-size:.82rem;
+  opacity:0;pointer-events:none;transition:all .3s var(--ease-spring);
+  z-index:999;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:hsl(142 71% 45%);color:hsl(142 71% 55%)}
+.toast.error{border-color:hsl(var(--red));color:hsl(var(--red))}
+.toast.info{border-color:hsl(var(--teal));color:hsl(var(--teal))}
+.toast.warn{border-color:hsl(var(--amber));color:hsl(var(--amber))}
+
+/* ═══ PATH OVERLAY (canvas instructions) ═══ */
+.canvas-overlay-text{
+  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+  background:hsl(var(--bg)/.8);border:1px solid hsl(var(--border));
+  border-radius:999px;padding:6px 16px;font-family:var(--font-mono);
+  font-size:.7rem;color:hsl(var(--fg3));pointer-events:none;
+  white-space:nowrap;backdrop-filter:blur(8px);
+}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:hsl(var(--bg2))}
+::-webkit-scrollbar-thumb{background:hsl(var(--border-hi));border-radius:3px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:700px){
+  .side-panel{width:200px}
+  .tower-name{font-size:.72rem}
+  .home-title{font-size:2rem}
+}
+@media(max-width:520px){
+  .side-panel{display:none}
+  .game-layout{flex-direction:column}
+  .game-canvas-wrap{flex:1}
+}
+</style>
+</head>
+<body>
+
+<canvas id="binaryCanvas"></canvas>
+<div class="bg-grid"></div>
+
+<div id="app">
+
+<!-- ══════════════════════ HOME ══════════════════════ -->
+<div class="screen active" id="screen-home">
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">🏰</div>
+        <span class="grad-text">RSA Kingdom</span>&nbsp;<span style="font-weight:400;opacity:.6">Defense</span>
+      </div>
+      <div class="nav-right">
+        <span style="font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--fg3));background:hsl(var(--surface));border:1px solid hsl(var(--border));padding:4px 10px;border-radius:999px">CRYPTO TOWER DEFENSE</span>
+      </div>
+    </div>
+  </nav>
+  <div class="home-blob home-blob1"></div>
+  <div class="home-blob home-blob2"></div>
+  <div class="home-blob home-blob3"></div>
+  <div class="home-content">
+    <div class="home-badge">⚔️ &nbsp;Cybersecurity × Fantasy Tower Defense</div>
+    <span class="castle-preview">🏰</span>
+    <h1 class="home-title">
+      <span class="grad-text">RSA Kingdom</span><br>
+      <span class="grad-amber">Defense</span>
+    </h1>
+    <p class="home-desc">Forge RSA keys, build crypto towers, repel hacker armies. Pelajari bilangan prima, modulo, dan kriptografi RSA sambil mempertahankan kerajaan digital kamu.</p>
+    <div class="home-actions">
+      <button class="btn btn-primary btn-lg" onclick="goKeyForge()">⚔ Mulai Misi</button>
+      <button class="btn btn-outline btn-lg" onclick="showScreen('leaderboard')">🏆 Leaderboard</button>
+    </div>
+    <div class="feature-pills">
+      <div class="pill">🔐 RSA Encryption</div>
+      <div class="pill">🧮 Bilangan Prima</div>
+      <div class="pill">🔢 Aritmatika Modulo</div>
+      <div class="pill">🗼 Tower Defense</div>
+      <div class="pill">👾 Boss Hacker</div>
+      <div class="pill">⬆️ Upgrade System</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ KEY FORGE ══════════════════════ -->
+<div class="screen" id="screen-keyforge">
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">🔑</div>
+        <span class="grad-text">Key Forge</span>&nbsp;<span style="opacity:.6;font-weight:400">— RSA Setup</span>
+      </div>
+      <div class="nav-right">
+        <button class="btn btn-outline btn-sm" onclick="showScreen('home')">← Back</button>
+      </div>
+    </div>
+  </nav>
+  <div class="keyforge-body">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-family:var(--font-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--teal));margin-bottom:8px">Mission Briefing</div>
+      <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:10px">Forge Your <span class="grad-text">RSA Keys</span></h2>
+      <p style="color:hsl(var(--fg2));font-size:.95rem;max-width:520px;margin:0 auto">Pilih dua bilangan prima untuk membuat kunci keamanan kerajaan kamu. Hacker akan mencoba memecahkan enkripsimu — pilih prima yang tepat!</p>
+    </div>
+
+    <!-- Step 1: Pick primes -->
+    <div class="kf-section">
+      <h3>🔢 Step 1 — Pilih Dua Bilangan Prima (p dan q)</h3>
+      <div class="prime-grid" id="primeGrid"></div>
+      <div class="edu-box" style="margin-top:12px">
+        <strong>Mengapa bilangan prima?</strong> RSA bergantung pada fakta bahwa mengalikan dua bilangan prima besar itu mudah, tapi memfaktorkan hasilnya kembali <em>sangat sulit</em> — inilah fondasi keamanan RSA. Semakin besar prima yang kamu pilih, semakin kuat pertahanan kerajaanmu!
+      </div>
+    </div>
+
+    <!-- Step 2: Compute n, φ(n) -->
+    <div class="kf-section" id="step2" style="display:none">
+      <h3>🧮 Step 2 — Hitung n dan φ(n)</h3>
+      <div class="rsa-display" id="rsaCalcDisplay"></div>
+      <div class="edu-box" style="margin-top:12px">
+        <strong>n = p × q</strong> disebut "modulus" — bilangan yang digunakan untuk enkripsi/dekripsi.<br>
+        <strong>φ(n) = (p-1)(q-1)</strong> adalah fungsi Euler Totient — menghitung berapa banyak bilangan 1 hingga n-1 yang tidak mempunyai faktor persekutuan dengan n.
+      </div>
+    </div>
+
+    <!-- Step 3: Choose e -->
+    <div class="kf-section" id="step3" style="display:none">
+      <h3>⚡ Step 3 — Pilih Public Exponent (e)</h3>
+      <p style="font-size:.85rem;color:hsl(var(--fg2));margin-bottom:14px">e harus: 1 &lt; e &lt; φ(n) dan gcd(e, φ(n)) = 1 (relatif prima)</p>
+      <div class="prime-grid" id="eGrid"></div>
+      <div class="edu-box" style="margin-top:12px">
+        <strong>Public key = (e, n)</strong>. Nilai e paling umum adalah 65537 karena efisien untuk komputasi. Di game ini, kamu memilih sendiri untuk belajar syarat-syaratnya!
+      </div>
+    </div>
+
+    <!-- Step 4: Verify d -->
+    <div class="kf-section" id="step4" style="display:none">
+      <h3>🔮 Step 4 — Temukan Private Exponent (d)</h3>
+      <p style="font-size:.85rem;color:hsl(var(--fg2));margin-bottom:14px">d adalah invers modular dari e terhadap φ(n): <strong>d × e ≡ 1 (mod φ(n))</strong></p>
+      <div id="dVerifyArea" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-family:var(--font-mono);font-size:.9rem">d = </span>
+        <input type="number" class="phi-input" id="dInput" placeholder="d=?" min="1"/>
+        <button class="btn btn-primary btn-sm" onclick="verifyD()">Verify</button>
+        <button class="btn btn-outline btn-sm" onclick="hintD()">Hint 💡</button>
+      </div>
+      <div id="dResult" style="margin-top:10px"></div>
+      <div class="edu-box" style="margin-top:12px">
+        <strong>Private key = (d, n)</strong>. Hanya kamu yang tahu d! Hacker yang berhasil menemukan d dapat mendekripsi semua pesan. Inilah yang ingin dicuri musuh-musuh kerajaanmu.
+      </div>
+    </div>
+
+    <!-- Key display -->
+    <div class="kf-section" id="step5" style="display:none">
+      <h3>✅ Keys Forged! — Kunci RSA Berhasil Dibuat</h3>
+      <div class="key-display" id="keyDisplay"></div>
+      <div class="edu-box" style="margin-top:16px">
+        <strong>Kerajaanmu siap!</strong> Kunci publik akan digunakan tower untuk mengidentifikasi musuh. Kunci privat tersimpan di benteng utama. Jaga kunci privat — jika musuh mendapatkannya, kerajaan runtuh!
+      </div>
+      <div style="margin-top:20px;text-align:center">
+        <button class="btn btn-primary btn-lg" onclick="startGame()">🏰 Deploy to Battle! ⚔</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ GAME ══════════════════════ -->
+<div class="screen" id="screen-game">
+  <nav class="navbar">
+    <div class="nav-inner" style="gap:8px">
+      <div class="nav-logo" style="gap:6px">
+        <div class="nav-logo-icon">🏰</div>
+        <span class="grad-text" style="font-size:.95rem">RSA Kingdom</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="hud-stat-g"><div class="hud-num" id="hud-score">0</div><div class="hud-lbl">Score</div></div>
+        <div class="hud-stat-g"><div class="hud-num amber" id="hud-gold">150</div><div class="hud-lbl">⚡ Mana</div></div>
+        <div class="hud-stat-g"><div class="hud-num violet" id="hud-wave">1</div><div class="hud-lbl">Wave</div></div>
+        <div class="hud-stat-g"><div class="hud-num" id="hud-killed">0</div><div class="hud-lbl">Defeated</div></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-outline btn-sm" id="pauseBtn" onclick="togglePause()">⏸</button>
+        <button class="btn btn-outline btn-sm" onclick="confirmQuit()">⌂</button>
+      </div>
+    </div>
+  </nav>
+  <div class="game-layout">
+    <!-- Canvas -->
+    <div class="game-canvas-wrap">
+      <canvas id="gameCanvas"></canvas>
+      <div class="canvas-overlay-text" id="canvasTip">Click an empty cell to place selected tower</div>
+    </div>
+    <!-- Side panel -->
+    <div class="side-panel">
+      <!-- Castle HP -->
+      <div class="panel-section">
+        <div class="panel-title">🏰 Castle Integrity</div>
+        <div class="castle-hp-wrap">
+          <div class="castle-hp-bar"><div class="castle-hp-fill" id="hpBar" style="width:100%"></div></div>
+          <div class="castle-hp-text"><span id="hpVal">100</span> / <span id="hpMax">100</span> HP</div>
+        </div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:6px">
+          <div class="wave-badge" id="waveBadge">Wave 1</div>
+          <div style="font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3))" id="enemyCountBadge"></div>
+        </div>
+        <!-- Enemy queue preview -->
+        <div class="enemy-queue" id="enemyQueue"></div>
+      </div>
+
+      <!-- RSA Keys -->
+      <div class="panel-section">
+        <div class="panel-title">🔑 RSA Keys Active</div>
+        <div style="font-family:var(--font-mono);font-size:.72rem;line-height:1.8;color:hsl(var(--fg2))">
+          <div>p=<span id="kp" style="color:hsl(var(--teal))"></span> q=<span id="kq" style="color:hsl(var(--violet))"></span></div>
+          <div>n=<span id="kn" style="color:hsl(var(--amber))"></span> e=<span id="ke" style="color:hsl(var(--teal))"></span></div>
+          <div>d=<span id="kd" style="color:hsl(var(--violet))"></span> φ=<span id="kphi" style="color:hsl(var(--fg3))"></span></div>
+        </div>
+      </div>
+
+      <!-- Tower palette -->
+      <div class="panel-section">
+        <div class="panel-title">🗼 Tower Arsenal</div>
+        <div class="tower-list" id="towerList"></div>
+      </div>
+
+      <!-- Selected tower upgrades -->
+      <div id="selectedTowerPanel" style="display:none">
+        <div class="selected-tower-info" id="selectedTowerInfo"></div>
+      </div>
+
+      <!-- Wave control -->
+      <div class="panel-section" style="margin-top:auto">
+        <button class="wave-btn" id="waveBtn" onclick="sendWave()">▶ Send Wave 1</button>
+        <div style="font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3));margin-top:6px;text-align:center" id="waveDesc"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ LEADERBOARD ══════════════════════ -->
+<div class="screen" id="screen-leaderboard">
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo"><div class="nav-logo-icon">🏆</div><span class="grad-text">Leaderboard</span></div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('home')">← Back</button>
+    </div>
+  </nav>
+  <div style="max-width:600px;margin:0 auto;padding:2rem">
+    <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:6px">🏆 <span class="grad-text">Top Defenders</span></h2>
+    <p style="color:hsl(var(--fg2));margin-bottom:28px;font-size:.9rem">RSA Kingdom Defense — Hall of Fame</p>
+    <div style="background:hsl(var(--surface));border:1px solid hsl(var(--border));border-radius:var(--radius);overflow:hidden" id="lbTable">
+      <div style="background:hsl(var(--surface2));padding:12px 16px;display:grid;grid-template-columns:48px 1fr auto auto;gap:12px;font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3))">
+        <span>Rank</span><span>Player</span><span>Score</span><span>Wave</span>
+      </div>
+    </div>
+    <div style="margin-top:24px;text-align:center;display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-primary" onclick="goKeyForge()">Play Again</button>
+      <button class="btn btn-outline" onclick="showScreen('home')">← Menu</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<!-- Global Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-emoji" id="mEmoji">🎉</div>
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-desc" id="mDesc"></div>
+    <div class="modal-stats" id="mStats"></div>
+    <div class="modal-actions" id="mActions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════
+   RSA KINGDOM DEFENSE — Full Game Engine
+═══════════════════════════════════════════════════ */
+
+// ── BINARY RAIN ──
+(function(){
+  const c=document.getElementById('binaryCanvas');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize();addEventListener('resize',resize);
+  const chars='01アABCDEF#@!%{}[]<>';
+  const cols=Math.floor(c.width/16);
+  const drops=Array(cols).fill(1);
+  setInterval(()=>{
+    ctx.fillStyle='rgba(8,10,14,.06)';
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#3dd9b3';ctx.font='12px Space Mono,monospace';
+    drops.forEach((y,i)=>{
+      const ch=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(ch,i*16,y*16);
+      if(y*16>c.height&&Math.random()>.975)drops[i]=0;
+      drops[i]++;
+    });
+  },55);
+})();
+
+// ── SCREEN ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+// ── TOAST ──
+let toastTimer;
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show '+type;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+// ── MODAL ──
+function showModal(emoji,title,desc,stats,actions){
+  document.getElementById('mEmoji').textContent=emoji;
+  document.getElementById('mTitle').innerHTML=title;
+  document.getElementById('mDesc').innerHTML=desc;
+  document.getElementById('mStats').innerHTML=stats||'';
+  document.getElementById('mActions').innerHTML=actions||'';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+document.getElementById('modalOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modalOverlay'))closeModal();
+});
+
+/* ══════════════════════════════════════════
+   KEY FORGE (RSA Education)
+══════════════════════════════════════════ */
+const PRIMES=[3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73];
+let kf={p:0,q:0,n:0,phi:0,e:0,d:0};
+
+function goKeyForge(){showScreen('keyforge');initKeyForge();}
+
+function initKeyForge(){
+  kf={p:0,q:0,n:0,phi:0,e:0,d:0};
+  ['step2','step3','step4','step5'].forEach(id=>document.getElementById(id).style.display='none');
+  const grid=document.getElementById('primeGrid');
+  grid.innerHTML=PRIMES.map(p=>`<button class="prime-btn" data-p="${p}" onclick="pickPrime(${p})">${p}</button>`).join('');
+  const inp=document.getElementById('dInput');
+  if(inp)inp.value='';
+  const dr=document.getElementById('dResult');
+  if(dr)dr.innerHTML='';
+}
+
+function pickPrime(val){
+  if(!kf.p){
+    kf.p=val;
+    document.querySelectorAll('#primeGrid .prime-btn').forEach(b=>{
+      if(+b.dataset.p===val)b.classList.add('selected-p');
+      if(+b.dataset.p===val)b.classList.add('used');
+    });
+    toast(`p = ${val} dipilih ✓`,'success');
+  } else if(!kf.q && val!==kf.p){
+    kf.q=val;
+    document.querySelectorAll('#primeGrid .prime-btn').forEach(b=>{
+      if(+b.dataset.p===val){b.classList.add('selected-q');b.classList.add('used');}
+    });
+    toast(`q = ${val} dipilih ✓`,'success');
+    computeRSA();
+  } else if(val===kf.p){
+    toast('p dan q harus berbeda!','error');
+  }
+}
+
+function gcd(a,b){while(b){let t=b;b=a%b;a=t;}return a;}
+function modInverse(e,phi){
+  // Extended Euclidean
+  let [old_r,r]=[e,phi],[old_s,s]=[1,0];
+  while(r!==0){let q=Math.floor(old_r/r);[old_r,r]=[r,old_r-q*r];[old_s,s]=[s,old_s-q*s];}
+  return((old_s%phi)+phi)%phi;
+}
+
+function computeRSA(){
+  kf.n=kf.p*kf.q;
+  kf.phi=(kf.p-1)*(kf.q-1);
+  document.getElementById('step2').style.display='block';
+  document.getElementById('rsaCalcDisplay').innerHTML=`
+    <div class="rsa-line"><span class="rsa-label">p (prima 1)</span><span class="rsa-val">${kf.p}</span></div>
+    <div class="rsa-line"><span class="rsa-label">q (prima 2)</span><span class="rsa-val violet">${kf.q}</span></div>
+    <div class="rsa-line"><span class="rsa-label">n = p × q</span><span class="rsa-val amber">${kf.p} × ${kf.q} = <strong>${kf.n}</strong></span></div>
+    <div class="rsa-line"><span class="rsa-label">φ(n) = (p−1)(q−1)</span><span class="rsa-val green">(${kf.p}−1)(${kf.q}−1) = ${kf.p-1} × ${kf.q-1} = <strong>${kf.phi}</strong></span></div>
+  `;
+  setTimeout(buildEGrid,400);
+}
+
+function buildEGrid(){
+  document.getElementById('step3').style.display='block';
+  // Valid e values: 1 < e < phi, gcd(e,phi)=1
+  const candidates=PRIMES.filter(p=>p>1&&p<kf.phi&&gcd(p,kf.phi)===1);
+  const eGrid=document.getElementById('eGrid');
+  eGrid.innerHTML=candidates.map(e=>`<button class="prime-btn" onclick="pickE(${e})">${e}</button>`).join('');
+  document.getElementById('step3').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function pickE(val){
+  if(gcd(val,kf.phi)!==1){toast(`gcd(${val},${kf.phi})≠1 — bukan pilihan valid!`,'error');return;}
+  kf.e=val;
+  document.querySelectorAll('#eGrid .prime-btn').forEach(b=>{
+    b.classList.remove('selected-p','selected-q');
+    if(+b.textContent===val)b.classList.add('selected-p');
+  });
+  toast(`e = ${val} dipilih ✓`,'success');
+  document.getElementById('step4').style.display='block';
+  document.getElementById('step4').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function verifyD(){
+  const inp=document.getElementById('dInput');
+  const d=parseInt(inp.value);
+  if(isNaN(d)||d<1){toast('Masukkan nilai d!','error');return;}
+  const check=(kf.e*d)%kf.phi;
+  const res=document.getElementById('dResult');
+  if(check===1){
+    kf.d=d;
+    inp.className='phi-input correct';
+    res.innerHTML=`<div class="edu-box"><strong style="color:hsl(142 71% 50%)">✅ Benar!</strong> ${kf.e} × ${d} = ${kf.e*d} ≡ <strong>1 (mod ${kf.phi})</strong> ✓<br>Private key d = ${d} berhasil ditemukan!</div>`;
+    setTimeout(showKeys,500);
+  } else {
+    inp.className='phi-input wrong';
+    res.innerHTML=`<div class="edu-box" style="border-color:hsl(var(--red)/.3);background:hsl(var(--red)/.05)"><strong style="color:hsl(var(--red))">❌ Salah.</strong> ${kf.e} × ${d} (mod ${kf.phi}) = <strong>${check}</strong>, bukan 1. Coba lagi!</div>`;
+    setTimeout(()=>inp.className='phi-input',800);
+  }
+}
+
+function hintD(){
+  const d=modInverse(kf.e,kf.phi);
+  toast(`Hint: d ≡ e⁻¹ mod φ(n). Coba ${d} 😉`,'info');
+}
+
+function showKeys(){
+  document.getElementById('step5').style.display='block';
+  document.getElementById('keyDisplay').innerHTML=`
+    <div class="key-card public">
+      <div class="key-icon">🔓</div>
+      <div class="key-label">Public Key (e, n)</div>
+      <div class="key-value teal">(${kf.e}, ${kf.n})</div>
+      <div style="font-size:.75rem;color:hsl(var(--fg3));margin-top:6px">Dibagikan ke semua orang</div>
+    </div>
+    <div class="key-card private">
+      <div class="key-icon">🔐</div>
+      <div class="key-label">Private Key (d, n)</div>
+      <div class="key-value violet">(${kf.d}, ${kf.n})</div>
+      <div style="font-size:.75rem;color:hsl(var(--fg3));margin-top:6px">RAHASIA — hanya kamu yang tahu!</div>
+    </div>
+  `;
+  document.getElementById('step5').scrollIntoView({behavior:'smooth',block:'start'});
+  toast('RSA Keys berhasil di-forge! 🔑','success');
+}
+
+/* ══════════════════════════════════════════
+   GAME ENGINE
+══════════════════════════════════════════ */
+const CELL=72;
+let canvas,ctx,W,H,COLS,ROWS;
+let gs={};  // game state
+
+// Tower definitions
+const TOWER_DEFS=[
+  {
+    id:'prime',name:'Prime Wall',icon:'🔢',color:'#3dd9b3',
+    desc:'Dinding prima — memblokir & memperlambat musuh',
+    baseCost:50,baseDmg:8,baseRange:2.5,baseRate:1.2,
+    upgrades:[
+      {name:'Prime Sieve',maxLv:3,costMult:[60,80,110],effect:'dmg',val:[2,3,4],desc:'+dmg per lv'},
+      {name:'Slow Field',maxLv:2,costMult:[70,100],effect:'slow',val:[.3,.5],desc:'Memperlambat musuh'},
+    ],
+    edu:'Menggunakan sifat bilangan prima untuk memfilter & mengidentifikasi paket musuh. Hanya paket yang lolos uji prima yang diizinkan!',
+    unlockWave:0
+  },
+  {
+    id:'modulo',name:'Modulo Cannon',icon:'🧮',color:'#a78bfa',
+    desc:'Kanon modulo — damage area besar',
+    baseCost:80,baseDmg:18,baseRange:3,baseRate:.7,
+    upgrades:[
+      {name:'Modular Boost',maxLv:3,costMult:[70,100,140],effect:'dmg',val:[4,8,14],desc:'+area dmg'},
+      {name:'Extended Range',maxLv:2,costMult:[60,90],effect:'range',val:[.5,1],desc:'+range'},
+    ],
+    edu:'Operasi modulo (a mod n) menghasilkan sisa pembagian. Dalam RSA, enkripsi = mᵉ mod n. Kanon ini mensimulasikan perhitungan modulo untuk menghancurkan musuh!',
+    unlockWave:0
+  },
+  {
+    id:'hash',name:'Hash Guard',icon:'#️⃣',color:'#fb923c',
+    desc:'Penjaga hash — serangan cepat multi-target',
+    baseCost:100,baseDmg:6,baseRange:2,baseRate:2.5,
+    upgrades:[
+      {name:'SHA Upgrade',maxLv:3,costMult:[80,110,150],effect:'rate',val:[.4,.7,1],desc:'+attack speed'},
+      {name:'Multi-Hash',maxLv:2,costMult:[90,130],effect:'multi',val:[1,2],desc:'+targets hitSee'},
+    ],
+    edu:'Fungsi hash kriptografis (SHA-256, dll) mengubah input menjadi output fixed-length yang unik. Mendeteksi perubahan data sekecil apapun! Guard ini menciptakan hash unik setiap serangan.',
+    unlockWave:2
+  },
+  {
+    id:'rsa',name:'RSA Fortress',icon:'🏰',color:'#fbbf24',
+    desc:'Benteng RSA — damage tertinggi, AoE, slow',
+    baseCost:180,baseDmg:35,baseRange:3.5,baseRate:.5,
+    upgrades:[
+      {name:'Key Size++',maxLv:3,costMult:[120,160,220],effect:'dmg',val:[10,20,35],desc:'+massive dmg'},
+      {name:'Decrypt Field',maxLv:2,costMult:[100,150],effect:'aoe',val:[1,2],desc:'+AoE radius'},
+    ],
+    edu:'RSA Fortress menggunakan full kunci RSA kamu! Enkripsi RSA: C = Mᵉ mod n. Dekripsi: M = Cᵈ mod n. Semakin besar nilai n (hasil p×q), semakin sulit dipecahkan!',
+    unlockWave:3
+  },
+];
+
+// Enemy definitions
+const ENEMY_DEFS=[
+  {id:'script',name:'Script Kiddie',emoji:'👾',hp:40,speed:1.0,reward:8,dmg:5,color:'#f87171',type:'basic',
+   desc:'Hacker pemula — hanya menjalankan script'},
+  {id:'cracker',name:'Hash Cracker',emoji:'💻',hp:80,speed:0.8,reward:15,dmg:10,color:'#c4b5fd',type:'hacker',
+   desc:'Mencoba crack fungsi hash — lebih lambat tapi kuat'},
+  {id:'injector',name:'SQL Injector',emoji:'🐛',hp:55,speed:1.4,reward:12,dmg:8,color:'#fca5a5',type:'basic',
+   desc:'Serangan cepat tapi HP rendah'},
+  {id:'brute',name:'Brute Force Bot',emoji:'🤖',hp:130,speed:0.6,reward:20,dmg:15,color:'#a78bfa',type:'hacker',
+   desc:'Mencoba semua kombinasi — lambat tapi sangat tahan'},
+  {id:'phisher',name:'Phishing Agent',emoji:'🎣',hp:70,speed:1.2,reward:14,dmg:12,color:'#fdba74',type:'hacker',
+   desc:'Serangan deceptif — mengelak beberapa serangan'},
+  {id:'mitm',name:'MITM Spy',emoji:'🕵️',hp:90,speed:0.9,reward:18,dmg:20,color:'#6ee7b7',type:'hacker',
+   desc:'Man-in-the-middle — mencuri data saat transit'},
+  {id:'ddos',name:'DDoS Beast',emoji:'🌊',hp:200,speed:0.7,reward:30,dmg:25,color:'#f97316',type:'boss',
+   desc:'Serangan besar-besaran — banyak HP!'},
+  {id:'boss_ransomware',name:'RANSOMWARE',emoji:'💀',hp:500,speed:0.5,reward:100,dmg:40,color:'#ef4444',type:'boss',
+   desc:'BOSS — enkripsi seluruh sistem kerajaan!'},
+  {id:'boss_quantum',name:'QUANTUM HACKER',emoji:'⚛️',hp:800,speed:0.4,reward:150,dmg:50,color:'#8b5cf6',type:'boss',
+   desc:'FINAL BOSS — komputer kuantum pemecah RSA!'},
+];
+
+// Wave definitions
+const WAVES=[
+  {label:'Wave 1 — Recon',enemies:[{id:'script',n:4},{id:'injector',n:2}],mana:80},
+  {label:'Wave 2 — Infiltrate',enemies:[{id:'script',n:3},{id:'cracker',n:3},{id:'injector',n:2}],mana:50},
+  {label:'Wave 3 — Escalate',enemies:[{id:'cracker',n:4},{id:'brute',n:2},{id:'phisher',n:3}],mana:50},
+  {label:'Wave 4 — DDoS!',enemies:[{id:'mitm',n:3},{id:'ddos',n:2},{id:'brute',n:3}],mana:60,boss:true},
+  {label:'Wave 5 — BOSS: Ransomware',enemies:[{id:'script',n:5},{id:'boss_ransomware',n:1},{id:'mitm',n:2}],mana:70,boss:true},
+  {label:'Wave 6 — All-Out',enemies:[{id:'cracker',n:4},{id:'brute',n:4},{id:'phisher',n:4},{id:'ddos',n:2}],mana:60},
+  {label:'Wave 7 — FINAL BOSS',enemies:[{id:'boss_quantum',n:1},{id:'brute',n:5},{id:'cracker',n:5}],mana:80,boss:true},
+];
+
+// Grid path (relative column indices for a winding path)
+function buildPath(cols,rows){
+  // A serpentine path through the grid
+  const path=[];
+  // Enter from left, wind through
+  let r=1,dir=1;
+  path.push({c:-1,r});
+  for(let c=0;c<cols;c++){
+    path.push({c,r});
+    if(c<cols-1 && (c%4===3)){
+      const nr=dir>0?Math.min(rows-2,r+2):Math.max(1,r-2);
+      for(let i=r+Math.sign(nr-r);i!==nr+Math.sign(nr-r);i+=Math.sign(nr-r)){
+        path.push({c,r:i});
+      }
+      r=nr;dir*=-1;
+    }
+  }
+  path.push({c:cols,r});
+  return path;
+}
+
+function initGame(){
+  canvas=document.getElementById('gameCanvas');
+  ctx=canvas.getContext('2d');
+  const wrap=canvas.parentElement;
+  const panelW=260;
+  W=wrap.clientWidth;
+  H=wrap.clientHeight;
+  canvas.width=W;canvas.height=H;
+  COLS=Math.floor(W/CELL);ROWS=Math.floor(H/CELL);
+
+  const path=buildPath(COLS,ROWS);
+
+  gs={
+    path,
+    towers:[],
+    enemies:[],
+    projectiles:[],
+    particles:[],
+    floats:[],
+    mana:150,
+    maxMana:300,
+    hp:100,
+    maxHp:100,
+    score:0,
+    wave:0,
+    killed:0,
+    waveActive:false,
+    waveQueue:[],
+    spawnTimer:0,
+    spawnInterval:90,
+    paused:false,
+    selectedTowerType:'prime',
+    selectedTowerOnMap:null,
+    frameId:null,
+    gameOver:false,
+  };
+
+  // Update key display
+  document.getElementById('kp').textContent=kf.p;
+  document.getElementById('kq').textContent=kf.q;
+  document.getElementById('kn').textContent=kf.n;
+  document.getElementById('ke').textContent=kf.e;
+  document.getElementById('kd').textContent=kf.d;
+  document.getElementById('kphi').textContent=kf.phi;
+
+  buildTowerList();
+  updateHUD();
+  updateWaveBtn();
+  renderEnemyQueue();
+  canvas.addEventListener('click',onCanvasClick);
+  cancelAnimationFrame(gs.frameId);
+  gameLoop();
+}
+
+function startGame(){
+  closeModal();
+  showScreen('game');
+  initGame();
+}
+
+/* ── TOWER LIST UI ── */
+function buildTowerList(){
+  const list=document.getElementById('towerList');
+  list.innerHTML=TOWER_DEFS.map(td=>{
+    const locked=td.unlockWave>gs.wave&&gs.wave<td.unlockWave;
+    const cantAfford=gs.mana<td.baseCost;
+    const sel=gs.selectedTowerType===td.id;
+    return `<div class="tower-item ${locked?'locked':cantAfford?'no-afford':''} ${sel?'selected':''}"
+      onclick="selectTowerType('${td.id}')"
+      ${locked?'title="Unlock at wave '+td.unlockWave+'"':''}>
+      ${locked?`<div class="tower-lock-badge">Lv${td.unlockWave}</div>`:''}
+      <div class="tower-row">
+        <div class="tower-icon">${td.icon}</div>
+        <div class="tower-info">
+          <div class="tower-name">${td.name}</div>
+          <div class="tower-stats">DMG:${td.baseDmg} RNG:${td.baseRange} SPD:${td.baseRate.toFixed(1)}/s</div>
+        </div>
+        <div class="tower-cost">${locked?'🔒':cantAfford?'❌':'⚡'+td.baseCost}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectTowerType(id){
+  gs.selectedTowerType=id;
+  gs.selectedTowerOnMap=null;
+  document.getElementById('selectedTowerPanel').style.display='none';
+  buildTowerList();
+  toast(`Selected: ${TOWER_DEFS.find(t=>t.id===id).name}`,'info');
+}
+
+/* ── CANVAS CLICK ── */
+function onCanvasClick(e){
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left;const my=e.clientY-rect.top;
+  const col=Math.floor(mx/CELL);const row=Math.floor(my/CELL);
+
+  // Check if clicked on existing tower
+  const clicked=gs.towers.find(t=>t.col===col&&t.row===row);
+  if(clicked){
+    gs.selectedTowerOnMap=clicked;
+    showSelectedTowerPanel(clicked);
+    return;
+  }
+
+  gs.selectedTowerOnMap=null;
+  document.getElementById('selectedTowerPanel').style.display='none';
+
+  // Check not on path
+  if(isOnPath(col,row)){toast('Tidak bisa menempatkan tower di jalur musuh!','error');return;}
+  if(col<0||col>=COLS||row<0||row>=ROWS){return;}
+
+  // Place tower
+  const td=TOWER_DEFS.find(t=>t.id===gs.selectedTowerType);
+  if(!td)return;
+  if(td.unlockWave>gs.wave){toast(`Tower ini terbuka di Wave ${td.unlockWave}!`,'warn');return;}
+  if(gs.mana<td.baseCost){toast('Mana tidak cukup!','error');return;}
+
+  gs.mana-=td.baseCost;
+  gs.towers.push({
+    id:Date.now(),
+    type:td.id,
+    col,row,
+    dmg:td.baseDmg,range:td.baseRange,rate:td.baseRate,
+    fireCd:0,multi:1,slow:0,aoe:0,
+    lvls:{},totalSpent:td.baseCost,
+    upgradeLvls:{},
+  });
+  toast(`${td.name} placed! ⚡-${td.baseCost}`,'success');
+  buildTowerList();updateHUD();
+}
+
+function isOnPath(col,row){
+  return gs.path.some(p=>p.c===col&&p.r===row);
+}
+
+function showSelectedTowerPanel(tower){
+  const td=TOWER_DEFS.find(t=>t.id===tower.type);
+  const panel=document.getElementById('selectedTowerPanel');
+  const info=document.getElementById('selectedTowerInfo');
+  const sellVal=Math.floor(tower.totalSpent*.6);
+  info.innerHTML=`
+    <div class="sti-name">${td.icon} ${td.name}</div>
+    <div class="sti-desc">${td.edu}</div>
+    <div style="font-family:var(--font-mono);font-size:.72rem;color:hsl(var(--fg2));margin-bottom:10px">
+      DMG:${tower.dmg} | Range:${tower.range.toFixed(1)} | Rate:${tower.rate.toFixed(1)}/s
+    </div>
+    <div class="sti-upgrades">
+      ${td.upgrades.map((upg,i)=>{
+        const lv=tower.upgradeLvls[i]||0;
+        const maxed=lv>=upg.maxLv;
+        const cost=maxed?0:upg.costMult[lv];
+        const canAfford=gs.mana>=cost;
+        return `<div class="sti-upg-btn ${maxed||!canAfford?'disabled':''}" onclick="${maxed||!canAfford?'':''}" 
+          id="upg_${tower.id}_${i}" ${maxed||!canAfford?'':''}>
+          <div>
+            <div class="sti-upg-name">${upg.name}</div>
+            <div class="sti-upg-level">${maxed?'MAX':lv+'/'+upg.maxLv} — ${upg.desc}</div>
+          </div>
+          ${maxed?'<span style="color:hsl(var(--teal));font-size:.75rem">✓MAX</span>':`<span class="sti-upg-cost">⚡${cost}</span>`}
+        </div>`;
+      }).join('')}
+    </div>
+    <button class="remove-tower-btn" onclick="sellTower(${tower.id})">
+      🔴 Sell Tower &nbsp;<span class="sell-val">+⚡${sellVal}</span>
+    </button>
+  `;
+  // Add upgrade handlers
+  td.upgrades.forEach((_,i)=>{
+    const btn=document.getElementById(`upg_${tower.id}_${i}`);
+    if(btn)btn.onclick=()=>upgradeTower(tower.id,i);
+  });
+  panel.style.display='block';
+}
+
+function upgradeTower(towerId,upgIdx){
+  const tower=gs.towers.find(t=>t.id===towerId);
+  if(!tower)return;
+  const td=TOWER_DEFS.find(t=>t.id===tower.type);
+  const upg=td.upgrades[upgIdx];
+  const lv=tower.upgradeLvls[upgIdx]||0;
+  if(lv>=upg.maxLv){toast('Sudah MAX!','warn');return;}
+  const cost=upg.costMult[lv];
+  if(gs.mana<cost){toast('Mana tidak cukup!','error');return;}
+  gs.mana-=cost;tower.totalSpent+=cost;
+  tower.upgradeLvls[upgIdx]=(lv+1);
+  // Apply effect
+  const val=upg.val[lv];
+  if(upg.effect==='dmg')tower.dmg+=val;
+  else if(upg.effect==='range')tower.range+=val;
+  else if(upg.effect==='rate')tower.rate+=val;
+  else if(upg.effect==='slow')tower.slow=val;
+  else if(upg.effect==='multi')tower.multi+=val;
+  else if(upg.effect==='aoe')tower.aoe+=val;
+  toast(`${upg.name} upgraded! ⬆️`,'success');
+  buildTowerList();updateHUD();
+  showSelectedTowerPanel(tower);
+}
+
+function sellTower(towerId){
+  const idx=gs.towers.findIndex(t=>t.id===towerId);
+  if(idx<0)return;
+  const tower=gs.towers[idx];
+  const refund=Math.floor(tower.totalSpent*.6);
+  gs.mana=Math.min(gs.maxMana,gs.mana+refund);
+  gs.towers.splice(idx,1);
+  gs.selectedTowerOnMap=null;
+  document.getElementById('selectedTowerPanel').style.display='none';
+  toast(`Tower sold! +⚡${refund}`,'success');
+  buildTowerList();updateHUD();
+}
+
+/* ── WAVE SYSTEM ── */
+function sendWave(){
+  if(gs.waveActive||gs.gameOver)return;
+  if(gs.wave>=WAVES.length){toast('All waves complete!','success');return;}
+  const waveDef=WAVES[gs.wave];
+  // Build queue
+  gs.waveQueue=[];
+  waveDef.enemies.forEach(e=>{
+    for(let i=0;i<e.n;i++) gs.waveQueue.push(e.id);
+  });
+  // Shuffle for variety
+  for(let i=gs.waveQueue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[gs.waveQueue[i],gs.waveQueue[j]]=[gs.waveQueue[j],gs.waveQueue[i]];}
+  gs.mana=Math.min(gs.maxMana,gs.mana+waveDef.mana);
+  gs.waveActive=true;
+  gs.spawnTimer=0;
+  gs.spawnInterval=Math.max(40,90-gs.wave*8);
+  if(waveDef.boss)toast(`⚠️ BOSS WAVE: ${waveDef.label}!`,'warn');
+  else toast(`${waveDef.label} — incoming!`,'info');
+  updateWaveBtn();renderEnemyQueue();
+}
+
+function updateWaveBtn(){
+  const btn=document.getElementById('waveBtn');
+  const desc=document.getElementById('waveDesc');
+  if(gs.wave>=WAVES.length){btn.textContent='✅ All Waves Cleared!';btn.disabled=true;return;}
+  if(gs.waveActive){
+    btn.textContent=`⚔️ Wave ${gs.wave+1} In Progress...`;
+    btn.className='wave-btn in-progress';btn.disabled=true;
+    desc.textContent=`${gs.waveQueue.length} enemies remaining`;
+  } else {
+    const wd=WAVES[gs.wave];
+    btn.textContent=`▶ Send ${wd.label}`;
+    btn.className='wave-btn';btn.disabled=false;
+    desc.textContent=`+⚡${wd.mana} mana reward${wd.boss?' | ⚠️ BOSS!':''}`;
+  }
+  document.getElementById('waveBadge').textContent=`Wave ${gs.wave+1}/${WAVES.length}`;
+}
+
+function renderEnemyQueue(){
+  const eq=document.getElementById('enemyQueue');
+  if(!gs.waveActive||!WAVES[gs.wave]){eq.innerHTML='';return;}
+  const wd=WAVES[gs.wave];
+  const counts={};
+  wd.enemies.forEach(e=>{counts[e.id]=(counts[e.id]||0)+e.n;});
+  eq.innerHTML=Object.entries(counts).map(([id,n])=>{
+    const ed=ENEMY_DEFS.find(e=>e.id===id);
+    return `<div class="enemy-dot ${ed.type}" title="${ed.name} ×${n}">${ed.emoji}×${n}</div>`;
+  }).join('');
+}
+
+/* ── ENEMY SPAWN ── */
+function spawnEnemy(id){
+  const ed=ENEMY_DEFS.find(e=>e.id===id)||ENEMY_DEFS[0];
+  const scaleFactor=1+gs.wave*0.12;
+  const e={
+    id:Date.now()+Math.random(),
+    def:ed,
+    hp:Math.floor(ed.hp*scaleFactor),
+    maxHp:Math.floor(ed.hp*scaleFactor),
+    speed:ed.speed,
+    pathIdx:0,
+    x:0,y:0,
+    reward:ed.reward,
+    dmg:ed.dmg,
+    color:ed.color,
+    slowTimer:0,
+    dodging:ed.type==='hacker'&&Math.random()<.2,
+  };
+  // Start position
+  const sp=gs.path[0];
+  e.x=(sp.c+.5)*CELL;e.y=(sp.r+.5)*CELL;
+  gs.enemies.push(e);
+}
+
+/* ── GAME LOOP ── */
+let lastTime=0;
+function gameLoop(ts=0){
+  const dt=Math.min((ts-lastTime)/1000,0.05);lastTime=ts;
+  if(!gs.paused&&!gs.gameOver){
+    update(dt);
+  }
+  draw();
+  gs.frameId=requestAnimationFrame(gameLoop);
+}
+
+function update(dt){
+  // Spawn
+  if(gs.waveActive&&gs.waveQueue.length>0){
+    gs.spawnTimer++;
+    if(gs.spawnTimer>=gs.spawnInterval){
+      gs.spawnTimer=0;
+      spawnEnemy(gs.waveQueue.shift());
+    }
+  }
+
+  // Move enemies
+  for(let i=gs.enemies.length-1;i>=0;i--){
+    const e=gs.enemies[i];
+    if(e.slowTimer>0)e.slowTimer-=dt;
+    const spd=e.slowTimer>0?e.speed*.4:e.speed;
+    moveEnemy(e,spd*CELL*dt);
+    // Reached end
+    if(e.pathIdx>=gs.path.length-1){
+      gs.hp-=e.dmg;
+      spawnParticles(e.x,e.y,'#ef4444',8);
+      gs.enemies.splice(i,1);
+      updateCastleHP();
+      if(gs.hp<=0&&!gs.gameOver)triggerGameOver();
+    }
+  }
+
+  // Tower fire
+  gs.towers.forEach(tower=>{
+    tower.fireCd=(tower.fireCd||0)-dt;
+    if(tower.fireCd>0)return;
+    const targets=findTargets(tower);
+    if(!targets.length)return;
+    tower.fireCd=1/tower.rate;
+    targets.forEach(target=>{
+      fireTower(tower,target);
+    });
+  });
+
+  // Projectiles
+  for(let i=gs.projectiles.length-1;i>=0;i--){
+    const p=gs.projectiles[i];
+    const dx=p.tx-p.x,dy=p.ty-p.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    const spd=p.speed*CELL*dt;
+    if(dist<=spd){
+      // Hit
+      applyProjectileHit(p);
+      gs.projectiles.splice(i,1);
+    } else {
+      p.x+=dx/dist*spd;p.y+=dy/dist*spd;
+      p.age=(p.age||0)+dt;
+    }
+  }
+
+  // Particles
+  for(let i=gs.particles.length-1;i>=0;i--){
+    const p=gs.particles[i];
+    p.x+=p.vx*dt*60;p.y+=p.vy*dt*60;
+    p.life-=dt;p.vy+=.05;
+    if(p.life<=0)gs.particles.splice(i,1);
+  }
+
+  // Floats
+  for(let i=gs.floats.length-1;i>=0;i--){
+    const f=gs.floats[i];
+    f.y-=30*dt;f.life-=dt;f.alpha=f.life/f.maxLife;
+    if(f.life<=0)gs.floats.splice(i,1);
+  }
+
+  // Wave end check
+  if(gs.waveActive&&gs.waveQueue.length===0&&gs.enemies.length===0){
+    gs.waveActive=false;
+    gs.wave++;
+    if(gs.wave>=WAVES.length){triggerVictory();}
+    else{
+      toast(`Wave ${gs.wave} cleared! +⚡${WAVES[Math.min(gs.wave,WAVES.length-1)]?.mana||0}`,'success');
+      updateWaveBtn();renderEnemyQueue();
+      buildTowerList();
+      checkNewUnlocks();
+    }
+  }
+  updateHUD();
+}
+
+function checkNewUnlocks(){
+  TOWER_DEFS.forEach(td=>{
+    if(td.unlockWave===gs.wave){toast(`🔓 New Tower Unlocked: ${td.name}!`,'success');}
+  });
+}
+
+function moveEnemy(e,dist){
+  if(e.pathIdx>=gs.path.length-1)return;
+  const target=gs.path[e.pathIdx+1];
+  const tx=(target.c+.5)*CELL,ty=(target.r+.5)*CELL;
+  const dx=tx-e.x,dy=ty-e.y;
+  const d=Math.sqrt(dx*dx+dy*dy);
+  if(d<=dist){e.x=tx;e.y=ty;e.pathIdx++;moveEnemy(e,dist-d);}
+  else{e.x+=dx/d*dist;e.y+=dy/d*dist;}
+}
+
+function findTargets(tower){
+  const tx=(tower.col+.5)*CELL,ty=(tower.row+.5)*CELL;
+  const r=tower.range*CELL;
+  const inRange=gs.enemies.filter(e=>{
+    const dx=e.x-tx,dy=e.y-ty;
+    return Math.sqrt(dx*dx+dy*dy)<=r;
+  });
+  // Sort by furthest along path (priority: most advanced)
+  inRange.sort((a,b)=>b.pathIdx-a.pathIdx||(b.x-a.x));
+  return inRange.slice(0,tower.multi||1);
+}
+
+function fireTower(tower,target){
+  const tx=(tower.col+.5)*CELL,ty=(tower.row+.5)*CELL;
+  const td=TOWER_DEFS.find(t=>t.id===tower.type);
+  gs.projectiles.push({
+    x:tx,y:ty,tx:target.x,ty:target.y,
+    targetId:target.id,
+    dmg:tower.dmg,slow:tower.slow,aoe:tower.aoe,
+    color:td.color,
+    speed:8+tower.range,
+    towerType:tower.type,
+  });
+}
+
+function applyProjectileHit(p){
+  if(p.aoe>0){
+    const ar=p.aoe*CELL;
+    gs.enemies.forEach(e=>{
+      const dx=e.x-p.tx,dy=e.y-p.ty;
+      if(Math.sqrt(dx*dx+dy*dy)<=ar){
+        damageEnemy(e,p.dmg,p.slow);
+        spawnParticles(e.x,e.y,p.color,5);
+      }
+    });
+    spawnParticles(p.tx,p.ty,p.color,12);
+  } else {
+    const e=gs.enemies.find(en=>en.id===p.targetId);
+    if(e){damageEnemy(e,p.dmg,p.slow);spawnParticles(e.x,e.y,p.color,5);}
+  }
+}
+
+function damageEnemy(e,dmg,slow=0){
+  if(e.dodging&&Math.random()<.15){
+    addFloat(e.x,e.y-20,'MISS!','#94a3b8');return;
+  }
+  e.hp-=dmg;
+  addFloat(e.x,e.y-10,'-'+dmg,dmg>20?'#fbbf24':'#f87171');
+  if(slow>0)e.slowTimer=slow*2;
+  if(e.hp<=0){
+    gs.score+=e.reward*10;gs.killed++;
+    gs.mana=Math.min(gs.maxMana,gs.mana+e.reward);
+    spawnParticles(e.x,e.y,e.color,12);
+    addFloat(e.x,e.y-24,'+'+e.reward+'⚡','#fbbf24');
+    const idx=gs.enemies.indexOf(e);
+    if(idx>=0)gs.enemies.splice(idx,1);
+    buildTowerList();
+  }
+}
+
+function addFloat(x,y,text,color){
+  gs.floats.push({x,y,text,color,life:.9,maxLife:.9,alpha:1,vy:-20});
+}
+
+function spawnParticles(x,y,color,n){
+  for(let i=0;i<n;i++){
+    const angle=Math.random()*Math.PI*2;
+    const spd=1+Math.random()*2;
+    gs.particles.push({x,y,vx:Math.cos(angle)*spd,vy:Math.sin(angle)*spd,color,life:.6+Math.random()*.4,r:2+Math.random()*3});
+  }
+}
+
+/* ── DRAW ── */
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  drawGrid();
+  drawPath();
+  drawTowers();
+  drawEnemies();
+  drawProjectiles();
+  drawParticles();
+  drawFloats();
+  drawRangePreview();
+}
+
+function drawGrid(){
+  ctx.strokeStyle='hsl(220,12%,18%)';ctx.lineWidth=.5;
+  for(let c=0;c<COLS;c++){for(let r=0;r<ROWS;r++){
+    ctx.strokeRect(c*CELL,r*CELL,CELL,CELL);
+  }}
+}
+
+function drawPath(){
+  // Draw path background
+  ctx.fillStyle='hsl(220,14%,11%)';
+  gs.path.forEach(p=>{
+    if(p.c>=0&&p.c<COLS&&p.r>=0&&p.r<ROWS)
+      ctx.fillRect(p.c*CELL,p.r*CELL,CELL,CELL);
+  });
+  // Path arrows
+  ctx.strokeStyle='hsl(220,12%,22%)';ctx.lineWidth=1;
+  ctx.setLineDash([6,8]);
+  ctx.beginPath();
+  gs.path.filter(p=>p.c>=0&&p.c<COLS).forEach((p,i)=>{
+    const x=(p.c+.5)*CELL,y=(p.r+.5)*CELL;
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.stroke();ctx.setLineDash([]);
+  // Start/End markers
+  const sp=gs.path.find(p=>p.c>=0);
+  const ep=gs.path.filter(p=>p.c<COLS).pop();
+  if(sp){
+    ctx.fillStyle='#22c55e';ctx.font='bold 14px Space Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('▶',(sp.c+.5)*CELL,(sp.r+.5)*CELL);
+  }
+  if(ep){
+    ctx.fillStyle='#ef4444';
+    ctx.fillText('🏰',(ep.c+.5)*CELL,(ep.r+.5)*CELL);
+  }
+}
+
+function drawTowers(){
+  gs.towers.forEach(tower=>{
+    const td=TOWER_DEFS.find(t=>t.id===tower.type);
+    const x=(tower.col+.5)*CELL,y=(tower.row+.5)*CELL;
+    const r=CELL*.38;
+    // Selection glow
+    if(gs.selectedTowerOnMap?.id===tower.id){
+      ctx.shadowColor=td.color;ctx.shadowBlur=16;
+    }
+    // Base
+    ctx.fillStyle='hsl(220,14%,13%)';
+    ctx.beginPath();ctx.roundRect(tower.col*CELL+4,tower.row*CELL+4,CELL-8,CELL-8,8);ctx.fill();
+    // Border
+    ctx.strokeStyle=td.color;ctx.lineWidth=gs.selectedTowerOnMap?.id===tower.id?2:1;
+    ctx.beginPath();ctx.roundRect(tower.col*CELL+4,tower.row*CELL+4,CELL-8,CELL-8,8);ctx.stroke();
+    ctx.shadowBlur=0;
+    // Icon
+    ctx.font=`${CELL*.38}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(td.icon,x,y);
+    // Level stars
+    const totalLvl=Object.values(tower.upgradeLvls).reduce((a,b)=>a+b,0);
+    if(totalLvl>0){
+      ctx.fillStyle='#fbbf24';ctx.font='bold 9px Space Mono';
+      ctx.fillText('★'.repeat(Math.min(totalLvl,3)),x,tower.row*CELL+CELL-6);
+    }
+  });
+}
+
+function drawEnemies(){
+  gs.enemies.forEach(e=>{
+    const r=CELL*.3*(e.def.type==='boss'?1.4:1);
+    // HP bar bg
+    ctx.fillStyle='rgba(0,0,0,.5)';
+    ctx.fillRect(e.x-r,e.y-r-8,r*2,5);
+    // HP bar fill
+    const hpPct=e.hp/e.maxHp;
+    ctx.fillStyle=hpPct>.5?'#22c55e':hpPct>.25?'#fbbf24':'#ef4444';
+    ctx.fillRect(e.x-r,e.y-r-8,r*2*hpPct,5);
+    // Enemy body
+    ctx.shadowColor=e.color;ctx.shadowBlur=e.def.type==='boss'?20:8;
+    ctx.font=`${r*1.8}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(e.def.emoji,e.x,e.y);
+    ctx.shadowBlur=0;
+    // Slow indicator
+    if(e.slowTimer>0){
+      ctx.strokeStyle='#60a5fa';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(e.x,e.y,r+2,0,Math.PI*2);ctx.stroke();
+    }
+  });
+}
+
+function drawProjectiles(){
+  gs.projectiles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,4,0,Math.PI*2);
+    ctx.fillStyle=p.color;
+    ctx.shadowColor=p.color;ctx.shadowBlur=10;
+    ctx.fill();ctx.shadowBlur=0;
+    // Tail
+    const td=p.towerType==='rsa'?12:6;
+    ctx.beginPath();ctx.moveTo(p.x,p.y);
+    const dx=p.tx-p.x,dy=p.ty-p.y;const d=Math.sqrt(dx*dx+dy*dy)||1;
+    ctx.lineTo(p.x-dx/d*td,p.y-dy/d*td);
+    ctx.strokeStyle=p.color+'88';ctx.lineWidth=2;ctx.stroke();
+  });
+}
+
+function drawParticles(){
+  gs.particles.forEach(p=>{
+    ctx.globalAlpha=p.life;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+}
+
+function drawFloats(){
+  gs.floats.forEach(f=>{
+    ctx.globalAlpha=f.alpha;
+    ctx.fillStyle=f.color;
+    ctx.font='bold 13px Playfair Display, serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.shadowColor=f.color;ctx.shadowBlur=6;
+    ctx.fillText(f.text,f.x,f.y);
+    ctx.shadowBlur=0;
+  });
+  ctx.globalAlpha=1;
+}
+
+function drawRangePreview(){
+  if(!gs.selectedTowerOnMap)return;
+  const t=gs.selectedTowerOnMap;
+  const x=(t.col+.5)*CELL,y=(t.row+.5)*CELL;
+  const td=TOWER_DEFS.find(td=>td.id===t.type);
+  ctx.beginPath();
+  ctx.arc(x,y,t.range*CELL,0,Math.PI*2);
+  ctx.strokeStyle=td.color+'60';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+  ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=td.color+'10';ctx.fill();
+}
+
+/* ── HUD ── */
+function updateHUD(){
+  document.getElementById('hud-score').textContent=gs.score.toLocaleString();
+  document.getElementById('hud-gold').textContent=gs.mana;
+  document.getElementById('hud-wave').textContent=gs.wave+1;
+  document.getElementById('hud-killed').textContent=gs.killed;
+  if(gs.waveActive){
+    document.getElementById('enemyCountBadge').textContent=
+      `${gs.enemies.length+gs.waveQueue.length} left`;
+  }
+}
+
+function updateCastleHP(){
+  const pct=Math.max(0,gs.hp/gs.maxHp*100);
+  const bar=document.getElementById('hpBar');
+  bar.style.width=pct+'%';
+  bar.className='castle-hp-fill'+(pct<35?' danger':pct<60?' warn':'');
+  document.getElementById('hpVal').textContent=Math.max(0,gs.hp);
+}
+
+/* ── PAUSE ── */
+function togglePause(){
+  gs.paused=!gs.paused;
+  document.getElementById('pauseBtn').textContent=gs.paused?'▶':'⏸';
+  if(gs.paused)toast('Paused','info');
+}
+
+/* ── GAME OVER / VICTORY ── */
+function triggerGameOver(){
+  gs.gameOver=true;
+  saveScore();
+  setTimeout(()=>{
+    showModal('💀','<span style="color:hsl(0,80%,60%)">Kingdom Fallen!</span>',
+      `Kerajaan RSA-mu berhasil dibobol! Hacker memperoleh kunci privat <strong>d=${kf.d}</strong>.<br><br>Kamu telah mencapai wave ${gs.wave+1} dan mengalahkan <strong>${gs.killed} musuh</strong>.`,
+      `<div class="ms"><div class="ms-val">${gs.score.toLocaleString()}</div><div class="ms-lbl">Score</div></div>
+       <div class="ms"><div class="ms-val">${gs.wave+1}</div><div class="ms-lbl">Wave</div></div>
+       <div class="ms"><div class="ms-val">${gs.killed}</div><div class="ms-lbl">Defeated</div></div>`,
+      `<button class="btn btn-primary" onclick="closeModal();goKeyForge()">Try Again</button>
+       <button class="btn btn-outline" onclick="closeModal();showScreen('leaderboard')">🏆 Leaderboard</button>`
+    );
+  },600);
+}
+
+function triggerVictory(){
+  gs.gameOver=true;
+  saveScore();
+  setTimeout(()=>{
+    showModal('🏆','<span class="grad-text">Kingdom Defended!</span>',
+      `Luar biasa! Semua ${WAVES.length} wave berhasil ditaklukkan! Kunci RSA kamu (n=${kf.n}, e=${kf.e}) tetap aman. Hacker tidak berhasil memfaktorkan n menjadi p=${kf.p} dan q=${kf.q}!`,
+      `<div class="ms"><div class="ms-val">${gs.score.toLocaleString()}</div><div class="ms-lbl">Final Score</div></div>
+       <div class="ms"><div class="ms-val">${gs.killed}</div><div class="ms-lbl">Enemies Defeated</div></div>
+       <div class="ms"><div class="ms-val">${gs.hp}/${gs.maxHp}</div><div class="ms-lbl">HP Remaining</div></div>`,
+      `<button class="btn btn-primary" onclick="closeModal();goKeyForge()">Play Again</button>
+       <button class="btn btn-outline" onclick="closeModal();showScreen('leaderboard')">🏆 Leaderboard</button>`
+    );
+  },400);
+}
+
+function confirmQuit(){
+  showModal('⚠️','Tinggalkan Battle?','Progress game akan hilang.',
+    '',
+    `<button class="btn btn-danger" onclick="closeModal();cancelAnimationFrame(gs?.frameId);showScreen('home')">Quit</button>
+     <button class="btn btn-outline" onclick="closeModal()">Continue</button>`
+  );
+}
+
+/* ── LEADERBOARD ── */
+function saveScore(){
+  let lb=JSON.parse(localStorage.getItem('rsa_lb')||'[]');
+  lb.push({name:`p=${kf.p},q=${kf.q}`,score:gs.score,wave:gs.wave+1,killed:gs.killed,date:new Date().toLocaleDateString('id-ID')});
+  lb.sort((a,b)=>b.score-a.score);lb=lb.slice(0,15);
+  localStorage.setItem('rsa_lb',JSON.stringify(lb));
+}
+
+function buildLB(){
+  let lb=JSON.parse(localStorage.getItem('rsa_lb')||'[]');
+  if(!lb.length){
+    lb=[
+      {name:'p=47,q=53',score:85200,wave:7,killed:124,date:'10/5/2025'},
+      {name:'p=61,q=67',score:72400,wave:6,killed:98,date:'9/5/2025'},
+      {name:'p=41,q=43',score:54100,wave:5,killed:76,date:'8/5/2025'},
+      {name:'p=29,q=31',score:38900,wave:4,killed:55,date:'7/5/2025'},
+      {name:'p=17,q=19',score:22000,wave:3,killed:34,date:'6/5/2025'},
+    ];
+  }
+  const table=document.getElementById('lbTable');
+  const rankEmoji=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+  table.innerHTML=`
+    <div style="background:hsl(var(--surface2));padding:12px 16px;display:grid;grid-template-columns:48px 1fr auto auto;gap:12px;font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3))">
+      <span>Rank</span><span>Player</span><span>Score</span><span>Wave</span>
+    </div>
+    ${lb.map((e,i)=>`
+      <div style="border-top:1px solid hsl(var(--border));padding:12px 16px;display:grid;grid-template-columns:48px 1fr auto auto;gap:12px;align-items:center">
+        <span style="font-family:var(--font-display);font-weight:900;font-size:1.1rem;color:${i===0?'#ffd700':i===1?'#c0c0c0':i===2?'#cd7f32':'hsl(var(--fg3))'}">${rankEmoji(i)}</span>
+        <span style="font-size:.85rem;font-weight:600">${e.name}</span>
+        <span style="font-family:var(--font-mono);color:hsl(var(--teal));font-weight:700">${e.score.toLocaleString()}</span>
+        <span style="font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--fg3))">W${e.wave}</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+// Override showScreen to run buildLB
+const _origShowScreen=showScreen;
+window.showScreen=function(id){
+  _origShowScreen(id);
+  if(id==='leaderboard')buildLB();
+};
+
+/* ── RESIZE ── */
+window.addEventListener('resize',()=>{
+  if(document.getElementById('screen-game').classList.contains('active')&&canvas){
+    const wrap=canvas.parentElement;
+    W=wrap.clientWidth;H=wrap.clientHeight;
+    canvas.width=W;canvas.height=H;
+    COLS=Math.floor(W/CELL);ROWS=Math.floor(H/CELL);
+  }
+});
+</script>
+</body>
+</html>
