@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secret Spy Mission — Game Edukasi Kriptografi</title>
+  <meta name="description" content="Game edukasi interaktif tentang enkripsi, dekripsi, dan kriptografi modern." />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0-9..40,700;1,9..40,400&family=Playfair+Display:wght@700;800;900&display=swap" />
+  <style>
+    /* ═════════════════════════════════════════════════════════════════
+       SECRET SPY MISSION — Game Edukasi Kriptografi
+       Tema: Dark Spy / Cinematic Modern
+       ═════════════════════════════════════════════════════════════════ */
+
+    /* Reset & CSS Variables */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Color Palette */
+      --bg: 220 18% 7%;
+      --bg2: 220 15% 10%;
+      --bg3: 220 14% 13%;
+      --fg: 210 25% 92%;
+      --fg2: 210 15% 70%;
+      --fg3: 210 12% 50%;
+      --primary: 174 72% 52%;
+      --teal: 174 72% 52%;
+      --teal-dim: 174 50% 32%;
+      --danger: 0 84% 60%;
+      --success: 142 71% 45%;
+      --amber: 38 95% 58%;
+      --violet: 265 65% 65%;
+      --border: 220 12% 22%;
+
+      /* Fonts & Animation */
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: hsl(var(--bg));
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: hsl(var(--bg));
+      color: hsl(var(--fg));
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grid Background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(hsl(220 12% 14%) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(220 12% 14%) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       KEYFRAME ANIMATIONS
+       ════════════════════════════════════════════════════════════════ */
+
+    @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes glow { 0%, 100% { text-shadow: 0 0 8px hsl(var(--teal)), 0 0 16px hsl(var(--teal) / .5); } 50% { text-shadow: 0 0 16px hsl(var(--teal)), 0 0 32px hsl(var(--teal) / .8); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+    @keyframes slideDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes typewriter { 0% { width: 0; } 100% { width: 100%; } }
+    @keyframes blink { 0%, 49%, 100% { opacity: 1; } 50%, 99% { opacity: 0; } }
+    @keyframes floatUp { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
+
+    .animate-fade-up { animation: fadeUp 0.8s var(--ease-smooth) both; }
+    .animate-glow { animation: glow 2s ease-in-out infinite; }
+    .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+    .animate-scan { animation: scan 3s linear infinite; }
+
+    /* ════════════════════════════════════════════════════════════════
+       LAYOUT & COMMON
+       ════════════════════════════════════════════════════════════════ */
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; font-family: inherit; background: none; }
+
+    /* ════════════════════════════════════════════════════════════════
+       MAIN GAME LAYOUT
+       ════════════════════════════════════════════════════════════════ */
+
+    #spyGame {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 32px 0;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       SCREEN STATES
+       ════════════════════════════════════════════════════════════════ */
+
+    .screen { display: none; position: relative; z-index: 1; animation: fadeUp 0.6s var(--ease-smooth); }
+    .screen.active { display: block; }
+
+    /* ─── MAIN MENU ─── */
+    .screen.main-menu {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-content {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .game-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.2s both;
+    }
+
+    .game-subtitle {
+      font-size: 1.25rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.4s both;
+    }
+
+    .agent-rank {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 8px;
+      border: 1px solid hsl(var(--teal) / 0.3);
+      background: hsl(var(--teal) / 0.1);
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: hsl(var(--teal));
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.6s both;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn-game {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 14px 36px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-spring);
+      border: 1.5px solid transparent;
+    }
+
+    .btn-game.primary {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      box-shadow: 0 8px 32px hsl(var(--teal) / 0.25);
+    }
+
+    .btn-game.primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px hsl(var(--teal) / 0.4);
+    }
+
+    .btn-game.secondary {
+      border-color: hsl(var(--border));
+      color: hsl(var(--fg));
+    }
+
+    .btn-game.secondary:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.1);
+    }
+
+    .menu-info {
+      font-size: 0.875rem;
+      color: hsl(var(--fg3));
+      margin-top: 32px;
+    }
+
+    /* ─── MISSION SELECT ─── */
+    .mission-select {
+      padding: 64px 0;
+    }
+
+    .mission-header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s var(--ease-smooth);
+    }
+
+    .mission-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .mission-card {
+      border-radius: 12px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 28px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s var(--ease-smooth);
+      animation: fadeUp 0.6s var(--ease-smooth) forwards;
+      opacity: 0;
+    }
+
+    .mission-card:nth-child(1) { animation-delay: 0.1s; }
+    .mission-card:nth-child(2) { animation-delay: 0.2s; }
+    .mission-card:nth-child(3) { animation-delay: 0.3s; }
+    .mission-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .mission-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, hsl(var(--teal) / 0.08), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .mission-card:hover {
+      border-color: hsl(var(--teal) / 0.4);
+      background: hsl(var(--teal) / 0.03);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px hsl(220 18% 3% / 0.4);
+    }
+
+    .mission-card:hover::before { opacity: 1; }
+
+    .mission-card.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .mission-card.locked:hover {
+      transform: none;
+      border-color: hsl(var(--border));
+      background: hsl(var(--bg3));
+    }
+
+    .mission-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .mission-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: hsl(var(--fg));
+    }
+
+    .mission-desc {
+      font-size: 0.875rem;
+      color: hsl(var(--fg3));
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .mission-difficulty {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .difficulty-easy { color: hsl(var(--success)); }
+    .difficulty-medium { color: hsl(var(--amber)); }
+    .difficulty-hard { color: hsl(var(--danger)); }
+
+    .lock-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 1.5rem;
+    }
+
+    /* ─── GAME PLAY ─── */
+    .gameplay {
+      padding: 48px 0;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .game-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .game-title-play {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      animation: fadeUp 0.6s var(--ease-smooth);
+    }
+
+    .game-brief {
+      font-size: 0.95rem;
+      color: hsl(var(--fg2));
+      line-height: 1.6;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.1s both;
+    }
+
+    .game-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 12px 16px;
+      text-align: center;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.2s both;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: hsl(var(--teal));
+    }
+
+    /* ─── MESSAGE PANELS ─── */
+    .message-box {
+      border-radius: 12px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3) / 0.6);
+      backdrop-filter: blur(10px);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+      animation: slideDown 0.5s var(--ease-smooth);
+    }
+
+    .message-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, hsl(var(--teal)), hsl(var(--violet)));
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--fg3));
+    }
+
+    .message-icon {
+      font-size: 1.25rem;
+    }
+
+    .message-content {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: hsl(var(--fg));
+      word-break: break-word;
+    }
+
+    .message-encrypted {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      background: hsl(var(--teal) / 0.05);
+      border: 1px solid hsl(var(--teal) / 0.2);
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 16px;
+      word-break: break-all;
+      overflow-x: auto;
+    }
+
+    /* ─── CIPHER SELECTOR ─── */
+    .cipher-selector {
+      margin-bottom: 32px;
+    }
+
+    .cipher-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--fg2));
+      margin-bottom: 12px;
+    }
+
+    .cipher-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cipher-btn {
+      border-radius: 6px;
+      border: 1.5px solid hsl(var(--border));
+      background: transparent;
+      padding: 10px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: hsl(var(--fg2));
+      cursor: pointer;
+      transition: all 0.25s var(--ease-spring);
+    }
+
+    .cipher-btn:hover {
+      border-color: hsl(var(--teal));
+      color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.1);
+    }
+
+    .cipher-btn.active {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+    }
+
+    /* ─── INPUT AREA ─── */
+    .input-area {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-label {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--fg2));
+    }
+
+    .input-box, .textarea-box {
+      border-radius: 8px;
+      border: 1.5px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      color: hsl(var(--fg));
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      transition: all 0.25s var(--ease-smooth);
+    }
+
+    .input-box:focus, .textarea-box:focus {
+      outline: none;
+      border-color: hsl(var(--teal));
+      box-shadow: 0 0 12px hsl(var(--teal) / 0.2);
+    }
+
+    .textarea-box {
+      resize: vertical;
+      min-height: 100px;
+      font-family: var(--font-mono);
+    }
+
+    /* ─── KEY INPUT ─── */
+    .key-input-section {
+      background: hsl(var(--bg2) / 0.5);
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .key-hint {
+      font-size: 0.8rem;
+      color: hsl(var(--fg3));
+      font-style: italic;
+      margin-top: 8px;
+    }
+
+    /* ─── BUTTONS ─── */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .btn-action {
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-spring);
+      border: 1.5px solid transparent;
+    }
+
+    .btn-action.primary {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      box-shadow: 0 4px 16px hsl(var(--teal) / 0.25);
+    }
+
+    .btn-action.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px hsl(var(--teal) / 0.35);
+    }
+
+    .btn-action.secondary {
+      border-color: hsl(var(--border));
+      color: hsl(var(--fg));
+    }
+
+    .btn-action.secondary:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.08);
+    }
+
+    .btn-action.danger {
+      border-color: hsl(var(--danger));
+      color: hsl(var(--danger));
+    }
+
+    .btn-action.danger:hover {
+      background: hsl(var(--danger) / 0.1);
+    }
+
+    /* ─── RESULT SCREEN ─── */
+    .result-screen {
+      text-align: center;
+      padding: 64px 0;
+    }
+
+    .result-icon {
+      font-size: 5rem;
+      margin-bottom: 24px;
+      animation: pop 0.6s var(--ease-spring);
+    }
+
+    .result-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.2s both;
+    }
+
+    .result-message {
+      font-size: 1.1rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 32px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.3s both;
+    }
+
+    .result-details {
+      background: hsl(var(--bg3));
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      padding: 24px;
+      margin-bottom: 32px;
+      text-align: left;
+      display: inline-block;
+      min-width: 300px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.4s both;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .detail-value {
+      font-weight: 700;
+      color: hsl(var(--teal));
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--violet)));
+      color: hsl(var(--bg));
+      padding: 12px 24px;
+      font-weight: 700;
+      margin-top: 16px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.5s both;
+    }
+
+    /* ─── GAME OVER ─── */
+    .game-over {
+      text-align: center;
+      padding: 64px 0;
+    }
+
+    .game-over-icon {
+      font-size: 4rem;
+      margin-bottom: 24px;
+      animation: shake 0.5s;
+    }
+
+    .game-over-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: hsl(var(--danger));
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.2s both;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+
+      .game-header {
+        flex-direction: column;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn-action {
+        width: 100%;
+      }
+
+      .mission-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .game-title {
+        font-size: clamp(1.8rem, 6vw, 3rem);
+      }
+
+      .result-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- MAIN GAME CONTAINER -->
+<div id="spyGame" class="container">
+  <!-- SCREEN: MAIN MENU -->
+  <div class="screen main-menu active" id="screenMainMenu">
+    <div class="menu-content">
+      <div class="game-title">🕵️ SECRET SPY MISSION</div>
+      <div class="game-subtitle">Game Edukasi Kriptografi</div>
+      
+      <div class="agent-rank">
+        <span>🎖️ Agent Rank:</span>
+        <strong id="displayRank">Rookie</strong>
+      </div>
+
+      <div class="menu-buttons">
+        <button class="btn-game primary" onclick="startGame()">▶ Mulai Misi</button>
+        <button class="btn-game secondary" onclick="showInstructions()">📖 Panduan</button>
+        <button class="btn-game secondary" onclick="resetProgress()">🔄 Reset Game</button>
+      </div>
+
+      <div class="menu-info">
+        <p>Menjadi agen rahasia dan kuasai seni enkripsi & dekripsi pesan!</p>
+        <p style="margin-top: 12px; font-size: 0.8rem; color: hsl(var(--fg3))">💡 Tips: Setiap misi mengajarkan cipher berbeda. Mulai dari Easy untuk memahami dasar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: MISSION SELECT -->
+  <div class="screen mission-select" id="screenMissionSelect">
+    <div class="mission-header">
+      <h1>🎯 Pilih Misimu</h1>
+      <p style="color: hsl(var(--fg2)); margin-top: 12px;">Setiap misi mengajarkan konsep enkripsi berbeda</p>
+    </div>
+
+    <div class="mission-grid" id="missionGrid"></div>
+
+    <div style="text-align: center; margin-top: 48px;">
+      <button class="btn-action secondary" onclick="backToMenu()">← Kembali ke Menu</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAMEPLAY -->
+  <div class="screen gameplay" id="screenGameplay">
+    <div class="game-header">
+      <div class="game-info">
+        <div class="game-title-play" id="missionTitle">Misi 1: Caesar Cipher</div>
+        <p class="game-brief" id="missionBrief">Dekripsi pesan dengan Caesar Cipher...</p>
+      </div>
+      <div class="game-stats">
+        <div class="stat-box">
+          <div class="stat-label">Poin</div>
+          <div class="stat-value" id="pointsDisplay">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Streak</div>
+          <div class="stat-value" id="streakDisplay">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Rank</div>
+          <div class="stat-value" id="rankDisplay">Rookie</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="message-box">
+      <div class="message-header">
+        <span class="message-icon">📩</span>
+        <span>PESAN TERENKRIPSI</span>
+      </div>
+      <div class="message-content" id="messageContent">
+        Pesan akan ditampilkan di sini...
+      </div>
+      <div class="message-encrypted" id="messageEncrypted">
+        ENCRYPTED_MESSAGE_HERE
+      </div>
+    </div>
+
+    <div class="cipher-selector">
+      <label class="cipher-label">Pilih Metode Dekripsi:</label>
+      <div class="cipher-buttons" id="cipherButtons"></div>
+    </div>
+
+    <div class="input-area" id="inputArea"></div>
+
+    <div class="action-buttons">
+      <button class="btn-action primary" onclick="submitAnswer()">✓ Dekripsi Pesan</button>
+      <button class="btn-action secondary" onclick="skipMission()">⏭️ Skip</button>
+      <button class="btn-action danger" onclick="quitGame()">✕ Keluar</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: RESULT -->
+  <div class="screen result-screen" id="screenResult">
+    <div class="result-icon" id="resultIcon">✓</div>
+    <div class="result-title" id="resultTitle">BENAR!</div>
+    <div class="result-message" id="resultMessage">
+      Kamu berhasil mendekripsi pesan! Bagus sekali.
+    </div>
+
+    <div class="result-details">
+      <div class="detail-row">
+        <span class="detail-label">Cipher Method</span>
+        <span class="detail-value" id="resultCipher">Caesar Cipher</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Hasil Dekripsi</span>
+        <span class="detail-value" id="resultAnswer">HIDDEN_ANSWER</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Poin Diperoleh</span>
+        <span class="detail-value" id="resultPoints">+100</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Total Poin</span>
+        <span class="detail-value" id="resultTotal">100</span>
+      </div>
+    </div>
+
+    <div id="rankUpContainer" style="display: none;">
+      <div class="rank-badge" id="rankUpBadge">
+        <span>🎖️ RANK NAIK!</span>
+        <span id="rankUpText">Master Cryptographer</span>
+      </div>
+    </div>
+
+    <div class="action-buttons" style="justify-content: center; margin-top: 32px;">
+      <button class="btn-action primary" onclick="nextMission()">▶ Misi Berikutnya</button>
+      <button class="btn-action secondary" onclick="backToMissionSelect()">📋 Pilih Misi Lain</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: GAME OVER -->
+  <div class="screen game-over" id="screenGameOver">
+    <div class="game-over-icon">✕</div>
+    <div class="game-over-title">MISI GAGAL!</div>
+    <p style="color: hsl(var(--fg2)); margin-bottom: 32px;">Jawaban yang kamu berikan tidak benar. Coba lagi!</p>
+    <div style="background: hsl(var(--bg3)); border: 1px solid hsl(var(--border)); border-radius: 8px; padding: 20px; margin-bottom: 32px; display: inline-block;">
+      <div class="detail-row" style="border: none;">
+        <span class="detail-label">Jawaban Benar</span>
+        <span class="detail-value" id="correctAnswerDisplay">ANSWER</span>
+      </div>
+    </div>
+    <div class="action-buttons" style="justify-content: center;">
+      <button class="btn-action primary" onclick="retryMission()">🔄 Coba Lagi</button>
+      <button class="btn-action secondary" onclick="backToMissionSelect()">📋 Pilih Misi Lain</button>
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT GAME ENGINE -->
+<script>
+  // ═════════════════════════════════════════════════════════════════
+  // GAME STATE & CONSTANTS
+  // ═════════════════════════════════════════════════════════════════
+
+  const RANKS = [
+    { name: 'Rookie', minPoints: 0, icon: '🟦' },
+    { name: 'Agent', minPoints: 200, icon: '🟩' },
+    { name: 'Operative', minPoints: 500, icon: '🟪' },
+    { name: 'Specialist', minPoints: 1000, icon: '🟨' },
+    { name: 'Master Cryptographer', minPoints: 2000, icon: '🟥' }
+  ];
+
+  const MISSIONS = [
+    {
+      id: 1,
+      title: 'Caesar Cipher Basics',
+      description: 'Pelajari metode enkripsi paling sederhana dari jaman Romawi.',
+      icon: '🔤',
+      difficulty: 'easy',
+      cipher: 'caesar',
+      encrypted: 'KHOOR ZRUOG',
+      answer: 'HELLO WORLD',
+      hint: 'Setiap huruf digeser 3 posisi ke kanan.',
+      explanation: 'Caesar Cipher menggeser setiap huruf dengan jarak yang sama. Geser kembali 3 posisi = jawaban.',
+      pointsReward: 100
+    },
+    {
+      id: 2,
+      title: 'Caesar Cipher Challenge',
+      description: 'Cari tau pergeseran yang tepat untuk dekripsi.',
+      icon: '🔐',
+      difficulty: 'medium',
+      cipher: 'caesar',
+      encrypted: 'URYYB JBEYQ',
+      answer: 'HELLO WORLD',
+      hint: 'Coba pergeseran berbeda. Ini bukan 3!',
+      explanation: 'Pergeseran 7 posisi. Ada 26 kemungkinan, coba satu per satu!',
+      pointsReward: 150
+    },
+    {
+      id: 3,
+      title: 'Substitution Cipher',
+      description: 'Setiap huruf diganti dengan huruf lain secara konsisten.',
+      icon: '🔑',
+      difficulty: 'hard',
+      cipher: 'substitution',
+      encrypted: 'URYYB JBEYQ',
+      answer: 'HELLO WORLD',
+      hint: 'Gunakan analisis frekuensi atau pola.',
+      explanation: 'A=U, B=R, C=Y, dst. Substitusi 1-ke-1 yang konsisten.',
+      pointsReward: 200
+    },
+    {
+      id: 4,
+      title: 'Modern Encryption Concept',
+      description: 'Memahami RSA dan public key cryptography dasar.',
+      icon: '🔒',
+      difficulty: 'expert',
+      cipher: 'rsa-concept',
+      encrypted: '[ENCRYPTED_WITH_PUBLIC_KEY_123456]',
+      answer: 'PUBLIC KEY ENCRYPTION',
+      hint: 'Gunakan private key untuk dekripsi.',
+      explanation: 'RSA menggunakan sepasang kunci (publik & privat) untuk enkripsi asimetris.',
+      pointsReward: 250
+    }
+  ];
+
+  let gameState = {
+    currentMission: null,
+    selectedCipher: null,
+    totalPoints: 0,
+    streak: 0,
+    completedMissions: [],
+    isGameActive: false
+  };
+
+  // Load dari localStorage
+  function loadGameState() {
+    const saved = localStorage.getItem('spyMissionGameState');
+    if (saved) {
+      gameState = { ...gameState, ...JSON.parse(saved) };
+    }
+  }
+
+  // Save ke localStorage
+  function saveGameState() {
+    localStorage.setItem('spyMissionGameState', JSON.stringify(gameState));
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // SCREEN MANAGEMENT
+  // ═════════════════════════════════════════════════════════════════
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // RANK SYSTEM
+  // ═════════════════════════════════════════════════════════════════
+
+  function getCurrentRank() {
+    let rank = RANKS[0];
+    for (let r of RANKS) {
+      if (gameState.totalPoints >= r.minPoints) {
+        rank = r;
+      }
+    }
+    return rank;
+  }
+
+  function updateRankDisplay() {
+    const rank = getCurrentRank();
+    document.getElementById('displayRank').textContent = rank.name;
+    document.getElementById('rankDisplay').textContent = rank.name;
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // ENCRYPTION / DECRYPTION
+  // ═════════════════════════════════════════════════════════════════
+
+  function caesarDecrypt(text, shift) {
+    return text.split('').map(char => {
+      if (/[A-Z]/.test(char)) {
+        return String.fromCharCode((char.charCodeAt(0) - 65 - shift + 26) % 26 + 65);
+      }
+      return char;
+    }).join('');
+  }
+
+  function caesarEncrypt(text, shift) {
+    return text.split('').map(char => {
+      if (/[A-Z]/.test(char)) {
+        return String.fromCharCode((char.charCodeAt(0) - 65 + shift) % 26 + 65);
+      }
+      return char;
+    }).join('');
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // GAME FLOW
+  // ═════════════════════════════════════════════════════════════════
+
+  function startGame() {
+    showScreen('screenMissionSelect');
+    renderMissions();
+  }
+
+  function renderMissions() {
+    const grid = document.getElementById('missionGrid');
+    grid.innerHTML = '';
+
+    MISSIONS.forEach((mission, idx) => {
+      const isLocked = idx > 0 && !gameState.completedMissions.includes(MISSIONS[idx - 1].id);
+      const card = document.createElement('div');
+      card.className = `mission-card ${isLocked ? 'locked' : ''}`;
+      card.onclick = () => !isLocked && startMission(mission.id);
+
+      let difficultyClass = 'difficulty-easy';
+      if (mission.difficulty === 'medium') difficultyClass = 'difficulty-medium';
+      if (mission.difficulty === 'hard') difficultyClass = 'difficulty-hard';
+      if (mission.difficulty === 'expert') difficultyClass = 'difficulty-hard';
+
+      card.innerHTML = `
+        <div class="mission-icon">${mission.icon}</div>
+        <div class="mission-title">${mission.title}</div>
+        <div class="mission-desc">${mission.description}</div>
+        <div class="mission-difficulty">
+          <span class="${difficultyClass}">${mission.difficulty.toUpperCase()}</span>
+        </div>
+        ${isLocked ? '<div class="lock-badge">🔒</div>' : ''}
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function startMission(missionId) {
+    const mission = MISSIONS.find(m => m.id === missionId);
+    gameState.currentMission = mission;
+    gameState.selectedCipher = null;
+    gameState.isGameActive = true;
+
+    // Update UI
+    document.getElementById('missionTitle').textContent = `🎯 ${mission.title}`;
+    document.getElementById('missionBrief').textContent = mission.explanation;
+    document.getElementById('messageContent').textContent = `"${mission.answer}"`;
+    document.getElementById('messageEncrypted').textContent = mission.encrypted;
+    document.getElementById('pointsDisplay').textContent = gameState.totalPoints;
+    document.getElementById('streakDisplay').textContent = gameState.streak;
+    updateRankDisplay();
+
+    renderCipherButtons(mission);
+    renderInputArea(mission);
+
+    showScreen('screenGameplay');
+  }
+
+  function renderCipherButtons(mission) {
+    const container = document.getElementById('cipherButtons');
+    container.innerHTML = '';
+
+    const ciphers = ['caesar', 'substitution', 'rsa-concept'];
+    ciphers.forEach(cipher => {
+      const btn = document.createElement('button');
+      btn.className = 'cipher-btn';
+      btn.textContent = cipher.charAt(0).toUpperCase() + cipher.slice(1).replace('-', ' ');
+      btn.onclick = () => selectCipher(cipher, btn);
+      container.appendChild(btn);
+    });
+  }
+
+  function selectCipher(cipher, btn) {
+    document.querySelectorAll('.cipher-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    gameState.selectedCipher = cipher;
+    renderInputArea(gameState.currentMission);
+  }
+
+  function renderInputArea(mission) {
+    const container = document.getElementById('inputArea');
+    container.innerHTML = '';
+
+    if (!gameState.selectedCipher) return;
+
+    if (gameState.selectedCipher === 'caesar') {
+      container.innerHTML = `
+        <div class="input-group">
+          <label class="input-label">Masukkan Pergeseran Caesar (1-25):</label>
+          <input type="number" id="caesarShift" class="input-box" min="1" max="25" placeholder="Contoh: 3">
+          <div class="key-hint">💡 Caesar Cipher menggeser setiap huruf dengan jarak yang sama.</div>
+        </div>
+      `;
+    } else if (gameState.selectedCipher === 'substitution') {
+      container.innerHTML = `
+        <div class="input-group">
+          <label class="input-label">Masukkan Hasil Dekripsi:</label>
+          <textarea id="substitutionResult" class="textarea-box" placeholder="Ketik hasil dekripsi pesan di sini..."></textarea>
+          <div class="key-hint">💡 Analisis pola huruf dan coba mapping substitusi.</div>
+        </div>
+      `;
+    } else if (gameState.selectedCipher === 'rsa-concept') {
+      container.innerHTML = `
+        <div class="input-group">
+          <label class="input-label">Masukkan Hasil Dekripsi dengan Private Key:</label>
+          <textarea id="rsaResult" class="textarea-box" placeholder="Ketik hasil dekripsi pesan di sini..."></textarea>
+          <div class="key-hint">💡 RSA membutuhkan private key untuk dekripsi.</div>
+        </div>
+      `;
+    }
+  }
+
+  function submitAnswer() {
+    const mission = gameState.currentMission;
+    let userAnswer = '';
+
+    if (gameState.selectedCipher === 'caesar') {
+      const shift = parseInt(document.getElementById('caesarShift')?.value || 0);
+      if (!shift) {
+        alert('Masukkan pergeseran yang valid!');
+        return;
+      }
+      userAnswer = caesarDecrypt(mission.encrypted, shift);
+    } else if (gameState.selectedCipher === 'substitution') {
+      userAnswer = document.getElementById('substitutionResult')?.value.toUpperCase().trim() || '';
+    } else if (gameState.selectedCipher === 'rsa-concept') {
+      userAnswer = document.getElementById('rsaResult')?.value.toUpperCase().trim() || '';
+    }
+
+    // Check answer (normalize whitespace)
+    const normalizedUser = userAnswer.replace(/\s+/g, ' ').trim();
+    const normalizedAnswer = mission.answer.replace(/\s+/g, ' ').trim();
+
+    if (normalizedUser === normalizedAnswer) {
+      showResultScreen(true, userAnswer);
+    } else {
+      showGameOverScreen(userAnswer);
+    }
+  }
+
+  function showResultScreen(isCorrect, userAnswer) {
+    const mission = gameState.currentMission;
+    const points = mission.pointsReward;
+
+    // Update state
+    gameState.totalPoints += points;
+    gameState.streak += 1;
+    if (!gameState.completedMissions.includes(mission.id)) {
+      gameState.completedMissions.push(mission.id);
+    }
+    saveGameState();
+
+    const newRank = getCurrentRank();
+
+    document.getElementById('resultIcon').textContent = '✓';
+    document.getElementById('resultTitle').textContent = 'BENAR! 🎉';
+    document.getElementById('resultMessage').textContent = `Kamu berhasil mendekripsi pesan dengan ${gameState.selectedCipher}!`;
+    document.getElementById('resultCipher').textContent = gameState.selectedCipher;
+    document.getElementById('resultAnswer').textContent = mission.answer;
+    document.getElementById('resultPoints').textContent = `+${points}`;
+    document.getElementById('resultTotal').textContent = gameState.totalPoints;
+
+    // Check if rank up
+    const oldRank = getRankFromPoints(gameState.totalPoints - points);
+    if (oldRank.name !== newRank.name) {
+      document.getElementById('rankUpContainer').style.display = 'block';
+      document.getElementById('rankUpText').textContent = newRank.name;
+    } else {
+      document.getElementById('rankUpContainer').style.display = 'none';
+    }
+
+    showScreen('screenResult');
+  }
+
+  function showGameOverScreen(userAnswer) {
+    const mission = gameState.currentMission;
+    gameState.streak = 0;
+    saveGameState();
+
+    document.getElementById('correctAnswerDisplay').textContent = mission.answer;
+
+    showScreen('screenGameOver');
+  }
+
+  function getRankFromPoints(points) {
+    let rank = RANKS[0];
+    for (let r of RANKS) {
+      if (points >= r.minPoints) {
+        rank = r;
+      }
+    }
+    return rank;
+  }
+
+  function nextMission() {
+    const nextId = gameState.currentMission.id + 1;
+    const nextMission = MISSIONS.find(m => m.id === nextId);
+    if (nextMission) {
+      startMission(nextId);
+    } else {
+      alert('🎊 Anda telah menyelesaikan semua misi! Selamat!');
+      backToMenu();
+    }
+  }
+
+  function retryMission() {
+    startMission(gameState.currentMission.id);
+  }
+
+  function skipMission() {
+    if (confirm('Lewati misi ini? Anda tidak akan mendapat poin.')) {
+      nextMission();
+    }
+  }
+
+  function backToMenu() {
+    gameState.isGameActive = false;
+    showScreen('screenMainMenu');
+    updateRankDisplay();
+  }
+
+  function backToMissionSelect() {
+    showScreen('screenMissionSelect');
+    renderMissions();
+  }
+
+  function quitGame() {
+    if (confirm('Keluar dari misi? Progress akan disimpan.')) {
+      backToMenu();
+    }
+  }
+
+  function showInstructions() {
+    alert(`
+  PANDUAN GAME SECRET SPY MISSION
+  
+  📖 CARA BERMAIN:
+  1. Pilih misi untuk memulai dekripsi
+  2. Baca pesan terenkripsi
+  3. Pilih metode cipher (Caesar, Substitution, atau RSA)
+  4. Sesuaikan parameter atau masukkan jawaban
+  5. Klik "Dekripsi Pesan" untuk submit
+  
+  🔐 CIPHER YANG DIPELAJARI:
+  • Caesar: Setiap huruf digeser N posisi (N=1-25)
+  • Substitution: Setiap huruf diganti dengan huruf lain
+  • RSA: Public key untuk enkripsi, private key untuk dekripsi
+  
+  🎖️ RANK SYSTEM:
+  Kumpulkan poin untuk naik rank:
+  - Rookie (0 poin)
+  - Agent (200 poin)
+  - Operative (500 poin)
+  - Specialist (1000 poin)
+  - Master Cryptographer (2000 poin)
+  
+  💡 TIPS:
+  • Analisis pola huruf untuk cipher substitusi
+  • Coba semua kemungkinan shift untuk Caesar
+  • Pahami konsep key dalam RSA
+    `);
+  }
+
+  function resetProgress() {
+    if (confirm('Reset semua progress? Ini tidak bisa dibatalkan!')) {
+      gameState = {
+        currentMission: null,
+        selectedCipher: null,
+        totalPoints: 0,
+        streak: 0,
+        completedMissions: [],
+        isGameActive: false
+      };
+      localStorage.removeItem('spyMissionGameState');
+      updateRankDisplay();
+      alert('Progress telah direset!');
+    }
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // INITIALIZATION
+  // ═════════════════════════════════════════════════════════════════
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadGameState();
+    updateRankDisplay();
+  });
+</script>
+
+</body>
+</html>
