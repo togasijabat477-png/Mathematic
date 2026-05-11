@@ -172,8 +172,8 @@ var gameData = [
     {num:"★ NEW",title:"⚔ Matrix Battle",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/matrix-battle.html"}
   ]},
   {icon:"🕹️",title:"Game Kriptografi",items:[
-    {num:"★ NEW",title:"⚿ Cipher Quest",description:"Enkripsi & dekripsi pesan rahasia! Caesar, Atbash, Vigenère — 10 level dari mudah ke sulit.",tag:"Enkripsi & Dekripsi",isNew:true,accentColor:"green",file:"game/kriptografi/cipher-quest.html"},
-    {num:"★ NEW",title:"⚿ password-hunter",description:"Enkripsi & dekripsi pesan rahasia! Caesar, Atbash, Vigenère — 10 level dari mudah ke sulit.",tag:"Enkripsi & Dekripsi",isNew:true,accentColor:"green",file:"game/kriptografi/password-hunter.html"}
+    {num:"01",title:"⚿ Cipher Quest",description:"Enkripsi & dekripsi pesan rahasia! Caesar, Atbash, Vigenère — 10 level dari mudah ke sulit.",tag:"Enkripsi & Dekripsi",isNew:true,accentColor:"green",file:"game/kriptografi/cipher-quest.html"},
+    {num:"02",title:"⚿ password-hunter",description:"Enkripsi & dekripsi pesan rahasia! Caesar, Atbash, Vigenère — 10 level dari mudah ke sulit.",tag:"Enkripsi & Dekripsi",isNew:true,accentColor:"green",file:"game/kriptografi/password-hunter.html"}
   ]}
 ];
 
