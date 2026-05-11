@@ -1,193 +1,2116 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materi Lengkap: Nilai Eigen dan Vektor Eigen</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        body { font-family: 'Times New Roman', Times, serif; line-height: 1.6; color: #333; background-color: #f4f4f4; }
-        .page-container { max-width: 900px; margin: 20px auto; background-color: white; padding: 40px; border: 1px solid #ddd; }
-        .chapter-header { display: flex; align-items: center; margin-bottom: 40px; }
-        .chapter-number { font-size: 80px; font-weight: bold; line-height: 1; margin-right: 20px; text-align: center; }
-        .chapter-number span { display: block; font-size: 30px; margin-bottom: 5px; }
-        .vertical-line { border-left: 4px solid black; height: 120px; margin-right: 30px; }
-        .chapter-title { font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        .math-block { background-color: #f7fafc; padding: 1.5rem; border-radius: 0.5rem; margin: 1rem 0; overflow-x: auto; }
-        .section-divider { border-left: 5px solid #3498db; background-color: #fafafa; padding: 20px; margin-bottom: 30px; }
-        .conclusion-box { background-color: #e8f6ef; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 5px solid #27ae60; }
-        .orange-section { border-left: 5px solid #e67e22; background-color: #fafafa; padding: 20px; margin-bottom: 30px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nilai Eigen Dan Vektor Eigen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --surface: #ffffff;
+      --surface2: #f3ede4;
+      --accent: #3B82F6;
+      --accent2: #3B82F6;
+      --accent3: #b7e4c7;
+      --accent-warm: #c77c3c;
+      --text: #1a1a1a;
+      --text-muted: #5c5c5c;
+      --border: #d9cfc2;
+      --shadow: rgba(45, 106, 79, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 17px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #3B82F6 0%, #3B82F6 55%, #3B82F6 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, #3B82F6(183,228,199,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .15s;
+      backdrop-filter: blur(6px);
+    }
+    .btn-back:hover {
+      background: rgba(255,255,255,.28);
+      border-color: rgba(255,255,255,.7);
+      transform: translateY(-1px);
+    }
+
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .toc-bar a {
+      display: inline-block;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px var(--shadow);
+      padding: 40px 44px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      transition: box-shadow .25s;
+    }
+    .section-card:hover { box-shadow: 0 6px 28px var(--shadow); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+     .eigen-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 16px;
+    background: linear-gradient(135deg,#f0f9ff,#e0f2fe);
+    border-radius: 14px;
+    font-family: Arial, sans-serif;
+  }
+
+  .eigen-container h2 {
+    font-size: clamp(18px, 4vw, 26px);
+    color: #1d4ed8;
+    margin-bottom: 10px;
+  }
+
+  .eigen-container h3 {
+    font-size: clamp(16px, 3.5vw, 20px);
+    color: #2563eb;
+    margin-top: 15px;
+  }
+
+  .eigen-container p, 
+  .eigen-container li {
+    font-size: clamp(14px, 3.5vw, 16px);
+    color: #334155;
+    line-height: 1.6;
+  }
+
+  .card-box {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 12px;
+  }
+
+  .highlight {
+    background: #dbeafe;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 15px;
+  }
+
+  ul {
+    padding-left: 18px;
+  }
+
+  @media (max-width: 480px) {
+    .eigen-container {
+      padding: 12px;
+    }
+  }
+
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 12px;
+    }
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--accent); }
+    em { color: var(--accent-warm); font-style: italic; }
+
+    .def-box {
+      background: linear-gradient(135deg, #e9f5f5 0%, #d1e5ea 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 20px 0;
+    }
+    .def-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .def-box p { margin: 0; font-size: 0.97rem; }
+
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .prop-card {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop-card .prop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .prop-card strong { display: block; margin-bottom: 4px; color: var(--text); }
+
+    .tree-visual {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .tree-visual svg { display: block; margin: 0 auto; }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.93rem;
+    }
+    .info-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table tr:nth-child(even) td { background: var(--surface2); }
+
+    .formula {
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      background: #74d8da;
+      color: #000000;
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout {
+      background: #fff8f0;
+      border: 1.5px solid #e8c490;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .callout .callout-icon { font-size: 1.1rem; margin-right: 6px; }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent3);
+      color: #3B82F6;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent3), transparent);
+      border: none;
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+    
+    .huffman-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+    }
+    
+    .huffman-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #3B82F6;
+    }
+
+    .huffman-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .num {
+        min-width: 28px;
+        height: 28px;
+        background: #3B82F6;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      
+      .huffman-item p {
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .green {
+        color: #3B82F6;
+        font-weight: 600;
+      }
+
+      .orange {
+        color: #3B82F6;
+        font-weight: 600;
+      }
+      
+      .note {
+        display: block;
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 2px;
+      }
+
+.eigen-section {
+  max-width: 800px;
+  margin: auto;
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  color: #1e293b;
+}
+
+.math-modern {
+  margin: 16px 0;
+  padding: 14px;
+  text-align: center;
+  font-size: clamp(22px, 6vw, 34px);
+  font-weight: bold;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.math-modern:hover {
+  transform: scale(1.03);
+}
+
+.math-modern.small {
+  font-size: clamp(18px, 5vw, 24px);
+  background: #f8fafc;
+}
+
+.eigen-list {
+  margin: 12px 0;
+  padding-left: 10px;
+  list-style: none;
+}
+
+.eigen-list li {
+  margin: 6px 0;
+  font-size: clamp(14px, 3.5vw, 16px);
+}
+
+.eigen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+  text-align: center;
+}
+
+.grid-card {
+  padding: 10px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  font-size: 14px;
+  font-style: italic;
+  border-bottom: 2px solid #93c5fd;
+}
+
+.grid-card span {
+  font-size: 12px;
+  color: #475569;
+}
+
+.note {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #475569;
+}
+.card, .section, .section-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 16px;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.card {
+    overflow: hidden;
+}
+
+.desc {
+    padding-left: 18px;
+    margin-top: 8px;
+}
+
+.grid-box {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.formula-box {
+    word-wrap: break-word;
+}
+
+.explain {
+    word-wrap: break-word;
+}
+h3 {
+    margin-bottom: 10px;
+}
+
+.explain, .box {
+    background: #f1f7ff;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.formula-box, .math-block {
+    background: #eaf2ff;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    margin: 12px 0;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+.grid-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+    gap: 10px;
+    margin-top: 10px;
+    text-align: center;
+    font-style: italic;
+}
+
+.grid-box div {
+    background: #f0f6ff;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th {
+    background: #eaf2ff;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.result-display {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f0f6ff;
+    font-weight: 500;
+}
+
+.btn-action {
+    background: #eaf2ff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.btn-action:hover {
+    background: #dbeafe;
+}
+
+.calc-grid {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 5px 0;
+}
+
+.m-input {
+    width: 60px;
+    padding: 6px;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.theorem-box {
+    background: #f1f7ff;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.matrix-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-family: "Times New Roman", serif;
+}
+
+.matrix-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-style: italic;
+    margin-right: 10px;
+}
+
+.matrix-box {
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    padding: 10px 20px;
+    border-left: 2px solid #444;
+    border-right: 2px solid #444;
+    border-radius: 25px;
+}
+
+.matrix-box::before,
+.matrix-box::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 6px;
+    background: #f8fbff;
+}
+
+.matrix-box::before { top: -3px; }
+.matrix-box::after { bottom: -3px; }
+
+.matrix-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.matrix-row span {
+    font-size: 1.2rem;
+    min-width: 25px;
+    text-align: center;
+}
+
+.matrix-classic {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.matrix-content {
+    text-align: center;
+    font-family: "Times New Roman", serif;
+    font-size: 18px;
+    line-height: 2;
+    padding: 0 15px;
+    color: #000;
+}
+
+.bracket {
+    width: 12px;
+    height: 140px;
+    border: 2px solid #000;
+}
+
+.bracket.left {
+    border-right: none;
+    border-radius: 15px 0 0 15px;
+}
+
+.bracket.right {
+    border-left: none;
+    border-radius: 0 15px 15px 0;
+}
+
+@media (max-width: 600px) {
+    .matrix-content {
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .bracket {
+        height: 110px;
+    }
+}
+@media (max-width: 600px) {
+    .matrix-content {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+
+    .matrix-bracket {
+        height: 110px;
+    }
+}
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      width: 48px; height: 48px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px #3B82F6(45,106,79,.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, background .2s;
+      z-index: 200;
+    }
+
+    .fab:hover { background: var(--accent2); transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 15px;
+      }
+
+      .hero {
+        padding: 40px 16px 60px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 0.9rem;
+      }
+      
+      .btn-back {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+      
+      .container {
+        padding: 24px 14px 60px;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+      }
+      
+      .section-header {
+        gap: 10px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-num {
+         width: 34px;
+         height: 34px;
+         font-size: 0.8rem;
+        }
+        
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .formula {
+        font-size: 0.8rem;
+      }
+      
+      .tree-visual {
+        overflow-x: auto;
+      }
+      
+      .tree-visual svg {
+        min-width: 400px;
+      }
+      
+      .toc-bar {
+        padding: 0 10px;
+      }
+      
+      .toc-bar a {
+        font-size: 0.75rem;
+        padding: 10px 10px;
+      }
+      
+      .fab {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="page-container">
+<header class="hero" id="top">
+  <span class="hero-icon">📈</span>
+  <h1>Nilai Eigen Dan Vektor Eigen</h1>
+  <p>Materi lengkap Matematika — Nilai Eigen, Vektor Eigen, konsep dasar, dan aplikasi</p>
+  <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
+</header>
 
-    <button onclick="window.location.href='../../index.html?page=materi'">
-  ← Kembali ke Materi
-</button>
+<nav class="toc-bar">
+<a href="#Pengantar">Pengantar Nilai Eigen dan Vektor Eigen</a>
+<a href="#Nilai">Nilai Eigen dan EigenVektor</a>
+<a href="#Persamaan">Persamaan Vektor Eigen</a>
+<a href="#Matriks">Matriks dan Transformasi Linear</a>
+<a href="#Karakteristik">Persamaan Karakteristik</a>
+<a href="#Diagonal">Diagonalization Matriks</a>
+<a href="#Aplikasi">Aplikasi Nilai Eigen dan Vektor Eigen</a>
+</nav>
 
-    <header class="chapter-header">
-        <div class="chapter-number"><span>BAB</span>5</div>
-        <div class="vertical-line"></div>
-        <div class="chapter-title">Nilai Eigen<br>dan Vektor Eigen</div>
-    </header>
+<main class="container">
 
-    <section>
-        <h2 class="text-xl font-bold mb-2">Capaian Pembelajaran Mata Kuliah:</h2>
-        <ol class="list-decimal pl-5 mb-6">
-            <li>Mahasiswa mampu menemukan persamaan karakteristik.</li>
-            <li>Mahasiswa mampu menghitung nilai eigen dari persamaan karakteristik.</li>
-            <li>Mahasiswa mampu menghitung eigenvector yang membentuk matriks.</li>
-        </ol>
-    </section>
-
-    <h2 class="text-xl font-bold mb-4">Pengantar Nilai Eigen dan Vektor Eigen</h2>
-    <div class="flex flex-col md:flex-row gap-6 mb-10">
-        <div class="border border-gray-800 p-4 flex-1">
-            <h3 class="font-bold mb-2">Image Compression Algorithms</h3>
-            <p class="text-justify">Vektor eigen adalah sumbu, nilai eigen adalah jarak sepanjang sumbu tersebut. Vektor eigen adalah dasar teknik reduksi dimensi seperti PCA (analisis komponen utama). Contoh: mencari gambar serupa dalam kumpulan besar dan memperlihatkan hubungannya dalam 2D.</p>
-        </div>
-        <div class="w-full md:w-64 text-center">
-            <img src="gambar1.png" alt="Visualisasi PCA" class="border mb-2">
-            <p class="text-xs">Sumber: https://bit.ly/3tE64G3</p>
-        </div>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 1. Pengantar Nilai Eigen dan Vektor Eigen -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Pengantar">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Pengantar Nilai Eigen dan Vektor Eigen</h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="md:col-span-1 text-center">
-            <img src="gambar2.jpg" alt="Konstruksi Jembatan" class="w-full h-auto rounded shadow-sm mb-2">
-            <p class="text-xs">Sumber: https://bit.ly/3rXLO1A</p>
-        </div>
-        <div class="md:col-span-2 border-2 border-black p-4">
-            <h2 class="font-bold text-lg mb-2">Konstruksi Jembatan</h2>
-            <p class="text-justify">Aplikasi nilai eigen adalah magnitudo terkecil dari suatu sistem pembangunan yang memodelkan jembatan yang merupakan frekuensi natural jembatan. Insinyur menggunakan ini untuk menjamin stabilitas struktur.</p>
-        </div>
+    <div class="def-box">
+    <div class="label">Definisi Formal</div>
+    <p><strong>Vektor Eigen</strong> adalah vektor tak nol yang, 
+      ketika dikalikan dengan suatu matriks, hanya mengalami perubahan skala tanpa perubahan arah.</p>
     </div>
 
-    <section class="mb-8">
-        <h2 class="text-xl font-bold mb-4">A. Nilai Eigen dan EigenVektor</h2>
-        <p class="text-justify mb-4">Nilai eigen adalah kumpulan skalar khusus yang terkait dengan sistem persamaan linier. Vektor eigen untuk matriks persegi didefinisikan sebagai nilai vektor bukan nol yang bila dikalikan dengan matriks persegi akan menghasilkan kelipatan skala dari vektor tersebut:</p>
+    <p>Nilai Eigen dan Vektor Eigen merupakan konsep penting dalam aljabar linear yang memiliki berbagai aplikasi dalam ilmu komputer, fisika, dan bidang lainnya. Mereka membantu dalam memahami sifat-sifat matriks dan transformasi linear.</p>
+    <p>
+    Dalam dunia matematika, khususnya aljabar linear, <strong>nilai eigen</strong> dan 
+    <strong>vektor eigen</strong> adalah konsep penting yang digunakan untuk memahami 
+    bagaimana suatu transformasi memengaruhi suatu ruang.
+  </p>
 
-        <div class="math-block text-2xl text-center">
-            \[Ax = \lambda x\]
+  <h3>✨ Konsep Dasar</h3>
+  <p>
+    Ketika sebuah <strong>matriks</strong> mengalikan suatu vektor, biasanya arah dan panjang 
+    vektor akan berubah. Namun, ada vektor tertentu yang hanya berubah panjangnya saja, 
+    tanpa berubah arah.
+  </p>
+
+  <div class="card-box">
+    👉 Vektor seperti ini disebut <strong>Vektor Eigen</strong><br>
+    👉 Faktor pengalinya disebut <strong>Nilai Eigen</strong>
+  </div>
+
+  <h3>📐 Ilustrasi Sederhana</h3>
+  <p>
+    Bayangkan sebuah panah ➡️ yang diputar atau diregangkan. 
+    Sebagian besar panah akan berubah arah, tetapi ada panah tertentu yang tetap 
+    menunjuk ke arah yang sama — hanya panjangnya saja yang berubah 📏.
+  </p>
+
+ <h3 style="color:#2563eb;">🧮 Bentuk Matematis</h3>
+<p>Jika <strong>A</strong> adalah matriks dan <strong>v</strong> adalah vektor:</p>
+
+  <div class="formula">
+    Av = λv
+  </div>
+
+  <p>
+    • <strong>v</strong> = Vektor Eigen 🎯<br>
+    • <strong>λ</strong> = Nilai Eigen 📊
+  </p>
+
+  <h3>⚙️ Kenapa Penting?</h3>
+  <ul>
+    <li>📊 Analisis data (PCA)</li>
+    <li>🎮 Grafika komputer</li>
+    <li>📡 Sistem dinamis</li>
+    <li>🤖 Machine learning</li>
+  </ul>
+
+  <div class="highlight">
+    <strong>💡 Intinya:</strong><br>
+    Nilai eigen = besar skala perubahan,<br>
+    Vektor eigen = arah yang tetap.
+  </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 2. Nilai Eigen dan EigenVektor  -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Nilai">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Nilai Eigen dan EigenVektor</h2>
+    </div>
+<div class="explain">
+📘 <b>Nilai eigen</b> adalah skalar khusus yang berhubungan dengan matriks.  
+📐 <b>Vektor eigen</b> adalah vektor tak nol yang ketika dikalikan matriks hanya berubah skala, bukan arah utamanya.
+</div>
+
+<div class="formula-box">
+✨ Ax = λx
+</div>
+
+<ul class="desc">
+<li>🔢 <b>A</b> = matriks persegi (n × n)</li>
+<li>📍 <b>x</b> = vektor eigen (x ≠ 0)</li>
+<li>💡 <b>λ</b> = nilai eigen</li>
+</ul>
+
+<div class="grid-box">
+<div>↗ x<br><small>🌱 0 ≤ λ ≤ 1</small></div>
+<div>↗↗ λx<br><small>🚀 λ > 1</small></div>
+<div>↙ λx<br><small>🔄 -1 ≤ λ</small></div>
+<div>↙↙ λx<br><small>⚡ λ ≤ -1</small></div>
+</div>
+
+<div class="explain">
+🎯 Secara geometris, transformasi matriks terhadap vektor eigen hanya mengubah
+<b>panjang (skala)</b> tanpa mengubah arah dasar vektor.
+</div>
+
+<div class="formula-box">
+📌 (λI − A)x = 0
+</div>
+
+<div class="formula-box">
+🧮 det(λI − A) = 0
+</div>
+
+<div class="explain">
+🔥 Persamaan ini disebut <b>persamaan karakteristik</b>  
+dan menghasilkan <b>polinomial karakteristik</b> untuk mencari nilai eigen.
+</div>
+
+<div class="explain">
+🪜 <b>Langkah mencari nilai eigen:</b>
+<ol class="desc">
+<li>➜ Bentuk matriks λI − A</li>
+<li>➜ Hitung determinan</li>
+<li>➜ Selesaikan persamaan det(λI − A) = 0</li>
+<li>➜ Dapatkan nilai λ</li>
+</ol>
+</div>
+
+<div class="explain">
+🧩 <b>Langkah mencari vektor eigen:</b>
+<ol class="desc">
+<li>➜ Substitusi nilai λ ke (λI − A)x = 0</li>
+<li>➜ Bentuk sistem persamaan linear</li>
+<li>➜ Cari solusi vektor x</li>
+</ol>
+</div>
+
+<div class="explain">
+📊 <b>Sifat-sifat penting nilai eigen:</b>
+<ul class="desc">
+<li>➕ Jumlah semua nilai eigen = trace matriks</li>
+<li>✖️ Hasil kali semua nilai eigen = determinan matriks</li>
+<li>⚠️ Jika det(A) = 0 → minimal satu λ = 0</li>
+<li>📐 Matriks diagonal → λ = elemen diagonal</li>
+<li>🔁 Matriks simetris → nilai eigen real</li>
+</ul>
+</div>
+
+<div class="explain">
+🚀 <b>Aplikasi nilai eigen:</b>
+<ul class="desc">
+<li>📐 Transformasi linear (rotasi, scaling)</li>
+<li>📊 Analisis data (PCA di Machine Learning)</li>
+<li>⚙️ Sistem dinamik & stabilitas</li>
+<li>🌐 Analisis jaringan & graf</li>
+</ul>
+</div>
+
+<div class="explain">
+💡 Nilai eigen dan vektor eigen digunakan untuk memahami bagaimana
+suatu matriks <b>mengubah bentuk, arah, dan skala</b> suatu ruang.
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 3. Persamaan Vektor Eigen -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Persamaan">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Persamaan Vektor Eigen</h2>
+    </div>
+    <section class="materi-box">
+
+    <div class="card">
+        <h3>🎯 Pengertian Nilai & Vektor Eigen</h3>
+
+        <p class="explain">
+            Nilai eigen adalah angka khusus yang menunjukkan seberapa besar perubahan skala
+            pada suatu vektor ketika dikalikan dengan matriks.
+        </p>
+
+        <div class="formula-box">
+            A x = λ x
         </div>
 
-        <ul class="list-none ml-4 mb-8">
-            <li><strong>A</strong> adalah matriks persegi yang diberikan.</li>
-            <li><strong>x</strong> adalah vektor eigen dari matriks A.</li>
-            <li><strong>\(\lambda\)</strong> adalah kelipatan skalar apa pun.</li>
+        <ul class="desc">
+            <li><b>A</b> = matriks</li>
+            <li><b>x</b> = vektor eigen</li>
+            <li><b>λ</b> = nilai eigen</li>
         </ul>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-10 italic text-sm">
-            <div class="border-b pb-2"><span>↗ x</span><br>(a) \(0 \le \lambda \le 1\)</div>
-            <div class="border-b pb-2"><span>↗↗ \(\lambda x\)</span><br>(b) \(\lambda > 1\)</div>
-            <div class="border-b pb-2"><span>↙ \(\lambda x\)</span><br>(c) \(-1 \le \lambda\)</div>
-            <div class="border-b pb-2"><span>↙↙ \(\lambda x\)</span><br>(d) \(\lambda \le -1\)</div>
+        <div class="result-box">
+            ✨ Vektor eigen tidak berubah arah, hanya berubah panjang
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🧮 Cara Mencari Nilai Eigen</h3>
+
+        <div class="formula-box">
+            det(λI − A) = 0
         </div>
 
-        <div class="math-block text-center">
-            \[Ax = \lambda Ix\]
-            \[(\lambda I - A)x = 0\]
-            <p>\(det (\lambda I - A) = 0\) yang akan menghasilkan persamaan fungsi polinomial.</p>
-        </div>
-    </section>
-
-    <section class="mb-8">
-        <h2 class="text-xl font-bold mb-4">B. Persamaan Vektor Eigen</h2>
-        <div class="math-block text-center">
-            \(x = \begin{bmatrix} x_1 \\ x_2 \\ \dots \\ x_n \end{bmatrix}\) dengan \(Ax = \lambda Ix\); \(x\) adalah vektor eigen.
-        </div>
-        <p class="italic mb-3">Langkah langkah menghitung vektor eigen:</p>
-        <ol class="list-decimal ml-6 space-y-2 mb-8">
-            <li>Tentukan nilai eigen matriks \(A\) menggunakan persamaan \(det (\lambda I - A) = 0\).</li>
-            <li>Nilai yang diperoleh diberi nama \(\lambda_1, \lambda_2, \lambda_3 \dots\).</li>
-            <li>Temukan vektor eigen (\(x\)) untuk \(\lambda_1\) menggunakan persamaan \((\lambda I - A) = 0\).</li>
-            <li>Ulangi langkah 3 untuk nilai eigen lainnya.</li>
+        <ol class="desc">
+            <li>🔍 Bentuk matriks (λI − A)</li>
+            <li>🧠 Hitung determinan</li>
+            <li>📊 Bentuk persamaan polinomial</li>
+            <li>✨ Cari akar (nilai λ)</li>
         </ol>
-    </section>
+    </div>
 
-    <section class="mb-10">
-        <h3 class="text-lg font-bold mb-4">Contoh 1</h3>
-        <p>Diketahui matriks \(A = \begin{pmatrix} 1 & -2 \\ 1 & 4 \end{pmatrix}\). Hitunglah nilai eigen \(\lambda\).</p>
-        <div class="math-block">
-            \(\lambda \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} - \begin{pmatrix} 1 & -2 \\ 1 & 4 \end{pmatrix} = 0 \rightarrow \begin{pmatrix} \lambda - 1 & 2 \\ -1 & \lambda - 4 \end{pmatrix} = 0\)
-            <br><br>
-            \[((\lambda - 1)(\lambda - 4) - (2)(-1)) = 0 \rightarrow \lambda^2 - 5\lambda + 6 = 0\]
-            \[(\lambda - 2)(\lambda - 3) = 0 \Rightarrow \mathbf{\lambda = 2} \text{ atau } \mathbf{\lambda = 3} \text{} \]
-        </div>
-        <p><strong>Untuk \(\lambda = 2\):</strong></p>
-        <div class="math-block">
-            \(\begin{pmatrix} 2 - 1 & 2 \\ -1 & 2 - 4 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = 0 \rightarrow \begin{pmatrix} 1 & 2 \\ -1 & -2 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = 0\)
-            <br>
-            \(v_1 + 2v_2 = 0\) dan \(-v_1 - 2v_2 = 0\), Maka, \(v_1 = -1\) dan \(v_2 = 1\).
-        </div>
-        <p><strong>Pembuktian (\(Ax = \lambda x\)):</strong></p>
-        <div class="math-block">
-            \(\begin{pmatrix} 1 & -2 \\ 1 & 4 \end{pmatrix} \begin{pmatrix} 1 \\ -1 \end{pmatrix} = 3 \begin{pmatrix} 1 \\ -1 \end{pmatrix} \rightarrow \begin{pmatrix} 3 \\ -3 \end{pmatrix} = 3 \begin{pmatrix} 1 \\ -1 \end{pmatrix}\)
-        </div>
-    </section>
+    <div class="card">
+        <h3>📌 Cara Mencari Vektor Eigen</h3>
 
-    <section class="mb-10">
-        <p>2. Diketahui matriks \( A = \begin{bmatrix} 4 & 0 & 1 \\ -2 & 1 & 0 \\ -2 & 0 & 1 \end{bmatrix} \), Hitunglah: (a) Persamaan polinomial, (b) Nilai eigen, (c) Eigen vektor.</p>
-        
-        <div class="section-divider">
-            <h4 class="font-bold">a. Menemukan persamaan polinomial</h4>
-            <div class="math-block">
-                \(\det \left( \lambda I - A \right) = \begin{vmatrix} \lambda - 4 & 0 & -1 \\ 2 & \lambda - 1 & 0 \\ 2 & 0 & \lambda - 1 \end{vmatrix} = 0\)
-                <br><br>
-                \( ((\lambda - 1)(\lambda - 1)(\lambda - 4) + 0 + 0) - (-1 \cdot 2 \cdot (\lambda - 1) + 0 + 0) = 0 \)
-                <br>
-                \(\lambda^3 - 6\lambda^2 + 11\lambda - 6 = 0\)
+        <div class="formula-box">
+            (λI − A)x = 0
+        </div>
+
+        <ol class="desc">
+            <li>Pilih salah satu nilai λ</li>
+            <li>Substitusi ke persamaan</li>
+            <li>Selesaikan sistem linear</li>
+            <li>Dapatkan vektor eigen</li>
+        </ol>
+    </div>
+        <div class="result-box">
+            ✨ λ₁ = 2, λ₂ = 3
+        </div>
+
+        <p class="explain">
+            Matriks diagonal → nilai eigen langsung dari diagonal utama.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>📊 Jenis-Jenis Nilai Eigen</h3>
+
+        <ul class="desc">
+            <li>🔢 Real → bilangan biasa</li>
+            <li>🌀 Kompleks → mengandung i</li>
+            <li>🔁 Berulang → nilai sama muncul lebih dari sekali</li>
+            <li>0️⃣ Nol → menunjukkan matriks tidak invertible</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>🧩 Diagonalisasi Matriks</h3>
+
+        <div class="formula-box">
+            A = P × D × P⁻¹
+        </div>
+
+        <p class="explain">
+            Matriks bisa didiagonalkan jika memiliki cukup vektor eigen.
+        </p>
+
+        <div class="result-box">
+            🚀 Mempermudah perhitungan besar
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>⚡ Pangkat Matriks Cepat</h3>
+
+        <div class="formula-box">
+            Aⁿ = P × Dⁿ × P⁻¹
+        </div>
+
+        <div class="result-box">
+            🔥 Digunakan untuk menghitung A⁵⁰, A¹⁰⁰, dll
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📊 Hubungan dengan Determinan</h3>
+
+        <div class="formula-box">
+            det(A) = λ₁ × λ₂ × ... × λₙ
+        </div>
+
+        <div class="result-box">
+            ❗ Jika ada λ = 0 → matriks tidak punya invers
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📌 Trace Matriks</h3>
+
+        <div class="formula-box">
+            tr(A) = λ₁ + λ₂ + ... + λₙ
+        </div>
+
+        <div class="result-box">
+            ✨ Jumlah nilai eigen = trace
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📉 Stabilitas Sistem</h3>
+
+        <ul class="desc">
+            <li>✅ Semua λ negatif → stabil</li>
+            <li>⚠️ Ada λ positif → tidak stabil</li>
+            <li>🔁 λ = 0 → kritis</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>📐 Makna Geometris</h3>
+
+        <div class="grid-box">
+            <div>➡️ arah tetap</div>
+            <div>📏 membesar</div>
+            <div>📉 mengecil</div>
+            <div>🔄 berbalik</div>
+        </div>
+
+        <div class="result-box">
+            🎯 Vektor eigen hanya berubah panjang
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🌍 Aplikasi Nilai Eigen</h3>
+
+        <ul class="desc">
+            <li>🤖 Machine Learning (PCA)</li>
+            <li>📊 Analisis data</li>
+            <li>🔊 Pengolahan sinyal</li>
+            <li>🏗️ Teknik struktur</li>
+            <li>💻 Grafika komputer</li>
+        </ul>
+
+        <div class="result-box">
+            🚀 Dipakai di AI, teknik, dan sains
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>⭐ Kenapa Penting?</h3>
+
+        <ul class="desc">
+            <li>Mempermudah perhitungan matriks</li>
+            <li>Menentukan sifat sistem</li>
+            <li>Digunakan di banyak bidang</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>🎯 Kesimpulan</h3>
+
+        <div class="box">
+            Nilai eigen dan vektor eigen adalah konsep penting dalam aljabar linear
+            yang digunakan untuk memahami transformasi, stabilitas, dan berbagai aplikasi modern.
+        </div>
+    </div>
+
+</section>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. Matriks dan Transformasi Linear -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Matriks">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Matriks dan Transformasi Linear</h2>
+    </div>
+    <section class="materi-box">
+
+    <div class="card">
+        <h3>🎯 Matriks & Transformasi Linear</h3>
+
+        <p class="explain">
+            Matriks adalah susunan bilangan dalam baris dan kolom yang digunakan
+            untuk merepresentasikan transformasi linear dalam matematika.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>📊 Bentuk Matriks</h3>
+
+        <div class="matrix-classic">
+            <div class="bracket left"></div>
+            <div class="matrix-content">
+                a₁₁ &nbsp; a₁₂ &nbsp; a₁₃ <br>
+                a₂₁ &nbsp; a₂₂ &nbsp; a₂₃ <br>
+                a₃₁ &nbsp; a₃₂ &nbsp; a₃₃
             </div>
+            <div class="bracket right"></div>
         </div>
 
-        <div class="section-divider">
-            <h4 class="font-bold">b. Mencari nilai eigen</h4>
-            <div class="math-block text-center">
-                \(\lambda^3 - 6\lambda^2 + 11\lambda - 6 = 0 \rightarrow (\lambda - 1)(\lambda - 2)(\lambda - 3) = 0\)
-                <br>
-                \(\mathbf{\lambda = 1, \lambda = 2, \lambda = 3}\)
+        <p class="explain">
+            Matriks memiliki ukuran m × n (baris × kolom).
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>➕ Operasi Matriks</h3>
+
+        <ul class="desc">
+            <li>Penjumlahan matriks</li>
+            <li>Perkalian dengan skalar</li>
+            <li>Perkalian matriks</li>
+        </ul>
+
+        <div class="formula-box">
+            C = A × B
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🔄 Transformasi Linear</h3>
+
+        <p class="explain">
+            Transformasi linear adalah fungsi yang memetakan vektor ke vektor lain
+            dengan mempertahankan operasi penjumlahan dan perkalian skalar.
+        </p>
+
+        <div class="formula-box">
+            T(x) = A × x
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📌 Representasi Vektor</h3>
+
+        <div class="matrix-classic">
+            <div class="bracket left"></div>
+            <div class="matrix-content">
+                x₁ <br>
+                x₂
             </div>
+            <div class="bracket right"></div>
         </div>
 
-        <div class="section-divider" style="border-left-color: #3498db;">
-            <h4 class="font-bold">c. Mencari vektor ciri (eigen vektor)</h4>
-            
-            <p><strong>Untuk \(\lambda = 1\):</strong></p>
-            <div class="math-block text-sm">
-                \(\begin{bmatrix} -3 & 0 & -1 \\ 2 & 0 & 0 \\ 2 & 0 & 0 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = 0 \rightarrow \dots \rightarrow x = s \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix}\)
-            </div>
+        <p class="explain">
+            Vektor direpresentasikan sebagai matriks kolom.
+        </p>
+    </div>
 
-            <p><strong>Untuk \(\lambda = 2\):</strong></p>
-            <div class="math-block text-sm">
-                \(\begin{bmatrix} -2 & 0 & -1 \\ 2 & 1 & 0 \\ 2 & 0 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = 0 \rightarrow \begin{bmatrix} 1 & 0 & 1/2 \\ 0 & 1 & -1 \\ 0 & 0 & 0 \end{bmatrix} \rightarrow x = s \begin{bmatrix} 1/2 \\ 1 \\ 1 \end{bmatrix}\)
-            </div>
+    <div class="card">
+        <h3>🧠 Contoh Transformasi</h3>
 
-            <p><strong>Untuk \(\lambda = 3\):</strong></p>
-            <div class="math-block text-sm">
-                \(\begin{bmatrix} -1 & 0 & -1 \\ 2 & 2 & 0 \\ 2 & 0 & 2 \end{bmatrix} \rightarrow \dots \rightarrow \begin{bmatrix} 1 & 0 & 1 \\ 0 & 1 & -1 \\ 0 & 0 & 0 \end{bmatrix} \rightarrow x = s \begin{bmatrix} -1 \\ 1 \\ 1 \end{bmatrix}\)
-            </div>
+        <p>Misalkan matriks:</p>
 
-            <div class="conclusion-box">
-                <p>Vektor-vektor ciri untuk matriks A adalah:</p>
-                \(\begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} \text{ untuk } \lambda = 1, \enspace \begin{bmatrix} 1/2 \\ 1 \\ 1 \end{bmatrix} \text{ untuk } \lambda = 2, \enspace \begin{bmatrix} -1 \\ 1 \\ 1 \end{bmatrix} \text{ untuk } \lambda = 3\)
+        <div class="matrix-classic">
+            <div class="bracket left"></div>
+            <div class="matrix-content">
+                2 &nbsp; 0 <br>
+                0 &nbsp; 3
             </div>
+            <div class="bracket right"></div>
         </div>
-    </section>
 
-    <section class="orange-section">
-        <p><strong>3. Diberikan</strong> \( A = \begin{pmatrix} 2 & -3 & 1 \\ 3 & 1 & 3 \\ -5 & 2 & -4 \end{pmatrix} \), Tentukan persamaan polinomial dari A.</p>
-        <div class="math-block">
-            \( S_1 = 2 + 1 - 4 = -1 \)<br>
-            \( S_2 = \begin{vmatrix} 1 & 3 \\ 2 & -4 \end{vmatrix} + \begin{vmatrix} 2 & 1 \\ -5 & -4 \end{vmatrix} + \begin{vmatrix} 2 & -3 \\ 3 & 1 \end{vmatrix} = -10 + (-3) + 11 = -2 \)<br>
-            \( S_3 = \text{det}(A) = 2(-10) + 3(3) + 1(11) = 0 \)
+        <p class="explain">
+            Matriks ini memperbesar sumbu x sebanyak 2 kali dan sumbu y sebanyak 3 kali.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>📐 Jenis Transformasi Linear</h3>
+
+        <ul class="desc">
+            <li>🔍 Dilatasi (perbesaran)</li>
+            <li>🔄 Rotasi (perputaran)</li>
+            <li>↔️ Refleksi (pencerminan)</li>
+            <li>📏 Shear (geser)</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>🔄 Matriks Rotasi</h3>
+
+        <div class="matrix-classic">
+            <div class="bracket left"></div>
+            <div class="matrix-content">
+                cosθ &nbsp; -sinθ <br>
+                sinθ &nbsp; cosθ
+            </div>
+            <div class="bracket right"></div>
         </div>
-        <p class="font-bold">Persamaan karakteristiknya: \(\lambda^3 + \lambda^2 - 2\lambda = 0\)</p>
-    </section>
+
+        <div class="result-box">
+            🎯 Digunakan untuk memutar vektor
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🪞 Matriks Refleksi</h3>
+
+        <p>Terhadap sumbu x:</p>
+
+        <div class="matrix-classic">
+            <div class="bracket left"></div>
+            <div class="matrix-content">
+                1 &nbsp; 0 <br>
+                0 &nbsp; -1
+            </div>
+            <div class="bracket right"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📏 Matriks Shear</h3>
+
+        <div class="matrix-classic">
+            <div class="bracket left"></div>
+            <div class="matrix-content">
+                1 &nbsp; k <br>
+                0 &nbsp; 1
+            </div>
+            <div class="bracket right"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📊 Determinan dalam Transformasi</h3>
+
+        <div class="formula-box">
+            det(A)
+        </div>
+
+        <ul class="desc">
+            <li>📐 Menentukan perubahan luas/volume</li>
+            <li>❗ det = 0 → ruang runtuh</li>
+            <li>🔁 det negatif → orientasi terbalik</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>⭐ Hubungan dengan Eigen</h3>
+
+        <p class="explain">
+            Nilai eigen menunjukkan faktor skala, sedangkan vektor eigen
+            menunjukkan arah tetap dalam transformasi.
+        </p>
+
+        <div class="formula-box">
+            A x = λ x
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🌍 Aplikasi Transformasi Linear</h3>
+
+        <ul class="desc">
+            <li>🎮 Grafika komputer</li>
+            <li>🤖 Machine Learning</li>
+            <li>📊 Analisis data</li>
+            <li>🏗️ Teknik sipil</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>🎯 Kesimpulan</h3>
+
+        <div class="box">
+            Matriks adalah alat utama dalam transformasi linear.
+            Dengan matriks, kita dapat mengubah bentuk, arah,
+            dan ukuran suatu objek secara matematis.
+        </div>
+    </div>
+
+</section>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 5. Persamaan Karakteristik -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Karakteristik">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Persamaan Karakteristik</h2>
+    </div>
+<div class="explain">
+💡 Dalam aljabar linear, <b>nilai eigen</b> dan <b>vektor eigen</b> digunakan untuk 
+memahami bagaimana suatu matriks mentransformasikan suatu vektor.
 </div>
+
+<div class="formula-box">
+Ax = λx
+</div>
+
+<div class="explain">
+📌 Artinya: vektor <b>x</b> tidak berubah arah, hanya berubah skala sebesar <b>λ</b>.
+</div>
+
+
+<h3>🔍 A. Pengertian Nilai Eigen & Vektor Eigen</h3>
+
+<ul class="desc">
+<li><b>A</b> = matriks persegi</li>
+<li><b>x</b> = vektor eigen (vektor tak nol)</li>
+<li><b>λ</b> = nilai eigen (skalar)</li>
+</ul>
+
+<div class="explain">
+✨ Vektor eigen adalah vektor yang ketika dikalikan matriks hanya berubah panjang, bukan arah.
+</div>
+
+<h3>⚙️ B. Persamaan Karakteristik</h3>
+
+<div class="explain">
+Untuk mencari nilai eigen, digunakan <b>persamaan karakteristik</b>.
+</div>
+
+<div class="formula-box">
+det(λI − A) = 0
+</div>
+
+<div class="explain">
+📌 Persamaan ini menghasilkan <b>polinomial karakteristik</b>.
+</div>
+
+
+<h3>📐 C. Matriks Identitas (I)</h3>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>1</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>1</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+<div class="explain">
+📌 Matriks identitas digunakan dalam persamaan λI − A.
+</div>
+
+
+<h3>🧮 D. Langkah Mencari Nilai Eigen</h3>
+
+<ol class="desc">
+<li>🔹 Bentuk persamaan: <b>det(λI − A)</b></li>
+<li>🔹 Hitung determinan</li>
+<li>🔹 Bentuk persamaan polinomial</li>
+<li>🔹 Cari akar → nilai eigen λ</li>
+</ol>
+
+
+<h3>📊 E. Contoh Soal (2x2)</h3>
+
+<div class="explain">
+Diketahui matriks:
+</div>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>1</span><span>2</span></div>
+        <div class="matrix-row"><span>3</span><span>4</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+<div class="explain">
+Langkah 1: Bentuk λI − A
+</div>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>λ−1</span><span>-2</span></div>
+        <div class="matrix-row"><span>-3</span><span>λ−4</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+<div class="explain">
+Langkah 2: Hitung determinan
+</div>
+
+<div class="formula-box">
+(λ−1)(λ−4) − (-2)(-3) = 0
+</div>
+
+<div class="formula-box">
+λ² − 5λ − 2 = 0
+</div>
+
+<div class="explain">
+🎯 Nilai eigen diperoleh dari akar persamaan tersebut.
+</div>
+
+
+<h3>📌 F. Mencari Vektor Eigen</h3>
+
+<div class="explain">
+Setelah mendapatkan λ, substitusi ke:
+</div>
+
+<div class="formula-box">
+(λI − A)x = 0
+</div>
+
+<div class="explain">
+📌 Hasilnya adalah sistem persamaan linear untuk mencari vektor x.
+</div>
+
+<h3>📦 G. Contoh Vektor Eigen</h3>
+
+<div class="explain">
+Misalkan λ = 2, maka:
+</div>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>1</span><span>2</span></div>
+        <div class="matrix-row"><span>-1</span><span>-2</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+<div class="explain">
+Dari sistem:
+<br>v₁ + 2v₂ = 0
+<br>👉 v₁ = -2v₂
+</div>
+
+<div class="explain">
+✨ Jadi vektor eigen:
+</div>
+
+<div class="formula-box">
+x = ( -2 , 1 )
+</div>
+
+
+<h3>📈 H. Makna Geometris</h3>
+
+<ul class="desc">
+<li>📏 λ > 1 → vektor membesar</li>
+<li>📉 0 < λ < 1 → mengecil</li>
+<li>🔄 λ < 0 → arah berlawanan</li>
+<li>⚠️ λ = 0 → runtuh ke titik nol</li>
+</ul>
+
+<h3>⚡ I. Sifat-Sifat Nilai Eigen</h3>
+
+<ul class="desc">
+<li>Jumlah nilai eigen = trace matriks</li>
+<li>Hasil kali nilai eigen = determinan</li>
+<li>Matriks segitiga → eigen = elemen diagonal</li>
+</ul>
+
+<h3>🎯 J. Aplikasi</h3>
+
+<ul class="desc">
+<li>📊 Machine Learning</li>
+<li>📈 Analisis data (PCA)</li>
+<li>🎮 Grafik komputer</li>
+<li>🔬 Fisika & teknik</li>
+</ul>
+
+<h3>🎯 Kesimpulan</h3>
+
+<div class="conclusion-box">
+✨ Persamaan karakteristik digunakan untuk mencari nilai eigen.
+<br>
+✨ Nilai eigen menunjukkan faktor skala transformasi.
+<br>
+✨ Vektor eigen menunjukkan arah yang tetap setelah transformasi.
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 6. Diagonalization Matriks -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Diagonal">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Diagonalization Matriks</h2>
+    </div>
+<div class="explain">
+💡 <b>Diagonalization (Diagonalisasi)</b> adalah proses mengubah suatu matriks menjadi 
+bentuk matriks diagonal menggunakan transformasi tertentu.
+</div>
+
+<div class="explain">
+✨ Matriks diagonal adalah matriks yang hanya memiliki elemen tidak nol pada diagonal utama.
+</div>
+
+
+<h3>🔷 A. Bentuk Matriks Diagonal</h3>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>λ₁</span><span>0</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>λ₂</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>0</span><span>λ₃</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+<div class="explain">
+📌 Elemen diagonal biasanya adalah <b>nilai eigen</b>.
+</div>
+
+
+<h3>⚙️ B. Konsep Diagonalisasi</h3>
+
+<div class="formula-box">
+A = PDP⁻¹
+</div>
+
+<div class="explain">
+📌 Di mana:
+</div>
+
+<ul class="desc">
+<li><b>A</b> = matriks asal</li>
+<li><b>P</b> = matriks vektor eigen</li>
+<li><b>D</b> = matriks diagonal (isi nilai eigen)</li>
+<li><b>P⁻¹</b> = invers dari P</li>
+</ul>
+
+
+<h3>🔍 C. Syarat Matriks Bisa Didagonal</h3>
+
+<div class="explain">
+Suatu matriks dapat didiagonalkan jika:
+</div>
+
+<ul class="desc">
+<li>✅ Memiliki cukup vektor eigen (bebas linear)</li>
+<li>✅ Jumlah vektor eigen = ukuran matriks</li>
+<li>✅ Matriks dapat dibentuk menjadi P yang invertible</li>
+</ul>
+
+<div class="explain">
+⚠️ Jika tidak memenuhi, maka matriks <b>tidak bisa didiagonalkan</b>.
+</div>
+
+
+<h3>🧮 D. Langkah-Langkah Diagonalisasi</h3>
+
+<ol class="desc">
+<li>🔹 Cari nilai eigen (λ)</li>
+<li>🔹 Cari vektor eigen untuk setiap λ</li>
+<li>🔹 Susun matriks P dari vektor eigen</li>
+<li>🔹 Susun matriks D dari nilai eigen</li>
+<li>🔹 Hitung P⁻¹</li>
+<li>🔹 Gunakan rumus A = PDP⁻¹</li>
+</ol>
+
+
+<h3>📊 E. Contoh Soal</h3>
+
+<div class="explain">
+Diketahui matriks:
+</div>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>2</span><span>1</span></div>
+        <div class="matrix-row"><span>0</span><span>3</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+
+<h4>1️⃣ Nilai Eigen</h4>
+
+<div class="formula-box">
+(2 − λ)(3 − λ) = 0
+</div>
+
+<div class="explain">
+🎯 λ₁ = 2 dan λ₂ = 3
+</div>
+
+<h4>2️⃣ Vektor Eigen</h4>
+
+<div class="explain">
+Untuk λ₁ = 2:
+</div>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>0</span><span>1</span></div>
+        <div class="matrix-row"><span>0</span><span>1</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+<div class="explain">
+👉 vektor eigen: (1,0)
+</div>
+
+<div class="explain">
+Untuk λ₂ = 3:
+</div>
+
+<div class="explain">
+👉 vektor eigen: (1,1)
+</div>
+
+<h4>3️⃣ Matriks P</h4>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>1</span><span>1</span></div>
+        <div class="matrix-row"><span>0</span><span>1</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+
+<h4>4️⃣ Matriks D</h4>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>2</span><span>0</span></div>
+        <div class="matrix-row"><span>0</span><span>3</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+
+<h3>📐 F. Manfaat Diagonalisasi</h3>
+
+<ul class="desc">
+<li>⚡ Mempermudah perhitungan pangkat matriks</li>
+<li>📊 Digunakan dalam analisis sistem dinamis</li>
+<li>🧠 Penting dalam machine learning (PCA)</li>
+<li>📈 Digunakan dalam grafik komputer</li>
+</ul>
+
+
+<h3>📦 G. Pangkat Matriks Lebih Mudah</h3>
+
+<div class="formula-box">
+Aⁿ = PDⁿP⁻¹
+</div>
+
+<div class="explain">
+✨ Karena D diagonal, maka Dⁿ sangat mudah dihitung.
+</div>
+
+
+<h3>📉 H. Jika Tidak Bisa Diagonal</h3>
+
+<div class="explain">
+⚠️ Jika matriks tidak memiliki cukup vektor eigen:
+</div>
+
+<ul class="desc">
+<li>Tidak bisa didiagonalkan</li>
+<li>Digunakan bentuk lain (Jordan Form)</li>
+</ul>
+
+<h3>🎯 Kesimpulan</h3>
+
+<div class="conclusion-box">
+✨ Diagonalisasi mengubah matriks menjadi bentuk sederhana.
+<br>
+✨ Menggunakan nilai eigen dan vektor eigen.
+<br>
+✨ Mempermudah banyak perhitungan matematika lanjutan.
+</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 7. Aplikasi Nilai Eigen dan Vektor Eigen -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section-card" id="Aplikasi">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Aplikasi Nilai Eigen dan Vektor Eigen</h2>
+    </div>
+    <h2 style="text-align:center;">📊 Aplikasi Nilai Eigen & Vektor Eigen</h2>
+
+<div class="explain">
+💡 Nilai eigen (λ) dan vektor eigen (x) tidak hanya konsep teori, 
+tetapi memiliki banyak aplikasi penting dalam berbagai bidang ilmu.
+</div>
+
+<div class="formula-box">
+Ax = λx
+</div>
+
+<div class="explain">
+📌 Persamaan ini menunjukkan bagaimana suatu transformasi hanya mengubah skala vektor.
+</div>
+
+<h3>🧠 A. Aplikasi dalam Machine Learning</h3>
+
+<div class="explain">
+✨ Dalam <b>Machine Learning</b>, nilai eigen digunakan dalam teknik 
+<b>PCA (Principal Component Analysis)</b>.
+</div>
+
+<ul class="desc">
+<li>📊 Mengurangi dimensi data</li>
+<li>📉 Menghilangkan noise</li>
+<li>📈 Menemukan fitur paling penting</li>
+</ul>
+
+<div class="explain">
+👉 Vektor eigen menunjukkan arah variasi terbesar data.
+</div>
+
+
+<h3>📊 B. Analisis Data & Statistik</h3>
+
+<div class="explain">
+Dalam statistik, nilai eigen digunakan pada matriks kovarians:
+</div>
+
+<div class="matrix-classic">
+    <div class="bracket left"></div>
+
+    <div class="matrix-content">
+        <div class="matrix-row"><span>σ₁₁</span><span>σ₁₂</span></div>
+        <div class="matrix-row"><span>σ₂₁</span><span>σ₂₂</span></div>
+    </div>
+
+    <div class="bracket right"></div>
+</div>
+
+<ul class="desc">
+<li>📌 Menentukan arah distribusi data</li>
+<li>📌 Mengukur variasi data</li>
+</ul>
+
+<h3>🎮 C. Grafik Komputer</h3>
+
+<div class="explain">
+Dalam grafik komputer, digunakan untuk:
+</div>
+
+<ul class="desc">
+<li>🎨 Transformasi objek (rotasi, scaling)</li>
+<li>🧊 Animasi 3D</li>
+<li>📐 Rendering gambar</li>
+</ul>
+
+<div class="explain">
+✨ Vektor eigen menjaga arah objek tetap stabil saat transformasi.
+</div>
+
+
+<h3>⚙️ D. Sistem Dinamis</h3>
+
+<div class="explain">
+Digunakan untuk menganalisis kestabilan sistem:
+</div>
+
+<div class="formula-box">
+xₙ₊₁ = Axₙ
+</div>
+
+<ul class="desc">
+<li>📈 λ > 1 → sistem tidak stabil</li>
+<li>📉 0 < λ < 1 → sistem stabil</li>
+<li>🔄 λ negatif → osilasi</li>
+</ul>
+
+
+<h3>🔌 E. Teknik & Fisika</h3>
+
+<div class="explain">
+Digunakan dalam:
+</div>
+
+<ul class="desc">
+<li>⚡ Analisis getaran</li>
+<li>🏗️ Struktur bangunan</li>
+<li>🔊 Gelombang & frekuensi alami</li>
+</ul>
+
+<div class="explain">
+📌 Nilai eigen = frekuensi alami sistem
+</div>
+
+<h3>🌐 F. Google Search (PageRank)</h3>
+
+<div class="explain">
+Algoritma PageRank menggunakan nilai eigen untuk menentukan:
+</div>
+
+<ul class="desc">
+<li>🌍 Ranking halaman web</li>
+<li>🔗 Kepentingan suatu halaman</li>
+</ul>
+
+<div class="formula-box">
+Ax = x
+</div>
+
+<div class="explain">
+📌 Ini adalah kasus khusus λ = 1
+</div>
+
+
+<h3>🧬 G. Biologi & Populasi</h3>
+
+<div class="explain">
+Digunakan dalam model pertumbuhan populasi:
+</div>
+
+<div class="formula-box">
+xₙ = Aⁿx₀
+</div>
+
+<ul class="desc">
+<li>📈 λ terbesar → laju pertumbuhan</li>
+<li>📉 λ kecil → penurunan populasi</li>
+</ul>
+
+
+<h3>📦 H. Kompresi Gambar</h3>
+
+<div class="explain">
+Digunakan dalam:
+</div>
+
+<ul class="desc">
+<li>🖼️ Kompresi gambar</li>
+<li>📉 Mengurangi ukuran file</li>
+<li>✨ Menjaga kualitas penting</li>
+</ul>
+
+<h3>🎯 I. Makna Geometris</h3>
+
+<ul class="desc">
+<li>📏 λ → faktor skala</li>
+<li>📐 vektor eigen → arah tetap</li>
+<li>🔄 transformasi → tidak mengubah arah eigen</li>
+</ul>
+
+<h3>🎯 Kesimpulan</h3>
+
+<div class="conclusion-box">
+✨ Nilai eigen & vektor eigen sangat penting dalam banyak bidang.
+<br>
+✨ Digunakan dalam AI, teknik, grafik, dan sains.
+<br>
+✨ Membantu memahami transformasi dan sistem kompleks.
+</div>
+  </section>
+ <!-- ══════════════════════════════════════════ -->
+<!-- SUMMARY NILAI EIGEN -->
+<!-- ══════════════════════════════════════════ -->
+<section class="section-card" style="background: linear-gradient(135deg,#e8e4fc,#bcbbf8);">
+  <div class="section-header">
+    <div class="section-num" style="background:#856fff;">✓</div>
+    <h2 style="color:#3814ad;">📊 Rangkuman Nilai Eigen & Vektor Eigen</h2>
+  </div>
+
+  <table class="info-table">
+    <thead>
+      <tr>
+        <th>Topik</th>
+        <th>Poin Utama</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Pengertian</strong></td>
+        <td>Nilai eigen (λ) adalah skalar, vektor eigen (x) adalah vektor tak nol yang memenuhi Ax = λx</td>
+      </tr>
+      <tr>
+        <td><strong>Persamaan Utama</strong></td>
+        <td>Ax = λx → transformasi hanya mengubah skala, bukan arah</td>
+      </tr>
+      <tr>
+        <td><strong>Persamaan Karakteristik</strong></td>
+        <td>det(λI − A) = 0 digunakan untuk mencari nilai eigen</td>
+      </tr>
+      <tr>
+        <td><strong>Matriks Identitas</strong></td>
+        <td>I adalah matriks dengan diagonal 1 dan lainnya 0</td>
+      </tr>
+      <tr>
+        <td><strong>Nilai Eigen</strong></td>
+        <td>Diperoleh dari akar persamaan polinomial karakteristik</td>
+      </tr>
+      <tr>
+        <td><strong>Vektor Eigen</strong></td>
+        <td>Diperoleh dari penyelesaian (λI − A)x = 0</td>
+      </tr>
+      <tr>
+        <td><strong>Makna Geometris</strong></td>
+        <td>λ menentukan skala, vektor eigen menunjukkan arah tetap</td>
+      </tr>
+      <tr>
+        <td><strong>Sifat</strong></td>
+        <td>Jumlah eigen = trace, hasil kali eigen = determinan</td>
+      </tr>
+      <tr>
+        <td><strong>Diagonalization</strong></td>
+        <td>A = PDP⁻¹, D berisi nilai eigen, P berisi vektor eigen</td>
+      </tr>
+      <tr>
+        <td><strong>Aplikasi</strong></td>
+        <td>Digunakan dalam AI, grafik komputer, fisika, dan analisis data</td>
+      </tr>
+      <tr>
+        <td><strong>Stabilitas Sistem</strong></td>
+        <td>λ menentukan apakah sistem stabil atau tidak</td>
+      </tr>
+      <tr>
+        <td><strong>PCA</strong></td>
+        <td>Digunakan untuk reduksi dimensi data dalam machine learning</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+    <div style="text-align:center; margin-top:24px;">
+    <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">←  Kembali ke Materi</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FAB scroll to top -->
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Kembali ke atas">↑</button>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.toc-bar a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.borderBottomColor = 'transparent');
+        links.forEach(l => {
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.style.borderBottomColor = 'var(--accent)';
+            l.style.color = 'var(--accent)';
+          } else {
+            l.style.color = '';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+</script>
 
 </body>
 </html>
