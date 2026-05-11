@@ -229,10 +229,53 @@ var features = [
 ];
 
 var creators = [
-  {initial:"T",nim:"43325040",name:"Toga Sijabat",role:"Member",avatarClass:"avatar-1"},
-  {initial:"J",nim:"43325024",name:"Joshua Nainggolan",role:"Member",avatarClass:"avatar-2"},
-  {initial:"D",nim:"43325041",name:"Desmonth Heiwa Hutabarat",role:"Member",avatarClass:"avatar-3"},
-  {initial:"A",nim:"43325006",name:"Abin Hendamo Boangmanalu",role:"Member",avatarClass:"avatar-4"}
+  {
+    initial: "T",
+    nim: "43325040",
+    name: "Toga Sijabat",
+    role: "Frontend Developer",
+    avatar: "images/toga.jpg",
+    bio: "Mengerjakan tampilan website dan animasi.",
+    instagram: "@toga",
+    email: "toga@gmail.com",
+    avatarClass: "avatar-1"
+  },
+
+  {
+    initial: "J",
+    nim: "43325024",
+    name: "Joshua Nainggolan",
+    role: "Backend Developer",
+    avatar: "images/joshua.jpg",
+    bio: "Mengembangkan database dan API.",
+    instagram: "@joshua",
+    email: "joshua@gmail.com",
+    avatarClass: "avatar-2"
+  },
+
+  {
+    initial: "D",
+    nim: "43325041",
+    name: "Desmonth Heiwa Hutabarat",
+    role: "UI/UX Designer",
+    avatar: "images/desmonth.jpg",
+    bio: "Mendesain interface dan pengalaman pengguna.",
+    instagram: "@desmonth",
+    email: "desmonth@gmail.com",
+    avatarClass: "avatar-3"
+  },
+
+  {
+    initial: "A",
+    nim: "43325006",
+    name: "Abin Hendamo Boangmanalu",
+    role: "Game Developer",
+    avatar: "images/abin.jpg",
+    bio: "Membuat game matematika interaktif.",
+    instagram: "@abin",
+    email: "abin@gmail.com",
+    avatarClass: "avatar-4"
+  }
 ];
 
 /* ═══ STATE ═══ */
