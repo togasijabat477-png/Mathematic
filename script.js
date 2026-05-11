@@ -198,19 +198,22 @@ var stats = [
     icon:'🧠',
     target:'∞',
     label:'Eksplorasi Konsep',
-    desc:'matematika modern dan visual'
+    desc:'matematika modern dan visual',
+    suffix:''
   },
   {
     icon:'🔗',
     target:'3',
     label:'Cabang Utama',
-    desc:'diskrit, linear, kriptografi'
+    desc:'diskrit, linear, kriptografi',
+    suffix:''
   },
   {
     icon:'⚡',
     target:'24/7',
     label:'Akses Pembelajaran',
-    desc:'belajar kapan saja'
+    desc:'belajar kapan saja',
+    suffix:''
   }
 ];
 
