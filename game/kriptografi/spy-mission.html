@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Secret Spy Mission — Game Edukasi Kriptografi</title>
   <meta name="description" content="Game edukasi interaktif tentang enkripsi, dekripsi, dan kriptografi modern." />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0-9..40,700;1,9..40,400&family=Playfair+Display:wght@700;800;900&display=swap" />
+  <!-- External fonts removed for local/offline use -->
   <style>
     /* ═════════════════════════════════════════════════════════════════
        SECRET SPY MISSION — Game Edukasi Kriptografi
@@ -37,9 +37,9 @@
       --border: 220 12% 22%;
 
       /* Fonts & Animation */
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-mono: 'Space Mono', monospace;
-      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-display: Georgia, 'Times New Roman', serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
       --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -761,7 +761,7 @@
       </div>
 
       <div class="menu-buttons">
-        <button class="btn-game primary" onclick="startGame()">▶ Mulai Misi</button>
+        <button class="btn-game primary" onclick="startGame()">🎯 Pilih Misi</button>
         <button class="btn-game secondary" onclick="showInstructions()">📖 Panduan</button>
         <button class="btn-game secondary" onclick="resetProgress()">🔄 Reset Game</button>
       </div>
@@ -977,7 +977,12 @@
   function loadGameState() {
     const saved = localStorage.getItem('spyMissionGameState');
     if (saved) {
-      gameState = { ...gameState, ...JSON.parse(saved) };
+      try {
+        gameState = { ...gameState, ...JSON.parse(saved) };
+      } catch (error) {
+        console.warn('Gagal memuat progress tersimpan:', error);
+        localStorage.removeItem('spyMissionGameState');
+      }
     }
   }
 
@@ -1084,7 +1089,7 @@
     // Update UI
     document.getElementById('missionTitle').textContent = `🎯 ${mission.title}`;
     document.getElementById('missionBrief').textContent = mission.explanation;
-    document.getElementById('messageContent').textContent = `"${mission.answer}"`;
+    document.getElementById('messageContent').textContent = mission.hint;
     document.getElementById('messageEncrypted').textContent = mission.encrypted;
     document.getElementById('pointsDisplay').textContent = gameState.totalPoints;
     document.getElementById('streakDisplay').textContent = gameState.streak;
@@ -1104,7 +1109,10 @@
     ciphers.forEach(cipher => {
       const btn = document.createElement('button');
       btn.className = 'cipher-btn';
-      btn.textContent = cipher.charAt(0).toUpperCase() + cipher.slice(1).replace('-', ' ');
+      const label = cipher === 'rsa-concept'
+        ? 'RSA Concept'
+        : cipher.charAt(0).toUpperCase() + cipher.slice(1).replace('-', ' ');
+      btn.textContent = label;
       btn.onclick = () => selectCipher(cipher, btn);
       container.appendChild(btn);
     });
@@ -1153,6 +1161,11 @@
   function submitAnswer() {
     const mission = gameState.currentMission;
     let userAnswer = '';
+
+    if (!gameState.selectedCipher) {
+      alert('Pilih metode dekripsi terlebih dahulu!');
+      return;
+    }
 
     if (gameState.selectedCipher === 'caesar') {
       const shift = parseInt(document.getElementById('caesarShift')?.value || 0);
