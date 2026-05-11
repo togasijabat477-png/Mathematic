@@ -196,20 +196,22 @@ var filterCategories = [
 var stats = [
   {
     icon:'orbit',
-    target:'∞',
+    target:999,
+    display:'∞',
     label:'Eksplorasi Konsep',
     desc:'matematika modern dan visual'
   },
   {
     icon:'network',
     target:3,
+    display:'3',
     label:'Cabang Utama',
-    desc:'diskrit, linear, kriptografi',
-    suffix:''
+    desc:'diskrit, linear, kriptografi'
   },
   {
     icon:'zap',
-    target:'24/7',
+    target:24,
+    display:'24/7',
     label:'Akses Pembelajaran',
     desc:'belajar kapan saja'
   }
