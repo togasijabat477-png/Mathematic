@@ -229,7 +229,7 @@ var features = [
 ];
 
 var creators = [
-  {initial:"J",nim:"43325040",name:"Toga Sijabat",role:"Member",avatarClass:"avatar-1"},
+  {initial:"T",nim:"43325040",name:"Toga Sijabat",role:"Member",avatarClass:"avatar-1"},
   {initial:"J",nim:"43325024",name:"Joshua Nainggolan",role:"Member",avatarClass:"avatar-2"},
   {initial:"D",nim:"43325041",name:"Desmonth Heiwa Hutabarat",role:"Member",avatarClass:"avatar-3"},
   {initial:"A",nim:"43325006",name:"Abin Hendamo Boangmanalu",role:"Member",avatarClass:"avatar-4"}
