@@ -194,9 +194,25 @@ var filterCategories = [
 ];
 
 var stats = [
-  {icon:'👥',target:10,label:'Mahasiswa Aktif',desc:'dari berbagai universitas',suffix:'+'},
-  {icon:'📚',target:10,label:'Topik Materi',desc:'terus berkembang',suffix:'+'},
-  {icon:'🏆',target:95,label:'Tingkat Kepuasan',desc:'dari survei pengguna',suffix:'%'}
+  {
+    icon:'orbit',
+    target:'∞',
+    label:'Eksplorasi Konsep',
+    desc:'matematika modern dan visual'
+  },
+  {
+    icon:'network',
+    target:3,
+    label:'Cabang Utama',
+    desc:'diskrit, linear, kriptografi',
+    suffix:''
+  },
+  {
+    icon:'zap',
+    target:'24/7',
+    label:'Akses Pembelajaran',
+    desc:'belajar kapan saja'
+  }
 ];
 
 var features = [
