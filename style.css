@@ -2,6 +2,34 @@
    MATHEMATIC — Design System & Styles
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
+
+.creators-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:24px;
+}
+
+.creator-card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    border-radius:24px;
+    padding:24px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.creator-card:hover{
+    transform:translateY(-8px);
+}
+
+.creator-photo{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:16px;
+}
+
 /* ===== NAVBAR RIGHT ===== */
 .right {
   display: flex;
