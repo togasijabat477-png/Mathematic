@@ -164,16 +164,14 @@ var gameData = [
     {num:"02",title:"Set Match Game",description:"Cocokkan elemen himpunan dengan cepat",tag:"Dasar",file:"game/matdis/set-match.html"},
     {num:"03",title:"Hitung Peluang!",description:"Tantangan kombinatorika dan peluang",tag:"Dasar",file:"game/matdis/hitung-peluang.html"},
     {num:"04",title:"Temukan Jalannya!",description:"Traversal graf dan pencarian jalur",tag:"Dasar",file:"game/matdis/temukan-jalan.html"},
-    {num:"05",title:"Benar atau Salah?",description:"Uji kemampuan logika proposisimu",tag:"Dasar",file:"game/matdis/truth-table.html"},
-    {num:"06",title:"Kombinatorika",description:"Permutasi, kombinasi, dan prinsip pencacahan",tag:"Menengah",file:"game/matdis/kombinatorika.html"},
-    {num:"★ NEW",title:"⬡ Graf Explorer",description:"Temukan jalur Euler & sirkuit Hamilton di graf interaktif. 5 level menantang!",tag:"Teori Graf",isNew:true,accentColor:"teal",file:"game/matdis/graf-explorer.html"}
+    {num:"05",title:"Benar atau Salah?",description:"Uji kemampuan logika proposisimu",tag:"Dasar",file:"game/matdis/truth-table.html"}
   ]},
   {icon:"👾",title:"Game Aljabar Linear",items:[
-    {num:"★ NEW",title:"⚔ Matrix Battle Arena",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
-    {num:"★ NEW",title:"Vector Racer",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
-    {num:"★ NEW",title:"Transform City",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
-    {num:"★ NEW",title:"Determinant Crisis",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/determinan-crisis.html"},
-    {num:"★ NEW",title:"Space Linear Mission",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/space-linear-mission.html"}
+    {num:"01",title:"⚔ Matrix Battle Arena",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
+    {num:"02",title:"Vector Racer",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
+    {num:"03",title:"Transform City",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
+    {num:"04",title:"Determinant Crisis",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/determinan-crisis.html"},
+    {num:"05",title:"Space Linear Mission",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/space-linear-mission.html"}
   ]},
   {icon:"🕹️",title:"Game Kriptografi",items:[
     {num:"01",title:"⚿ Cipher Quest",description:"Enkripsi & dekripsi pesan rahasia! Caesar, Atbash, Vigenère — 10 level dari mudah ke sulit.",tag:"Enkripsi & Dekripsi",isNew:true,accentColor:"green",file:"game/kriptografi/cipher-quest.html"},
