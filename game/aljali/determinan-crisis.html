@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Determinant Crisis — Aljabar Linear</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ── Variables (match Mathematic site) ── */
+:root {
+  --bg:     hsl(220,18%,7%);
+  --bg2:    hsl(220,15%,10%);
+  --bg3:    hsl(220,14%,13%);
+  --fg:     hsl(210,25%,92%);
+  --fg2:    hsl(210,15%,70%);
+  --fg3:    hsl(210,12%,50%);
+  --card:   hsl(220,13%,16%);
+  --border: hsl(220,12%,22%);
+  --teal:   hsl(174,72%,52%);
+  --cyan:   hsl(165,86%,44%);
+  --amber:  hsl(38,95%,58%);
+  --red:    hsl(0,72%,58%);
+  --violet: hsl(265,65%,65%);
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out: cubic-bezier(0,0,0.2,1);
+  --r: 12px;
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Playfair Display', serif;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { overflow-x:hidden; background:var(--bg); color:var(--fg); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
+
+/* Grid background */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: linear-gradient(hsl(220,15%,14%,.5) 1px, transparent 1px),
+                    linear-gradient(90deg, hsl(220,15%,14%,.5) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+
+/* ── Glitch effect ── */
+@keyframes glitch-x {
+  0%,100% { text-shadow: 0 0 0 transparent, 0 0 0 transparent; }
+  20% { text-shadow: -2px 0 hsl(174,100%,50%), 2px 0 hsl(265,100%,50%); }
+  40% { text-shadow: -2px 0 hsl(0,100%,50%), 2px 0 hsl(174,100%,50%); }
+  60% { text-shadow: 2px 0 hsl(265,100%,50%), -2px 0 hsl(38,95%,58%); }
+}
+.glitch-text { animation: glitch-x .3s ease; }
+.grid-glitch { animation: gridGlitch .4s ease; }
+@keyframes gridGlitch { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── Layout ── */
+#app { position:relative; z-index:1; min-height:100vh; }
+
+.screen { display:none; min-height:100vh; }
+.screen.active { display:flex; flex-direction:column; }
+
+/* ── Back Button ── */
+.back-btn {
+  position:fixed; top:16px; left:16px; z-index:200;
+  display:flex; align-items:center; gap:8px;
+  background:hsl(220,13%,16%,.9); border:1px solid hsl(220,12%,30%);
+  color:var(--fg2); padding:8px 16px; border-radius:99px;
+  font-family:var(--font-mono); font-size:.8rem; cursor:pointer;
+  backdrop-filter:blur(12px); transition:all .3s var(--ease-spring);
+}
+.back-btn:hover { color:var(--cyan); border-color:var(--cyan); transform:translateX(-3px); }
+
+/* ── HUD (top right) ── */
+.hud {
+  position:fixed; top:16px; right:16px; z-index:200;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.hud-box {
+  background:hsl(220,13%,16%,.9); border:1px solid hsl(220,12%,30%);
+  padding:12px 18px; border-radius:8px; font-family:var(--font-mono);
+  font-size:.8rem; backdrop-filter:blur(12px);
+  transition:all .3s;
+}
+.hud-timer { color:var(--amber); font-weight:700; font-size:1rem; }
+.hud-timer.danger { color:var(--red); animation:pulse-timer .6s ease-in-out infinite; }
+.hud-level { color:var(--cyan); }
+.hud-combo { color:var(--teal); }
+.hud-rank { color:var(--violet); }
+
+@keyframes pulse-timer { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.1)} }
+
+/* ── Intro Screen ── */
+#intro {
+  align-items:center; justify-content:center; text-align:center;
+  padding:60px 20px; position:relative;
+}
+
+.intro-bg-glitch {
+  position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 60% 60% at 50% 30%, hsl(174,100%,50%,.08), transparent 60%);
+}
+
+.intro-icon {
+  font-size:5rem; margin-bottom:20px;
+  animation:float-icon 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 40px hsl(174,100%,50%,.5));
+}
+
+.intro h1 {
+  font-family:var(--font-display); font-size:clamp(2.5rem,6vw,4.5rem);
+  font-weight:900; letter-spacing:-.03em; margin-bottom:8px;
+}
+.intro h1 span { color:var(--cyan); }
+
+.intro-subtitle {
+  font-family:var(--font-mono); font-size:.95rem; color:var(--fg2);
+  text-transform:uppercase; letter-spacing:.1em; margin-bottom:24px;
+}
+
+.intro p { font-size:1.05rem; color:var(--fg2); max-width:550px; line-height:1.8; margin:0 auto 40px; }
+
+.difficulty-grid { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-bottom:40px; }
+
+.diff-card {
+  background:var(--card); border:1.5px solid var(--border); border-radius:var(--r);
+  padding:20px 24px; width:min(140px,100%); cursor:pointer; transition:all .35s var(--ease-spring);
+  position:relative; overflow:hidden;
+}
+.diff-card::before {
+  content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--cyan),transparent);
+  opacity:0; transition:opacity .3s;
+}
+.diff-card:hover { transform:translateY(-6px); border-color:var(--cyan); }
+.diff-card:hover::before { opacity:.08; }
+
+.diff-icon { font-size:1.8rem; margin-bottom:8px; }
+.diff-name { font-weight:700; font-size:.85rem; margin-bottom:4px; }
+.diff-desc { font-size:.7rem; color:var(--fg3); font-family:var(--font-mono); }
+
+.btn-start {
+  background:linear-gradient(135deg, var(--cyan), var(--teal));
+  color:hsl(220,18%,7%); border:none; padding:16px 48px;
+  border-radius:var(--r); font-size:1.1rem; font-weight:700;
+  font-family:var(--font-body); cursor:pointer;
+  box-shadow:0 12px 40px hsl(174,100%,50%,.3);
+  transition:all .35s var(--ease-spring);
+}
+.btn-start:hover { transform:translateY(-4px); box-shadow:0 16px 60px hsl(174,100%,50%,.45); }
+.btn-start:active { transform:translateY(-1px) scale(.98); }
+
+/* ── Game Screen ── */
+#game {
+  flex-direction:column; padding:80px 20px 40px; align-items:center;
+  position:relative;
+}
+
+.crisis-header {
+  text-align:center; margin-bottom:32px; max-width:800px; width:100%;
+  position:relative; z-index:2;
+}
+
+.level-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(135deg, hsl(220,14%,20%), hsl(220,14%,14%));
+  border:1px solid var(--cyan); padding:8px 16px; border-radius:99px;
+  font-family:var(--font-mono); font-size:.75rem; color:var(--cyan);
+  text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px;
+}
+
+.crisis-header h2 {
+  font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem);
+  font-weight:900; letter-spacing:-.02em; margin-bottom:8px;
+}
+
+.crisis-desc { font-size:.95rem; color:var(--fg2); line-height:1.6; }
+
+/* ── Collapse effect ── */
+.collapse-warning {
+  background:linear-gradient(135deg, hsl(0,72%,20%), hsl(0,72%,14%));
+  border:1px solid var(--red); border-radius:8px;
+  padding:16px; margin:24px 0; text-align:center;
+  font-family:var(--font-mono); font-size:.85rem; color:var(--red);
+  animation:collapseGlow 1.2s ease-in-out infinite;
+}
+@keyframes collapseGlow {
+  0%,100% { box-shadow: 0 0 20px hsl(0,72%,50%,.3); }
+  50% { box-shadow: 0 0 40px hsl(0,72%,50%,.6); }
+}
+
+/* ── Matrix display (game area) ── */
+.game-area {
+  background:linear-gradient(135deg, hsl(220,14%,12%), hsl(220,14%,8%));
+  border:2px solid var(--cyan); border-radius:var(--r);
+  padding:32px; max-width:900px; width:100%;
+  position:relative; overflow:hidden;
+  box-shadow:0 0 40px hsl(174,100%,50%,.15), inset 0 0 40px hsl(174,100%,50%,.05);
+}
+
+.game-area::before {
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.1) 2px, rgba(0,0,0,.1) 4px);
+  pointer-events:none; z-index:1;
+}
+
+.crisis-title {
+  font-family:var(--font-mono); font-size:.75rem; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--fg3); margin-bottom:12px;
+  position:relative; z-index:2;
+}
+
+.puzzle-statement {
+  font-size:1rem; font-weight:600; color:var(--fg); margin-bottom:20px;
+  line-height:1.7; position:relative; z-index:2;
+}
+
+/* Matrix input grid */
+.matrix-grid {
+  display:inline-flex; flex-direction:column; gap:12px;
+  margin-bottom:24px; position:relative; z-index:2;
+}
+
+.matrix-row { display:flex; gap:12px; }
+
+.mat-cell {
+  width:60px; height:60px; border-radius:6px;
+  background:hsl(220,14%,16%); border:2px solid var(--border);
+  font-family:var(--font-mono); font-size:1rem; font-weight:700;
+  color:var(--cyan); text-align:center; display:flex; align-items:center;
+  justify-content:center; cursor:text; transition:all .3s;
+  position:relative; overflow:hidden;
+}
+
+.mat-cell::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, var(--cyan), transparent);
+  opacity:0; transition:opacity .3s;
+}
+
+.mat-cell:hover {
+  border-color:var(--cyan); box-shadow:0 0 12px hsl(174,100%,50%,.3);
+}
+
+.mat-cell:focus {
+  outline:none; border-color:var(--teal); box-shadow:0 0 20px hsl(174,100%,50%,.5);
+}
+
+.mat-cell.filled { border-color:var(--teal); }
+
+.mat-cell.wrong { border-color:var(--red); animation:cellShake .4s ease; }
+@keyframes cellShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-4px)} 60%{transform:translateX(4px)} }
+
+.mat-cell.correct { border-color:var(--cyan); background:hsl(174,100%,50%,.15); }
+
+/* Answer section */
+.answer-section {
+  position:relative; z-index:2;
+  background:hsl(220,14%,14%); border-radius:8px;
+  padding:20px; margin-bottom:20px;
+}
+
+.answer-label { font-family:var(--font-mono); font-size:.75rem; color:var(--fg3); margin-bottom:8px; }
+
+.answer-input {
+  width:100%; background:hsl(220,14%,10%); border:1.5px solid var(--border);
+  border-radius:6px; padding:12px 16px; font-family:var(--font-mono);
+  font-size:.95rem; color:var(--cyan); outline:none;
+  transition:all .3s;
+}
+
+.answer-input::placeholder { color:var(--fg3); }
+.answer-input:focus { border-color:var(--teal); box-shadow:0 0 16px hsl(174,100%,50%,.25); }
+
+/* Buttons */
+.btn-group { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; position:relative; z-index:2; }
+
+.btn-action {
+  background:hsl(220,14%,18%); border:1.5px solid var(--border);
+  color:var(--fg2); padding:10px 24px; border-radius:6px;
+  font-family:var(--font-body); font-size:.9rem; cursor:pointer;
+  transition:all .3s var(--ease-spring);
+}
+
+.btn-action:hover { border-color:var(--fg2); color:var(--fg); }
+
+.btn-submit {
+  background:linear-gradient(135deg, var(--teal), hsl(174,60%,38%));
+  color:hsl(220,18%,7%); border:none; padding:12px 32px;
+  border-radius:6px; font-weight:700; cursor:pointer;
+  font-family:var(--font-body); font-size:.95rem;
+  transition:all .35s var(--ease-spring);
+  box-shadow:0 6px 20px hsl(174,100%,50%,.3);
+}
+
+.btn-submit:hover { transform:translateY(-2px); box-shadow:0 10px 32px hsl(174,100%,50%,.4); }
+.btn-submit:active { transform:translateY(0) scale(.97); }
+
+/* Feedback */
+.feedback-msg {
+  margin-top:16px; padding:12px 16px; border-radius:6px;
+  font-size:.9rem; text-align:center; display:none;
+  animation:slideDown .4s var(--ease-spring);
+}
+
+.feedback-msg.success { background:hsl(142,70%,45%,.15); color:hsl(142,70%,60%); display:block; }
+.feedback-msg.error { background:hsl(0,72%,58%,.15); color:hsl(0,72%,75%); display:block; }
+
+@keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+/* Challenge popup */
+.modal-overlay {
+  display:none; position:fixed; inset:0; z-index:300;
+  background:hsl(220,18%,3%,.85); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center; padding:20px;
+}
+
+.modal-overlay.open { display:flex; }
+
+.modal-box {
+  background:linear-gradient(135deg, hsl(220,14%,14%), hsl(220,14%,10%));
+  border:2px solid var(--cyan); border-radius:var(--r);
+  padding:40px 36px; max-width:500px; width:100%;
+  box-shadow:0 0 60px hsl(174,100%,50%,.25);
+  animation:popIn .5s var(--ease-spring);
+}
+
+@keyframes popIn {
+  from { opacity:0; transform:scale(.85) translateY(-30px); }
+  to { opacity:1; transform:scale(1) translateY(0); }
+}
+
+.modal-close {
+  position:absolute; right:12px; top:12px;
+  width:32px; height:32px; border-radius:50%;
+  background:transparent; border:1px solid var(--border);
+  color:var(--fg2); cursor:pointer; transition:all .3s;
+}
+
+.modal-close:hover { border-color:var(--cyan); color:var(--cyan); }
+
+.modal-icon { font-size:2.5rem; text-align:center; margin-bottom:12px; }
+
+.modal-title {
+  font-family:var(--font-display); font-size:1.4rem; font-weight:900;
+  text-align:center; margin-bottom:8px; color:var(--cyan);
+}
+
+.modal-text { text-align:center; color:var(--fg2); line-height:1.7; margin-bottom:24px; }
+
+.modal-buttons { display:flex; gap:12px; }
+
+.btn-modal {
+  flex:1; padding:10px 16px; border-radius:6px;
+  font-weight:600; cursor:pointer; transition:all .3s;
+  font-family:var(--font-body);
+}
+
+.btn-modal.primary {
+  background:var(--teal); color:hsl(220,18%,7%);
+  box-shadow:0 4px 12px hsl(174,100%,50%,.25);
+}
+
+.btn-modal.secondary {
+  background:hsl(220,14%,18%); border:1px solid var(--border);
+  color:var(--fg2);
+}
+
+.btn-modal:hover { transform:translateY(-2px); }
+
+/* Combo counter */
+.combo-display {
+  position:fixed; bottom:40px; right:40px; z-index:150;
+  text-align:center; display:none;
+}
+
+.combo-count {
+  font-family:var(--font-display); font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:900; color:var(--amber);
+  text-shadow:0 0 20px hsl(38,95%,58%,.5);
+  animation:comboFloat 1.2s ease-in-out infinite;
+}
+
+@keyframes comboFloat {
+  0%,100% { transform:translateY(0) scale(1); }
+  50% { transform:translateY(-8px) scale(1.05); }
+}
+
+.combo-label { font-family:var(--font-mono); font-size:.75rem; color:var(--amber); }
+
+/* Victory screen */
+#victory {
+  align-items:center; justify-content:center; text-align:center;
+  padding:60px 20px; position:relative;
+}
+
+.victory-glow {
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 70% 70% at 50% 40%, var(--cyan) 5%, transparent 60%);
+  pointer-events:none;
+}
+
+.victory-icon { font-size:4rem; margin-bottom:16px; animation:victoryBounce .8s var(--ease-spring) infinite; }
+
+@keyframes victoryBounce {
+  0%,100% { transform:translateY(0) scale(1); }
+  50% { transform:translateY(-20px) scale(1.1); }
+}
+
+.victory h1 {
+  font-family:var(--font-display); font-size:clamp(2.5rem,6vw,4rem);
+  font-weight:900; letter-spacing:-.02em; margin-bottom:8px;
+  color:var(--cyan); text-shadow:0 0 30px hsl(174,100%,50%,.4);
+}
+
+.victory-rank {
+  font-family:var(--font-display); font-size:1.8rem; font-weight:800;
+  color:var(--violet); margin-bottom:16px;
+}
+
+.victory-stats {
+  display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:32px 0;
+}
+
+.v-stat {
+  background:hsl(220,14%,14%); border:1px solid var(--cyan);
+  border-radius:var(--r); padding:20px 28px;
+  min-width:130px;
+}
+
+.v-stat-val {
+  font-family:var(--font-display); font-size:1.8rem; font-weight:900;
+  color:var(--teal);
+}
+
+.v-stat-lbl { font-size:.75rem; color:var(--fg3); font-family:var(--font-mono); margin-top:6px; }
+
+.btn-restart {
+  background:hsl(220,14%,18%); border:1.5px solid var(--border);
+  color:var(--fg2); padding:12px 32px; border-radius:6px;
+  font-weight:600; cursor:pointer; font-family:var(--font-body);
+  transition:all .3s; margin:0 8px;
+}
+
+.btn-restart:hover { border-color:var(--cyan); color:var(--cyan); }
+
+.btn-home {
+  background:linear-gradient(135deg, var(--cyan), var(--teal));
+  color:hsl(220,18%,7%); border:none; padding:14px 36px;
+  border-radius:6px; font-weight:700; cursor:pointer;
+  font-family:var(--font-body); font-size:.95rem;
+  transition:all .35s var(--ease-spring);
+  box-shadow:0 6px 20px hsl(174,100%,50%,.3); margin:0 8px;
+}
+
+.btn-home:hover { transform:translateY(-3px); box-shadow:0 10px 32px hsl(174,100%,50%,.4); }
+
+/* Rank display */
+.rank-badge {
+  display:inline-block; padding:6px 14px; border-radius:99px;
+  background:hsl(220,14%,16%); border:1px solid var(--border);
+  font-family:var(--font-mono); font-size:.8rem; font-weight:700;
+  color:var(--violet); margin-top:12px;
+}
+
+/* Collapse animation (world falling) ── */
+.world-collapse {
+  position:fixed; inset:0; z-index:999; pointer-events:none;
+  display:none;
+}
+
+.collapse-bar {
+  position:absolute; width:100%; height:8px;
+  background:linear-gradient(90deg, transparent, var(--red), transparent);
+  animation:collapseBar 1.5s ease-in-out infinite;
+}
+
+@keyframes collapseBar {
+  0%,100% { opacity:0; transform:scaleX(.8); }
+  50% { opacity:1; transform:scaleX(1); }
+}
+
+/* Responsive */
+@media(max-width:768px) {
+  .hud { flex-direction:column; gap:8px; }
+  .hud-box { padding:8px 14px; font-size:.7rem; }
+  .game-area { padding:20px; }
+  .mat-cell { width:50px; height:50px; font-size:.9rem; }
+  .diff-card { width:min(120px,100%); padding:16px 12px; }
+  .combo-display { right:20px; bottom:30px; }
+}
+
+@media(max-width:480px) {
+  .intro h1 { font-size:1.8rem; }
+  .mat-cell { width:44px; height:44px; font-size:.8rem; }
+  .game-area { padding:16px; }
+  .answer-input { font-size:.85rem; }
+  .modal-box { padding:28px 20px; }
+}
+
+@keyframes float-icon {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  50% { transform:translateY(-16px) rotate(3deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- Back button -->
+<button class="back-btn" onclick="goBack()">&#9664; Kembali</button>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="hud-box">
+    <span style="color:var(--fg3)">LEVEL</span>
+    <div class="hud-level" id="levelDisplay">1/6</div>
+  </div>
+  <div class="hud-box">
+    <span style="color:var(--fg3)">TIME</span>
+    <div class="hud-timer" id="timerDisplay">2:00</div>
+  </div>
+  <div class="hud-box">
+    <span style="color:var(--fg3)">COMBO</span>
+    <div class="hud-combo" id="comboDisplay">×0</div>
+  </div>
+  <div class="hud-box">
+    <span style="color:var(--fg3)">RANK</span>
+    <div class="hud-rank" id="rankDisplay">E</div>
+  </div>
+</div>
+
+<!-- Combo counter (floating) -->
+<div class="combo-display" id="comboFloating">
+  <div class="combo-count" id="comboCount">×3</div>
+  <div class="combo-label">COMBO!</div>
+</div>
+
+<div id="app">
+
+<!-- ════════════════════════════════════
+     INTRO SCREEN
+════════════════════════════════════ -->
+<div class="screen active" id="intro">
+  <div class="intro-bg-glitch"></div>
+  <div class="intro-icon">⚡</div>
+  <h1>Determinant<br><span>Crisis</span></h1>
+  <div class="intro-subtitle">Aljabar Linear Emergency</div>
+  <p>Dunia virtual sedang runtuh. Hanya dengan menguasai determinan, invers, dan sistem persamaan linear — kamu bisa menyelamatkannya sebelum terlambat!</p>
+
+  <div class="difficulty-grid">
+    <div class="diff-card" onclick="startGame(1)">
+      <div class="diff-icon">🟢</div>
+      <div class="diff-name">EASY</div>
+      <div class="diff-desc">2×2 Matrices</div>
+    </div>
+    <div class="diff-card" onclick="startGame(2)">
+      <div class="diff-icon">🟡</div>
+      <div class="diff-name">NORMAL</div>
+      <div class="diff-desc">3×3 Matrices</div>
+    </div>
+    <div class="diff-card" onclick="startGame(3)">
+      <div class="diff-icon">🔴</div>
+      <div class="diff-name">HARD</div>
+      <div class="diff-desc">Mixed Types</div>
+    </div>
+  </div>
+
+  <button class="btn-start" onclick="startGame(2)">▶ Mulai Misi</button>
+
+  <p style="margin-top:28px; font-size:.8rem; color:var(--fg3); font-family:var(--font-mono)">
+    6 Level + 1 Boss Challenge · Tingkat Kesulitan Meningkat
+  </p>
+</div>
+
+<!-- ════════════════════════════════════
+     GAME SCREEN
+════════════════════════════════════ -->
+<div class="screen" id="game">
+  <div class="crisis-header" id="crisisHeader"></div>
+
+  <div class="collapse-warning" id="collapseWarning" style="display:none;">
+    ⚠ INTEGRITAS DUNIA: <span id="integrity">100</span>% | SISTEM AKAN RUNTUH DALAM <span id="warningTime">2:00</span>
+  </div>
+
+  <div class="game-area">
+    <div class="crisis-title" id="crisisTitle">MATRIKS RESCUE</div>
+    <div class="puzzle-statement" id="puzzleStatement">Hitung determinan matriks:</div>
+    <div class="matrix-grid" id="matrixDisplay"></div>
+    <div class="answer-section" id="answerSection"></div>
+    <div class="btn-group">
+      <button class="btn-submit" onclick="submitAnswer()">SUBMIT JAWABAN</button>
+      <button class="btn-action" onclick="showHint()">💡 HINT</button>
+    </div>
+    <div class="feedback-msg" id="feedback"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     VICTORY SCREEN
+════════════════════════════════════ -->
+<div class="screen" id="victory">
+  <div class="victory-glow"></div>
+  <div class="victory-icon">✨</div>
+  <h1>DUNIA TERSELAMATKAN</h1>
+  <div class="victory-rank" id="finalRank">RANK: S</div>
+
+  <div class="victory-stats">
+    <div class="v-stat">
+      <div class="v-stat-val" id="finalScore">2450</div>
+      <div class="v-stat-lbl">POIN</div>
+    </div>
+    <div class="v-stat">
+      <div class="v-stat-val" id="finalTime">4:32</div>
+      <div class="v-stat-lbl">WAKTU TERSISA</div>
+    </div>
+    <div class="v-stat">
+      <div class="v-stat-val" id="finalCombo">12</div>
+      <div class="v-stat-lbl">MAX COMBO</div>
+    </div>
+  </div>
+
+  <p style="color:var(--fg2); font-size:1rem; margin-bottom:24px; max-width:500px; line-height:1.8;">
+    Kamu berhasil menyelamatkan dunia virtual dari keruntuhan total. Determinan, invers, dan SPL bukanlah musuh lagi — mereka adalah senapanmu!
+  </p>
+
+  <div>
+    <button class="btn-restart" onclick="returnToIntro()">↻ Main Ulang</button>
+    <button class="btn-home" onclick="goBack()">⏠ Kembali ke Platform</button>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<!-- Challenge Modal -->
+<div class="modal-overlay" id="challengeModal">
+  <div class="modal-box" style="position:relative;">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-icon" id="modalIcon">🎯</div>
+    <div class="modal-title" id="modalTitle">CHALLENGE!</div>
+    <div class="modal-text" id="modalText">Invers Matrix: Apakah matriks ini invertible?</div>
+    <div class="modal-buttons">
+      <button class="btn-modal secondary" onclick="closeModal()">Mengerti</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═════════════════════════════════════════════════════════
+   DETERMINANT CRISIS — Game Logic
+   Aljabar Linear Emergency
+   ═════════════════════════════════════════════════════════ */
+
+/* ── Game State ── */
+var state = {
+  difficulty: 2,          // 1=easy, 2=normal, 3=hard
+  level: 0,               // 0-5 = levels, 6 = boss
+  timeLeft: 120,          // seconds per level (2 min)
+  timerInterval: null,
+  score: 0,
+  combo: 0,
+  maxCombo: 0,
+  questionsCorrect: 0,
+  totalQuestions: 0,
+  audioCtx: null,
+  currentPuzzle: null,
+  rank: 'E',
+  integrity: 100,         // world health
+};
+
+var levelData = [
+  { // Level 1: Determinant 2×2
+    type: 'determinant',
+    size: 2,
+    desc: 'Hitung determinan matriks 2×2 berikut:',
+    challenge: 'Determinan matriks adalah kunci untuk memahami transformasi linear',
+    example: [[2, 3], [1, 4]],
+  },
+  { // Level 2: Determinant 3×3
+    type: 'determinant',
+    size: 3,
+    desc: 'Hitung determinan matriks 3×3 menggunakan ekspansi baris/kolom:',
+    challenge: 'Untuk 3×3, gunakan metode Sarrus atau ekspansi kofaktor',
+    example: [[1, 2, 3], [0, 1, 4], [5, 6, 0]],
+  },
+  { // Level 3: Invers Matriks (2×2)
+    type: 'invers',
+    size: 2,
+    desc: 'Tentukan elemen (1,1) dari invers matriks ini:',
+    challenge: 'Invers hanya ada jika determinan ≠ 0. Rumus: A⁻¹ = (1/det(A)) × adj(A)',
+    example: [[4, 7], [2, 6]],
+  },
+  { // Level 4: SPL (2 persamaan, 2 variabel)
+    type: 'spl',
+    size: 2,
+    desc: 'Selesaikan SPL menggunakan metode Cramer (determinan):',
+    challenge: '2x + 3y = 8 dan x - y = 1. Gunakan aturan Cramer!',
+    example: null,
+  },
+  { // Level 5: Invers 3×3
+    type: 'invers',
+    size: 3,
+    desc: 'Tentukan elemen (2,3) dari invers matriks 3×3:',
+    challenge: 'Gunakan metode adjugate atau Gauss-Jordan',
+    example: [[1, 0, 2], [3, 1, 1], [2, 1, 2]],
+  },
+  { // Level 6: SPL Complex (3 persamaan, 3 variabel)
+    type: 'spl',
+    size: 3,
+    desc: 'Selesaikan SPL 3×3 menggunakan Cramer atau Gauss:',
+    challenge: 'x + 2y + z = 9, 2x - y + 3z = 8, 3x + y - z = 3',
+    example: null,
+  },
+];
+
+var bossLevel = { // Boss: Matriks Gaib
+  type: 'boss',
+  size: 3,
+  desc: 'BOSS MATRIKS: Elemen matriks gaib. Tentukan nilai yang hilang untuk membuat det = 25:',
+  challenge: 'Elemen (2,2) adalah ? Matriks: [[2, 1, 0], [3, ?, 1], [0, 1, 3]]',
+  example: null,
+};
+
+/* ── Audio (Web Audio API) ── */
+function initAudio() {
+  try { state.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+}
+
+function playSound(type) {
+  if (!state.audioCtx) return;
+  var ctx = state.audioCtx;
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  if (type === 'success') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(523, ctx.currentTime);
+    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.start(); osc.stop(ctx.currentTime + 0.5);
+  } else if (type === 'error') {
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.setValueAtTime(100, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+    osc.start(); osc.stop(ctx.currentTime + 0.25);
+  } else if (type === 'level_up') {
+    [262, 330, 392, 523].forEach(function(f, i) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine'; o.frequency.setValueAtTime(f, ctx.currentTime + i*0.1);
+      g.gain.setValueAtTime(0.12, ctx.currentTime + i*0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.1 + 0.35);
+      o.start(ctx.currentTime + i*0.1); o.stop(ctx.currentTime + i*0.1 + 0.35);
+    });
+  }
+}
+
+/* ── Navigation ── */
+function goBack() {
+  clearInterval(state.timerInterval);
+  history.back();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+/* ── Start Game ── */
+function startGame(diff) {
+  initAudio();
+  state.difficulty = diff;
+  state.level = 1;
+  state.score = 0;
+  state.combo = 0;
+  state.maxCombo = 0;
+  state.questionsCorrect = 0;
+  state.totalQuestions = 0;
+  state.rank = 'E';
+  state.integrity = 100;
+  state.timeLeft = 120;
+
+  showScreen('game');
+  loadLevel(1);
+  startTimer();
+  updateHUD();
+}
+
+function returnToIntro() {
+  clearInterval(state.timerInterval);
+  state.timeLeft = 120;
+  showScreen('intro');
+}
+
+/* ── Timer ── */
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(function() {
+    state.timeLeft--;
+    updateHUD();
+
+    if (state.timeLeft <= 30) {
+      document.querySelector('.hud-timer').classList.add('danger');
+      if (state.timeLeft === 30 || state.timeLeft === 10) playSound('error');
+    }
+
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timerInterval);
+      showTimeout();
+    }
+  }, 1000);
+}
+
+function formatTime(s) {
+  var m = Math.floor(s / 60);
+  var sec = s % 60;
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+function updateHUD() {
+  document.getElementById('timerDisplay').textContent = formatTime(state.timeLeft);
+  document.getElementById('levelDisplay').textContent = (state.level < 7) ? state.level + '/6' : 'BOSS';
+  document.getElementById('comboDisplay').textContent = '×' + state.combo;
+  document.getElementById('rankDisplay').textContent = state.rank;
+  document.getElementById('integrity').textContent = Math.max(0, state.integrity);
+}
+
+/* ── Level Logic ── */
+function loadLevel(levelNum) {
+  state.level = levelNum;
+  state.timeLeft = 120;
+  document.querySelector('.hud-timer').classList.remove('danger');
+  updateHUD();
+
+  var data = levelNum === 7 ? bossLevel : levelData[levelNum - 1];
+  state.currentPuzzle = generatePuzzle(data, levelNum);
+
+  var header = document.getElementById('crisisHeader');
+  var badge = levelNum === 7 ? 'BOSS CHALLENGE — FINAL' : 'LEVEL ' + levelNum + '/6';
+  var title = levelNum === 7 ? 'Matriks Gaib Terakhir' : 'World Collapse - ' + formatTime(state.timeLeft);
+
+  header.innerHTML =
+    '<div class="level-badge">⚡ ' + badge + '</div>' +
+    '<h2>' + title + '</h2>' +
+    '<div class="crisis-desc">' + data.desc + '</div>';
+
+  renderPuzzle();
+
+  // Show challenge modal every 2 levels
+  if (levelNum % 2 === 0 && levelNum < 7) {
+    showChallengeModal(data.challenge);
+  }
+}
+
+function generatePuzzle(template, level) {
+  var puzzle = { type: template.type, size: template.size };
+
+  if (template.type === 'determinant') {
+    // Generate random matrix
+    var matrix = [];
+    for (var i = 0; i < template.size; i++) {
+      var row = [];
+      for (var j = 0; j < template.size; j++) {
+        row.push(Math.floor(Math.random() * 10) - 5); // -5 to 5
+      }
+      matrix.push(row);
+    }
+    puzzle.matrix = matrix;
+    puzzle.answer = calculateDeterminant(matrix);
+    puzzle.hintText = 'Determinan: gunakan ekspansi kofaktor atau metode Sarrus (untuk 3×3)';
+  } else if (template.type === 'invers') {
+    var matrix = [];
+    for (var i = 0; i < template.size; i++) {
+      var row = [];
+      for (var j = 0; j < template.size; j++) {
+        row.push(Math.floor(Math.random() * 10) + 1);
+      }
+      matrix.push(row);
+    }
+    puzzle.matrix = matrix;
+    var det = calculateDeterminant(matrix);
+    if (det === 0) puzzle.matrix[0][0] = puzzle.matrix[0][0] + 1; // ensure invertible
+    puzzle.answer = getInverseElement(puzzle.matrix);
+    puzzle.hintText = 'Elemen invers: A⁻¹ = (1/det) × adj(A)';
+  } else if (template.type === 'spl') {
+    puzzle.equations = generateSPL(template.size);
+    puzzle.answer = solveSPL(puzzle.equations);
+    puzzle.hintText = 'Gunakan aturan Cramer: x = det(Ax)/det(A)';
+  } else if (template.type === 'boss') {
+    puzzle.matrix = [[2, 1, 0], [3, 0, 1], [0, 1, 3]]; // fixed for boss
+    puzzle.missingElement = 1; // (1,1) index
+    puzzle.targetDet = 25;
+    puzzle.answer = 6; // x = 6 makes det = 25
+    puzzle.hintText = 'Determinan = 25. Elemen (2,2) = ?';
+  }
+
+  return puzzle;
+}
+
+function calculateDeterminant(matrix) {
+  var n = matrix.length;
+  if (n === 1) return matrix[0][0];
+  if (n === 2) return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
+
+  // 3×3 - Sarrus method
+  if (n === 3) {
+    return matrix[0][0]*(matrix[1][1]*matrix[2][2] - matrix[1][2]*matrix[2][1])
+         - matrix[0][1]*(matrix[1][0]*matrix[2][2] - matrix[1][2]*matrix[2][0])
+         + matrix[0][2]*(matrix[1][0]*matrix[2][1] - matrix[1][1]*matrix[2][0]);
+  }
+  return 0;
+}
+
+function getInverseElement(matrix) {
+  var det = calculateDeterminant(matrix);
+  if (matrix.length === 2) {
+    // Inverse of 2×2: [1/det * [d, -b], [-c, a]]
+    return Math.round((matrix[1][1] / det) * 100) / 100;
+  } else if (matrix.length === 3) {
+    // Adjugate element (2,3) / det
+    var adj23 = matrix[0][1]*matrix[1][0] - matrix[0][0]*matrix[1][1];
+    return Math.round((adj23 / det) * 100) / 100;
+  }
+  return 0;
+}
+
+function generateSPL(size) {
+  if (size === 2) {
+    // 2x + 3y = 8, x - y = 1 => x=2, y=2/3
+    return { coeff: [[2, 3], [1, -1]], const: [8, 1], answer: { x: 2, y: 2/3 } };
+  } else {
+    // 3×3 SPL
+    return { coeff: [[1, 2, 1], [2, -1, 3], [3, 1, -1]], const: [9, 8, 3], answer: { x: 2, y: 1, z: 4 } };
+  }
+}
+
+function solveSPL(spl) {
+  // Just return the first solution for simplicity
+  if (spl.answer.x !== undefined) return spl.answer.x;
+  return 0;
+}
+
+/* ── Puzzle Rendering ── */
+function renderPuzzle() {
+  var p = state.currentPuzzle;
+  var display = document.getElementById('matrixDisplay');
+  var answerSec = document.getElementById('answerSection');
+
+  display.innerHTML = '';
+  answerSec.innerHTML = '';
+
+  if (p.type === 'determinant' || p.type === 'invers') {
+    // Show matrix
+    display.className = 'matrix-grid';
+    p.matrix.forEach(function(row) {
+      var rowEl = document.createElement('div');
+      rowEl.className = 'matrix-row';
+      row.forEach(function(val) {
+        var cell = document.createElement('div');
+        cell.className = 'mat-cell';
+        cell.textContent = val;
+        rowEl.appendChild(cell);
+      });
+      display.appendChild(rowEl);
+    });
+
+    var label = p.type === 'determinant' ? 'Determinan:' : 'Jawaban (element):';
+    answerSec.innerHTML =
+      '<div class="answer-label">' + label + '</div>' +
+      '<input class="answer-input" id="answerInput" type="number" placeholder="Masukkan jawaban..." step="0.01"/>';
+  } else if (p.type === 'spl') {
+    var eqStr = '';
+    for (var i = 0; i < p.equations.coeff.length; i++) {
+      var coef = p.equations.coeff[i];
+      var c = p.equations.const[i];
+      eqStr += coef[0] + 'x';
+      if (coef.length > 1) eqStr += (coef[1] >= 0 ? ' + ' : ' - ') + Math.abs(coef[1]) + 'y';
+      if (coef.length > 2) eqStr += (coef[2] >= 0 ? ' + ' : ' - ') + Math.abs(coef[2]) + 'z';
+      eqStr += ' = ' + c + '<br>';
+    }
+    display.innerHTML = '<div style="font-family:var(--font-mono);font-size:.95rem;text-align:center;line-height:2;color:var(--cyan)">' + eqStr + '</div>';
+
+    answerSec.innerHTML =
+      '<div class="answer-label">Nilai x (variabel pertama):</div>' +
+      '<input class="answer-input" id="answerInput" type="number" placeholder="x = ?" step="0.01"/>';
+  } else if (p.type === 'boss') {
+    display.className = 'matrix-grid';
+    var bossMat = [[2, 1, 0], [3, '?', 1], [0, 1, 3]];
+    bossMat.forEach(function(row, i) {
+      var rowEl = document.createElement('div');
+      rowEl.className = 'matrix-row';
+      row.forEach(function(val, j) {
+        var cell = document.createElement('div');
+        cell.className = 'mat-cell';
+        cell.textContent = val;
+        if (val === '?') cell.style.borderColor = 'var(--red)';
+        rowEl.appendChild(cell);
+      });
+      display.appendChild(rowEl);
+    });
+
+    answerSec.innerHTML =
+      '<div class="answer-label">Elemen (2,2) [untuk det = 25]:</div>' +
+      '<input class="answer-input" id="answerInput" type="number" placeholder="? = " step="0.01"/>';
+  }
+}
+
+/* ── Answer Submission ── */
+function submitAnswer() {
+  var input = document.getElementById('answerInput');
+  var userAnswer = parseFloat(input.value);
+  var correct = Math.abs(userAnswer - state.currentPuzzle.answer) < 0.01;
+
+  state.totalQuestions++;
+
+  if (correct) {
+    state.questionsCorrect++;
+    state.combo++;
+    state.maxCombo = Math.max(state.maxCombo, state.combo);
+    state.score += (100 + state.combo * 25 + Math.floor(state.timeLeft / 10));
+
+    document.getElementById('feedback').className = 'feedback-msg success';
+    document.getElementById('feedback').textContent = '✓ Benar! Combo: ×' + state.combo;
+    input.className = 'answer-input';
+
+    playSound('success');
+
+    // Floating combo
+    if (state.combo % 3 === 0) {
+      document.getElementById('comboFloating').style.display = 'block';
+      document.getElementById('comboCount').textContent = '×' + state.combo;
+      setTimeout(function() { document.getElementById('comboFloating').style.display = 'none'; }, 1200);
+    }
+
+    updateHUD();
+
+    setTimeout(function() {
+      if (state.level < 6) {
+        loadLevel(state.level + 1);
+      } else if (state.level === 6) {
+        loadLevel(7); // Boss
+      } else {
+        showVictory();
+      }
+    }, 1500);
+  } else {
+    state.combo = 0;
+    state.integrity = Math.max(0, state.integrity - 15);
+
+    document.getElementById('feedback').className = 'feedback-msg error';
+    document.getElementById('feedback').textContent = '✗ Salah. Jawaban: ' + state.currentPuzzle.answer;
+    input.className = 'answer-input wrong';
+
+    setTimeout(function() { input.className = 'answer-input'; }, 600);
+    playSound('error');
+    updateHUD();
+
+    // Collapse effect
+    if (state.integrity <= 0) {
+      showTimeout();
+    }
+  }
+}
+
+function showHint() {
+  playSound('success');
+  var h = state.currentPuzzle.hintText;
+  showChallengeModal('💡 ' + h);
+}
+
+/* ── Challenge Modal ── */
+function showChallengeModal(text) {
+  document.getElementById('modalText').textContent = text;
+  document.getElementById('challengeModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('challengeModal').classList.remove('open');
+}
+
+/* ── Victory / Timeout ── */
+function showVictory() {
+  clearInterval(state.timerInterval);
+
+  // Calculate rank
+  var pct = (state.questionsCorrect / state.totalQuestions) * 100;
+  if (pct === 100 && state.maxCombo >= 5) state.rank = 'S';
+  else if (pct >= 90) state.rank = 'A';
+  else if (pct >= 75) state.rank = 'B';
+  else if (pct >= 60) state.rank = 'C';
+  else state.rank = 'D';
+
+  document.getElementById('finalScore').textContent = state.score;
+  document.getElementById('finalTime').textContent = formatTime(state.timeLeft);
+  document.getElementById('finalCombo').textContent = state.maxCombo;
+  document.getElementById('finalRank').textContent = 'RANK: ' + state.rank;
+
+  showScreen('victory');
+  playSound('level_up');
+}
+
+function showTimeout() {
+  clearInterval(state.timerInterval);
+  alert('⚠ Dunia runtuh! Integritas habis. Coba lagi!');
+  returnToIntro();
+}
+
+/* ── Init ── */
+(function() {
+  // Ambient setup
+})();
+</script>
+</body>
+</html>
