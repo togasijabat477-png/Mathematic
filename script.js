@@ -169,7 +169,11 @@ var gameData = [
     {num:"★ NEW",title:"⬡ Graf Explorer",description:"Temukan jalur Euler & sirkuit Hamilton di graf interaktif. 5 level menantang!",tag:"Teori Graf",isNew:true,accentColor:"teal",file:"game/matdis/graf-explorer.html"}
   ]},
   {icon:"👾",title:"Game Aljabar Linear",items:[
-    {num:"★ NEW",title:"⚔ Matrix Battle",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/matrix-battle.html"}
+    {num:"★ NEW",title:"⚔ Matrix Battle Arena",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/matrix-battle.html"},
+     {num:"★ NEW",title:"Vector Racer",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/matrix-battle.html"},
+     {num:"★ NEW",title:"Transform City",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/matrix-battle.html"},
+     {num:"★ NEW",title:"Determinant Crisis",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/matrix-battle.html"},
+     {num:"★ NEW",title:"Space Linear Mission",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/matrix-battle.html"}
   ]},
   {icon:"🕹️",title:"Game Kriptografi",items:[
     {num:"01",title:"⚿ Cipher Quest",description:"Enkripsi & dekripsi pesan rahasia! Caesar, Atbash, Vigenère — 10 level dari mudah ke sulit.",tag:"Enkripsi & Dekripsi",isNew:true,accentColor:"green",file:"game/kriptografi/cipher-quest.html"},
