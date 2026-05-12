@@ -248,7 +248,7 @@ var creators = [
     nim: "43325024",
     name: "Joshua Nainggolan",
     role: "Backend Developer",
-    avatar: "images/joshua.jpg",
+    avatar: "images/joshua.jpeg",
     bio: "Mengembangkan database dan API.",
     instagram: "@joshua",
     email: "joshua@gmail.com",
