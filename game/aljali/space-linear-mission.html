@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Space Linear Mission — Aljabar Linear</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@700;800;900&display=swap"/>
+<style>
+/* ═══ SITE DESIGN SYSTEM ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:220 18% 7%;--bg2:220 15% 10%;--bg3:220 14% 13%;
+  --fg:210 25% 92%;--fg2:210 15% 70%;--fg3:210 12% 50%;
+  --surface:220 13% 16%;--surface2:220 12% 20%;
+  --teal:174 72% 52%;--teal-dim:174 50% 32%;
+  --amber:38 95% 58%;--violet:265 65% 65%;--violet-dim:265 50% 40%;
+  --border:220 12% 22%;--border-hi:220 12% 30%;
+  --radius:.75rem;
+  --font-display:'Playfair Display',serif;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ease-smooth:cubic-bezier(.4,0,.2,1);
+  --ease-out:cubic-bezier(0,0,.2,1);
+  /* Space-specific */
+  --laser:#3dd9b3;--laser-b:#a78bfa;--star-core:#fff;
+  --planet-a:174 72% 52%;--planet-b:265 65% 65%;--planet-c:38 95% 58%;
+  --planet-d:340 75% 58%;--planet-e:142 71% 45%;
+}
+html,body{height:100%;overflow:hidden;background:hsl(var(--bg))}
+body{font-family:var(--font-body);color:hsl(var(--fg));-webkit-font-smoothing:antialiased;user-select:none}
+
+/* ═══ KEYFRAMES ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes float2{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(3deg)}}
+@keyframes orbitRing{to{transform:rotateX(70deg) rotateZ(360deg)}}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes laserShot{0%{opacity:1;transform:scaleX(0);transform-origin:left}30%{transform:scaleX(1)}100%{opacity:0;transform:scaleX(1)}}
+@keyframes explosion{0%{opacity:1;transform:scale(0)}60%{opacity:1;transform:scale(1.4)}100%{opacity:0;transform:scale(1.8)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.5) rotate(-8deg)}70%{transform:scale(1.1) rotate(2deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes thruster{0%,100%{opacity:.7;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1.2)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes scanline{0%{top:-4px}100%{top:100%}}
+@keyframes warpIn{0%{opacity:0;transform:scale(0) rotate(180deg)}80%{transform:scale(1.1) rotate(-5deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes nebula{0%,100%{opacity:.08;transform:scale(1) rotate(0)}50%{opacity:.15;transform:scale(1.06) rotate(5deg)}}
+@keyframes dashMove{to{stroke-dashoffset:-20}}
+@keyframes progressFill{from{width:0}to{width:var(--target-w)}}
+@keyframes correctGlow{0%,100%{box-shadow:none}50%{box-shadow:0 0 24px hsl(var(--teal)/.5)}}
+
+/* ═══ LAYOUT ═══ */
+#app{position:relative;width:100%;height:100%;overflow:hidden}
+.screen{display:none;position:absolute;inset:0;flex-direction:column}
+.screen.active{display:flex}
+
+/* ═══ STARFIELD ═══ */
+#starCanvas{position:fixed;inset:0;pointer-events:none;z-index:0}
+
+/* ═══ NEBULA BG ═══ */
+.nebula{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 20% 30%,hsl(265 65% 65%/.07),transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%,hsl(174 72% 52%/.06),transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 10%,hsl(38 95% 58%/.04),transparent 50%);
+  animation:nebula 25s ease-in-out infinite;
+}
+
+/* ═══ NAVBAR ═══ */
+.navbar{
+  position:relative;z-index:100;
+  border-bottom:1px solid hsl(var(--border));
+  background:hsl(var(--bg)/.88);backdrop-filter:blur(24px) saturate(1.8);
+  flex-shrink:0;padding:0 1.5rem;
+}
+.nav-inner{height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,hsl(var(--teal)),hsl(var(--violet)));
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+  box-shadow:0 0 14px hsl(var(--teal)/.35);
+}
+.nav-title{font-family:var(--font-display);font-size:1.1rem;font-weight:800}
+.grad{background:linear-gradient(135deg,hsl(var(--teal)) 20%,hsl(var(--violet)) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-amber{background:linear-gradient(135deg,hsl(var(--amber)),hsl(38 95% 78%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-chip{
+  background:hsl(var(--surface));border:1px solid hsl(var(--border));
+  border-radius:999px;padding:4px 12px;
+  font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--fg3));
+}
+/* Buttons */
+.btn{border:none;border-radius:var(--radius);cursor:pointer;font-family:var(--font-body);font-weight:600;transition:all .25s var(--ease-spring);display:inline-flex;align-items:center;gap:7px}
+.btn-sm{padding:7px 16px;font-size:.82rem}
+.btn-md{padding:11px 24px;font-size:.9rem}
+.btn-lg{padding:14px 32px;font-size:1rem}
+.btn-primary{background:hsl(var(--teal));color:hsl(220 18% 7%)}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 24px hsl(var(--teal)/.3)}
+.btn-outline{background:transparent;color:hsl(var(--fg));border:1px solid hsl(var(--border-hi))}
+.btn-outline:hover{border-color:hsl(var(--teal)/.5);background:hsl(var(--teal)/.07);transform:translateY(-1px)}
+.btn-amber{background:hsl(var(--amber));color:hsl(220 18% 7%)}
+.btn-amber:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.btn-violet{background:hsl(var(--violet));color:#fff}
+.btn-violet:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.btn-danger{background:hsl(0 75% 55%);color:#fff}
+.btn-danger:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.btn:active{transform:scale(.97) !important}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important}
+
+/* ═══════════════════════════════
+   HOME SCREEN
+════════════════════════════════ */
+#screen-home{background:transparent;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.home-inner{position:relative;z-index:2;max-width:700px;padding:2rem;animation:fadeUp .8s var(--ease-out) both}
+.home-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:hsl(var(--teal)/.1);border:1px solid hsl(var(--teal)/.25);
+  color:hsl(var(--teal));padding:6px 18px;border-radius:999px;
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:.06em;margin-bottom:28px;
+}
+.home-ship{font-size:6rem;animation:float 4s ease-in-out infinite;display:block;margin-bottom:12px;filter:drop-shadow(0 0 24px hsl(var(--teal)/.5))}
+.home-title{font-family:var(--font-display);font-size:clamp(2.4rem,6vw,4rem);font-weight:900;letter-spacing:-.03em;line-height:1.06;margin-bottom:20px}
+.home-desc{color:hsl(var(--fg2));font-size:1.05rem;line-height:1.7;max-width:520px;margin:0 auto 40px}
+.home-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.home-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pill{background:hsl(var(--surface));border:1px solid hsl(var(--border));border-radius:999px;padding:6px 14px;font-size:.78rem;color:hsl(var(--fg2));display:flex;align-items:center;gap:6px}
+
+/* ═══════════════════════════════
+   MISSION SELECT / GALAXY MAP
+════════════════════════════════ */
+#screen-galaxy{overflow-y:auto}
+.galaxy-body{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:2rem}
+.galaxy-header{text-align:center;margin-bottom:40px;animation:fadeUp .5s var(--ease-out) both}
+.galaxy-title{font-family:var(--font-display);font-size:2.2rem;font-weight:900;margin-bottom:8px}
+.galaxy-subtitle{color:hsl(var(--fg2));font-size:.95rem}
+/* Mission cards */
+.mission-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-bottom:32px}
+.mission-card{
+  background:hsl(var(--surface));border:1px solid hsl(var(--border));
+  border-radius:calc(var(--radius)*1.2);padding:24px;cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:all .35s var(--ease-spring);
+  animation:fadeUp .5s var(--ease-out) both;
+}
+.mission-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,hsl(var(--teal)),hsl(var(--violet)));
+  transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease-smooth);
+}
+.mission-card:hover:not(.locked)::before{transform:scaleX(1)}
+.mission-card:hover:not(.locked){transform:translateY(-6px);border-color:hsl(var(--teal)/.35);box-shadow:0 16px 40px hsl(220 18% 3%/.5)}
+.mission-card.locked{opacity:.5;cursor:not-allowed}
+.mission-card.completed{border-color:hsl(142 71% 45%/.4)}
+.mission-num{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3));margin-bottom:10px}
+.mission-planet{font-size:2.8rem;margin-bottom:12px;display:block;filter:drop-shadow(0 0 12px currentColor)}
+.mission-name{font-weight:700;font-size:1.05rem;margin-bottom:6px}
+.mission-desc{font-size:.82rem;color:hsl(var(--fg2));line-height:1.55;margin-bottom:14px}
+.mission-tag{
+  display:inline-block;border-radius:999px;padding:3px 10px;
+  font-family:var(--font-mono);font-size:.68rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.tag-easy{background:hsl(142 71% 45%/.15);color:hsl(142 71% 55%);border:1px solid hsl(142 71% 45%/.3)}
+.tag-medium{background:hsl(var(--amber)/.15);color:hsl(var(--amber));border:1px solid hsl(var(--amber)/.3)}
+.tag-hard{background:hsl(var(--violet)/.15);color:hsl(var(--violet));border:1px solid hsl(var(--violet)/.3)}
+.tag-expert{background:hsl(0 75% 55%/.15);color:hsl(0 75% 65%);border:1px solid hsl(0 75% 55%/.3)}
+.mission-lock{position:absolute;top:14px;right:14px;font-size:1.2rem;opacity:.6}
+.mission-done{position:absolute;top:14px;right:14px;color:hsl(142 71% 50%);font-size:1rem;font-weight:700}
+.mission-xp{font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--amber));margin-top:8px}
+/* Ship stats */
+.ship-card{
+  background:hsl(var(--surface));border:1px solid hsl(var(--teal)/.25);
+  border-radius:var(--radius);padding:20px;display:flex;align-items:center;gap:20px;
+  margin-bottom:24px;animation:fadeUp .5s var(--ease-out) .1s both;
+}
+.ship-emoji{font-size:3rem;animation:float2 3s ease-in-out infinite}
+.ship-stats{flex:1}
+.ship-name{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin-bottom:8px}
+.stat-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.stat-label{font-family:var(--font-mono);font-size:.68rem;color:hsl(var(--fg3));width:80px;flex-shrink:0}
+.stat-bar{flex:1;height:5px;background:hsl(var(--surface2));border-radius:999px;overflow:hidden}
+.stat-fill{height:100%;border-radius:999px;transition:width .6s var(--ease-smooth)}
+.sf-teal{background:linear-gradient(90deg,hsl(var(--teal)),hsl(174 72% 72%))}
+.sf-amber{background:linear-gradient(90deg,hsl(var(--amber)),hsl(38 95% 75%))}
+.sf-violet{background:linear-gradient(90deg,hsl(var(--violet)),hsl(265 65% 82%))}
+.stat-val{font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--fg2));width:28px;text-align:right}
+/* XP bar */
+.xp-row{display:flex;align-items:center;gap:10px}
+.xp-bar{flex:1;height:8px;background:hsl(var(--surface2));border-radius:999px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,hsl(var(--amber)),hsl(38 95% 75%));border-radius:999px;transition:width .8s var(--ease-smooth)}
+.xp-text{font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--amber))}
+.level-badge{
+  background:hsl(var(--amber)/.15);border:1px solid hsl(var(--amber)/.3);
+  color:hsl(var(--amber));border-radius:999px;padding:4px 12px;
+  font-family:var(--font-mono);font-size:.75rem;font-weight:700;white-space:nowrap;
+}
+
+/* ═══════════════════════════════
+   GAME / MISSION SCREEN
+════════════════════════════════ */
+#screen-game{background:transparent}
+.game-layout{flex:1;display:flex;height:calc(100% - 60px);overflow:hidden}
+
+/* Left: galaxy nav */
+.galaxy-nav{
+  width:200px;flex-shrink:0;border-right:1px solid hsl(var(--border));
+  background:hsl(var(--bg)/.7);backdrop-filter:blur(12px);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:10;
+}
+.galaxy-nav canvas{flex:1;width:100%;display:block}
+.gnav-footer{padding:12px;border-top:1px solid hsl(var(--border))}
+
+/* Center: main game */
+.game-center{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden}
+#spaceCanvas{flex:1;display:block;width:100%;height:100%}
+
+/* Right: mission panel */
+.mission-panel{
+  width:320px;flex-shrink:0;border-left:1px solid hsl(var(--border));
+  background:hsl(var(--bg)/.7);backdrop-filter:blur(12px);
+  display:flex;flex-direction:column;overflow-y:auto;position:relative;z-index:10;
+}
+.mpanel-section{padding:16px;border-bottom:1px solid hsl(var(--border))}
+.mpanel-title{font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3));margin-bottom:12px}
+
+/* Mission header */
+.mission-header-card{
+  background:linear-gradient(135deg,hsl(var(--teal)/.08),hsl(var(--violet)/.08));
+  border:1px solid hsl(var(--teal)/.2);border-radius:var(--radius);padding:14px;
+}
+.mh-name{font-weight:700;font-size:.95rem;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.mh-planet{font-size:1.8rem}
+.mh-desc{font-size:.78rem;color:hsl(var(--fg2));line-height:1.5}
+
+/* Objective */
+.objective-box{
+  background:hsl(var(--bg3));border:1px solid hsl(var(--border));
+  border-radius:calc(var(--radius) - 2px);padding:14px;margin-bottom:12px;
+}
+.obj-title{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3));margin-bottom:8px}
+.obj-text{font-size:.85rem;line-height:1.6;color:hsl(var(--fg))}
+.obj-formula{
+  background:hsl(220 18% 5%);border:1px solid hsl(var(--teal)/.2);
+  border-radius:6px;padding:10px 12px;margin-top:8px;
+  font-family:var(--font-mono);font-size:.8rem;color:hsl(var(--teal));line-height:1.8;
+}
+
+/* SPL Input */
+.spl-form{display:flex;flex-direction:column;gap:10px}
+.spl-row{display:flex;align-items:center;gap:8px}
+.spl-label{font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--fg3));width:24px;flex-shrink:0;text-align:right}
+.spl-eq{
+  flex:1;background:hsl(var(--surface2));border:1.5px solid hsl(var(--border));
+  border-radius:8px;padding:10px 12px;
+  font-family:var(--font-mono);font-size:.85rem;color:hsl(var(--fg));line-height:1.4;
+}
+.spl-eq strong{color:hsl(var(--teal))}
+.spl-eq.correct{border-color:hsl(142 71% 45%);animation:correctGlow .6s ease-in-out}
+.spl-eq.wrong{border-color:hsl(0 75% 55%);animation:shake .4s var(--ease-smooth)}
+/* Answer inputs */
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.ans-wrap{display:flex;flex-direction:column;gap:4px}
+.ans-label{font-family:var(--font-mono);font-size:.68rem;color:hsl(var(--fg3));text-align:center}
+.ans-input{
+  background:hsl(var(--surface2));border:1.5px solid hsl(var(--border));
+  border-radius:8px;padding:10px;font-family:var(--font-mono);font-size:.9rem;
+  color:hsl(var(--fg));text-align:center;width:100%;outline:none;
+  transition:border-color .2s;
+}
+.ans-input:focus{border-color:hsl(var(--teal))}
+.ans-input.correct{border-color:hsl(142 71% 45%);background:hsl(142 71% 45%/.08);color:hsl(142 71% 55%)}
+.ans-input.wrong{border-color:hsl(0 75% 55%);animation:shake .4s}
+
+/* Augmented matrix display */
+.aug-matrix{
+  background:hsl(220 18% 5%);border:1px solid hsl(var(--violet)/.25);
+  border-radius:var(--radius);padding:14px;font-family:var(--font-mono);font-size:.8rem;
+}
+.aug-title{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--violet));margin-bottom:8px}
+.aug-row{display:flex;align-items:center;justify-content:center;gap:3px;padding:2px 0}
+.aug-cell{
+  width:36px;text-align:center;color:hsl(var(--fg));padding:3px 0;
+}
+.aug-cell.coeff{color:hsl(var(--teal))}
+.aug-cell.rhs{color:hsl(var(--amber))}
+.aug-cell.bar{color:hsl(var(--border-hi));user-select:none}
+.aug-row.pivot .aug-cell{color:hsl(var(--violet));font-weight:700}
+.aug-row.eliminated .aug-cell{opacity:.45}
+/* Gauss steps */
+.gauss-steps{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.gauss-step{font-size:.73rem;color:hsl(var(--fg3));padding:3px 6px;border-radius:4px;border-left:2px solid hsl(var(--violet)/.4)}
+.gauss-step.active{color:hsl(var(--violet));border-left-color:hsl(var(--violet));background:hsl(var(--violet)/.06)}
+
+/* Education panel */
+.edu-panel{
+  background:hsl(var(--teal)/.06);border:1px solid hsl(var(--teal)/.18);
+  border-radius:var(--radius);padding:14px;font-size:.8rem;line-height:1.65;color:hsl(var(--fg2));
+}
+.edu-panel strong{color:hsl(var(--teal))}
+.edu-panel code{font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--violet));background:hsl(var(--violet)/.1);padding:1px 5px;border-radius:3px}
+
+/* Fuel bar */
+.fuel-bar-wrap{display:flex;flex-direction:column;gap:4px}
+.fuel-bar{height:8px;background:hsl(var(--surface2));border-radius:999px;overflow:hidden}
+.fuel-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,hsl(var(--amber)),hsl(38 95% 75%));transition:width .4s var(--ease-smooth)}
+.fuel-text{font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--amber))}
+
+/* Hints */
+.hint-btn{
+  width:100%;background:hsl(var(--violet)/.1);border:1px solid hsl(var(--violet)/.25);
+  border-radius:8px;padding:8px;font-size:.78rem;color:hsl(var(--violet));cursor:pointer;
+  font-family:var(--font-body);font-weight:600;transition:all .2s;
+}
+.hint-btn:hover{background:hsl(var(--violet)/.18)}
+.hint-text{
+  background:hsl(var(--violet)/.06);border:1px solid hsl(var(--violet)/.2);
+  border-radius:8px;padding:10px 12px;font-size:.78rem;color:hsl(var(--fg2));margin-top:8px;display:none;
+}
+.hint-text.show{display:block;animation:fadeUp .3s var(--ease-out) both}
+
+/* ═══ TOAST ═══ */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:hsl(var(--surface));border:1px solid hsl(var(--border));border-radius:var(--radius);
+  padding:10px 22px;font-family:var(--font-mono);font-size:.82rem;
+  opacity:0;pointer-events:none;transition:all .3s var(--ease-spring);z-index:9999;white-space:nowrap;max-width:90vw;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:hsl(142 71% 45%);color:hsl(142 71% 55%)}
+.toast.error{border-color:hsl(0 75% 55%);color:hsl(0 75% 65%)}
+.toast.info{border-color:hsl(var(--teal));color:hsl(var(--teal))}
+.toast.warn{border-color:hsl(var(--amber));color:hsl(var(--amber))}
+
+/* ═══ MODAL ═══ */
+.modal-ov{
+  position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;
+  background:hsl(220 18% 3%/.8);backdrop-filter:blur(10px);
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal-box{
+  background:hsl(var(--surface));border:1.5px solid hsl(var(--border));
+  border-radius:calc(var(--radius)*1.5);padding:36px;max-width:500px;width:92%;
+  text-align:center;animation:modalIn .45s var(--ease-spring) both;
+  position:relative;overflow:hidden;
+}
+.modal-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,hsl(var(--teal)),hsl(var(--violet)),hsl(var(--amber)));
+}
+.modal-emoji{font-size:3.5rem;margin-bottom:14px;display:block;animation:warpIn .5s var(--ease-spring) both}
+.modal-title{font-family:var(--font-display);font-size:1.8rem;font-weight:900;margin-bottom:8px}
+.modal-desc{color:hsl(var(--fg2));margin-bottom:24px;line-height:1.65;font-size:.9rem}
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.mstat{background:hsl(var(--surface2));border-radius:var(--radius);padding:14px;text-align:center}
+.mstat-val{font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:hsl(var(--teal))}
+.mstat-lbl{font-size:.68rem;color:hsl(var(--fg3));margin-top:3px}
+.modal-acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* Scanline effect */
+.scanline{
+  position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;
+}
+.scanline::after{
+  content:'';position:absolute;left:0;right:0;height:4px;
+  background:linear-gradient(transparent,hsl(var(--teal)/.04),transparent);
+  animation:scanline 8s linear infinite;
+}
+
+/* ═══ SCORE FLOATS ═══ */
+.score-float{
+  position:fixed;pointer-events:none;z-index:200;
+  font-family:var(--font-display);font-weight:900;font-size:1.3rem;
+  animation:float 1.2s var(--ease-out) forwards;
+  text-shadow:0 2px 10px currentColor;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .galaxy-nav{display:none}
+  .mission-panel{width:260px}
+}
+@media(max-width:560px){
+  .mission-panel{display:none}
+  .game-layout{flex-direction:column}
+}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:hsl(var(--bg2))}
+::-webkit-scrollbar-thumb{background:hsl(var(--border-hi));border-radius:3px}
+</style>
+</head>
+<body>
+<canvas id="starCanvas"></canvas>
+<div class="nebula"></div>
+<div class="scanline"></div>
+<div id="app">
+
+<!-- ══════════ HOME ══════════ -->
+<div class="screen active" id="screen-home">
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">🚀</div>
+        <span class="nav-title"><span class="grad">Space Linear</span> Mission</span>
+      </div>
+      <div class="nav-right">
+        <span class="nav-chip">ALJABAR LINEAR</span>
+      </div>
+    </div>
+  </nav>
+  <div class="home-inner">
+    <div class="home-badge">🛸 Educational Space Adventure</div>
+    <span class="home-ship">🚀</span>
+    <h1 class="home-title">
+      <span class="grad">Space Linear</span><br>
+      <span class="grad-amber">Mission</span>
+    </h1>
+    <p class="home-desc">Navigasikan pesawat antargalaksi menggunakan Sistem Persamaan Linear, Eliminasi Gauss, dan Matriks Augmentasi. Selesaikan misi — selamatkan alam semesta!</p>
+    <div class="home-actions">
+      <button class="btn btn-primary btn-lg" onclick="showGalaxy()">🚀 Launch Mission</button>
+      <button class="btn btn-outline btn-lg" onclick="showModal('howto')">📖 How to Play</button>
+    </div>
+    <div class="home-pills">
+      <div class="pill">📐 Sistem Persamaan Linear</div>
+      <div class="pill">🔢 Eliminasi Gauss</div>
+      <div class="pill">🗂️ Matriks Augmentasi</div>
+      <div class="pill">🌌 Galaxy Map</div>
+      <div class="pill">⚡ Laser FX</div>
+      <div class="pill">🛸 Ship Upgrade</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ GALAXY MAP ══════════ -->
+<div class="screen" id="screen-galaxy">
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">🌌</div>
+        <span class="nav-title"><span class="grad">Galaxy</span> Map</span>
+      </div>
+      <div class="nav-right">
+        <button class="btn btn-outline btn-sm" onclick="showScreen('home')">← Home</button>
+      </div>
+    </div>
+  </nav>
+  <div class="galaxy-body">
+    <!-- Ship card -->
+    <div class="ship-card" id="shipCard"></div>
+    <!-- Mission grid -->
+    <div class="galaxy-header">
+      <h2 class="galaxy-title">🌌 <span class="grad">Planetary System</span></h2>
+      <p class="galaxy-subtitle">Pilih planet tujuan — selesaikan SPL untuk membuka jalur bintang</p>
+    </div>
+    <div class="mission-grid" id="missionGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════ GAME ══════════ -->
+<div class="screen" id="screen-game">
+  <nav class="navbar">
+    <div class="nav-inner" style="gap:10px">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">🚀</div>
+        <span class="nav-title" style="font-size:.95rem"><span class="grad">Mission</span> <span id="navMission" style="color:hsl(var(--fg2))">01</span></span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="text-align:center"><div style="font-family:var(--font-mono);font-size:.95rem;font-weight:700;color:hsl(var(--teal))" id="hudScore">0</div><div style="font-size:.6rem;color:hsl(var(--fg3))">SCORE</div></div>
+        <div style="text-align:center"><div style="font-family:var(--font-mono);font-size:.95rem;font-weight:700;color:hsl(var(--amber))" id="hudFuel">100</div><div style="font-size:.6rem;color:hsl(var(--fg3))">FUEL</div></div>
+        <div style="text-align:center"><div style="font-family:var(--font-mono);font-size:.95rem;font-weight:700;color:hsl(var(--violet))" id="hudXP">0</div><div style="font-size:.6rem;color:hsl(var(--fg3))">XP</div></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-outline btn-sm" id="hintToggle" onclick="toggleHint()">💡 Hint</button>
+        <button class="btn btn-outline btn-sm" onclick="confirmQuit()">← Back</button>
+      </div>
+    </div>
+  </nav>
+  <div class="game-layout">
+    <!-- Galaxy mini-map -->
+    <div class="galaxy-nav">
+      <canvas id="miniMap" style="flex:1;width:100%"></canvas>
+      <div class="gnav-footer">
+        <div style="font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3));margin-bottom:6px">SHIP LOCATION</div>
+        <div style="font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--teal))" id="shipCoords">x=0, y=0</div>
+      </div>
+    </div>
+    <!-- Space canvas -->
+    <div class="game-center">
+      <canvas id="spaceCanvas"></canvas>
+      <!-- Overlay instruction -->
+      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:hsl(var(--bg)/.7);border:1px solid hsl(var(--border));border-radius:999px;padding:5px 16px;font-family:var(--font-mono);font-size:.68rem;color:hsl(var(--fg3));pointer-events:none;backdrop-filter:blur(8px);white-space:nowrap" id="canvasTip">Solve SPL → Enter coordinates → Fire thrusters!</div>
+    </div>
+    <!-- Mission panel -->
+    <div class="mission-panel" id="missionPanel">
+      <!-- Mission info -->
+      <div class="mpanel-section">
+        <div class="mpanel-title">Current Mission</div>
+        <div class="mission-header-card">
+          <div class="mh-name"><span class="mh-planet" id="mpPlanet">🪐</span><span id="mpName">Loading…</span></div>
+          <div class="mh-desc" id="mpDesc"></div>
+        </div>
+      </div>
+      <!-- Objective -->
+      <div class="mpanel-section">
+        <div class="mpanel-title">🎯 Objective — Solve SPL</div>
+        <div class="objective-box">
+          <div class="obj-title">Navigation Equations</div>
+          <div class="obj-text" id="objText"></div>
+          <div class="obj-formula" id="objFormula"></div>
+        </div>
+        <!-- Augmented matrix -->
+        <div class="aug-matrix" id="augMatrix"></div>
+        <!-- Gauss steps -->
+        <div id="gaussSteps"></div>
+      </div>
+      <!-- Answer inputs -->
+      <div class="mpanel-section">
+        <div class="mpanel-title">📡 Enter Coordinates</div>
+        <div class="ans-grid" id="answerInputs"></div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn btn-primary btn-md" style="flex:1" onclick="checkAnswer()">🚀 Launch!</button>
+          <button class="btn btn-outline btn-md" onclick="resetInputs()">↺</button>
+        </div>
+        <!-- Hint -->
+        <div style="margin-top:8px">
+          <button class="hint-btn" onclick="showHint()">💡 Show Hint</button>
+          <div class="hint-text" id="hintText"></div>
+        </div>
+      </div>
+      <!-- Education -->
+      <div class="mpanel-section">
+        <div class="mpanel-title">📚 Materi — Eliminasi Gauss</div>
+        <div class="edu-panel" id="eduPanel"></div>
+      </div>
+      <!-- Fuel -->
+      <div class="mpanel-section" style="margin-top:auto">
+        <div class="mpanel-title">⚡ Fuel Reserve</div>
+        <div class="fuel-bar-wrap">
+          <div class="fuel-bar"><div class="fuel-fill" id="fuelBar" style="width:100%"></div></div>
+          <div class="fuel-text"><span id="fuelVal">100</span>% remaining</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<!-- Modal -->
+<div class="modal-ov" id="modalOv">
+  <div class="modal-box" id="modalBox">
+    <span class="modal-emoji" id="mEmoji">🚀</span>
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-desc" id="mDesc"></div>
+    <div class="modal-stats" id="mStats"></div>
+    <div class="modal-acts" id="mActs"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ═══════════════════════════════════════════
+   SPACE LINEAR MISSION — Game Engine
+═══════════════════════════════════════════ */
+
+// ── STARFIELD ──
+(function(){
+  const c=document.getElementById('starCanvas');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize();addEventListener('resize',resize);
+  const stars=Array.from({length:260},()=>({
+    x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    r:.3+Math.random()*2,
+    speed:.2+Math.random()*.6,
+    twinkleOffset:Math.random()*Math.PI*2,
+    color:`hsl(${[210,220,180,265,38][Math.floor(Math.random()*5)]},${30+Math.random()*50}%,${70+Math.random()*30}%)`,
+  }));
+  let t=0;
+  function draw(){
+    t+=.012;
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      const alpha=.3+.7*(.5+.5*Math.sin(t*s.speed*2+s.twinkleOffset));
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle=s.color;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── SCREEN ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen-'+id);
+  if(el){el.classList.add('active');}
+}
+
+// ── TOAST ──
+let _tt;
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show '+type;
+  clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+// ── MODAL ──
+function closeModal(){document.getElementById('modalOv').classList.remove('open');}
+document.getElementById('modalOv').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modalOv'))closeModal();
+});
+function openModal(emoji,title,desc,stats,acts){
+  document.getElementById('mEmoji').textContent=emoji;
+  document.getElementById('mTitle').innerHTML=title;
+  document.getElementById('mDesc').innerHTML=desc;
+  document.getElementById('mStats').innerHTML=stats||'';
+  document.getElementById('mActs').innerHTML=acts||'';
+  document.getElementById('modalOv').classList.add('open');
+}
+function showModal(type){
+  if(type==='howto'){
+    openModal('📖','How to Play',
+      `<strong>1.</strong> Baca persamaan navigasi (SPL) di panel kanan.<br>
+       <strong>2.</strong> Gunakan Eliminasi Gauss untuk mencari koordinat (x, y, z).<br>
+       <strong>3.</strong> Masukkan jawaban → Klik <em>Launch!</em> → Pesawat terbang ke planet tujuan.<br>
+       <strong>4.</strong> Jawaban benar = bahan bakar penuh. Salah = -10% fuel.<br>
+       <strong>5.</strong> Selesaikan semua misi untuk upgrade pesawat!`,
+      '',
+      `<button class="btn btn-primary" onclick="closeModal()">Got it! 🚀</button>`
+    );
+  }
+}
+
+/* ═══ GAME DATA ═══ */
+const MISSIONS=[
+  {
+    id:1,planet:'🔵',name:'Planet Aqua',difficulty:'easy',
+    story:'Planet Aqua mengirim sinyal bahaya. Untuk mencapainya, navigasi sistem perlu memecahkan SPL 2×2.',
+    variables:['x','y'],
+    equations:[
+      {coeffs:[2,1],rhs:7,text:'2x + y = 7'},
+      {coeffs:[1,3],rhs:9,text:'x + 3y = 9'},
+    ],
+    solution:{x:3,y:1},
+    eduText:`<strong>Eliminasi Gauss</strong> adalah metode sistematis untuk menyelesaikan SPL dengan mengubah matriks augmentasi ke bentuk eselon baris.<br><br>
+    <strong>Langkah:</strong><br>
+    1. Tulis matriks augmentasi [A|b]<br>
+    2. Buat elemen pivot menjadi 1 (opsional)<br>
+    3. Eliminasi kolom di bawah pivot → bentuk segitiga atas<br>
+    4. Back-substitution untuk menemukan nilai variabel`,
+    xpReward:50,unlocked:true,
+  },
+  {
+    id:2,planet:'🟠',name:'Planet Ignis',difficulty:'easy',
+    story:'Badai plasma di Planet Ignis membutuhkan koordinat presisi. Sistem komputer telah memformat ulang jalur ke SPL.',
+    variables:['x','y'],
+    equations:[
+      {coeffs:[3,2],rhs:12,text:'3x + 2y = 12'},
+      {coeffs:[1,-1],rhs:1,text:'x − y = 1'},
+    ],
+    solution:{x:2,y:3},
+    eduText:`<strong>Matriks Augmentasi</strong> menggabungkan matriks koefisien A dan vektor konstanta b menjadi satu matriks [A|b].<br><br>
+    SPL: ax+by=e dan cx+dy=f ditulis:<br>
+    <code>[a  b | e]</code><br>
+    <code>[c  d | f]</code><br><br>
+    Operasi baris elementer: tukar baris, kali konstanta, tambah kelipatan satu baris ke baris lain.`,
+    xpReward:60,unlocked:false,
+  },
+  {
+    id:3,planet:'🟣',name:'Planet Nebula',difficulty:'medium',
+    story:'Nebula Celeste menyembunyikan portal dimensi. Jalur navigasi membutuhkan solusi SPL 3×3 dengan eliminasi penuh.',
+    variables:['x','y','z'],
+    equations:[
+      {coeffs:[1,1,0],rhs:4,text:'x + y = 4'},
+      {coeffs:[0,2,1],rhs:7,text:'2y + z = 7'},
+      {coeffs:[1,0,2],rhs:8,text:'x + 2z = 8'},
+    ],
+    solution:{x:1,y:3,z:1},
+    eduText:`<strong>SPL 3×3</strong> memerlukan 3 langkah eliminasi penuh.<br><br>
+    <strong>Forward Elimination:</strong><br>
+    Ciptakan bentuk segitiga atas dengan membuat nol semua elemen di bawah diagonal.<br><br>
+    <strong>Back Substitution:</strong><br>
+    Dari baris bawah ke atas, substitusi nilai yang sudah diketahui untuk menemukan variabel berikutnya.<br><br>
+    z ditemukan dari baris ke-3, lalu substitusi ke baris ke-2 untuk y, kemudian ke baris ke-1 untuk x.`,
+    xpReward:100,unlocked:false,
+  },
+  {
+    id:4,planet:'🟡',name:'Planet Aurum',difficulty:'medium',
+    story:'Planet emas ini menyimpan kristal energi. Koordinat terenkripsi dalam sistem linear dengan koefisien khusus.',
+    variables:['x','y','z'],
+    equations:[
+      {coeffs:[2,1,-1],rhs:8,text:'2x + y − z = 8'},
+      {coeffs:[-3,-1,2],rhs:-11,text:'−3x − y + 2z = −11'},
+      {coeffs:[-2,1,2],rhs:-3,text:'−2x + y + 2z = −3'},
+    ],
+    solution:{x:2,y:3,z:-1},
+    eduText:`<strong>Operasi Baris Elementer (OBE):</strong><br>
+    • <code>Ri ↔ Rj</code>: Tukar baris i dan j<br>
+    • <code>kRi → Ri</code>: Kalikan baris i dengan konstanta k≠0<br>
+    • <code>Ri + kRj → Ri</code>: Tambahkan k kali baris j ke baris i<br><br>
+    OBE tidak mengubah himpunan solusi SPL — hanya mengubah representasi matriks untuk mempermudah solusi.`,
+    xpReward:130,unlocked:false,
+  },
+  {
+    id:5,planet:'🔴',name:'Planet Inferno',difficulty:'hard',
+    story:'PERINGATAN: Planet ini sedang dalam krisis nuklir. Kamu harus memecahkan sistem 3×3 untuk mengaktifkan perisai defensif!',
+    variables:['x','y','z'],
+    equations:[
+      {coeffs:[1,2,-1],rhs:4,text:'x + 2y − z = 4'},
+      {coeffs:[2,-1,3],rhs:13,text:'2x − y + 3z = 13'},
+      {coeffs:[-1,3,-2],rhs:-8,text:'−x + 3y − 2z = −8'},
+    ],
+    solution:{x:1,y:2,z:3},
+    eduText:`<strong>Gaussian Elimination — Full Algorithm:</strong><br>
+    1. Pilih pivot (elemen ≠ 0 di kolom saat ini)<br>
+    2. Buat semua elemen di bawah pivot = 0 menggunakan OBE<br>
+    3. Lanjut ke sub-matriks berikutnya<br>
+    4. Back-substitution dari bawah ke atas<br><br>
+    Kompleksitas: O(n³) untuk matriks n×n — itulah mengapa komputer menggunakan metode ini untuk sistem besar!`,
+    xpReward:180,unlocked:false,
+  },
+  {
+    id:6,planet:'🌿',name:'Planet Viridis',difficulty:'hard',
+    story:'Planet hutan raksasa ini mengandung data kosmik. SPL navigasi memiliki koefisien desimal — perlu presisi tinggi!',
+    variables:['x','y','z'],
+    equations:[
+      {coeffs:[4,1,0],rhs:9,text:'4x + y = 9'},
+      {coeffs:[2,3,1],rhs:13,text:'2x + 3y + z = 13'},
+      {coeffs:[0,1,2],rhs:5,text:'y + 2z = 5'},
+    ],
+    solution:{x:2,y:1,z:2},
+    eduText:`<strong>Reduced Row Echelon Form (RREF):</strong><br>
+    Bentuk paling sederhana — setiap pivot = 1, dan semua elemen di atas DAN bawah pivot = 0.<br><br>
+    Eliminasi Gauss-Jordan mencapai RREF langsung tanpa back-substitution.<br><br>
+    Dalam praktik komputasi, metode LU decomposition digunakan untuk efisiensi, tapi konsepnya sama dengan eliminasi Gauss.`,
+    xpReward:200,unlocked:false,
+  },
+  {
+    id:7,planet:'⚡',name:'Planet Tempest',difficulty:'expert',
+    story:'MISI FINAL: Portal antar-galaksi membutuhkan koordinat 4D! Sistem komputer rusak — hanya kamu yang bisa menyelamatkan semua.',
+    variables:['x','y','z'],
+    equations:[
+      {coeffs:[3,-1,2],rhs:10,text:'3x − y + 2z = 10'},
+      {coeffs:[1,2,-1],rhs:3,text:'x + 2y − z = 3'},
+      {coeffs:[2,1,3],rhs:14,text:'2x + y + 3z = 14'},
+    ],
+    solution:{x:2,y:1,z:2},
+    eduText:`<strong>Aplikasi SPL dalam Ilmu Komputer & Fisika:</strong><br>
+    • <strong>Computer Graphics:</strong> Transformasi 3D objek menggunakan persamaan linear (matriks rotasi, translasi, skala)<br>
+    • <strong>Machine Learning:</strong> Regresi linear = solusi SPL besar<br>
+    • <strong>Simulasi Fisika:</strong> Hukum Kirchhoff → SPL untuk arus & tegangan<br>
+    • <strong>GPS:</strong> Trilateration = menyelesaikan SPL 3×3 dari sinyal satelit<br><br>
+    Inilah mengapa aljabar linear adalah fondasi seluruh ilmu komputer modern!`,
+    xpReward:300,unlocked:false,
+  },
+];
+
+// ── PLAYER STATE ──
+let player={
+  name:'Commander',
+  level:1,
+  xp:0,
+  xpToNext:100,
+  ship:'🚀',
+  shipName:'Cruiser MK-I',
+  speed:60,
+  power:45,
+  shield:55,
+  fuel:100,
+  completedMissions:[],
+  score:0,
+};
+
+// ── GAME STATE ──
+let gs={
+  currentMission:null,
+  hintUsed:false,
+  attempts:0,
+  startTime:0,
+  laserFiring:false,
+  shipPos:{x:.2,y:.5},
+  targetPos:{x:.8,y:.3},
+  animating:false,
+};
+
+// ── SPACE CANVAS ──
+let spaceCanvas,spaceCtx,miniCanvas,miniCtx;
+let spaceW,spaceH;
+let stars2=[];
+let laserParticles=[];
+let shipTrail=[];
+let animId;
+
+function initSpaceCanvas(){
+  spaceCanvas=document.getElementById('spaceCanvas');
+  spaceCtx=spaceCanvas.getContext('2d');
+  miniCanvas=document.getElementById('miniMap');
+  miniCtx=miniCanvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize',resizeCanvas);
+  // Local stars
+  stars2=Array.from({length:180},()=>({
+    x:Math.random(),y:Math.random(),
+    r:.3+Math.random()*1.8,speed:Math.random()*.5,
+    t:Math.random()*Math.PI*2,
+    col:`hsl(${210+Math.floor(Math.random()*60)},${30+Math.floor(Math.random()*40)}%,${70+Math.floor(Math.random()*30)}%)`,
+  }));
+  cancelAnimationFrame(animId);
+  spaceLoop();
+}
+
+function resizeCanvas(){
+  if(!spaceCanvas)return;
+  const wrap=spaceCanvas.parentElement;
+  spaceW=wrap.clientWidth;spaceH=wrap.clientHeight;
+  spaceCanvas.width=spaceW;spaceCanvas.height=spaceH;
+  if(miniCanvas){miniCanvas.width=miniCanvas.clientWidth;miniCanvas.height=miniCanvas.clientHeight||200;}
+}
+
+let spaceT=0;
+function spaceLoop(){
+  spaceT+=.016;
+  drawSpace();
+  drawMiniMap();
+  updateParticles();
+  animId=requestAnimationFrame(spaceLoop);
+}
+
+function drawSpace(){
+  const ctx=spaceCtx;
+  if(!ctx)return;
+  ctx.clearRect(0,0,spaceW,spaceH);
+  // Deep space bg
+  ctx.fillStyle='hsl(220,18%,5%)';
+  ctx.fillRect(0,0,spaceW,spaceH);
+  // Nebula gradient
+  const ng=ctx.createRadialGradient(spaceW*.7,spaceH*.3,0,spaceW*.7,spaceH*.3,spaceW*.5);
+  ng.addColorStop(0,'hsl(265,65%,65%,.04)');ng.addColorStop(1,'transparent');
+  ctx.fillStyle=ng;ctx.fillRect(0,0,spaceW,spaceH);
+  const ng2=ctx.createRadialGradient(spaceW*.2,spaceH*.7,0,spaceW*.2,spaceH*.7,spaceW*.4);
+  ng2.addColorStop(0,'hsl(174,72%,52%,.04)');ng2.addColorStop(1,'transparent');
+  ctx.fillStyle=ng2;ctx.fillRect(0,0,spaceW,spaceH);
+  // Stars
+  stars2.forEach(s=>{
+    const alpha=.3+.7*(.5+.5*Math.sin(spaceT*s.speed+s.t));
+    ctx.globalAlpha=alpha;ctx.fillStyle=s.col;
+    ctx.beginPath();ctx.arc(s.x*spaceW,s.y*spaceH,s.r,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  // Ship trail
+  shipTrail.forEach((p,i)=>{
+    ctx.globalAlpha=p.a*(i/shipTrail.length);
+    ctx.fillStyle='hsl(174,72%,52%)';
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  // Laser particles
+  laserParticles.forEach(p=>{
+    ctx.globalAlpha=p.a;
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+    g.addColorStop(0,p.col);g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  // Target planet
+  if(gs.currentMission){
+    const tx=gs.targetPos.x*spaceW,ty=gs.targetPos.y*spaceH;
+    const pr=40+12*Math.sin(spaceT*.7);
+    // Glow
+    const pg=ctx.createRadialGradient(tx,ty,0,tx,ty,pr*2.5);
+    const pc=gs.currentMission.planet;
+    const pcol=pc==='🔵'?'hsl(210,80%,60%)':pc==='🟠'?'hsl(30,90%,60%)':pc==='🟣'?'hsl(265,65%,65%)':pc==='🟡'?'hsl(45,95%,60%)':pc==='🔴'?'hsl(0,80%,60%)':pc==='🌿'?'hsl(142,71%,45%)':'hsl(265,80%,70%)';
+    pg.addColorStop(0,pcol.replace(')',',0.2)').replace('hsl(','hsla('));
+    pg.addColorStop(1,'transparent');
+    ctx.fillStyle=pg;ctx.fillRect(tx-pr*3,ty-pr*3,pr*6,pr*6);
+    // Ring
+    ctx.save();ctx.translate(tx,ty);
+    ctx.strokeStyle=pcol.replace(')',',0.3)').replace('hsl(','hsla(');
+    ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.ellipse(0,0,pr*1.6,pr*.4,Math.PI*.1,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+    // Planet body
+    ctx.font=`${pr*1.2}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.shadowColor=pcol;ctx.shadowBlur=20;
+    ctx.fillText(pc,tx,ty);
+    ctx.shadowBlur=0;
+    // Label
+    ctx.fillStyle='hsl(210,25%,80%)';ctx.font=`bold 12px 'DM Sans',sans-serif`;
+    ctx.textAlign='center';ctx.fillText(gs.currentMission.name,tx,ty+pr+18);
+  }
+  // Ship
+  const sx=gs.shipPos.x*spaceW,sy=gs.shipPos.y*spaceH;
+  const bob=Math.sin(spaceT*1.5)*3;
+  ctx.save();ctx.translate(sx,sy+bob);
+  // Thruster flame
+  const fl=8+4*Math.sin(spaceT*8);
+  ctx.fillStyle=`hsl(38,95%,${50+10*Math.sin(spaceT*8)}%)`;
+  ctx.globalAlpha=.7+.3*Math.sin(spaceT*8);
+  ctx.beginPath();ctx.ellipse(-22,0,fl*1.5,fl*.5,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='hsl(174,72%,72%)';ctx.globalAlpha=.5;
+  ctx.beginPath();ctx.ellipse(-18,0,fl*.8,fl*.3,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  // Ship icon
+  ctx.font='36px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.shadowColor='hsl(174,72%,52%)';ctx.shadowBlur=16;
+  ctx.fillText('🚀',0,0);ctx.shadowBlur=0;
+  ctx.restore();
+  // Ship trail update
+  shipTrail.push({x:sx,y:sy+bob,r:2+Math.random(),a:.6});
+  if(shipTrail.length>30)shipTrail.shift();
+}
+
+function drawMiniMap(){
+  if(!miniCtx)return;
+  const mc=miniCtx;
+  const mw=miniCanvas.width||200,mh=miniCanvas.height||200;
+  mc.clearRect(0,0,mw,mh);
+  mc.fillStyle='hsl(220,18%,5%)';mc.fillRect(0,0,mw,mh);
+  // Grid
+  mc.strokeStyle='hsl(220,12%,18%)';mc.lineWidth=.5;
+  for(let i=0;i<5;i++){mc.beginPath();mc.moveTo(i*mw/4,0);mc.lineTo(i*mw/4,mh);mc.stroke();}
+  for(let i=0;i<5;i++){mc.beginPath();mc.moveTo(0,i*mh/4);mc.lineTo(mw,i*mh/4);mc.stroke();}
+  // Connection line
+  if(gs.currentMission){
+    const sx=gs.shipPos.x*mw,sy=gs.shipPos.y*mh;
+    const tx=gs.targetPos.x*mw,ty=gs.targetPos.y*mh;
+    mc.strokeStyle='hsl(174,72%,52%,.3)';mc.lineWidth=1;mc.setLineDash([3,5]);
+    mc.beginPath();mc.moveTo(sx,sy);mc.lineTo(tx,ty);mc.stroke();mc.setLineDash([]);
+    // Target
+    mc.font='14px serif';mc.textAlign='center';mc.textBaseline='middle';
+    mc.fillText(gs.currentMission.planet,tx,ty);
+    // Ship
+    mc.font='12px serif';mc.fillText('🚀',sx,sy);
+    // Coords
+    document.getElementById('shipCoords').textContent=`x=${(gs.shipPos.x*100).toFixed(0)}, y=${(gs.shipPos.y*100).toFixed(0)}`;
+  }
+}
+
+function updateParticles(){
+  laserParticles=laserParticles.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.a-=.025;p.r+=.3;return p.a>0;
+  });
+}
+
+function fireLaser(success){
+  const sx=gs.shipPos.x*spaceW,sy=gs.shipPos.y*spaceH;
+  const tx=gs.targetPos.x*spaceW,ty=gs.targetPos.y*spaceH;
+  const dx=tx-sx,dy=ty-sy;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  const nx=dx/dist,ny=dy/dist;
+  const col=success?'hsl(174,72%,72%)':'hsl(0,80%,65%)';
+  for(let i=0;i<40;i++){
+    const t2=i/40;
+    const bx=sx+dx*t2,by=sy+dy*t2;
+    laserParticles.push({
+      x:bx,y:by,
+      vx:(nx+(.5-Math.random())*.4)*2,
+      vy:(ny+(.5-Math.random())*.4)*2,
+      col,r:3+Math.random()*4,a:.9,
+    });
+  }
+  // Explosion at target if success
+  if(success){
+    for(let i=0;i<30;i++){
+      const angle=Math.random()*Math.PI*2,spd=1+Math.random()*4;
+      laserParticles.push({
+        x:tx,y:ty,
+        vx:Math.cos(angle)*spd,vy:Math.sin(angle)*spd,
+        col:'hsl(38,95%,70%)',r:4+Math.random()*6,a:1,
+      });
+    }
+  }
+}
+
+// ── GALAXY MAP ──
+function showGalaxy(){
+  unlockMissions();
+  renderShipCard();
+  renderMissions();
+  showScreen('galaxy');
+}
+
+function unlockMissions(){
+  MISSIONS.forEach((m,i)=>{
+    m.unlocked=i===0||player.completedMissions.includes(MISSIONS[i-1]?.id)||false;
+    if(i>0&&player.completedMissions.includes(MISSIONS[i-1].id))m.unlocked=true;
+  });
+}
+
+function renderShipCard(){
+  const xpPct=Math.min(100,(player.xp/player.xpToNext)*100);
+  document.getElementById('shipCard').innerHTML=`
+    <div class="ship-emoji">${player.ship}</div>
+    <div class="ship-stats">
+      <div class="ship-name">${player.shipName}</div>
+      <div class="stat-row"><span class="stat-label">Speed</span><div class="stat-bar"><div class="stat-fill sf-teal" style="width:${player.speed}%"></div></div><span class="stat-val">${player.speed}</span></div>
+      <div class="stat-row"><span class="stat-label">Power</span><div class="stat-bar"><div class="stat-fill sf-amber" style="width:${player.power}%"></div></div><span class="stat-val">${player.power}</span></div>
+      <div class="stat-row"><span class="stat-label">Shield</span><div class="stat-bar"><div class="stat-fill sf-violet" style="width:${player.shield}%"></div></div><span class="stat-val">${player.shield}</span></div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+        <span class="level-badge">LV ${player.level}</span>
+        <div class="xp-row" style="flex:1">
+          <div class="xp-bar"><div class="xp-fill" style="width:${xpPct}%"></div></div>
+          <span class="xp-text">${player.xp}/${player.xpToNext}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderMissions(){
+  const grid=document.getElementById('missionGrid');
+  grid.innerHTML=MISSIONS.map((m,i)=>{
+    const done=player.completedMissions.includes(m.id);
+    const locked=!m.unlocked;
+    const tagClass={'easy':'tag-easy','medium':'tag-medium','hard':'tag-hard','expert':'tag-expert'}[m.difficulty];
+    return `<div class="mission-card ${locked?'locked':''} ${done?'completed':''}" 
+      onclick="${locked?'':'startMission('+m.id+')'}"
+      style="animation-delay:${i*.07}s">
+      ${locked?'<span class="mission-lock">🔒</span>':done?'<span class="mission-done">✅</span>':''}
+      <div class="mission-num">MISSION ${String(m.id).padStart(2,'0')}</div>
+      <span class="mission-planet">${m.planet}</span>
+      <div class="mission-name">${m.name}</div>
+      <div class="mission-desc">${m.story}</div>
+      <span class="mission-tag ${tagClass}">${m.difficulty.toUpperCase()}</span>
+      <div class="mission-xp">+${m.xpReward} XP</div>
+    </div>`;
+  }).join('');
+}
+
+// ── START MISSION ──
+function startMission(id){
+  const mission=MISSIONS.find(m=>m.id===id);
+  if(!mission||!mission.unlocked)return;
+  gs.currentMission=mission;
+  gs.hintUsed=false;
+  gs.attempts=0;
+  gs.startTime=Date.now();
+  gs.targetPos={x:.6+Math.random()*.25,y:.15+Math.random()*.65};
+  // Reset inputs
+  document.getElementById('hintText').style.display='none';
+  document.getElementById('hintText').classList.remove('show');
+  showScreen('game');
+  document.getElementById('navMission').textContent=String(id).padStart(2,'0');
+  renderMissionPanel(mission);
+  initSpaceCanvas();
+  updateFuelBar();
+  updateHUDVals();
+}
+
+function renderMissionPanel(m){
+  // Header
+  document.getElementById('mpPlanet').textContent=m.planet;
+  document.getElementById('mpName').textContent=m.name;
+  document.getElementById('mpDesc').textContent=m.story;
+  // Objective
+  const varStr=m.variables.join(', ');
+  document.getElementById('objText').textContent=`Temukan ${varStr} dari sistem persamaan navigasi:`;
+  document.getElementById('objFormula').innerHTML=m.equations.map(eq=>`${eq.text}`).join('\n');
+  // Augmented matrix
+  renderAugMatrix(m);
+  // Gauss steps
+  renderGaussSteps(m);
+  // Answer inputs
+  renderAnswerInputs(m);
+  // Education
+  document.getElementById('eduPanel').innerHTML=m.eduText;
+}
+
+function renderAugMatrix(m){
+  const rows=m.equations;
+  const n=m.variables.length;
+  let html=`<div class="aug-title">Matriks Augmentasi [A | b]</div>`;
+  rows.forEach((eq,ri)=>{
+    const isPivotRow=ri===0;
+    html+=`<div class="aug-row ${isPivotRow?'pivot':''}">
+      <span class="aug-cell bar">[</span>`;
+    eq.coeffs.forEach(c=>{
+      html+=`<span class="aug-cell coeff">${c>=0&&ri>0?' ':''} ${c}</span>`;
+    });
+    html+=`<span class="aug-cell bar"> | </span>`;
+    html+=`<span class="aug-cell rhs">${eq.rhs}</span>`;
+    html+=`<span class="aug-cell bar">]</span></div>`;
+  });
+  document.getElementById('augMatrix').innerHTML=html;
+}
+
+function renderGaussSteps(m){
+  const steps=generateGaussSteps(m);
+  const el=document.getElementById('gaussSteps');
+  if(!steps.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="gauss-steps">${steps.map((s,i)=>`<div class="gauss-step ${i===0?'active':''}">${s}</div>`).join('')}</div>`;
+}
+
+function generateGaussSteps(m){
+  const n=m.variables.length;
+  if(n===2){
+    const [e1,e2]=m.equations;
+    const [a,b]=e1.coeffs,[c,d]=e2.coeffs;
+    const r1=e1.rhs,r2=e2.rhs;
+    const mult=-(c/a).toFixed(2);
+    return[
+      `Step 1: Gunakan R1 sebagai baris pivot`,
+      `Step 2: R2 → R2 + (${mult})×R1 untuk eliminasi x`,
+      `Step 3: Solve R2 untuk y (back-sub)`,
+      `Step 4: Substitusi y ke R1 untuk x`,
+    ];
+  } else {
+    return[
+      `Step 1: Eliminasi kolom x menggunakan R1 sebagai pivot`,
+      `Step 2: R2 → R2 − (a₂₁/a₁₁)×R1`,
+      `Step 3: R3 → R3 − (a₃₁/a₁₁)×R1`,
+      `Step 4: Eliminasi kolom y: R3 → R3 − (a₃₂/a₂₂)×R2`,
+      `Step 5: Solve z dari R3, lalu back-substitution untuk y dan x`,
+    ];
+  }
+}
+
+function renderAnswerInputs(m){
+  const inputs=m.variables.map(v=>`
+    <div class="ans-wrap">
+      <div class="ans-label">${v} =</div>
+      <input type="number" class="ans-input" id="ans_${v}" placeholder="?" step="any" 
+        onkeydown="if(event.key==='Enter')checkAnswer()"/>
+    </div>
+  `).join('');
+  document.getElementById('answerInputs').innerHTML=inputs;
+  // Focus first
+  setTimeout(()=>{const f=document.querySelector('.ans-input');if(f)f.focus();},200);
+}
+
+// ── CHECK ANSWER ──
+function checkAnswer(){
+  const m=gs.currentMission;
+  if(!m)return;
+  gs.attempts++;
+  let allCorrect=true;
+  m.variables.forEach(v=>{
+    const inp=document.getElementById('ans_'+v);
+    if(!inp)return;
+    const val=parseFloat(inp.value);
+    const sol=m.solution[v];
+    if(Math.abs(val-sol)<0.01){
+      inp.classList.remove('wrong');inp.classList.add('correct');
+    } else {
+      inp.classList.remove('correct');inp.classList.add('wrong');
+      allCorrect=false;
+    }
+  });
+  if(allCorrect){
+    onMissionSuccess();
+  } else {
+    player.fuel=Math.max(0,player.fuel-10);
+    updateFuelBar();updateHUDVals();
+    fireLaser(false);
+    toast(`❌ Koordinat salah! -10% fuel. Coba lagi.`,'error');
+    setTimeout(()=>{
+      m.variables.forEach(v=>{
+        const inp=document.getElementById('ans_'+v);
+        if(inp)inp.classList.remove('wrong');
+      });
+    },800);
+    if(player.fuel<=0)onMissionFail();
+  }
+}
+
+function onMissionSuccess(){
+  const m=gs.currentMission;
+  const timeMs=Date.now()-gs.startTime;
+  const timeSec=Math.floor(timeMs/1000);
+  // XP & score
+  let xpGain=m.xpReward;
+  if(gs.hintUsed)xpGain=Math.floor(xpGain*.7);
+  if(gs.attempts===1)xpGain=Math.floor(xpGain*1.5);
+  const scoreDelta=xpGain*10+Math.max(0,300-timeSec*2);
+  player.xp+=xpGain;
+  player.score+=scoreDelta;
+  player.fuel=Math.min(100,player.fuel+20);
+  if(!player.completedMissions.includes(m.id))player.completedMissions.push(m.id);
+  // Animate ship
+  fireLaser(true);
+  animateShipTravel(()=>{
+    checkLevelUp();
+    unlockMissions();
+    openModal('🎉',`<span class="grad">Mission Complete!</span>`,
+      `Planet <strong>${m.name}</strong> berhasil dicapai! Koordinat ${m.variables.map(v=>`${v}=${m.solution[v]}`).join(', ')} terkonfirmasi. Metode Eliminasi Gauss berhasil!`,
+      `<div class="mstat"><div class="mstat-val">+${xpGain}</div><div class="mstat-lbl">XP</div></div>
+       <div class="mstat"><div class="mstat-val">+${scoreDelta}</div><div class="mstat-lbl">Score</div></div>
+       <div class="mstat"><div class="mstat-val">${gs.attempts}</div><div class="mstat-lbl">Attempts</div></div>`,
+      `<button class="btn btn-primary" onclick="closeModal();showGalaxy()">🌌 Galaxy Map</button>
+       ${getNextMission(m.id)?`<button class="btn btn-outline" onclick="closeModal();startMission(${getNextMission(m.id).id})">Next ▶</button>`:''}`
+    );
+  });
+}
+
+function animateShipTravel(cb){
+  const startX=gs.shipPos.x,startY=gs.shipPos.y;
+  const endX=gs.targetPos.x,endY=gs.targetPos.y;
+  const dur=1800;const t0=Date.now();
+  function step(){
+    const t=Math.min(1,(Date.now()-t0)/dur);
+    const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    gs.shipPos.x=startX+(endX-startX)*ease;
+    gs.shipPos.y=startY+(endY-startY)*ease;
+    if(t<1){requestAnimationFrame(step);}
+    else{gs.shipPos.x=endX;gs.shipPos.y=endY;if(cb)setTimeout(cb,300);}
+  }
+  step();
+}
+
+function onMissionFail(){
+  fireLaser(false);
+  toast('⚠️ Fuel habis! Mission failed.','warn');
+  setTimeout(()=>{
+    openModal('💀','Mission Failed',
+      `Fuel habis! Pesawat tidak bisa mencapai <strong>${gs.currentMission?.name}</strong>.<br>Pelajari lagi materi Eliminasi Gauss dan coba sekali lagi!`,
+      `<div class="mstat"><div class="mstat-val">${gs.attempts}</div><div class="mstat-lbl">Attempts</div></div>
+       <div class="mstat"><div class="mstat-val">0%</div><div class="mstat-lbl">Fuel</div></div>`,
+      `<button class="btn btn-amber" onclick="closeModal();retryMission()">↺ Retry</button>
+       <button class="btn btn-outline" onclick="closeModal();showGalaxy()">← Galaxy</button>`
+    );
+  },400);
+}
+
+function retryMission(){
+  player.fuel=100;
+  if(gs.currentMission)startMission(gs.currentMission.id);
+}
+
+function getNextMission(currentId){
+  const idx=MISSIONS.findIndex(m=>m.id===currentId);
+  return idx>=0&&idx<MISSIONS.length-1?MISSIONS[idx+1]:null;
+}
+
+function checkLevelUp(){
+  if(player.xp>=player.xpToNext){
+    player.xp-=player.xpToNext;
+    player.level++;
+    player.xpToNext=Math.floor(player.xpToNext*1.5);
+    player.speed=Math.min(99,player.speed+5);
+    player.power=Math.min(99,player.power+5);
+    player.shield=Math.min(99,player.shield+5);
+    if(player.level===3){player.ship='🛸';player.shipName='Scout MK-II';}
+    if(player.level===5){player.ship='🛩️';player.shipName='Striker MK-III';}
+    toast(`🌟 LEVEL UP! → Level ${player.level} — Pesawat diupgrade!`,'success');
+  }
+}
+
+// ── HUD ──
+function updateFuelBar(){
+  const pct=Math.max(0,player.fuel);
+  document.getElementById('fuelBar').style.width=pct+'%';
+  document.getElementById('fuelVal').textContent=pct;
+  document.getElementById('hudFuel').textContent=pct;
+}
+
+function updateHUDVals(){
+  document.getElementById('hudScore').textContent=player.score.toLocaleString();
+  document.getElementById('hudFuel').textContent=Math.max(0,player.fuel);
+  document.getElementById('hudXP').textContent=player.xp;
+}
+
+// ── HINT ──
+function showHint(){
+  const m=gs.currentMission;if(!m)return;
+  gs.hintUsed=true;
+  const sol=m.solution;
+  const hints=m.variables.map(v=>`${v} = ${sol[v]}`).join(', ');
+  const hintEl=document.getElementById('hintText');
+  hintEl.innerHTML=`💡 <strong>Langkah awal:</strong> Mulai dari baris pertama sebagai pivot. Eliminasi variabel pertama dari baris lainnya.<br><br>Kalau masih bingung: solusi adalah <strong>${hints}</strong> — tapi coba hitung sendiri dulu!`;
+  hintEl.classList.add('show');hintEl.style.display='block';
+  toast('💡 Hint diberikan (-30% XP bonus)','warn');
+  player.fuel=Math.max(0,player.fuel-5);
+  updateFuelBar();
+}
+
+function toggleHint(){
+  const h=document.getElementById('hintText');
+  h.style.display=h.style.display==='none'?'block':'none';
+}
+
+// ── RESET ──
+function resetInputs(){
+  document.querySelectorAll('.ans-input').forEach(inp=>{
+    inp.value='';inp.classList.remove('correct','wrong');
+  });
+  document.querySelector('.ans-input')?.focus();
+}
+
+// ── QUIT ──
+function confirmQuit(){
+  openModal('⚠️','Tinggalkan Misi?','Progress misi ini akan hilang.',
+    '',
+    `<button class="btn btn-danger btn-sm" onclick="closeModal();cancelAnimationFrame(animId);showGalaxy()">Quit</button>
+     <button class="btn btn-outline btn-sm" onclick="closeModal()">Continue</button>`
+  );
+}
+
+// ── SCROLLBAR ──
+window.addEventListener('resize',()=>{
+  if(document.getElementById('screen-game').classList.contains('active'))resizeCanvas();
+});
+</script>
+</body>
+</html>
