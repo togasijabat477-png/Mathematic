@@ -85,7 +85,7 @@ var materiData = {
   diskrit: [{
     icon:"∑", title:"Matematika Diskrit",
     items:[
-      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Learn",file:"subject/matdis/Logika_Matematika.html"},
+      {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Learn",file:"subject/matdis/videp_logika.php"},
       {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",tag:"Learn",file:"subject/matdis/Himpunan.html"},
       {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",tag:"Learn",file:"subject/matdis/Relasi_dan_Fungsi.html"},
       {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",tag:"Learn",file:"subject/matdis/teori_graf_gabungan.html"},
