@@ -169,7 +169,7 @@ var gameData = [
   {icon:"👾",title:"Game Aljabar Linear",items:[
     {num:"01",title:"⚔ Matrix Battle Arena",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
     {num:"02",title:"Vector Racer",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
-    {num:"03",title:"Transform City",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
+    {num:"03",title:"Transform City",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/transform-city.html"},
     {num:"04",title:"Determinant Crisis",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/determinan-crisis.html"},
     {num:"05",title:"Space Linear Mission",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/space-linear-mission.html"}
   ]},
