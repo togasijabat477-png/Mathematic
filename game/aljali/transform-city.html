@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Transform City — Game Aljabar Linear</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:220 18% 7%;--bg2:220 15% 10%;--bg3:220 14% 13%;
+  --fg:210 25% 92%;--fg2:210 15% 70%;--fg3:210 12% 50%;
+  --card:220 13% 16%;--surface:220 13% 16%;--surface2:220 12% 20%;
+  --primary:174 72% 52%;--teal:174 72% 52%;--teal-dim:174 50% 32%;
+  --amber:38 95% 58%;--violet:265 65% 65%;--violet-dim:265 50% 40%;
+  --border:220 12% 22%;--border-hi:220 12% 30%;
+  --radius:.75rem;
+  --font-display:'Playfair Display',serif;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ease-smooth:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:hsl(var(--bg));color:hsl(var(--fg));min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(hsl(220 15% 14%/.4) 1px,transparent 1px),linear-gradient(90deg,hsl(220 15% 14%/.4) 1px,transparent 1px);background-size:48px 48px}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;font-family:inherit}
+
+/* LAYOUT */
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+.header{position:sticky;top:0;z-index:100;background:hsl(var(--bg)/.9);backdrop-filter:blur(20px);border-bottom:1px solid hsl(var(--border));padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,hsl(var(--teal)),hsl(var(--violet)));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:hsl(var(--bg));box-shadow:0 0 16px hsl(174 72% 52%/.4)}
+.logo-text{font-family:var(--font-display);font-size:1.1rem;font-weight:800}
+.header-right{display:flex;align-items:center;gap:12px}
+.score-badge{font-family:var(--font-mono);font-size:.8rem;padding:6px 14px;border-radius:99px;background:hsl(var(--surface));border:1px solid hsl(var(--border));color:hsl(var(--teal))}
+.lives{display:flex;gap:4px;font-size:1.2rem}
+
+/* SCREENS */
+.screen{display:none;flex:1;padding:20px}
+.screen.active{display:flex;flex-direction:column}
+
+/* HOME SCREEN */
+#home-screen{align-items:center;justify-content:center;text-align:center;gap:32px;padding:40px 20px}
+.home-hero h1{font-family:var(--font-display);font-size:clamp(2.5rem,7vw,4.5rem);font-weight:900;line-height:1.05;letter-spacing:-.02em}
+.home-hero p{margin-top:16px;font-size:1.1rem;color:hsl(var(--fg2));max-width:28rem;margin-inline:auto}
+.home-canvas{position:relative;width:min(400px,90vw);height:220px;margin:20px auto}
+.city-preview{width:100%;height:100%;background:hsl(var(--bg2));border-radius:var(--radius);border:1px solid hsl(var(--border));overflow:hidden}
+.level-select{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;width:100%;max-width:560px}
+.level-btn{border-radius:var(--radius);border:1px solid hsl(var(--border));background:hsl(var(--surface));padding:16px 12px;text-align:center;transition:all .3s var(--ease-spring);position:relative;overflow:hidden}
+.level-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,hsl(var(--teal)),hsl(var(--violet)));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.level-btn:hover{border-color:hsl(174 72% 52%/.4);transform:translateY(-4px);box-shadow:0 8px 24px hsl(220 18% 3%/.5)}
+.level-btn:hover::before{transform:scaleX(1)}
+.level-btn .lv-num{font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--fg3));margin-bottom:6px}
+.level-btn .lv-title{font-weight:700;font-size:.9rem;margin-bottom:4px}
+.level-btn .lv-type{font-size:.75rem;color:hsl(var(--teal))}
+.level-btn .lv-stars{font-size:.9rem;margin-top:8px}
+.level-btn.locked{opacity:.45;cursor:not-allowed}
+.level-btn.locked:hover{transform:none;box-shadow:none}
+
+/* GAME SCREEN */
+#game-screen{flex-direction:row;gap:16px;padding:16px;align-items:flex-start;max-height:calc(100vh - 60px)}
+.game-left{display:flex;flex-direction:column;gap:12px;width:220px;flex-shrink:0}
+.panel{background:hsl(var(--surface));border:1px solid hsl(var(--border));border-radius:var(--radius);padding:14px}
+.panel h3{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3));margin-bottom:10px}
+.info-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.85rem}
+.info-val{font-family:var(--font-mono);font-weight:700;color:hsl(var(--teal))}
+
+/* TRANSFORM CONTROLS */
+.transform-controls{display:flex;flex-direction:column;gap:8px}
+.t-section{margin-bottom:4px}
+.t-label{font-size:.72rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:hsl(var(--fg3));margin-bottom:6px;display:block}
+.t-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.t-btn{padding:8px 6px;border-radius:8px;background:hsl(var(--bg3));border:1px solid hsl(var(--border));color:hsl(var(--fg2));font-size:.78rem;font-weight:600;transition:all .25s var(--ease-spring);text-align:center}
+.t-btn:hover{background:hsl(var(--surface2));border-color:hsl(var(--teal));color:hsl(var(--teal));transform:translateY(-2px)}
+.t-btn:active{transform:scale(.95)}
+.t-btn.active-transform{background:hsl(174 72% 52%/.2);border-color:hsl(var(--teal));color:hsl(var(--teal))}
+.t-slider-row{display:flex;align-items:center;gap:8px;font-size:.78rem;color:hsl(var(--fg2))}
+.t-slider-row input{flex:1;accent-color:hsl(var(--teal))}
+.t-val{font-family:var(--font-mono);color:hsl(var(--teal));min-width:36px;text-align:right;font-size:.75rem}
+
+/* APPLY BTN */
+.apply-btn{width:100%;padding:11px;border-radius:var(--radius);background:hsl(var(--teal));color:hsl(var(--bg));font-weight:700;font-size:.9rem;transition:all .3s var(--ease-spring);box-shadow:0 4px 16px hsl(174 72% 52%/.25)}
+.apply-btn:hover{filter:brightness(1.1);transform:translateY(-3px);box-shadow:0 8px 24px hsl(174 72% 52%/.35)}
+.apply-btn:active{transform:translateY(0) scale(.97)}
+.apply-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* GAME CENTER */
+.game-center{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
+.canvas-wrap{position:relative;flex:1;background:hsl(var(--bg2));border:1px solid hsl(var(--border));border-radius:var(--radius);overflow:hidden;cursor:grab;min-height:400px}
+.canvas-wrap:active{cursor:grabbing}
+#gameCanvas{display:block;width:100%;height:100%}
+.canvas-overlay{position:absolute;inset:0;pointer-events:none}
+.transform-badge{position:absolute;top:12px;left:12px;background:hsl(var(--bg)/.85);backdrop-filter:blur(10px);border:1px solid hsl(var(--border));border-radius:99px;padding:6px 14px;font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--teal))}
+.hint-box{position:absolute;bottom:12px;left:12px;right:12px;background:hsl(var(--bg)/.9);backdrop-filter:blur(10px);border:1px solid hsl(var(--teal)/.3);border-radius:10px;padding:10px 14px;font-size:.8rem;color:hsl(var(--fg2))}
+
+/* MATRIX DISPLAY */
+.matrix-panel{background:hsl(var(--bg3));border:1px solid hsl(var(--border));border-radius:8px;padding:12px;font-family:var(--font-mono);font-size:.78rem}
+.matrix-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:hsl(var(--fg3));margin-bottom:8px}
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;position:relative;padding:8px 0}
+.matrix-bracket{position:absolute;top:0;bottom:0;width:4px;border:1px solid hsl(var(--fg3));border-radius:1px}
+.matrix-bracket.left{left:0;border-right:none}
+.matrix-bracket.right{right:0;border-left:none}
+.m-cell{text-align:center;padding:3px;color:hsl(var(--teal));font-weight:700}
+
+/* PROGRESS BAR */
+.prog-bar{height:6px;border-radius:99px;background:hsl(var(--bg3));overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,hsl(var(--teal)),hsl(var(--violet)));transition:width .7s var(--ease-smooth)}
+
+/* GAME RIGHT */
+.game-right{width:180px;flex-shrink:0;display:flex;flex-direction:column;gap:12px}
+.building-shelf{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.building-thumb{border-radius:8px;border:1px solid hsl(var(--border));background:hsl(var(--bg3));aspect-ratio:1;display:flex;align-items:center;justify-content:center;cursor:grab;transition:all .25s var(--ease-spring);font-size:1.6rem;position:relative;overflow:hidden}
+.building-thumb:hover{border-color:hsl(var(--teal));transform:scale(1.08);box-shadow:0 4px 16px hsl(174 72% 52%/.3)}
+.building-thumb.selected{border-color:hsl(var(--teal));background:hsl(174 72% 52%/.15);box-shadow:0 0 0 2px hsl(var(--teal))}
+.building-thumb .b-label{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:.55rem;font-family:var(--font-mono);color:hsl(var(--fg3))}
+
+/* OBJECTIVES */
+.objective-list{display:flex;flex-direction:column;gap:6px}
+.obj-item{display:flex;align-items:center;gap:8px;font-size:.8rem;color:hsl(var(--fg2))}
+.obj-item.done{color:hsl(150 80% 55%)}
+.obj-check{width:16px;height:16px;border-radius:4px;border:1px solid hsl(var(--border));display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0}
+.obj-item.done .obj-check{background:hsl(150 80% 45%/.3);border-color:hsl(150 80% 45%);color:hsl(150 80% 55%)}
+
+/* RESULT SCREEN */
+#result-screen{align-items:center;justify-content:center;text-align:center;gap:24px}
+.result-card{background:hsl(var(--surface));border:1px solid hsl(var(--border));border-radius:var(--radius);padding:40px 48px;max-width:440px;width:100%}
+.stars-display{font-size:3rem;margin:16px 0;letter-spacing:8px}
+.result-score{font-family:var(--font-display);font-size:2.5rem;font-weight:900;color:hsl(var(--teal));margin-bottom:4px}
+.result-label{font-size:.875rem;color:hsl(var(--fg3))}
+.result-actions{display:flex;gap:12px;margin-top:24px;justify-content:center}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;border-radius:var(--radius);background:hsl(var(--teal));padding:12px 28px;font-weight:700;color:hsl(var(--bg));transition:all .3s var(--ease-spring)}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-3px)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;border-radius:var(--radius);border:1.5px solid hsl(var(--border-hi));background:transparent;padding:12px 28px;font-weight:600;color:hsl(var(--fg));transition:all .3s var(--ease-spring)}
+.btn-outline:hover{border-color:hsl(var(--teal));background:hsl(var(--teal)/.1);transform:translateY(-3px)}
+
+/* TUTORIAL OVERLAY */
+.tutorial-overlay{position:fixed;inset:0;z-index:200;background:hsl(220 18% 3%/.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center}
+.tutorial-card{background:hsl(var(--bg3));border:1px solid hsl(var(--border));border-radius:var(--radius);padding:36px;max-width:440px;width:90%}
+.tutorial-step{display:none}
+.tutorial-step.active{display:block}
+.tutorial-icon{font-size:3rem;margin-bottom:16px}
+.tutorial-title{font-family:var(--font-display);font-size:1.4rem;font-weight:800;margin-bottom:10px}
+.tutorial-text{font-size:.95rem;line-height:1.7;color:hsl(var(--fg2));margin-bottom:20px}
+.tut-progress{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.tut-dot{width:8px;height:8px;border-radius:50%;background:hsl(var(--border));transition:all .3s}
+.tut-dot.active{background:hsl(var(--teal));width:24px;border-radius:4px}
+
+/* CHALLENGE MODE */
+.challenge-timer{font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:hsl(var(--amber));text-align:center;padding:8px;border-radius:8px;background:hsl(38 95% 58%/.1);border:1px solid hsl(38 95% 58%/.3)}
+.challenge-timer.warning{color:#f87171;background:hsl(0 80% 50%/.1);border-color:hsl(0 80% 50%/.3)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 hsl(174 72% 52%/.4)}50%{box-shadow:0 0 0 8px hsl(174 72% 52%/.0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.animate-pop{animation:pop .4s var(--ease-spring)}
+.animate-float{animation:float 3s ease-in-out infinite}
+.animate-fade-up{animation:fadeUp .5s var(--ease-smooth) both}
+.grad-text{background:linear-gradient(135deg,hsl(var(--teal)) 20%,hsl(var(--violet)) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:300;border-radius:var(--radius);border:1px solid hsl(var(--border));background:hsl(var(--surface));padding:14px 20px;box-shadow:0 16px 40px hsl(220 18% 3%/.6);opacity:0;transform:translateY(16px);pointer-events:none;transition:all .4s var(--ease-spring);font-size:.875rem}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-left:3px solid #22c55e}
+.toast.info{border-left:3px solid hsl(var(--teal))}
+
+/* COORD DISPLAY */
+.coord-display{font-family:var(--font-mono);font-size:.72rem;color:hsl(var(--fg3));text-align:center;padding:6px;border-radius:6px;background:hsl(var(--bg3));border:1px solid hsl(var(--border))}
+
+/* FORMULA CHIP */
+.formula-chip{display:inline-flex;align-items:center;gap:6px;border-radius:99px;background:hsl(265 65% 65%/.15);border:1px solid hsl(265 65% 65%/.3);padding:5px 12px;font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--violet))}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  #game-screen{flex-direction:column;overflow-y:auto;max-height:none}
+  .game-left,.game-right{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .canvas-wrap{min-height:300px}
+}
+@media(max-width:600px){
+  .game-left,.game-right{grid-template-columns:1fr}
+  .header{padding:0 14px}.logo-text{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">∑</div>
+      <span class="logo-text">Transform City</span>
+    </div>
+    <div class="header-right">
+      <div class="score-badge" id="headerScore">Skor: 0</div>
+      <div class="lives" id="headerLives">❤️❤️❤️</div>
+    </div>
+  </header>
+
+  <!-- HOME SCREEN -->
+  <div class="screen active" id="home-screen">
+    <div class="home-hero animate-fade-up">
+      <div style="display:inline-flex;align-items:center;gap:8px;border-radius:99px;border:1px solid hsl(174 72% 52%/.3);background:hsl(174 72% 52%/.1);padding:6px 16px;font-family:var(--font-mono);font-size:.8rem;color:hsl(var(--teal));margin-bottom:20px">✨ Game Aljabar Linear Interaktif</div>
+      <h1><span class="grad-text">Transform City</span></h1>
+      <p>Bangun dan ubah kota menggunakan <strong>transformasi linear</strong>! Pelajari translasi, rotasi, refleksi, dan dilatasi sambil membangun kota impianmu.</p>
+    </div>
+
+    <canvas id="previewCanvas" width="380" height="200" style="border-radius:var(--radius);border:1px solid hsl(var(--border));max-width:90vw"></canvas>
+
+    <div style="text-align:center">
+      <div style="font-family:var(--font-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3));margin-bottom:16px">— Pilih Level —</div>
+      <div class="level-select" id="levelSelect"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <button class="btn-primary" onclick="startLevel(0)">▶ Mulai Belajar</button>
+      <button class="btn-outline" onclick="startChallenge()">⚡ Mode Challenge</button>
+    </div>
+
+    <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+      <div class="formula-chip">T(x,y) = (x+tx, y+ty)</div>
+      <div class="formula-chip">R(θ): [cosθ -sinθ; sinθ cosθ]</div>
+      <div class="formula-chip">D(k): [k 0; 0 k]</div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="screen" id="game-screen">
+    <!-- LEFT PANEL -->
+    <div class="game-left">
+      <div class="panel">
+        <h3>📊 Status Level</h3>
+        <div class="info-row"><span>Level</span><span class="info-val" id="currentLevelLabel">1</span></div>
+        <div class="info-row"><span>Skor</span><span class="info-val" id="gameScore">0</span></div>
+        <div class="info-row"><span>Langkah</span><span class="info-val" id="moveCount">0/10</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      </div>
+
+      <!-- TRANSFORM CONTROLS -->
+      <div class="panel">
+        <h3>🔧 Transformasi</h3>
+        <div class="transform-controls">
+          <div class="t-section">
+            <span class="t-label">Pilih Tipe</span>
+            <div class="t-btns">
+              <button class="t-btn active-transform" id="btnTrans" onclick="selectTransform('translasi')">➡ Translasi</button>
+              <button class="t-btn" id="btnRot" onclick="selectTransform('rotasi')">↻ Rotasi</button>
+              <button class="t-btn" id="btnRef" onclick="selectTransform('refleksi')">⇆ Refleksi</button>
+              <button class="t-btn" id="btnDil" onclick="selectTransform('dilatasi')">⇱ Dilatasi</button>
+            </div>
+          </div>
+
+          <!-- TRANSLASI params -->
+          <div id="paramsTranslasi">
+            <span class="t-label">Parameter (tx, ty)</span>
+            <div class="t-slider-row"><span>tx</span><input type="range" id="txSlider" min="-5" max="5" value="2" oninput="updateParams()"><span class="t-val" id="txVal">+2</span></div>
+            <div class="t-slider-row"><span>ty</span><input type="range" id="tySlider" min="-5" max="5" value="0" oninput="updateParams()"><span class="t-val" id="tyVal">+0</span></div>
+          </div>
+          <!-- ROTASI params -->
+          <div id="paramsRotasi" style="display:none">
+            <span class="t-label">Sudut (°)</span>
+            <div class="t-slider-row"><span>θ</span><input type="range" id="rotSlider" min="0" max="360" step="15" value="90" oninput="updateParams()"><span class="t-val" id="rotVal">90°</span></div>
+          </div>
+          <!-- REFLEKSI params -->
+          <div id="paramsRefleksi" style="display:none">
+            <span class="t-label">Sumbu Refleksi</span>
+            <div class="t-btns">
+              <button class="t-btn" id="refX" onclick="selectReflection('x')">Sumbu X</button>
+              <button class="t-btn active-transform" id="refY" onclick="selectReflection('y')">Sumbu Y</button>
+              <button class="t-btn" id="refXY" onclick="selectReflection('xy')">y = x</button>
+              <button class="t-btn" id="refNXY" onclick="selectReflection('-xy')">y = -x</button>
+            </div>
+          </div>
+          <!-- DILATASI params -->
+          <div id="paramsDilatasi" style="display:none">
+            <span class="t-label">Faktor Skala (k)</span>
+            <div class="t-slider-row"><span>k</span><input type="range" id="dilSlider" min="0.5" max="3" step="0.25" value="2" oninput="updateParams()"><span class="t-val" id="dilVal">×2</span></div>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <button class="apply-btn" id="applyBtn" onclick="applyTransform()">Terapkan ✓</button>
+        </div>
+      </div>
+
+      <!-- MATRIX -->
+      <div class="panel">
+        <h3>📐 Matriks Transformasi</h3>
+        <div class="matrix-panel" id="matrixDisplay">
+          <div class="matrix-title">T =</div>
+          <div style="position:relative;padding:0 12px">
+            <div class="matrix-bracket left"></div>
+            <div class="matrix-grid" id="matrixGrid">
+              <div class="m-cell">1</div><div class="m-cell">0</div>
+              <div class="m-cell">0</div><div class="m-cell">1</div>
+            </div>
+            <div class="matrix-bracket right"></div>
+          </div>
+        </div>
+        <div class="coord-display" id="coordDisplay" style="margin-top:8px">Pilih bangunan</div>
+      </div>
+    </div>
+
+    <!-- CENTER: CANVAS -->
+    <div class="game-center">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div style="font-family:var(--font-mono);font-size:.8rem;color:hsl(var(--fg2))" id="levelTitle">Level 1: Translasi</div>
+        <div style="display:flex;gap:8px">
+          <button class="t-btn" style="padding:6px 12px" onclick="resetLevel()">↺ Reset</button>
+          <button class="t-btn" style="padding:6px 12px" onclick="showTutorial()">? Bantuan</button>
+          <button class="t-btn" style="padding:6px 12px" onclick="goHome()">🏠</button>
+        </div>
+      </div>
+
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="gameCanvas"></canvas>
+        <div class="canvas-overlay">
+          <div class="transform-badge" id="modeBadge">Mode: Translasi</div>
+          <div class="hint-box" id="hintBox">Klik bangunan untuk memilih, lalu pilih transformasi dan klik Terapkan.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="formula-chip" id="formulaChip">T(x,y) = (x+tx, y+ty)</div>
+        <div style="font-size:.78rem;color:hsl(var(--fg3));align-self:center" id="transformInfo">tx=+2, ty=+0</div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="game-right">
+      <div class="panel">
+        <h3>🏗 Bangunan</h3>
+        <div class="building-shelf" id="buildingShelf"></div>
+      </div>
+
+      <div class="panel">
+        <h3>🎯 Misi</h3>
+        <div class="objective-list" id="objectiveList"></div>
+      </div>
+
+      <div class="panel" id="challengePanel" style="display:none">
+        <h3>⚡ Challenge</h3>
+        <div class="challenge-timer" id="challengeTimer">01:00</div>
+        <div style="margin-top:8px;font-size:.78rem;color:hsl(var(--fg3));text-align:center" id="challengeInfo">Selesaikan sebanyak mungkin!</div>
+      </div>
+
+      <button class="apply-btn" style="background:hsl(var(--amber));box-shadow:0 4px 16px hsl(38 95% 58%/.25)" onclick="nextPuzzle()" id="nextBtn" disabled>Lanjut ➔</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="screen" id="result-screen">
+    <div class="result-card animate-fade-up">
+      <div style="font-size:4rem" id="resultEmoji">🏆</div>
+      <h2 class="font-display" style="font-family:var(--font-display);font-size:1.8rem;font-weight:900;margin-top:12px" id="resultTitle">Level Selesai!</h2>
+      <div class="stars-display" id="resultStars">⭐⭐⭐</div>
+      <div class="result-score" id="resultScore">2400</div>
+      <div class="result-label">poin diperoleh</div>
+
+      <div style="margin:20px 0;background:hsl(var(--bg3));border-radius:10px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3));margin-bottom:12px">Ringkasan</div>
+        <div class="info-row"><span style="font-size:.85rem">Langkah Digunakan</span><span class="info-val" id="summaryMoves">5</span></div>
+        <div class="info-row"><span style="font-size:.85rem">Transformasi Tepat</span><span class="info-val" id="summaryCorrect">3/3</span></div>
+        <div class="info-row"><span style="font-size:.85rem">Materi Dikuasai</span><span class="info-val" id="summaryTopics">Translasi</span></div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-outline" onclick="goHome()">🏠 Menu</button>
+        <button class="btn-primary" onclick="nextLevel()" id="nextLevelBtn">Lanjut ➔</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIAL OVERLAY -->
+<div class="tutorial-overlay" id="tutorialOverlay" style="display:none">
+  <div class="tutorial-card">
+    <div class="tut-progress" id="tutDots"></div>
+    <div id="tutContent"></div>
+    <div style="display:flex;gap:10px;justify-content:space-between;margin-top:20px">
+      <button class="btn-outline" style="padding:10px 20px;font-size:.85rem" onclick="tutNav(-1)" id="tutPrev">← Prev</button>
+      <button class="btn-primary" style="padding:10px 20px;font-size:.85rem" onclick="tutNav(1)" id="tutNext">Next →</button>
+    </div>
+    <button style="position:absolute;top:14px;right:14px;background:none;color:hsl(var(--fg3));font-size:1.1rem" onclick="closeTutorial()">✕</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════
+   TRANSFORM CITY — Game Engine
+══════════════════════════════════ */
+
+/* ─── BUILDINGS DATA ─── */
+const BUILDINGS = [
+  {id:'house',emoji:'🏠',label:'Rumah',color:'#2dd4bf',w:60,h:50},
+  {id:'office',emoji:'🏢',label:'Kantor',color:'#818cf8',w:50,h:80},
+  {id:'tree',emoji:'🌳',label:'Pohon',color:'#4ade80',w:44,h:56},
+  {id:'shop',emoji:'🏪',label:'Toko',color:'#fb923c',w:60,h:46},
+  {id:'bank',emoji:'🏦',label:'Bank',color:'#facc15',w:64,h:60},
+  {id:'park',emoji:'⛲',label:'Taman',color:'#34d399',w:56,h:48},
+];
+
+/* ─── LEVELS ─── */
+const LEVELS = [
+  {
+    id:0,title:'Level 1',name:'Translasi Dasar',type:'translasi',
+    desc:'Pindahkan bangunan ke posisi yang ditandai!',
+    allowedTransforms:['translasi'],
+    maxMoves:8,
+    puzzles:[
+      {buildingId:'house',startPos:{x:2,y:2},targetPos:{x:5,y:2},hint:'Geser ke kanan (tx=+3)'},
+      {buildingId:'tree',startPos:{x:1,y:4},targetPos:{x:1,y:1},hint:'Geser ke atas (ty=-3)'},
+      {buildingId:'shop',startPos:{x:6,y:5},targetPos:{x:3,y:3},hint:'Translasi bebas!'},
+    ],
+    objectives:['Pindahkan Rumah ke target','Pindahkan Pohon ke target','Pindahkan Toko ke target'],
+    formula:'T(x,y) = (x+tx, y+ty)',
+    matrixType:'translation',
+    starsFormula:(moves,max)=>moves<=max*0.5?3:moves<=max*0.75?2:1,
+  },
+  {
+    id:1,title:'Level 2',name:'Rotasi Kota',type:'rotasi',
+    desc:'Putar bangunan mengelilingi pusat kota!',
+    allowedTransforms:['translasi','rotasi'],
+    maxMoves:10,
+    puzzles:[
+      {buildingId:'office',startPos:{x:4,y:1},targetPos:{x:7,y:4},hint:'Rotasi 90° searah jarum jam'},
+      {buildingId:'house',startPos:{x:7,y:4},targetPos:{x:4,y:7},hint:'Rotasi 90° lagi!'},
+      {buildingId:'bank',startPos:{x:2,y:6},targetPos:{x:5,y:3},hint:'Kombinasi rotasi dan translasi'},
+    ],
+    objectives:['Rotasi Kantor 90°','Rotasi Rumah 90°','Selesaikan puzzle terakhir'],
+    formula:'R(θ): [cosθ -sinθ; sinθ cosθ]',
+    matrixType:'rotation',
+    starsFormula:(moves,max)=>moves<=max*0.5?3:moves<=max*0.75?2:1,
+  },
+  {
+    id:2,title:'Level 3',name:'Refleksi Simetri',type:'refleksi',
+    desc:'Cerminkan bangunan untuk membuat kota simetris!',
+    allowedTransforms:['translasi','rotasi','refleksi'],
+    maxMoves:10,
+    puzzles:[
+      {buildingId:'house',startPos:{x:2,y:2},targetPos:{x:6,y:2},hint:'Refleksi sumbu Y (tengah)'},
+      {buildingId:'tree',startPos:{x:3,y:5},targetPos:{x:3,y:3},hint:'Refleksi sumbu X (tengah)'},
+      {buildingId:'shop',startPos:{x:1,y:1},targetPos:{x:7,y:7},hint:'Refleksi y = -x'},
+    ],
+    objectives:['Refleksi Rumah','Refleksi Pohon','Refleksi Toko'],
+    formula:'Ref-x: (x,-y) | Ref-y: (-x,y)',
+    matrixType:'reflection',
+    starsFormula:(moves,max)=>moves<=max*0.5?3:moves<=max*0.75?2:1,
+  },
+  {
+    id:3,title:'Level 4',name:'Dilatasi Megacity',type:'dilatasi',
+    desc:'Perbesar atau perkecil blok kota!',
+    allowedTransforms:['translasi','rotasi','refleksi','dilatasi'],
+    maxMoves:12,
+    puzzles:[
+      {buildingId:'office',startPos:{x:3,y:3},targetPos:{x:3,y:3},scale:2,hint:'Perbesar kantor 2×'},
+      {buildingId:'house',startPos:{x:6,y:2},targetPos:{x:6,y:2},scale:0.5,hint:'Perkecil rumah 0.5×'},
+      {buildingId:'bank',startPos:{x:2,y:5},targetPos:{x:5,y:2},scale:1.5,hint:'Pindah & perbesar!'},
+    ],
+    objectives:['Dilatasi Kantor ×2','Dilatasi Rumah ×0.5','Pindah & perbesar Bank'],
+    formula:'D(k): [k 0; 0 k]',
+    matrixType:'dilation',
+    starsFormula:(moves,max)=>moves<=max*0.5?3:moves<=max*0.75?2:1,
+  },
+];
+
+/* ─── TUTORIALS ─── */
+const TUTORIALS = [
+  {icon:'🏙️',title:'Selamat datang di Transform City!',text:'Bangun kota impianmu dengan transformasi linear. Setiap bangunan dapat dipindahkan, diputar, dicerminkan, atau diperbesar/diperkecil menggunakan matematika!'},
+  {icon:'➡️',title:'Translasi',text:'Translasi memindahkan titik (x,y) ke posisi baru (x+tx, y+ty).\n\nContoh: titik (2,3) ditranslasi dengan tx=1, ty=2 → (3,5).\n\nMatriks homogen: [1 0 tx; 0 1 ty; 0 0 1]'},
+  {icon:'↻',title:'Rotasi',text:'Rotasi memutar titik sebesar sudut θ:\nx\' = x·cos(θ) - y·sin(θ)\ny\' = x·sin(θ) + y·cos(θ)\n\nMatriks: [cosθ -sinθ; sinθ cosθ]'},
+  {icon:'⇆',title:'Refleksi',text:'Refleksi mencerminkan titik:\n• Sumbu X: (x,y) → (x,-y)\n• Sumbu Y: (x,y) → (-x,y)\n• y=x: (x,y) → (y,x)\n• y=-x: (x,y) → (-y,-x)'},
+  {icon:'⇱',title:'Dilatasi',text:'Dilatasi mengubah ukuran dengan faktor k:\n(x,y) → (k·x, k·y)\n\nMatriks: [k 0; 0 k]\n\nJika k>1 → diperbesar\nJika 0<k<1 → diperkecil'},
+  {icon:'🎮',title:'Cara Bermain',text:'1. Klik bangunan untuk memilih\n2. Pilih tipe transformasi\n3. Atur parameter\n4. Klik Terapkan\n5. Pindahkan ke posisi target (kotak hijau)\n\nSelesaikan semua misi untuk melanjutkan!'},
+];
+
+/* ─── STATE ─── */
+let state = {
+  screen:'home',
+  currentLevel:0,
+  currentPuzzle:0,
+  moves:0,
+  score:0,
+  stars:[0,0,0,0],
+  lives:3,
+  selectedBuilding:null,
+  activeTransform:'translasi',
+  reflectionAxis:'y',
+  placedBuildings:[],
+  puzzlesDone:[],
+  isChallenge:false,
+  challengeTime:60,
+  challengeScore:0,
+  challengeInterval:null,
+  animating:false,
+};
+
+let params = {tx:2,ty:0,angle:90,scale:2};
+
+/* ─── CANVAS SETUP ─── */
+let canvas, ctx, W, H;
+const GRID = 9;
+
+function initCanvas(){
+  canvas = document.getElementById('gameCanvas');
+  const wrap = document.getElementById('canvasWrap');
+  const resize = ()=>{
+    W = wrap.clientWidth; H = wrap.clientHeight||400;
+    canvas.width = W; canvas.height = H;
+    draw();
+  };
+  new ResizeObserver(resize).observe(wrap);
+  resize();
+}
+
+function cellSize(){return Math.min(W,H)/(GRID+1)}
+function cx(gx){return (gx+0.5)*cellSize()+cellSize()*0.5}
+function cy(gy){return (gy+0.5)*cellSize()+cellSize()*0.5}
+function toCellX(px){return Math.floor((px-cellSize()*0.5)/cellSize())}
+function toCellY(py){return Math.floor((py-cellSize()*0.5)/cellSize())}
+
+/* ─── DRAW ─── */
+function draw(){
+  if(!canvas||!ctx) return;
+  ctx.clearRect(0,0,W,H);
+  drawGrid();
+  const level = LEVELS[state.currentLevel];
+  if(state.currentPuzzle < (level?.puzzles?.length||0)){
+    drawTarget(level.puzzles[state.currentPuzzle]);
+  }
+  drawBuildings();
+  drawAxes();
+}
+
+function drawGrid(){
+  ctx.strokeStyle='hsl(220,12%,22%)';
+  ctx.lineWidth=0.5;
+  const cs=cellSize();
+  for(let i=0;i<=GRID+1;i++){
+    ctx.beginPath();ctx.moveTo(i*cs+cs*0.5,cs*0.5);ctx.lineTo(i*cs+cs*0.5,H-cs*0.5);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cs*0.5,i*cs+cs*0.5);ctx.lineTo(W-cs*0.5,i*cs+cs*0.5);ctx.stroke();
+  }
+  ctx.fillStyle='hsl(210,12%,50%)';
+  ctx.font=`${Math.max(8,cellSize()*0.35)}px Space Mono,monospace`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let i=0;i<=GRID;i++){
+    ctx.fillText(i,cx(i),cy(-0.55)+cellSize()*0.5);
+    if(i>0)ctx.fillText(i,cx(-0.55)+cellSize()*0.5,cy(i));
+  }
+}
+
+function drawAxes(){
+  const cs=cellSize();
+  ctx.strokeStyle='hsl(210,15%,35%)';ctx.lineWidth=1.5;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(cx(0),cs*0.5);ctx.lineTo(cx(0),H-cs*0.5);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cs*0.5,cy(0));ctx.lineTo(W-cs*0.5,cy(0));ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawTarget(puzzle){
+  if(!puzzle) return;
+  const cs=cellSize();
+  const tx=cx(puzzle.targetPos.x), ty=cy(puzzle.targetPos.y);
+  const bld=BUILDINGS.find(b=>b.id===puzzle.buildingId)||BUILDINGS[0];
+  const tw=cs*0.7, th=cs*0.7;
+
+  ctx.save();
+  ctx.strokeStyle='hsl(174,72%,52%)';ctx.lineWidth=2;
+  ctx.setLineDash([5,4]);
+  ctx.shadowColor='hsl(174,72%,52%)';ctx.shadowBlur=10;
+  ctx.strokeRect(tx-tw/2,ty-th/2,tw,th);
+  ctx.setLineDash([]);ctx.shadowBlur=0;
+
+  ctx.fillStyle='hsl(174,72%,52%/0.08)';
+  ctx.fillRect(tx-tw/2,ty-th/2,tw,th);
+
+  ctx.fillStyle='hsl(174,72%,52%)';ctx.font=`${cs*0.45}px sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.globalAlpha=0.4;ctx.fillText(bld.emoji,tx,ty);ctx.globalAlpha=1;
+
+  const targetDoneCount = state.puzzlesDone.filter(d=>d===true).length;
+  ctx.fillStyle='hsl(174,72%,52%)';ctx.font=`bold ${cs*0.25}px Space Mono,monospace`;
+  ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText('TARGET',tx,ty-th/2-4);
+  ctx.restore();
+}
+
+function drawBuildings(){
+  state.placedBuildings.forEach((b,i)=>{
+    drawBuilding(b,i===state.selectedBuilding);
+  });
+}
+
+function drawBuilding(b,selected){
+  const cs=cellSize();
+  const x=cx(b.x), y=cy(b.y);
+  const bld=BUILDINGS.find(bd=>bd.id===b.type)||BUILDINGS[0];
+  const w=cs*0.72*b.scale, h=cs*0.72*b.scale;
+
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.rotate(b.rotation*Math.PI/180);
+  if(b.scaleX<0||b.scaleY<0){ctx.scale(b.scaleX,b.scaleY);}
+
+  if(selected){
+    ctx.shadowColor='hsl(174,72%,52%)';ctx.shadowBlur=18;
+    ctx.strokeStyle='hsl(174,72%,52%)';ctx.lineWidth=2;
+    ctx.strokeRect(-w/2-2,-h/2-2,w+4,h+4);
+    ctx.shadowBlur=0;
+  }
+
+  ctx.fillStyle=bld.color+'22';
+  ctx.fillRect(-w/2,-h/2,w,h);
+  ctx.strokeStyle=bld.color;ctx.lineWidth=selected?2:1.5;
+  ctx.strokeRect(-w/2,-h/2,w,h);
+
+  ctx.font=`${w*0.55}px sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(bld.emoji,0,0);
+
+  ctx.fillStyle='rgba(255,255,255,0.7)';
+  ctx.font=`bold ${cs*0.18}px Space Mono,monospace`;
+  ctx.fillText(`(${b.x},${b.y})`,0,h/2+cs*0.2);
+  ctx.restore();
+}
+
+/* ─── PREVIEW CANVAS ─── */
+function drawPreview(){
+  const pc = document.getElementById('previewCanvas');
+  if(!pc) return;
+  const pctx = pc.getContext('2d');
+  const W=pc.width,H=pc.height;
+  pctx.clearRect(0,0,W,H);
+
+  pctx.strokeStyle='#1e2d3d';pctx.lineWidth=0.5;
+  for(let i=0;i<8;i++){
+    pctx.beginPath();pctx.moveTo(i*W/7,0);pctx.lineTo(i*W/7,H);pctx.stroke();
+    pctx.beginPath();pctx.moveTo(0,i*H/5);pctx.lineTo(W,i*H/5);pctx.stroke();
+  }
+
+  const buildings=[
+    {emoji:'🏠',x:0.12,y:0.5,t:0},
+    {emoji:'🏢',x:0.32,y:0.4,t:1000},
+    {emoji:'🌳',x:0.52,y:0.55,t:2000},
+    {emoji:'🏪',x:0.72,y:0.45,t:3000},
+    {emoji:'⛲',x:0.9,y:0.5,t:4000},
+  ];
+
+  const now=Date.now();
+  buildings.forEach(b=>{
+    const elapsed=(now-b.t)%3000;
+    const bounce=elapsed<1500?Math.sin(elapsed/1500*Math.PI)*4:0;
+    pctx.font=`${H*0.28}px sans-serif`;
+    pctx.textAlign='center';pctx.textBaseline='middle';
+    pctx.fillText(b.emoji,b.x*W,b.y*H-bounce);
+  });
+
+  requestAnimationFrame(drawPreview);
+}
+
+/* ─── LEVEL / PUZZLE SETUP ─── */
+function setupLevel(levelIdx){
+  const level=LEVELS[levelIdx];
+  if(!level) return;
+  state.currentLevel=levelIdx;
+  state.currentPuzzle=0;
+  state.moves=0;
+  state.puzzlesDone=[];
+  state.selectedBuilding=null;
+  state.placedBuildings=[];
+
+  level.puzzles.forEach((p,i)=>{
+    state.placedBuildings.push({
+      id:i,type:p.buildingId,
+      x:p.startPos.x,y:p.startPos.y,
+      rotation:0,scale:1,scaleX:1,scaleY:1,
+    });
+  });
+
+  document.getElementById('currentLevelLabel').textContent=level.title;
+  document.getElementById('levelTitle').textContent=`${level.title}: ${level.name}`;
+  document.getElementById('hintBox').textContent=level.puzzles[0]?.hint||level.desc;
+
+  renderObjectives();
+  renderBuildingShelf();
+  updateMoveCount();
+  updateMatrix();
+  draw();
+}
+
+function setupPuzzle(puzzleIdx){
+  const level=LEVELS[state.currentLevel];
+  const puzzle=level.puzzles[puzzleIdx];
+  if(!puzzle) return;
+  document.getElementById('hintBox').textContent=puzzle.hint||level.desc;
+  draw();
+}
+
+/* ─── RENDER UI ─── */
+function renderObjectives(){
+  const level=LEVELS[state.currentLevel];
+  const list=document.getElementById('objectiveList');
+  if(!list) return;
+  list.innerHTML=level.objectives.map((obj,i)=>`
+    <div class="obj-item${state.puzzlesDone[i]?' done':''}">
+      <div class="obj-check">${state.puzzlesDone[i]?'✓':''}</div>
+      <span>${obj}</span>
+    </div>`).join('');
+}
+
+function renderBuildingShelf(){
+  const shelf=document.getElementById('buildingShelf');
+  if(!shelf) return;
+  const level=LEVELS[state.currentLevel];
+  const used=new Set(level.puzzles.map(p=>p.buildingId));
+  const available=BUILDINGS.filter(b=>used.has(b.id));
+  shelf.innerHTML=available.map(b=>`
+    <div class="building-thumb" onclick="selectBuildingById('${b.id}')" title="${b.label}">
+      <span style="font-size:1.4rem">${b.emoji}</span>
+      <span class="b-label">${b.label}</span>
+    </div>`).join('');
+}
+
+function renderLevelSelect(){
+  const container=document.getElementById('levelSelect');
+  if(!container) return;
+  const typeEmojis={translasi:'➡️',rotasi:'↻',refleksi:'⇆',dilatasi:'⇱'};
+  container.innerHTML=LEVELS.map((lv,i)=>`
+    <div class="level-btn${i>0&&state.stars[i-1]===0?' locked':''}" onclick="${i>0&&state.stars[i-1]===0?'showToast(\'Selesaikan level sebelumnya!\',\'info\')':'startLevel('+i+')'}">
+      <div class="lv-num">LEVEL ${i+1}</div>
+      <div style="font-size:1.3rem">${typeEmojis[lv.type]||'🎮'}</div>
+      <div class="lv-title">${lv.name}</div>
+      <div class="lv-type">${lv.type}</div>
+      <div class="lv-stars">${'⭐'.repeat(state.stars[i])}${'☆'.repeat(3-state.stars[i])}</div>
+    </div>`).join('');
+}
+
+/* ─── TRANSFORM SELECT ─── */
+function selectTransform(type){
+  state.activeTransform=type;
+  ['Translasi','Rotasi','Refleksi','Dilatasi'].forEach(t=>{
+    const btn=document.getElementById('btn'+t.substring(0,4));
+    if(btn) btn.classList.toggle('active-transform',type===t.toLowerCase());
+  });
+  ['Translasi','Rotasi','Refleksi','Dilatasi'].forEach(t=>{
+    const el=document.getElementById('params'+t);
+    if(el) el.style.display=type===t.toLowerCase()?'block':'none';
+  });
+  const badges={translasi:'Mode: Translasi ➡️',rotasi:'Mode: Rotasi ↻',refleksi:'Mode: Refleksi ⇆',dilatasi:'Mode: Dilatasi ⇱'};
+  const formulas={translasi:'T(x,y) = (x+tx, y+ty)',rotasi:'R(θ): [cosθ -sinθ; sinθ cosθ]',refleksi:'Ref: (x,y) → (-x,y) atau (x,-y)',dilatasi:'D(k): (x,y) → (k·x, k·y)'};
+  document.getElementById('modeBadge').textContent=badges[type]||type;
+  document.getElementById('formulaChip').textContent=formulas[type]||'';
+  updateMatrix();updateParams();
+}
+
+function selectReflection(axis){
+  state.reflectionAxis=axis;
+  ['x','y','xy','-xy'].forEach(a=>{
+    const id={'x':'refX','y':'refY','xy':'refXY','-xy':'refNXY'}[a];
+    const btn=document.getElementById(id);
+    if(btn) btn.classList.toggle('active-transform',a===axis);
+  });
+  updateMatrix();
+}
+
+function updateParams(){
+  const tx=parseInt(document.getElementById('txSlider')?.value||2);
+  const ty=parseInt(document.getElementById('tySlider')?.value||0);
+  const angle=parseInt(document.getElementById('rotSlider')?.value||90);
+  const scale=parseFloat(document.getElementById('dilSlider')?.value||2);
+  params={tx,ty,angle,scale};
+  document.getElementById('txVal').textContent=(tx>=0?'+':'')+tx;
+  document.getElementById('tyVal').textContent=(ty>=0?'+':'')+ty;
+  document.getElementById('rotVal').textContent=angle+'°';
+  document.getElementById('dilVal').textContent='×'+scale;
+  document.getElementById('transformInfo').textContent=
+    state.activeTransform==='translasi'?`tx=${tx>=0?'+':''}${tx}, ty=${ty>=0?'+':''}${ty}`:
+    state.activeTransform==='rotasi'?`θ=${angle}°`:
+    state.activeTransform==='refleksi'?`sumbu: ${state.reflectionAxis}`:
+    `k=${scale}`;
+  updateMatrix();
+}
+
+function updateMatrix(){
+  const mg=document.getElementById('matrixGrid');
+  if(!mg) return;
+  let a='1',b='0',c='0',d='1';
+  const angle=params.angle*Math.PI/180;
+  const k=params.scale;
+  if(state.activeTransform==='rotasi'){
+    a=Math.cos(angle).toFixed(2);b=(-Math.sin(angle)).toFixed(2);
+    c=Math.sin(angle).toFixed(2);d=Math.cos(angle).toFixed(2);
+  } else if(state.activeTransform==='refleksi'){
+    if(state.reflectionAxis==='x'){a='1';b='0';c='0';d='-1';}
+    else if(state.reflectionAxis==='y'){a='-1';b='0';c='0';d='1';}
+    else if(state.reflectionAxis==='xy'){a='0';b='1';c='1';d='0';}
+    else{a='0';b='-1';c='-1';d='0';}
+  } else if(state.activeTransform==='dilatasi'){
+    a=k;b='0';c='0';d=k;
+  }
+  mg.innerHTML=`<div class="m-cell">${a}</div><div class="m-cell">${b}</div><div class="m-cell">${c}</div><div class="m-cell">${d}</div>`;
+}
+
+/* ─── SELECTION ─── */
+function selectBuildingById(buildingId){
+  const idx=state.placedBuildings.findIndex(b=>b.type===buildingId);
+  if(idx>=0){
+    state.selectedBuilding=idx;
+    const b=state.placedBuildings[idx];
+    document.getElementById('coordDisplay').textContent=`Dipilih: (${b.x}, ${b.y})`;
+    highlightShelfItem(buildingId);
+    draw();
+  }
+}
+
+function highlightShelfItem(buildingId){
+  document.querySelectorAll('.building-thumb').forEach((el,i)=>{
+    el.classList.toggle('selected',el.onclick?.toString().includes(buildingId));
+  });
+}
+
+canvas?.addEventListener('click',handleCanvasClick);
+
+function setupCanvasEvents(){
+  const c=document.getElementById('gameCanvas');
+  if(!c) return;
+  c.addEventListener('click',handleCanvasClick);
+}
+
+function handleCanvasClick(e){
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left;
+  const my=e.clientY-rect.top;
+  const cs=cellSize();
+  const gx=Math.round((mx-cs)/cs);
+  const gy=Math.round((my-cs)/cs);
+  if(gx<0||gx>GRID||gy<0||gy>GRID) return;
+
+  const clicked=state.placedBuildings.findIndex(b=>Math.abs(b.x-gx)<=0.8&&Math.abs(b.y-gy)<=0.8);
+  if(clicked>=0){
+    state.selectedBuilding=clicked;
+    const b=state.placedBuildings[clicked];
+    document.getElementById('coordDisplay').textContent=`Dipilih: (${b.x}, ${b.y})`;
+    const bld=BUILDINGS.find(bd=>bd.id===b.type);
+    if(bld) highlightShelfItem(bld.id);
+    draw();
+  }
+}
+
+/* ─── APPLY TRANSFORM ─── */
+function applyTransform(){
+  if(state.selectedBuilding===null){showToast('Pilih bangunan dulu!','info');return;}
+  if(state.animating) return;
+
+  const b=state.placedBuildings[state.selectedBuilding];
+  const oldX=b.x, oldY=b.y;
+  const oldRot=b.rotation;
+  const oldScale=b.scale;
+
+  let nx=b.x, ny=b.y, nrot=b.rotation, nscale=b.scale, nsx=b.scaleX, nsy=b.scaleY;
+  const center={x:GRID/2,y:GRID/2};
+
+  if(state.activeTransform==='translasi'){
+    nx=b.x+params.tx; ny=b.y+params.ty;
+  } else if(state.activeTransform==='rotasi'){
+    const angle=params.angle*Math.PI/180;
+    const dx=b.x-center.x, dy=b.y-center.y;
+    nx=Math.round(center.x+dx*Math.cos(angle)-dy*Math.sin(angle));
+    ny=Math.round(center.y+dx*Math.sin(angle)+dy*Math.cos(angle));
+    nrot=(b.rotation+params.angle)%360;
+  } else if(state.activeTransform==='refleksi'){
+    if(state.reflectionAxis==='x'){nx=b.x;ny=GRID-b.y;}
+    else if(state.reflectionAxis==='y'){nx=GRID-b.x;ny=b.y;}
+    else if(state.reflectionAxis==='xy'){nx=b.y;ny=b.x;}
+    else{nx=GRID-b.y;ny=GRID-b.x;}
+  } else if(state.activeTransform==='dilatasi'){
+    nx=Math.round(b.x*params.scale/b.scale||b.x);
+    ny=Math.round(b.y*params.scale/b.scale||b.y);
+    nscale=params.scale;
+  }
+
+  nx=Math.max(0,Math.min(GRID,nx));
+  ny=Math.max(0,Math.min(GRID,ny));
+
+  animateBuilding(state.selectedBuilding,{x:oldX,y:oldY,rotation:oldRot,scale:oldScale},{x:nx,y:ny,rotation:nrot,scale:nscale},()=>{
+    b.x=nx;b.y=ny;b.rotation=nrot;b.scale=nscale;
+    state.moves++;
+    updateMoveCount();
+    document.getElementById('coordDisplay').textContent=`(${nx}, ${ny})`;
+    checkPuzzleComplete();
+    draw();
+  });
+}
+
+function animateBuilding(idx,from,to,cb){
+  state.animating=true;
+  const steps=12, dur=350;
+  const start=Date.now();
+  const b=state.placedBuildings[idx];
+
+  function step(){
+    const elapsed=Date.now()-start;
+    const t=Math.min(1,elapsed/dur);
+    const ease=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+    b.x=from.x+(to.x-from.x)*ease;
+    b.y=from.y+(to.y-from.y)*ease;
+    b.rotation=from.rotation+(to.rotation-from.rotation)*ease;
+    b.scale=from.scale+(to.scale-from.scale)*ease;
+    draw();
+
+    if(t<1){requestAnimationFrame(step);}
+    else{b.x=to.x;b.y=to.y;b.rotation=to.rotation;b.scale=to.scale;state.animating=false;cb();}
+  }
+  requestAnimationFrame(step);
+}
+
+/* ─── PUZZLE CHECK ─── */
+function checkPuzzleComplete(){
+  const level=LEVELS[state.currentLevel];
+  const puzzle=level.puzzles[state.currentPuzzle];
+  if(!puzzle) return;
+  const b=state.placedBuildings[state.currentPuzzle];
+  if(!b) return;
+
+  const dx=Math.abs(Math.round(b.x)-puzzle.targetPos.x);
+  const dy=Math.abs(Math.round(b.y)-puzzle.targetPos.y);
+  const scaleOk=!puzzle.scale||Math.abs(b.scale-(puzzle.scale||1))<0.3;
+
+  if(dx<=1&&dy<=1&&scaleOk){
+    state.puzzlesDone[state.currentPuzzle]=true;
+    const pts=Math.max(100,300-state.moves*20);
+    state.score+=pts;
+    document.getElementById('gameScore').textContent=state.score;
+    document.getElementById('headerScore').textContent='Skor: '+state.score;
+    showToast(`✅ Puzzle ${state.currentPuzzle+1} selesai! +${pts} poin`,'success');
+    renderObjectives();
+
+    if(state.currentPuzzle<level.puzzles.length-1){
+      state.currentPuzzle++;
+      state.selectedBuilding=state.currentPuzzle;
+      setupPuzzle(state.currentPuzzle);
+    } else {
+      document.getElementById('nextBtn').disabled=false;
+      document.getElementById('nextBtn').textContent='Selesai! 🎉';
+      setTimeout(()=>finishLevel(),1500);
+    }
+  }
+}
+
+function updateMoveCount(){
+  const level=LEVELS[state.currentLevel];
+  const el=document.getElementById('moveCount');
+  if(el) el.textContent=`${state.moves}/${level.maxMoves}`;
+  const pct=Math.min(100,state.moves/level.maxMoves*100);
+  const fill=document.getElementById('progFill');
+  if(fill) fill.style.width=pct+'%';
+}
+
+/* ─── FINISH ─── */
+function finishLevel(){
+  const level=LEVELS[state.currentLevel];
+  const stars=level.starsFormula(state.moves,level.maxMoves);
+  state.stars[state.currentLevel]=Math.max(state.stars[state.currentLevel],stars);
+
+  if(state.isChallenge){
+    state.challengeScore+=state.score;
+    document.getElementById('challengeInfo').textContent='Skor: '+state.challengeScore;
+    setTimeout(()=>setupLevel(state.currentLevel),500);
+    return;
+  }
+
+  showScreen('result-screen');
+  document.getElementById('resultStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('resultScore').textContent=state.score;
+  document.getElementById('resultEmoji').textContent=stars===3?'🏆':stars===2?'🌟':'💪';
+  document.getElementById('resultTitle').textContent=stars===3?'Sempurna!':stars===2?'Hebat!':'Level Selesai!';
+  document.getElementById('summaryMoves').textContent=state.moves;
+  document.getElementById('summaryCorrect').textContent=`${level.puzzles.length}/${level.puzzles.length}`;
+  document.getElementById('summaryTopics').textContent=level.name;
+
+  const nextBtn=document.getElementById('nextLevelBtn');
+  if(state.currentLevel<LEVELS.length-1){
+    nextBtn.textContent='Level Berikutnya →';nextBtn.disabled=false;
+  } else {
+    nextBtn.textContent='Selesai! 🎊';
+    nextBtn.onclick=()=>{showToast('Kamu sudah menyelesaikan semua level!','success');goHome();};
+  }
+}
+
+/* ─── NAVIGATION ─── */
+function startLevel(idx){
+  const level=LEVELS[idx];
+  if(!level){showToast('Level tidak ditemukan','info');return;}
+  state.isChallenge=false;
+  document.getElementById('challengePanel').style.display='none';
+  showScreen('game-screen');
+  requestAnimationFrame(()=>{
+    ctx=document.getElementById('gameCanvas').getContext('2d');
+    initCanvas();
+    setupLevel(idx);
+    selectTransform(level.allowedTransforms[0]||'translasi');
+    setupCanvasEvents();
+    document.getElementById('nextBtn').disabled=true;
+    document.getElementById('nextBtn').textContent='Lanjut ➔';
+  });
+}
+
+function startChallenge(){
+  state.isChallenge=true;
+  state.challengeTime=60;
+  state.challengeScore=0;
+  document.getElementById('challengePanel').style.display='block';
+  startLevel(Math.floor(Math.random()*LEVELS.length));
+  clearInterval(state.challengeInterval);
+  state.challengeInterval=setInterval(()=>{
+    state.challengeTime--;
+    updateChallengeTimer();
+    if(state.challengeTime<=0){clearInterval(state.challengeInterval);endChallenge();}
+  },1000);
+}
+
+function updateChallengeTimer(){
+  const el=document.getElementById('challengeTimer');
+  if(!el) return;
+  const m=String(Math.floor(state.challengeTime/60)).padStart(2,'0');
+  const s=String(state.challengeTime%60).padStart(2,'0');
+  el.textContent=`${m}:${s}`;
+  el.classList.toggle('warning',state.challengeTime<=10);
+}
+
+function endChallenge(){
+  showToast(`⚡ Challenge selesai! Skor: ${state.challengeScore}`,'success');
+  state.isChallenge=false;
+  finishLevel();
+}
+
+function nextLevel(){
+  if(state.currentLevel<LEVELS.length-1){
+    startLevel(state.currentLevel+1);
+  } else {goHome();}
+}
+
+function nextPuzzle(){
+  finishLevel();
+}
+
+function resetLevel(){
+  setupLevel(state.currentLevel);
+  showToast('Level direset','info');
+}
+
+function goHome(){
+  clearInterval(state.challengeInterval);
+  showScreen('home-screen');
+  renderLevelSelect();
+  drawPreview();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  state.screen=id.replace('-screen','');
+}
+
+/* ─── TUTORIAL ─── */
+let tutStep=0;
+function showTutorial(){
+  tutStep=0;
+  renderTutorial();
+  document.getElementById('tutorialOverlay').style.display='flex';
+}
+function closeTutorial(){document.getElementById('tutorialOverlay').style.display='none';}
+function tutNav(dir){
+  tutStep=Math.max(0,Math.min(TUTORIALS.length-1,tutStep+dir));
+  renderTutorial();
+}
+function renderTutorial(){
+  const t=TUTORIALS[tutStep];
+  document.getElementById('tutContent').innerHTML=`
+    <div class="tutorial-icon">${t.icon}</div>
+    <div class="tutorial-title">${t.title}</div>
+    <div class="tutorial-text" style="white-space:pre-line">${t.text}</div>`;
+  document.getElementById('tutDots').innerHTML=TUTORIALS.map((_,i)=>`<div class="tut-dot${i===tutStep?' active':''}"></div>`).join('');
+  document.getElementById('tutPrev').disabled=tutStep===0;
+  document.getElementById('tutNext').textContent=tutStep===TUTORIALS.length-1?'Mulai! →':'Next →';
+  document.getElementById('tutNext').onclick=tutStep===TUTORIALS.length-1?closeTutorial:()=>tutNav(1);
+}
+
+/* ─── TOAST ─── */
+let toastTimeout;
+function showToast(msg,type='info'){
+  clearTimeout(toastTimeout);
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast show ${type}`;
+  toastTimeout=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ─── INIT ─── */
+window.addEventListener('DOMContentLoaded',()=>{
+  renderLevelSelect();
+  drawPreview();
+  // Auto-show tutorial on first visit
+  if(!localStorage.getItem('tc-visited')){
+    localStorage.setItem('tc-visited','1');
+    setTimeout(showTutorial,600);
+  }
+});
+
+// Expose globals
+window.startLevel=startLevel;
+window.startChallenge=startChallenge;
+window.nextLevel=nextLevel;
+window.nextPuzzle=nextPuzzle;
+window.resetLevel=resetLevel;
+window.goHome=goHome;
+window.showTutorial=showTutorial;
+window.closeTutorial=closeTutorial;
+window.tutNav=tutNav;
+window.selectTransform=selectTransform;
+window.selectReflection=selectReflection;
+window.updateParams=updateParams;
+window.applyTransform=applyTransform;
+window.showToast=showToast;
+</script>
+</body>
+</html>
