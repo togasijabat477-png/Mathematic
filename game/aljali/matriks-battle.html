@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrix Battle Arena — Game Edukasi Aljabar Linear</title>
+  <meta name="description" content="Game pertarungan interaktif yang mengajarkan operasi matriks, determinan, dan invers matriks." />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0-9..40,700;1,9..40,400&family=Playfair+Display:wght@700;800;900&display=swap" />
+  <style>
+    /* ═════════════════════════════════════════════════════════════════
+       MATRIX BATTLE ARENA — Game Edukasi Aljabar Linear
+       Tema: Dark Futuristic / Cyberpunk Battle
+       ═════════════════════════════════════════════════════════════════ */
+
+    /* Reset & CSS Variables */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Color Palette */
+      --bg: 220 18% 7%;
+      --bg2: 220 15% 10%;
+      --bg3: 220 14% 13%;
+      --fg: 210 25% 92%;
+      --fg2: 210 15% 70%;
+      --fg3: 210 12% 50%;
+      --primary: 174 72% 52%;
+      --teal: 174 72% 52%;
+      --teal-dim: 174 50% 32%;
+      --danger: 0 84% 60%;
+      --success: 142 71% 45%;
+      --amber: 38 95% 58%;
+      --violet: 265 65% 65%;
+      --border: 220 12% 22%;
+
+      /* Fonts & Animation */
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: hsl(var(--bg));
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: hsl(var(--bg));
+      color: hsl(var(--fg));
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grid Background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(hsl(220 12% 14%) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(220 12% 14%) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       KEYFRAME ANIMATIONS
+       ════════════════════════════════════════════════════════════════ */
+
+    @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes glow { 0%, 100% { text-shadow: 0 0 8px hsl(var(--teal)), 0 0 16px hsl(var(--teal) / .5); } 50% { text-shadow: 0 0 16px hsl(var(--teal)), 0 0 32px hsl(var(--teal) / .8); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    @keyframes slideDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes attackPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 0; } }
+    @keyframes damageNumber { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(0.7); opacity: 0; } }
+    @keyframes matrixRain { 0% { transform: translateY(-100%); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }
+    @keyframes glow-border { 0%, 100% { box-shadow: 0 0 10px hsl(var(--teal) / 0.3), inset 0 0 10px hsl(var(--teal) / 0.1); } 50% { box-shadow: 0 0 20px hsl(var(--teal) / 0.6), inset 0 0 20px hsl(var(--teal) / 0.2); } }
+
+    .animate-fade-up { animation: fadeUp 0.8s var(--ease-smooth) both; }
+    .animate-glow { animation: glow 2s ease-in-out infinite; }
+    .animate-shake { animation: shake 0.4s ease-in-out; }
+    .animate-attack { animation: attackPulse 0.6s ease-out; }
+
+    /* ════════════════════════════════════════════════════════════════
+       LAYOUT & COMMON
+       ════════════════════════════════════════════════════════════════ */
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; font-family: inherit; background: none; }
+
+    /* ════════════════════════════════════════════════════════════════
+       SCREEN MANAGEMENT
+       ════════════════════════════════════════════════════════════════ */
+
+    #gameContainer {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 32px 0;
+    }
+
+    .screen { display: none; position: relative; z-index: 1; animation: fadeUp 0.6s var(--ease-smooth); }
+    .screen.active { display: block; }
+
+    /* ════════════════════════════════════════════════════════════════
+       MAIN MENU SCREEN
+       ════════════════════════════════════════════════════════════════ */
+
+    .screen.main-menu {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-content {
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .game-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.2s both;
+      color: hsl(var(--teal));
+      text-shadow: 0 0 20px hsl(var(--teal) / 0.4);
+    }
+
+    .game-subtitle {
+      font-size: 1.25rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.4s both;
+    }
+
+    .player-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.5s both;
+    }
+
+    .stat-card {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--fg3));
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: hsl(var(--teal));
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn-menu {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 14px 36px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-spring);
+      border: 1.5px solid transparent;
+    }
+
+    .btn-menu.primary {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      box-shadow: 0 8px 32px hsl(var(--teal) / 0.25);
+    }
+
+    .btn-menu.primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px hsl(var(--teal) / 0.4);
+    }
+
+    .btn-menu.secondary {
+      border-color: hsl(var(--border));
+      color: hsl(var(--fg));
+    }
+
+    .btn-menu.secondary:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.1);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       LEVEL SELECT SCREEN
+       ════════════════════════════════════════════════════════════════ */
+
+    .level-select {
+      padding: 48px 0;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+      animation: fadeUp 0.6s var(--ease-smooth);
+    }
+
+    .section-desc {
+      color: hsl(var(--fg2));
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.1s both;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .level-card {
+      border-radius: 10px;
+      border: 1.5px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 20px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s var(--ease-smooth);
+      animation: fadeUp 0.6s var(--ease-smooth) forwards;
+      opacity: 0;
+    }
+
+    .level-card:nth-child(1) { animation-delay: 0.1s; }
+    .level-card:nth-child(2) { animation-delay: 0.2s; }
+    .level-card:nth-child(3) { animation-delay: 0.3s; }
+    .level-card:nth-child(4) { animation-delay: 0.4s; }
+    .level-card:nth-child(5) { animation-delay: 0.5s; }
+    .level-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .level-card:hover {
+      border-color: hsl(var(--teal) / 0.5);
+      background: hsl(var(--teal) / 0.05);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px hsl(220 18% 3% / 0.4);
+    }
+
+    .level-card.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .level-card.locked:hover {
+      transform: none;
+      border-color: hsl(var(--border));
+      background: hsl(var(--bg3));
+    }
+
+    .level-number {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 800;
+      color: hsl(var(--teal));
+      margin-bottom: 8px;
+    }
+
+    .level-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .level-enemy {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .level-info {
+      font-size: 0.8rem;
+      color: hsl(var(--fg3));
+      margin-bottom: 8px;
+    }
+
+    .level-reward {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: hsl(var(--success));
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .lock-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 1.2rem;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       BATTLE ARENA SCREEN
+       ════════════════════════════════════════════════════════════════ */
+
+    .battle-arena {
+      padding: 32px 0;
+    }
+
+    .battle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .battle-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      animation: fadeUp 0.6s var(--ease-smooth);
+    }
+
+    .combo-counter {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: hsl(var(--amber));
+      animation: fadeUp 0.6s var(--ease-smooth) 0.1s both;
+    }
+
+    .battle-field {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.2s both;
+    }
+
+    /* Character / Enemy Card */
+    .character-card {
+      border-radius: 12px;
+      border: 1.5px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .character-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, hsl(var(--teal)), hsl(var(--violet)));
+    }
+
+    .character-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .character-avatar {
+      font-size: 4rem;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .hp-section {
+      margin-bottom: 16px;
+    }
+
+    .hp-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--fg3));
+      margin-bottom: 6px;
+    }
+
+    .hp-bar {
+      border-radius: 6px;
+      background: hsl(var(--bg2));
+      border: 1px solid hsl(var(--border));
+      height: 24px;
+      overflow: hidden;
+    }
+
+    .hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, hsl(var(--success)), hsl(var(--success) / 0.6));
+      transition: width 0.4s var(--ease-smooth);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: hsl(var(--bg));
+    }
+
+    .hp-text {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      margin-top: 4px;
+      color: hsl(var(--fg2));
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .badge {
+      border-radius: 4px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--teal) / 0.15);
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      color: hsl(var(--teal));
+      font-weight: 600;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       MATRIX OPERATION PANEL
+       ════════════════════════════════════════════════════════════════ */
+
+    .operation-panel {
+      border-radius: 12px;
+      border: 1.5px solid hsl(var(--teal) / 0.3);
+      background: hsl(var(--teal) / 0.05);
+      padding: 28px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.3s both;
+    }
+
+    .operation-title {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--fg2));
+      margin-bottom: 16px;
+    }
+
+    .matrix-display {
+      background: hsl(var(--bg2));
+      border: 1px solid hsl(var(--border));
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      white-space: pre;
+      overflow-x: auto;
+      color: hsl(var(--teal));
+    }
+
+    .input-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: hsl(var(--fg3));
+    }
+
+    .input-box {
+      border-radius: 6px;
+      border: 1.5px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      color: hsl(var(--fg));
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      transition: all 0.25s var(--ease-smooth);
+    }
+
+    .input-box:focus {
+      outline: none;
+      border-color: hsl(var(--teal));
+      box-shadow: 0 0 12px hsl(var(--teal) / 0.2);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       ACTION BUTTONS
+       ════════════════════════════════════════════════════════════════ */
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .btn-action {
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-spring);
+      border: 1.5px solid transparent;
+    }
+
+    .btn-action.primary {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      box-shadow: 0 4px 16px hsl(var(--teal) / 0.25);
+    }
+
+    .btn-action.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px hsl(var(--teal) / 0.35);
+    }
+
+    .btn-action.primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-action.secondary {
+      border-color: hsl(var(--border));
+      color: hsl(var(--fg));
+    }
+
+    .btn-action.secondary:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.08);
+    }
+
+    .btn-action.danger {
+      border-color: hsl(var(--danger));
+      color: hsl(var(--danger));
+    }
+
+    .btn-action.danger:hover {
+      background: hsl(var(--danger) / 0.1);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       RESULT SCREEN
+       ════════════════════════════════════════════════════════════════ */
+
+    .result-screen {
+      text-align: center;
+      padding: 64px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .result-content {
+      max-width: 500px;
+    }
+
+    .result-icon {
+      font-size: 5rem;
+      margin-bottom: 24px;
+      animation: pop 0.6s var(--ease-spring);
+    }
+
+    .result-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.2s both;
+    }
+
+    .result-message {
+      font-size: 1.1rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 32px;
+      line-height: 1.6;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.3s both;
+    }
+
+    .result-stats {
+      background: hsl(var(--bg3));
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      padding: 24px;
+      margin-bottom: 32px;
+      text-align: left;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.4s both;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .stat-key {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat-val {
+      font-weight: 700;
+      color: hsl(var(--teal));
+    }
+
+    .result-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.6s var(--ease-smooth) 0.5s both;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       FLOATING DAMAGE NUMBERS
+       ════════════════════════════════════════════════════════════════ */
+
+    .damage-number {
+      position: fixed;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: hsl(var(--danger));
+      pointer-events: none;
+      animation: damageNumber 1.5s ease-out forwards;
+      z-index: 100;
+    }
+
+    .damage-number.heal {
+      color: hsl(var(--success));
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+
+      .battle-field {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn-action, .btn-menu {
+        width: 100%;
+      }
+
+      .level-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .game-title {
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+      }
+
+      .result-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- MAIN GAME CONTAINER -->
+<div id="gameContainer" class="container">
+
+  <!-- SCREEN: MAIN MENU -->
+  <div class="screen main-menu active" id="screenMainMenu">
+    <div class="menu-content">
+      <div class="game-title">⚔ MATRIX BATTLE ARENA</div>
+      <div class="game-subtitle">Game Pertarungan Aljabar Linear</div>
+
+      <div class="player-stats">
+        <div class="stat-card">
+          <div class="stat-label">Level</div>
+          <div class="stat-value" id="playerLevel">1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Exp</div>
+          <div class="stat-value" id="playerExp">0 / 100</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Menang</div>
+          <div class="stat-value" id="playerWins">0</div>
+        </div>
+      </div>
+
+      <div class="menu-buttons">
+        <button class="btn-menu primary" onclick="goToLevelSelect()">▶ Pilih Level</button>
+        <button class="btn-menu secondary" onclick="showGuide()">📖 Panduan</button>
+        <button class="btn-menu secondary" onclick="resetProgress()">🔄 Reset Game</button>
+      </div>
+
+      <p style="color: hsl(var(--fg3)); margin-top: 24px; font-size: 0.9rem;">
+        Kuasai penjumlahan, perkalian, determinan, dan invers matriks melalui pertarungan seru!
+      </p>
+    </div>
+  </div>
+
+  <!-- SCREEN: LEVEL SELECT -->
+  <div class="screen level-select" id="screenLevelSelect">
+    <h1 class="section-title">📊 Pilih Level Pertarungan</h1>
+    <p class="section-desc">Kalahkan musuh dengan menyelesaikan operasi matriks dengan benar</p>
+
+    <div class="level-grid" id="levelGrid"></div>
+
+    <div style="text-align: center;">
+      <button class="btn-action secondary" onclick="goToMenu()">← Kembali ke Menu</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: BATTLE ARENA -->
+  <div class="screen battle-arena" id="screenBattle">
+    <div class="battle-header">
+      <div>
+        <h1 class="battle-title" id="battleTitle">Pertarungan Level 1</h1>
+      </div>
+      <div class="combo-counter">
+        <span>🔥 COMBO:</span>
+        <span id="comboDisplay">0</span>
+      </div>
+    </div>
+
+    <div class="battle-field">
+      <!-- PLAYER CARD -->
+      <div class="character-card">
+        <div class="character-name">👨‍💼 Pemain</div>
+        <div class="character-avatar">🧠</div>
+        <div class="hp-section">
+          <div class="hp-label">Health Points</div>
+          <div class="hp-bar">
+            <div class="hp-fill" id="playerHPFill" style="width: 100%;"></div>
+          </div>
+          <div class="hp-text"><span id="playerHPValue">100</span> / <span id="playerHPMax">100</span></div>
+        </div>
+        <div class="status-badges">
+          <div class="badge" id="playerBuffBadge" style="display: none;">⚡ BOOST</div>
+        </div>
+      </div>
+
+      <!-- ENEMY CARD -->
+      <div class="character-card">
+        <div class="character-name" id="enemyName">👹 Matrix Golem</div>
+        <div class="character-avatar" id="enemyAvatar">⬜</div>
+        <div class="hp-section">
+          <div class="hp-label">Health Points</div>
+          <div class="hp-bar">
+            <div class="hp-fill" id="enemyHPFill" style="width: 100%;"></div>
+          </div>
+          <div class="hp-text"><span id="enemyHPValue">100</span> / <span id="enemyHPMax">100</span></div>
+        </div>
+        <div class="status-badges">
+          <div class="badge" id="enemyBuffBadge" style="display: none;">🛡 DEFEND</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPERATION PANEL -->
+    <div class="operation-panel">
+      <div class="operation-title" id="operationTitle">Operasi: Penjumlahan Matriks</div>
+      <div class="matrix-display" id="matrixDisplay">A + B = ?</div>
+
+      <div class="input-grid" id="inputGrid">
+        <div class="input-group">
+          <label class="input-label">Masukkan Elemen Matriks</label>
+          <input type="text" id="matrixInput" class="input-box" placeholder="Contoh: [[1,2],[3,4]]">
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-action primary" onclick="submitAnswer()" id="submitBtn">⚡ Serang</button>
+        <button class="btn-action secondary" onclick="skipTurn()" id="skipBtn">⏭ Skip Turn</button>
+        <button class="btn-action danger" onclick="quitBattle()" id="quitBtn">✕ Keluar</button>
+      </div>
+    </div>
+
+    <div style="text-align: center; font-size: 0.9rem; color: hsl(var(--fg3)); margin-top: 24px;">
+      💡 Petunjuk: Masukkan jawaban dalam format [[a,b],[c,d]] atau angka tunggal untuk determinan/invers
+    </div>
+  </div>
+
+  <!-- SCREEN: VICTORY -->
+  <div class="screen result-screen" id="screenVictory">
+    <div class="result-content">
+      <div class="result-icon">🏆</div>
+      <div class="result-title">KEMENANGAN!</div>
+      <div class="result-message">Selamat! Kamu telah mengalahkan musuh dengan operasi matriks yang sempurna.</div>
+
+      <div class="result-stats">
+        <div class="stat-row">
+          <span class="stat-key">Damage Dealt</span>
+          <span class="stat-val" id="resultDamage">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-key">Combo Max</span>
+          <span class="stat-val" id="resultCombo">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-key">Exp Earned</span>
+          <span class="stat-val" id="resultExp">+50</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-key">HP Remaining</span>
+          <span class="stat-val" id="resultHP">100%</span>
+        </div>
+      </div>
+
+      <div class="result-buttons">
+        <button class="btn-action primary" onclick="nextLevel()">▶ Level Berikutnya</button>
+        <button class="btn-action secondary" onclick="goToLevelSelect()">📋 Pilih Level Lain</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: DEFEAT -->
+  <div class="screen result-screen" id="screenDefeat">
+    <div class="result-content">
+      <div class="result-icon">💥</div>
+      <div class="result-title" style="color: hsl(var(--danger));">KALAH!</div>
+      <div class="result-message">HP Pemain habis. Coba lagi untuk menguasai operasi matriks ini.</div>
+
+      <div class="result-stats">
+        <div class="stat-row">
+          <span class="stat-key">Enemy HP Remaining</span>
+          <span class="stat-val" id="resultEnemyHP">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-key">Total Damage</span>
+          <span class="stat-val" id="resultTotalDamage">0</span>
+        </div>
+      </div>
+
+      <div class="result-buttons">
+        <button class="btn-action primary" onclick="retryLevel()">🔄 Coba Lagi</button>
+        <button class="btn-action secondary" onclick="goToLevelSelect()">📋 Pilih Level Lain</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- GAME ENGINE JAVASCRIPT -->
+<script>
+  // ═════════════════════════════════════════════════════════════════
+  // GAME CONFIGURATION & STATE
+  // ═════════════════════════════════════════════════════════════════
+
+  const LEVELS = [
+    {
+      id: 1,
+      name: 'Matrix Novice',
+      enemy: '👾 Matrix Goblin',
+      hp: 80,
+      operation: 'addition',
+      operationText: 'Penjumlahan Matriks',
+      description: 'A = [[1, 2], [3, 4]], B = [[5, 6], [7, 8]]\nHitung: A + B',
+      answer: '[[6,8],[10,12]]',
+      altAnswers: ['[[6, 8], [10, 12]]', '[[6,8],[10,12]]'],
+      expReward: 50,
+      dmgMultiplier: 1
+    },
+    {
+      id: 2,
+      name: 'Matrix Warrior',
+      enemy: '⚔ Matrix Knight',
+      hp: 100,
+      operation: 'multiplication',
+      operationText: 'Perkalian Matriks',
+      description: 'A = [[1, 2], [3, 4]], B = [[2, 0], [1, 2]]\nHitung: A × B',
+      answer: '[[4,4],[10,8]]',
+      altAnswers: ['[[4, 4], [10, 8]]', '[[4,4],[10,8]]'],
+      expReward: 100,
+      dmgMultiplier: 1.2
+    },
+    {
+      id: 3,
+      name: 'Determinant Duel',
+      enemy: '🔷 Determinant Demon',
+      hp: 120,
+      operation: 'determinant',
+      operationText: 'Determinan Matriks',
+      description: 'A = [[3, 2], [1, 4]]\nHitung: det(A) = ?',
+      answer: '10',
+      altAnswers: ['10'],
+      expReward: 150,
+      dmgMultiplier: 1.5
+    },
+    {
+      id: 4,
+      name: 'Invers Expert',
+      enemy: '👑 Inverse King',
+      hp: 150,
+      operation: 'inverse',
+      operationText: 'Invers Matriks',
+      description: 'A = [[4, 7], [2, 6]]\nHitung: A⁻¹',
+      answer: '[[0.6,-0.7],[-0.2,0.4]]',
+      altAnswers: ['[[0.6, -0.7], [-0.2, 0.4]]', '[[3/5,-7/10],[-1/5,2/5]]'],
+      expReward: 200,
+      dmgMultiplier: 1.8
+    },
+    {
+      id: 5,
+      name: 'Advanced Operations',
+      enemy: '🔮 Matrix Wizard',
+      hp: 180,
+      operation: 'combined',
+      operationText: 'Operasi Gabungan',
+      description: 'A = [[1, 2], [3, 4]], B = [[2, 0], [1, 2]]\nHitung: (A + B) × 2',
+      answer: '[[6,4],[8,12]]',
+      altAnswers: ['[[6, 4], [8, 12]]', '[[6,4],[8,12]]'],
+      expReward: 250,
+      dmgMultiplier: 2
+    },
+    {
+      id: 6,
+      name: 'Boss Battle: Matrix Overlord',
+      enemy: '👹 MATRIX OVERLORD',
+      hp: 250,
+      operation: 'boss',
+      operationText: 'Boss Challenge: Semua Operasi',
+      description: 'A = [[2, 1], [1, 2]]\nB = [[1, 0], [0, 1]]\nTantangan: Hitung det(A) + trace(B)',
+      answer: '4',
+      altAnswers: ['4'],
+      expReward: 500,
+      dmgMultiplier: 2.5,
+      isBoss: true
+    }
+  ];
+
+  let gameState = {
+    playerLevel: 1,
+    playerExp: 0,
+    playerWins: 0,
+    currentLevel: null,
+    playerHP: 100,
+    playerMaxHP: 100,
+    enemyHP: 100,
+    enemyMaxHP: 100,
+    combo: 0,
+    totalDamage: 0,
+    inBattle: false
+  };
+
+  const MAX_EXP_FOR_LEVEL = 100;
+
+  // ═════════════════════════════════════════════════════════════════
+  // UTILITY FUNCTIONS
+  // ═════════════════════════════════════════════════════════════════
+
+  function loadGameState() {
+    const saved = localStorage.getItem('matrixBattleState');
+    if (saved) {
+      gameState = { ...gameState, ...JSON.parse(saved) };
+    }
+  }
+
+  function saveGameState() {
+    localStorage.setItem('matrixBattleState', JSON.stringify(gameState));
+  }
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  function playSound(type) {
+    // Simple beep sounds using Web Audio API
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      if (type === 'attack') {
+        oscillator.frequency.value = 800;
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+      } else if (type === 'hit') {
+        oscillator.frequency.value = 600;
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.15);
+      } else if (type === 'victory') {
+        oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(1100, audioContext.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+      }
+    } catch (e) {
+      // Audio context not available
+    }
+  }
+
+  function showDamageNumber(damage, isHealing = false) {
+    const number = document.createElement('div');
+    number.className = `damage-number ${isHealing ? 'heal' : ''}`;
+    number.textContent = (isHealing ? '+' : '') + damage;
+    number.style.left = Math.random() * 100 + 'px';
+    number.style.top = window.innerHeight / 2 + 'px';
+    document.body.appendChild(number);
+    setTimeout(() => number.remove(), 1500);
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // SCREEN NAVIGATION
+  // ═════════════════════════════════════════════════════════════════
+
+  function goToMenu() {
+    showScreen('screenMainMenu');
+    updateMenuStats();
+  }
+
+  function goToLevelSelect() {
+    showScreen('screenLevelSelect');
+    renderLevels();
+  }
+
+  function updateMenuStats() {
+    document.getElementById('playerLevel').textContent = gameState.playerLevel;
+    document.getElementById('playerExp').textContent = gameState.playerExp + ' / ' + MAX_EXP_FOR_LEVEL;
+    document.getElementById('playerWins').textContent = gameState.playerWins;
+  }
+
+  function renderLevels() {
+    const grid = document.getElementById('levelGrid');
+    grid.innerHTML = '';
+
+    LEVELS.forEach((level, idx) => {
+      const isLocked = idx > 0 && gameState.playerWins < idx;
+      const card = document.createElement('div');
+      card.className = `level-card ${isLocked ? 'locked' : ''}`;
+      
+      if (!isLocked) {
+        card.style.cursor = 'pointer';
+        card.onclick = () => startBattle(level.id);
+      }
+
+      card.innerHTML = `
+        <div class="level-number">LEVEL ${level.id}</div>
+        <div class="level-name">${level.name}</div>
+        <div class="level-enemy">${level.enemy}</div>
+        <div class="level-info">HP: ${level.hp}</div>
+        <div class="level-reward">+${level.expReward} EXP</div>
+        ${isLocked ? '<div class="lock-icon">🔒</div>' : ''}
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // BATTLE SYSTEM
+  // ═════════════════════════════════════════════════════════════════
+
+  function startBattle(levelId) {
+    const level = LEVELS.find(l => l.id === levelId);
+    gameState.currentLevel = level;
+    gameState.playerHP = gameState.playerMaxHP;
+    gameState.enemyHP = level.hp;
+    gameState.enemyMaxHP = level.hp;
+    gameState.combo = 0;
+    gameState.totalDamage = 0;
+    gameState.inBattle = true;
+
+    document.getElementById('battleTitle').textContent = `Pertarungan: ${level.name}`;
+    document.getElementById('enemyName').textContent = level.enemy;
+    document.getElementById('operationTitle').textContent = `Operasi: ${level.operationText}`;
+    document.getElementById('matrixDisplay').textContent = level.description;
+
+    updateBattleUI();
+    showScreen('screenBattle');
+  }
+
+  function updateBattleUI() {
+    const level = gameState.currentLevel;
+
+    // Update HP bars
+    const playerHPPercent = (gameState.playerHP / gameState.playerMaxHP) * 100;
+    const enemyHPPercent = (gameState.enemyHP / gameState.enemyMaxHP) * 100;
+
+    document.getElementById('playerHPFill').style.width = playerHPPercent + '%';
+    document.getElementById('playerHPValue').textContent = Math.max(0, gameState.playerHP);
+    document.getElementById('playerHPMax').textContent = gameState.playerMaxHP;
+
+    document.getElementById('enemyHPFill').style.width = enemyHPPercent + '%';
+    document.getElementById('enemyHPValue').textContent = Math.max(0, gameState.enemyHP);
+    document.getElementById('enemyHPMax').textContent = gameState.enemyMaxHP;
+
+    document.getElementById('comboDisplay').textContent = gameState.combo;
+  }
+
+  function submitAnswer() {
+    const input = document.getElementById('matrixInput').value.trim();
+    const level = gameState.currentLevel;
+
+    // Normalize input
+    const normalized = input.replace(/\s+/g, '').toLowerCase();
+    const normalizedAnswer = level.answer.replace(/\s+/g, '').toLowerCase();
+
+    let isCorrect = normalized === normalizedAnswer;
+    if (!isCorrect && level.altAnswers) {
+      isCorrect = level.altAnswers.some(alt => alt.replace(/\s+/g, '').toLowerCase() === normalized);
+    }
+
+    if (isCorrect) {
+      playerAttack();
+      gameState.combo++;
+      gameState.totalDamage += 10 + (gameState.combo * 5);
+    } else {
+      enemyAttack();
+      gameState.combo = 0;
+      alert('❌ Jawaban salah! Musuh melakukan serangan!');
+    }
+
+    document.getElementById('matrixInput').value = '';
+    updateBattleUI();
+
+    if (gameState.enemyHP <= 0) {
+      winBattle();
+    } else if (gameState.playerHP <= 0) {
+      loseBattle();
+    } else {
+      setTimeout(() => enemyAttack(), 1500);
+    }
+  }
+
+  function playerAttack() {
+    const baseDamage = 10 + (gameState.currentLevel.dmgMultiplier * 10);
+    const comboDamage = gameState.combo * 5;
+    const totalDamage = baseDamage + comboDamage;
+
+    gameState.enemyHP -= totalDamage;
+    gameState.totalDamage += totalDamage;
+
+    playSound('attack');
+    document.getElementById('enemyHPFill').parentElement.parentElement.classList.add('animate-shake');
+    setTimeout(() => document.getElementById('enemyHPFill').parentElement.parentElement.classList.remove('animate-shake'), 400);
+
+    showDamageNumber(Math.round(totalDamage));
+  }
+
+  function enemyAttack() {
+    if (gameState.playerHP <= 0) return;
+
+    const baseDamage = 5 + (gameState.currentLevel.dmgMultiplier * 5);
+    const damage = Math.round(baseDamage + Math.random() * 10);
+
+    gameState.playerHP -= damage;
+
+    playSound('hit');
+    document.getElementById('playerHPFill').parentElement.parentElement.classList.add('animate-shake');
+    setTimeout(() => document.getElementById('playerHPFill').parentElement.parentElement.classList.remove('animate-shake'), 400);
+
+    showDamageNumber(damage);
+  }
+
+  function skipTurn() {
+    gameState.combo = 0;
+    enemyAttack();
+    updateBattleUI();
+
+    if (gameState.playerHP <= 0) {
+      loseBattle();
+    }
+  }
+
+  function winBattle() {
+    gameState.inBattle = false;
+    gameState.playerWins++;
+    gameState.playerExp += gameState.currentLevel.expReward;
+
+    // Check level up
+    while (gameState.playerExp >= MAX_EXP_FOR_LEVEL) {
+      gameState.playerLevel++;
+      gameState.playerExp -= MAX_EXP_FOR_LEVEL;
+      gameState.playerMaxHP += 20;
+      gameState.playerHP = gameState.playerMaxHP;
+    }
+
+    saveGameState();
+    playSound('victory');
+
+    document.getElementById('resultDamage').textContent = Math.round(gameState.totalDamage);
+    document.getElementById('resultCombo').textContent = gameState.combo;
+    document.getElementById('resultExp').textContent = '+' + gameState.currentLevel.expReward;
+    document.getElementById('resultHP').textContent = Math.round((gameState.playerHP / gameState.playerMaxHP) * 100) + '%';
+
+    showScreen('screenVictory');
+  }
+
+  function loseBattle() {
+    gameState.inBattle = false;
+    saveGameState();
+    playSound('hit');
+
+    document.getElementById('resultEnemyHP').textContent = Math.max(0, gameState.enemyHP);
+    document.getElementById('resultTotalDamage').textContent = Math.round(gameState.totalDamage);
+
+    showScreen('screenDefeat');
+  }
+
+  function nextLevel() {
+    const nextId = gameState.currentLevel.id + 1;
+    if (nextId <= LEVELS.length) {
+      startBattle(nextId);
+    } else {
+      alert('🎊 Selamat! Kamu telah menyelesaikan semua level!');
+      goToLevelSelect();
+    }
+  }
+
+  function retryLevel() {
+    startBattle(gameState.currentLevel.id);
+  }
+
+  function quitBattle() {
+    if (confirm('Keluar dari pertarungan? Progress akan disimpan.')) {
+      gameState.inBattle = false;
+      goToLevelSelect();
+    }
+  }
+
+  function showGuide() {
+    alert(`
+PANDUAN MATRIX BATTLE ARENA
+
+📖 CARA BERMAIN:
+1. Pilih level untuk memulai pertarungan
+2. Baca soal operasi matriks
+3. Masukkan jawaban dengan format yang benar
+4. Jawaban benar = serangan pemain
+5. Jawaban salah = serangan musuh
+6. Kalahkan musuh dengan HP 0
+
+🎯 OPERASI MATRIKS:
+• Penjumlahan: [[1,2],[3,4]] + [[5,6],[7,8]]
+• Perkalian: [[1,2],[3,4]] × [[2,0],[1,2]]
+• Determinan: det(A) = bilangan tunggal
+• Invers: A⁻¹ = [[a,b],[c,d]]
+
+⚡ SISTEM PERTARUNGAN:
+• Combo: Setiap jawaban benar menambah combo
+• Damage: Base damage + (combo × 5)
+• Exp: Setiap level memberi exp, level up saat exp penuh
+• HP: Naik level menambah max HP
+
+🎖️ LEVEL:
+Level 1-5: Materi pelajaran progresif
+Level 6: Boss Battle - tantangan semua operasi
+
+💡 TIPS:
+• Perhatikan format jawaban dengan teliti
+• Gunakan kalkulator matriks jika perlu
+• Combo tinggi = damage besar
+• Defender membaca pertanyaan dengan seksama
+    `);
+  }
+
+  function resetProgress() {
+    if (confirm('Reset semua progress? Ini tidak bisa dibatalkan!')) {
+      gameState = {
+        playerLevel: 1,
+        playerExp: 0,
+        playerWins: 0,
+        currentLevel: null,
+        playerHP: 100,
+        playerMaxHP: 100,
+        enemyHP: 100,
+        enemyMaxHP: 100,
+        combo: 0,
+        totalDamage: 0,
+        inBattle: false
+      };
+      localStorage.removeItem('matrixBattleState');
+      updateMenuStats();
+      alert('Progress telah direset!');
+    }
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // INITIALIZATION
+  // ═════════════════════════════════════════════════════════════════
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadGameState();
+    updateMenuStats();
+  });
+</script>
+
+</body>
+</html>
