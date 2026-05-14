@@ -10,8 +10,8 @@
       --bg: #f9f6f0;
       --surface: #ffffff;
       --surface2: #f3ede4;
-      --accent: #F77F00;
-      --accent2: #F77F00;
+      --accent: #bf5f00;
+      --accent2: #bf5f00;
       --accent3: #b7e4c7;
       --accent-warm: #F77F00;
       --text: #1a1a1a;
@@ -33,7 +33,7 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #43361b 0%, #6a5c2d 55%, #F77F00 100%);
+      background: linear-gradient(135deg, #bf5f00 0%, #bf5f00 55%, #bf5f00 100%);
       color: #fff;
       padding: 60px 24px 80px;
       text-align: center;
@@ -44,7 +44,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 70% 30%, rgba(228, 212, 183, 0.18) 0%, transparent 65%);
+      background: radial-gradient(ellipse at 70% 30%, #bf5f00(228, 212, 183, 0.18) 0%, transparent 65%);
       pointer-events: none;
     }
     .hero-icon {
@@ -175,7 +175,7 @@
 }
 
 .table-yellow thead {
-  background: linear-gradient(135deg, #ff9800, #ffb74d);
+  background: linear-gradient(135deg, #bf5f00, #bf5f00);
   color: #fff;
 }
 
@@ -191,7 +191,7 @@
 }
 
 .table-yellow tbody tr:nth-child(even) {
-  background: #fff3e0;
+  background: #bf5f00;
 }
 
 .table-yellow tbody tr:hover {
@@ -218,13 +218,15 @@
     strong { color: var(--accent); }
     em { color: var(--accent-warm); font-style: italic; }
 
-    .def-box {
-      background: linear-gradient(135deg, #4f65b9 0%, #4466bd 100%);
-      border-left: 5px solid var(--accent);
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      padding: 18px 22px;
-      margin: 20px 0;
-    }
+ .def-box {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  border-left: 5px solid #4f46e5;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 18px 22px;
+  margin: 20px 0;
+  color: #1e1b4b;
+}
+
     .def-box .label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.78rem;
