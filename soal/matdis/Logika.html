@@ -1,447 +1,1825 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quiz Logika Matematika</title>
-    <style>
-        :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --secondary: #64748b;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quiz Logika Matematika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #2d2d4e;
+    --paper: #f8f6f1;
+    --cream: #fdf9f3;
+    --accent-easy: #2e7d58;
+    --accent-easy-light: #d4edde;
+    --accent-medium: #1a5fa8;
+    --accent-medium-light: #d0e4f7;
+    --accent-hard: #8b1a1a;
+    --accent-hard-light: #fde8e8;
+    --gold: #c9a227;
+    --gold-light: #fdf3d7;
+    --correct: #2e7d58;
+    --wrong: #c0392b;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+  }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Times New Roman", Times, serif;
-            background: var(--bg-gradient);
-            color: #1e293b;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-        }
+  body {
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 16px 40px;
+    overflow-x: hidden;
+  }
 
-        .container {
-            width: 100%;
-            max-width: 550px; 
-            padding: 15px;
-            margin: auto;
-        }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,160,42,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(46,125,88,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: clamp(15px, 5vw, 30px);
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.04);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            width: 100%;
-        }
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 680px; }
 
-        h2 {
-            margin-top: 0;
-            color: #1e3a8a;
-            font-size: clamp(1.2rem, 5vw, 1.8rem);
-        }
+  /* ── FLOATING LOGIC PARTICLES ── */
+  #particle-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  #particle-canvas.visible { opacity: 1; }
 
-        p {
-            color: #475569;
-            line-height: 1.6;
-            font-size: clamp(14px, 4vw, 16px);
-        }
+  /* ── TOP NAV ── */
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.12);
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .back-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-        button {
-            display: block;
-            width: 100%; 
-            padding: 14px 20px;
-            margin: 10px 0; 
-            font-family: inherit;
-            font-size: clamp(16px, 4vw, 18px); 
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            border: none;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            word-wrap: break-word;
-        }
+  /* ── SCREEN SHARED ── */
+  .screen { display: none; animation: fadeUp .45s ease both; }
+  .screen.active { display: block; }
 
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -5px rgba(59, 130, 246, 0.4);
-        }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-        #timer {
-            font-weight: bold;
-            font-family: monospace;
-            background: #1e293b;
-            color: #fff;
-            padding: 6px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
+  /* ── START SCREEN ── */
+  .start-header {
+    text-align: center;
+    padding: 36px 0 28px;
+  }
 
-        .progress {
-            height: 10px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
+  /* Eyebrow animation */
+  .start-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: eyebrowIn .6s ease .2s both;
+  }
+  @keyframes eyebrowIn {
+    from { opacity: 0; letter-spacing: .4em; }
+    to   { opacity: 1; letter-spacing: .18em; }
+  }
 
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.4s ease;
-        }
+  /* Title char-by-char animation */
+  .start-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .start-title em { font-style: italic; color: var(--gold); }
 
-        #question {
-            font-size: clamp(1rem, 4.5vw, 1.2rem);
-            margin-bottom: 20px;
-            font-weight: 700;
-            text-align: left;
-            line-height: 1.4;
-        }
+  .title-word {
+    display: inline-block;
+  }
+  .title-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px) rotate(8deg);
+    animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes charIn {
+    to { opacity: 1; transform: translateY(0) rotate(0deg); }
+  }
 
-        .option {
-            text-align: left;
-            margin: 10px 0;
-            padding: 12px 15px;
-            border-radius: 12px;
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: clamp(14px, 4vw, 16px);
-            line-height: 1.3;
-        }
+  /* Subtitle fade */
+  .start-subtitle {
+    font-size: 15px;
+    color: #5a5a7a;
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp .7s ease 1.2s both;
+  }
 
-        .option:hover {
-            border-color: var(--primary);
-            background: #eff6ff;
-        }
+  /* Animated underline on title */
+  .title-underline {
+    display: block;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), rgba(201,162,39,0.2));
+    border-radius: 3px;
+    margin: 6px auto 0;
+    animation: underlineGrow .8s ease 1.4s both;
+  }
+  @keyframes underlineGrow {
+    to { width: 200px; }
+  }
 
-        .correct {
-            background: var(--success) !important;
-            border-color: var(--success) !important;
-            color: white;
-        }
+  .divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin: 20px auto;
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadeUp .5s ease 1s both;
+  }
 
-        .wrong {
-            background: var(--danger) !important;
-            border-color: var(--danger) !important;
-            color: white;
-        }
+  /* Level cards */
+  .level-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 28px 0;
+  }
 
-        .explanation {
-            margin-top: 15px;
-            text-align: left;
-            font-size: 14px;
-            background: #fffbeb;
-            padding: 15px;
-            border-left: 4px solid var(--warning);
-            border-radius: 8px;
-            color: #92400e;
-            white-space: pre-line;
-            max-height: 200px;
-            overflow-y: auto;
-        }
+  .level-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1.5px solid transparent;
+    padding: 28px 28px 28px 32px;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    text-align: left;
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  .level-card.card-in {
+    animation: cardSlideIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes cardSlideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
 
-        .hidden { display: none; }
+  /* Logic symbol watermark on card */
+  .level-card::after {
+    content: attr(data-symbol);
+    position: absolute;
+    right: 20px;
+    bottom: -10px;
+    font-size: 80px;
+    font-family: var(--mono);
+    font-weight: 700;
+    opacity: 0.07;
+    line-height: 1;
+    transition: all .4s ease;
+    pointer-events: none;
+    transform: rotate(-10deg);
+  }
+  .level-card:hover::after {
+    opacity: 0.15;
+    transform: rotate(-5deg) scale(1.1);
+    bottom: -5px;
+  }
 
-        #score-display {
-            font-size: clamp(60px, 15vw, 80px);
-            font-weight: 800;
-            margin: 10px 0;
-            color: var(--primary);
-        }
+  .level-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 20px 0 0 20px;
+  }
+  .level-card:hover { transform: translateX(6px) scale(1.01); }
 
-        .nav-buttons {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: nowrap;
-        }
+  /* Ripple on click */
+  .level-card .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: rippleAnim .6s linear;
+    background: rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
 
-        .nav-buttons button { margin: 0; }
+  .level-card.easy   { background: var(--accent-easy-light); border-color: rgba(46,125,88,.25); }
+  .level-card.easy::before { background: var(--accent-easy); }
+  .level-card.medium { background: var(--accent-medium-light); border-color: rgba(26,95,168,.25); }
+  .level-card.medium::before { background: var(--accent-medium); }
+  .level-card.hard   { background: var(--accent-hard-light); border-color: rgba(139,26,26,.25); }
+  .level-card.hard::before { background: var(--accent-hard); }
 
-        @media (max-width: 360px) {
-            .card { padding: 15px; }
-            .nav-buttons { flex-direction: column; }
-        }
-    </style>
+  .level-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .level-card:hover .level-icon { transform: scale(1.2) rotate(-5deg); }
+
+  .level-info { flex: 1; }
+  .level-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    margin-bottom: 4px;
+  }
+  .level-card.easy   .level-name { color: var(--accent-easy); }
+  .level-card.medium .level-name { color: var(--accent-medium); }
+  .level-card.hard   .level-name { color: var(--accent-hard); }
+
+  .level-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 8px; }
+  .level-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+  .easy   .tag { background: rgba(46,125,88,.15); color: var(--accent-easy); }
+  .medium .tag { background: rgba(26,95,168,.15); color: var(--accent-medium); }
+  .hard   .tag { background: rgba(139,26,26,.15); color: var(--accent-hard); }
+
+  .level-arrow {
+    font-size: 20px; opacity: .4; flex-shrink: 0;
+    transition: all .3s ease;
+  }
+  .level-card:hover .level-arrow { opacity: 1; transform: translateX(6px); }
+
+  /* Quote box */
+  .quote-box {
+    margin-top: 8px;
+    background: var(--gold-light);
+    border: 1px solid rgba(201,162,39,.3);
+    border-radius: 14px;
+    padding: 18px 22px;
+    font-style: italic;
+    font-size: 14px;
+    color: #6b4d0a;
+    line-height: 1.65;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp .6s ease 1.8s both;
+  }
+  .quote-box cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; opacity: .7; font-family: var(--mono); }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+  .quiz-level-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .quiz-level-badge:hover {
+    opacity: 0.75;
+    transform: scale(0.97);
+  }
+  .badge-easy   { background: var(--accent-easy-light);   color: var(--accent-easy); }
+  .badge-medium { background: var(--accent-medium-light); color: var(--accent-medium); }
+  .badge-hard   { background: var(--accent-hard-light);   color: var(--accent-hard); }
+
+  /* Back to level button in quiz */
+  .back-to-level-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .back-to-level-btn:hover {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .back-to-level-btn svg {
+    width: 12px; height: 12px;
+    flex-shrink: 0;
+  }
+
+  .timer-pill {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--ink);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: .04em;
+    transition: background .3s;
+  }
+  .timer-pill.urgent { background: var(--wrong); animation: pulse .6s ease infinite alternate; }
+  @keyframes pulse { from { opacity:1 } to { opacity:.7 } }
+
+  .q-counter {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #888;
+    letter-spacing: .06em;
+  }
+
+  /* Progress track */
+  .progress-track {
+    height: 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 6px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .fill-easy   { background: linear-gradient(90deg, var(--accent-easy), #52b788); }
+  .fill-medium { background: linear-gradient(90deg, var(--accent-medium), #4895ef); }
+  .fill-hard   { background: linear-gradient(90deg, var(--accent-hard), #e76f51); }
+
+  /* Dot row */
+  .dot-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #e0ddd6;
+    transition: all .3s;
+    cursor: pointer;
+  }
+  .dot.answered-correct { background: var(--correct); }
+  .dot.answered-wrong   { background: var(--wrong); }
+  .dot.skipped          { background: var(--gold); }
+  .dot.current          { background: var(--ink); transform: scale(1.3); }
+
+  /* Question card */
+  .q-card {
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.08);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  }
+  .q-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: clamp(15px, 3.5vw, 17px);
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all .22s;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    text-align: left;
+  }
+  .opt:hover:not(.locked) {
+    border-color: var(--ink);
+    background: #fafafa;
+    transform: translateX(4px);
+  }
+  .opt-letter {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.06);
+    color: var(--ink-soft);
+    letter-spacing: .05em;
+    transition: all .2s;
+    margin-top: 1px;
+  }
+  .opt.selected { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .opt.selected .opt-letter { background: rgba(255,255,255,.2); color: #fff; }
+
+  .opt.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
+  .opt.correct .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+  .opt.wrong   { background: var(--wrong);   border-color: var(--wrong);   color: #fff; }
+  .opt.wrong   .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+
+  /* Explanation */
+  .explanation-box {
+    display: none;
+    background: var(--gold-light);
+    border: 1.5px solid rgba(201,162,39,.35);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    animation: slideIn .3s ease;
+  }
+  .explanation-box.show { display: block; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
+
+  .exp-header {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600;
+  }
+  .exp-title { font-size: 13px; font-weight: 700; color: #6b4d0a; margin-bottom: 6px; }
+  .exp-body { font-size: 14px; color: #7a5515; line-height: 1.65; }
+
+  /* Nav buttons */
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .nav-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 20px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+  .btn-prev {
+    background: #fff;
+    border-color: rgba(0,0,0,0.15);
+    color: var(--ink);
+    flex: 0 0 auto;
+  }
+  .btn-prev:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .btn-skip {
+    background: var(--gold-light);
+    border-color: rgba(201,162,39,.4);
+    color: #8b5e00;
+    flex: 1;
+  }
+  .btn-skip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+  .btn-next {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+    flex: 2;
+  }
+  .btn-next:hover { background: var(--ink-soft); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+  .btn-finish {
+    background: var(--gold);
+    color: #fff;
+    border-color: var(--gold);
+    flex: 2;
+  }
+  .btn-finish:hover { background: #a8821e; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,162,39,.4); }
+
+  /* ── RESULT SCREEN ── */
+  .result-container {
+    text-align: center;
+    padding: 16px 0;
+  }
+  .result-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+  }
+  .result-circle {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .result-circle svg {
+    position: absolute; inset: 0; transform: rotate(-90deg);
+  }
+  .result-score-num {
+    font-size: 54px; font-weight: 700; line-height: 1;
+    position: relative; z-index: 1;
+  }
+  .result-score-den {
+    font-family: var(--mono); font-size: 14px; color: #888;
+    position: relative; z-index: 1;
+  }
+
+  .result-grade {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 700; margin-bottom: 8px;
+  }
+  .result-message { font-size: 15px; color: #666; line-height: 1.65; margin-bottom: 28px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-box {
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 16px 10px;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; }
+  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #888; margin-top: 4px; }
+
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-action {
+    font-family: var(--serif);
+    font-size: 15px; font-weight: 600;
+    padding: 15px;
+    border-radius: 14px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+  }
+  .btn-retry { background: var(--ink); color: #fff; }
+  .btn-retry:hover { background: var(--ink-soft); transform: translateY(-2px); }
+  .btn-home  { background: #fff; border-color: rgba(0,0,0,.15); color: var(--ink); }
+  .btn-home:hover { background: var(--ink); color: #fff; }
+
+  /* Review panel */
+  .review-toggle {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; color: #888;
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    margin: 0 auto 16px;
+    transition: color .2s;
+  }
+  .review-toggle:hover { color: var(--ink); }
+
+  .review-panel { display: none; margin-bottom: 16px; }
+  .review-panel.open { display: block; }
+
+  .review-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,.07);
+  }
+  .ri-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .ri-correct .ri-dot { background: var(--correct); }
+  .ri-wrong   .ri-dot { background: var(--wrong); }
+  .ri-skipped .ri-dot { background: var(--gold); }
+  .ri-q { flex: 1; color: #444; line-height: 1.4; }
+  .ri-a { font-family: var(--mono); font-size: 11px; color: #888; }
+
+  @media (max-width: 420px) {
+    .level-card { padding: 20px 18px; gap: 16px; }
+    .q-card { padding: 20px; }
+    .nav-row { flex-wrap: wrap; }
+    .btn-prev { flex: 0 0 46px; padding: 13px; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-    <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
-            Kembali ke Materi
-    </button>
 
-         <div class="wrap">
-     <div class="card">
+<!-- FLOATING LOGIC PARTICLES CANVAS -->
+<canvas id="particle-canvas"></canvas>
 
-<div class="container">
-    <div id="startScreen" class="card">
-        <h2>Soal & Jawaban Logika Matematika</h2>
-        <p>Logika matematika adalah seni menata nalar untuk menemukan kepastian di tengah ketidakpastian.</p>
-        
-        <div style="margin: 20px 0;">
-            <button onclick="startQuiz('easy')">Easy</button>
-            <button onclick="startQuiz('medium')" style="background:#4f46e5">Medium</button>
-            <button onclick="startQuiz('hard')" style="background:#3730a3">Hard</button>
-        </div>
+<div class="wrap">
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <a href="../../index.html?page=materi" class="back-btn">← Kembali ke Materi</a>
+  </div>
 
-        <div style="background: #f1f5f9; padding: 12px; border-radius: 12px; text-align: left; font-size: 12px;">
-            <strong>Detail Ujian:</strong>
-            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
-                <li>30 Soal Logika Matematika</li>
-                <li>Waktu: 2 Jam</li>
-                <li>Pembahasan lengkap setiap nomor</li>
-            </ul>
-        </div>
+  <!-- ══════════════════ START SCREEN ══════════════════ -->
+  <div id="startScreen" class="screen active">
+    <div class="start-header">
+      <div class="start-eyebrow">✦ Matematika · Logika ✦</div>
+      <h1 class="start-title" id="mainTitle">
+        <span class="title-word" id="word1"></span><br>
+        <em><span class="title-word" id="word2"></span></em>
+        <span class="title-underline"></span>
+      </h1>
+      <div class="divider"></div>
+      <p class="start-subtitle">Uji kemampuan nalarmu dengan soal-soal logika yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
     </div>
 
-    <div id="quizScreen" class="card hidden">
-        <div id="timer">Waktu: 120:00</div>
-        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-        
-        <div id="question"></div>
-        <div id="options"></div>
-        
-        <div class="explanation hidden" id="explanation"></div>
-        
-        <div class="nav-buttons">
-            <button onclick="nextQuestion()" style="flex: 2;">Berikutnya</button>
-            <button onclick="goHome()" style="flex: 1; background: #94a3b8; font-size: 12px;">Kembali</button>
+    <div class="level-grid">
+      <div class="level-card easy" data-symbol="∧" onclick="startQuizWithRipple(event,'easy')">
+        <div class="level-icon">🌱</div>
+        <div class="level-info">
+          <div class="level-name">Easy — Fondasi Logika</div>
+          <div class="level-desc">Mulai perjalananmu dari dasar. Nilai kebenaran, negasi, dan operasi dasar logika.</div>
+          <div class="level-tags">
+            <span class="tag">10 Soal</span>
+            <span class="tag">30 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
         </div>
+        <div class="level-arrow">›</div>
+      </div>
+
+      <div class="level-card medium" data-symbol="⇒" onclick="startQuizWithRipple(event,'medium')">
+        <div class="level-icon">⚡</div>
+        <div class="level-info">
+          <div class="level-name">Medium — Penalaran Lebih Dalam</div>
+          <div class="level-desc">Invers, konvers, kontraposisi, De Morgan, dan ekuivalensi logika.</div>
+          <div class="level-tags">
+            <span class="tag">20 Soal</span>
+            <span class="tag">40 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="level-arrow">›</div>
+      </div>
+
+      <div class="level-card hard" data-symbol="⇔" onclick="startQuizWithRipple(event,'hard')">
+        <div class="level-icon">🔥</div>
+        <div class="level-info">
+          <div class="level-name">Hard — Mahir Logika</div>
+          <div class="level-desc">Silogisme, Modus Ponens/Tollens, tautologi, dan pembuktian formal.</div>
+          <div class="level-tags">
+            <span class="tag">30 Soal</span>
+            <span class="tag">50 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="level-arrow">›</div>
+      </div>
     </div>
 
-    <div id="resultScreen" class="card hidden">
-        <h2>Hasil Akhir</h2>
-        <div id="score-display">0</div>
-        <p>Jawaban benar dari <span id="total-q-display">30</span> soal.</p>
-        <button onclick="goHome()">Ulangi Latihan</button>
+    <div class="quote-box">
+      "Logika membawa kamu dari A ke B. Imajinasi membawa kamu ke mana saja."
+      <cite>— Albert Einstein</cite>
     </div>
+  </div>
+
+  <!-- ══════════════════ QUIZ SCREEN ══════════════════ -->
+  <div id="quizScreen" class="screen">
+    <div class="quiz-topbar">
+      <button class="back-to-level-btn" onclick="backToLevelSelect()" title="Kembali ke pilihan level">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2L4 6L8 10"/>
+        </svg>
+        Level
+      </button>
+      <span id="levelBadge" class="quiz-level-badge badge-easy">Easy</span>
+      <span id="qCounter" class="q-counter">1 / 10</span>
+      <div id="timerPill" class="timer-pill">30:00</div>
+    </div>
+
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
+    </div>
+
+    <div class="dot-row" id="dotRow"></div>
+
+    <div class="q-card">
+      <div class="q-number" id="qNumber">SOAL 1</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options-list" id="optsList"></div>
+
+    <div class="explanation-box" id="expBox">
+      <div class="exp-header">💡 Pembahasan</div>
+      <div class="exp-title" id="expTitle"></div>
+      <div class="exp-body" id="expBody"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn btn-prev" onclick="goToPrev()" title="Soal Sebelumnya">‹</button>
+      <button class="nav-btn btn-skip" id="skipBtn" onclick="skipQuestion()">Lewati ›</button>
+      <button class="nav-btn btn-next" id="nextBtn" onclick="goToNext()">Berikutnya →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ RESULT SCREEN ══════════════════ -->
+  <div id="resultScreen" class="screen">
+    <div class="result-container">
+      <div class="result-eyebrow">✦ Hasil Quiz ✦</div>
+
+      <div class="result-circle" id="resultCircle">
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#e8e5de" stroke-width="8"/>
+          <circle id="arcCircle" cx="80" cy="80" r="70" fill="none" stroke="#c9a227" stroke-width="8"
+                  stroke-dasharray="439.82" stroke-dashoffset="439.82"
+                  stroke-linecap="round" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+        </svg>
+        <div class="result-score-num" id="rScoreNum">0</div>
+        <div class="result-score-den" id="rScoreDen">/ 10</div>
+      </div>
+
+      <div class="result-grade" id="rGrade"></div>
+      <p class="result-message" id="rMessage"></p>
+
+      <div class="result-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="rCorrect" style="color:var(--correct)">0</div>
+          <div class="stat-label">Benar</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rWrong" style="color:var(--wrong)">0</div>
+          <div class="stat-label">Salah</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rSkipped" style="color:var(--gold)">0</div>
+          <div class="stat-label">Dilewati</div>
+        </div>
+      </div>
+
+      <button class="review-toggle" onclick="toggleReview()" id="reviewToggle">
+        <span>▾</span> Lihat Review Soal
+      </button>
+      <div class="review-panel" id="reviewPanel"></div>
+
+      <div class="result-actions">
+        <button class="btn-action btn-retry" id="retryBtn" onclick="retryLevel()">Ulangi Level Ini</button>
+        <button class="btn-action btn-home" onclick="goHome()">← Kembali ke Pilihan Level</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-let quizData = [];
-let currentIndex = 0;
-let score = 0;
-let selected = null;
-let timer;
-let timeLeft = 7200;
+// ═══════════════════════════════════════════════════
+//  TITLE ANIMATION — char by char
+// ═══════════════════════════════════════════════════
+function animateTitle() {
+  const line1 = 'Quiz';
+  const line2 = 'Logika Matematika';
 
-const rawQuestions = [
-    // 30 SOAL EASY 
-    { q: "Jika p (B) dan q (S), maka p ∧ q adalah...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Konjungsi (∧) hanya benar jika keduanya Benar." },
-    { q: "Negasi dari 'Hari ini hujan' adalah...", opts: ["Hari ini panas", "Hari ini tidak hujan", "Kemarin hujan"], ans: "Hari ini tidak hujan", exp: "Negasi menggunakan kata 'tidak' atau 'bukan'." },
-    { q: "p ∨ q bernilai salah hanya jika...", opts: ["p B, q S", "p S, q B", "p S, q S"], ans: "p S, q S", exp: "Disjungsi (∨) hanya salah jika kedua komponen salah." },
-    { q: "Jika p (S) dan q (S), maka biimplikasi p ⇔ q adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Biimplikasi benar jika nilainya sama (S-S atau B-B)." },
-    { q: "Simbol 'p ⇒ q' dibaca...", opts: ["p dan q", "p atau q", "Jika p maka q"], ans: "Jika p maka q", exp: "Simbol ⇒ adalah Implikasi." },
-    { q: "Nilai dari '2+2=4 atau 3>5' adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Disjungsi (B ∨ S) = Benar." },
-    { q: "Kata hubung 'DAN' disebut...", opts: ["Disjungsi", "Konjungsi", "Implikasi"], ans: "Konjungsi", exp: "Dan = Konjungsi (∧)." },
-    { q: "Jika ~p Salah, maka p adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Negasi membalikkan nilai." },
-    { q: "Nilai kebenaran (B ∧ B) adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "B dan B = Benar." },
-    { q: "Pernyataan 'Jika 5>2 maka 2<5' bernilai...", opts: ["Benar", "Salah"], ans: "Benar", exp: "B ⇒ B = Benar." },
-    { q: "Jika p (B) dan q (B), p ∧ q adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Konjungsi keduanya benar." },
-    { q: "Jika p (S) dan q (B), p ∨ q adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Disjungsi minimal satu benar." },
-    { q: "Nilai dari ~(B) adalah...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Negasi benar adalah salah." },
-    { q: "Nilai dari ~(S) adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Negasi salah adalah benar." },
-    { q: "Jika p B dan q S, maka p ⇒ q adalah...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Implikasi B-S = S." },
-    { q: "Jika p S dan q B, maka p ⇒ q adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Implikasi p S selalu B." },
-    { q: "Jika p S dan q S, maka p ⇒ q adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Implikasi S-S = B." },
-    { q: "Nilai (B ∨ B) adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Disjungsi benar." },
-    { q: "Nilai (S ∧ S) adalah...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Konjungsi salah." },
-    { q: "Jika p ⇔ q dan p B, q B, maka...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Biimplikasi nilai sama." },
-    { q: "Jika p ⇔ q dan p S, q B, maka...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Biimplikasi beda nilai." },
-    { q: "Penulisan 'tidak benar bahwa p' adalah...", opts: ["p", "~p", "p ∧ q"], ans: "~p", exp: "Negasi = ~." },
-    { q: "Jika p B, maka ~(~p) adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Negasi ganda kembali ke asal." },
-    { q: "Jika p S, maka ~(~p) adalah...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Negasi ganda S tetap S." },
-    { q: "Pernyataan 'p atau q' disebut...", opts: ["Konjungsi", "Disjungsi", "Implikasi"], ans: "Disjungsi", exp: "Atau = Disjungsi." },
-    { q: "Pernyataan 'jika p maka q' disebut...", opts: ["Implikasi", "Konjungsi", "Biimplikasi"], ans: "Implikasi", exp: "Jika...maka = Implikasi." },
-    { q: "Jika p ∧ q benar, maka...", opts: ["p, q benar", "p salah", "q salah"], ans: "p, q benar", exp: "Konjungsi." },
-    { q: "Jika p ∨ q salah, maka...", opts: ["p, q benar", "p atau q benar", "p, q salah"], ans: "p, q salah", exp: "Disjungsi." },
-    { q: "Jika p ⇒ q benar dan p B, maka q...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Modus Ponens dasar." },
-    { q: "Jika p ⇒ q benar dan q S, maka p...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Modus Tollens dasar." },
+  function buildWord(el, text, baseDelay) {
+    el.innerHTML = '';
+    [...text].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'title-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.animationDelay = (baseDelay + i * 0.05) + 's';
+      el.appendChild(span);
+    });
+  }
 
-    // 30 SOAL MEDIUM 
-    { q: "Negasi dari p ⇒ q adalah...", opts: ["~p ⇒ ~q", "p ∧ ~q", "~p ∨ q"], ans: "p ∧ ~q", exp: "Negasi implikasi." },
-    { q: "Invers dari p ⇒ q adalah...", opts: ["q ⇒ p", "~p ⇒ ~q", "~q ⇒ ~p"], ans: "~p ⇒ ~q", exp: "Invers: negasikan keduanya." },
-    { q: "Kontraposisi dari 'Jika lapar maka makan'...", opts: ["~lapar ⇒ ~makan", "~makan ⇒ ~lapar", "makan ⇒ lapar"], ans: "~makan ⇒ ~lapar", exp: "Tukar dan negasikan." },
-    { q: "Nilai kebenaran (~B ∨ S)...", opts: ["Benar", "Salah"], ans: "Salah", exp: "(S ∨ S) = Salah." },
-    { q: "Konvers dari p ⇒ q adalah...", opts: ["q ⇒ p", "~p ⇒ ~q", "~q ⇒ ~p"], ans: "q ⇒ p", exp: "Konvers: tukar posisi." },
-    { q: "Pernyataan yang selalu benar disebut...", opts: ["Kontradiksi", "Tautologi", "Ekuivalen"], ans: "Tautologi", exp: "Tautologi." },
-    { q: "Negasi 'Semua siswa seragam'...", opts: ["Semua tidak", "Ada yang tidak", "Tidak ada"], ans: "Ada yang tidak", exp: "Negasi kuantor universal." },
-    { q: "p ⇒ q SALAH saat...", opts: ["p B, q B", "p B, q S", "p S, q B"], ans: "p B, q S", exp: "Hanya satu kondisi salah." },
-    { q: "Bentuk ~p ∨ q ekuivalen dengan...", opts: ["p ∧ q", "p ⇒ q", "p ⇔ q"], ans: "p ⇒ q", exp: "Implikasi." },
-    { q: "Negasi dari 'p atau q'...", opts: ["~p atau ~q", "~p dan ~q", "p dan ~q"], ans: "~p dan ~q", exp: "De Morgan." },
-    { q: "Negasi dari 'p dan q'...", opts: ["~p dan ~q", "~p atau ~q", "p atau q"], ans: "~p atau ~q", exp: "De Morgan." },
-    { q: "Jika q ⇒ p, bentuk ekuivalennya...", opts: ["~q ∨ p", "~p ∨ q", "p ∧ q"], ans: "~q ∨ p", exp: "Rumus implikasi." },
-    { q: "Pernyataan selalu salah disebut...", opts: ["Tautologi", "Kontradiksi", "Ekuivalen"], ans: "Kontradiksi", exp: "Kontradiksi." },
-    { q: "Jika (~p ∧ q) benar, maka...", opts: ["p S, q B", "p B, q B", "p S, q S"], ans: "p S, q B", exp: "~p B berarti p S." },
-    { q: "Nilai (~S ∧ B)...", opts: ["Benar", "Salah"], ans: "Benar", exp: "B ∧ B = B." },
-    { q: "Jika p ⇔ q salah, maka...", opts: ["p=q", "p≠q", "p B"], ans: "p≠q", exp: "Biimplikasi beda nilai." },
-    { q: "Ekuivalen ~(p ⇒ q)...", opts: ["~p ∧ q", "p ∧ ~q", "~p ∨ q"], ans: "p ∧ ~q", exp: "Negasi implikasi." },
-    { q: "Jika p B dan (~p ∨ q) B, maka q...", opts: ["Benar", "Salah"], ans: "Benar", exp: "S ∨ q = B maka q musti B." },
-    { q: "Nilai (B ⇒ S)...", opts: ["Benar", "Salah"], ans: "Salah", exp: "BS = S." },
-    { q: "Nilai (S ⇒ B)...", opts: ["Benar", "Salah"], ans: "Benar", exp: "SB = B." },
-    { q: "Sifat transitif p ⇒ q dan q ⇒ r...", opts: ["p ⇒ r", "r ⇒ p", "p ⇔ r"], ans: "p ⇒ r", exp: "Silogisme." },
-    { q: "Negasi 'Jika p maka q'...", opts: ["~p ∧ q", "p ∧ ~q", "~p ∨ q"], ans: "p ∧ ~q", exp: "Hukum negasi." },
-    { q: "Jika p B, q S, p ⇔ q adalah...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Nilai beda." },
-    { q: "Jika p S, q S, p ⇔ q adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Nilai sama." },
-    { q: "Ekuivalen ~(~p)...", opts: ["p", "~p", "p ∧ p"], ans: "p", exp: "Identitas." },
-    { q: "Jika (~p ∨ ~q) benar, maka...", opts: ["p, q B", "p atau q S", "p, q S"], ans: "p atau q S", exp: "Minimal satu S." },
-    { q: "Jika (p ∧ q) salah, maka...", opts: ["p, q B", "min satu S", "keduanya B"], ans: "min satu S", exp: "Konjungsi salah." },
-    { q: "Jika (p ∨ q) benar, maka...", opts: ["keduanya S", "min satu B", "keduanya B"], ans: "min satu B", exp: "Disjungsi benar." },
-    { q: "Jika (~p ⇒ q) salah, maka...", opts: ["~p B, q S", "~p S", "q B"], ans: "~p B, q S", exp: "Implikasi p-q." },
-    { q: "p ⇒ q B dan q ⇒ p B berarti...", opts: ["p ⇒ q", "p ⇔ q", "~p ∨ q"], ans: "p ⇔ q", exp: "Biimplikasi." },
+  buildWord(document.getElementById('word1'), line1, 0.3);
+  buildWord(document.getElementById('word2'), line2, 0.7);
+}
 
-    // 30 SOAL HARD
-    { q: "p ⇒ q, q ⇒ r, kesimpulan p ⇒ r disebut...", opts: ["Ponens", "Tollens", "Silogisme"], ans: "Silogisme", exp: "Penyambungan implikasi." },
-    { q: "p ⇒ q, ~q, kesimpulan ~p disebut...", opts: ["Ponens", "Tollens", "Silogisme"], ans: "Tollens", exp: "Modus Tollens." },
-    { q: "p ⇒ q, p, kesimpulan q disebut...", opts: ["Ponens", "Tollens", "Silogisme"], ans: "Ponens", exp: "Modus Ponens." },
-    { q: "Negasi 'Ada manusia tidak berdosa'...", opts: ["Semua tidak", "Semua berdosa", "Ada yang berdosa"], ans: "Semua berdosa", exp: "Negasi Ada-Tidak = Semua." },
-    { q: "Nilai (B ⇔ S) ∧ B...", opts: ["Benar", "Salah"], ans: "Salah", exp: "S ∧ B = Salah." },
-    { q: "Jika hujan maka basah. Tidak basah. Kesimpulan...", opts: ["Hujan", "Tidak hujan", "Kering"], ans: "Tidak hujan", exp: "Modus Tollens." },
-    { q: "Ekuivalensi ~(p ⇔ q)...", opts: ["p ⇔ ~q", "~p ⇔ ~q", "p ∧ q"], ans: "p ⇔ ~q", exp: "Ingkaran biimplikasi." },
-    { q: "Sederhana (p ∧ q) ∨ (p ∧ ~q)...", opts: ["p", "q", "~p"], ans: "p", exp: "Hukum Distributif." },
-    { q: "Manakah kontradiksi?", opts: ["p ∨ ~p", "p ∧ ~p", "p ⇒ p"], ans: "p ∧ ~p", exp: "Selalu salah." },
-    { q: "p ⇒ q ekuivalen dengan...", opts: ["~q ⇒ ~p", "q ⇒ p", "p ∧ ~q"], ans: "~q ⇒ ~p", exp: "Kontraposisi." },
-    { q: "Negasi 'p dan (~q atau r)'...", opts: ["~p atau (q dan ~r)", "~p dan (q atau ~r)", "p dan ~q"], ans: "~p atau (q dan ~r)", exp: "De Morgan bertingkat." },
-    { q: "Jika p ⇒ q B dan p S, maka q...", opts: ["Benar", "Salah"], ans: "Benar", exp: "S-B atau S-S tetap B." },
-    { q: "p ⇒ q S, maka p dan q...", opts: ["p B, q S", "p S, q B", "p S, q S"], ans: "p B, q S", exp: "Kondisi Tunggal." },
-    { q: "p ⇔ q B dan p S, maka q...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Biimplikasi nilainya sama." },
-    { q: "p ⇔ q S dan p B, maka q...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Biimplikasi nilai beda." },
-    { q: "Nilai (p ∨ ~p)...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Tautologi." },
-    { q: "Nilai (p ∧ ~p)...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Kontradiksi." },
-    { q: "p ⇒ (q ⇒ p) adalah...", opts: ["Tautologi", "Kontradiksi", "Satiabilitas"], ans: "Tautologi", exp: "Dicek tabel kebenaran selalu B." },
-    { q: "Bentuk ekuivalen p ⇔ q...", opts: ["(p⇒q)∧(q⇒p)", "p∧q", "p∨q"], ans: "(p⇒q)∧(q⇒p)", exp: "Definisi biimplikasi." },
-    { q: "(p ⇒ q) ∧ p menghasilkan q adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Modus Ponens." },
-    { q: "(p ⇒ q) ∧ ~q menghasilkan ~p adalah...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Modus Tollens." },
-    { q: "p ⇒ q, q ⇒ r, p B, maka r...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Silogisme Ponens." },
-    { q: "Jika p ∧ q salah...", opts: ["p, q B", "min satu S", "keduanya B"], ans: "min satu S", exp: "Aturan konjungsi." },
-    { q: "Jika p ∨ q salah...", opts: ["min satu B", "keduanya S", "keduanya B"], ans: "keduanya S", exp: "Aturan disjungsi." },
-    { q: "Ekuivalen ~(p ∧ q)...", opts: ["~p ∨ ~q", "~p ∧ ~q", "p ∨ q"], ans: "~p ∨ ~q", exp: "De Morgan." },
-    { q: "~(p ∨ q) benar berarti...", opts: ["p, q B", "p, q S", "min satu B"], ans: "p, q S", exp: "De Morgan." },
-    { q: "p ⇒ q dan q ⇒ p berarti...", opts: ["p ⇒ q", "p ⇔ q", "~p ∨ q"], ans: "p ⇔ q", exp: "Biimplikasi." },
-    { q: "p S dan p ⇒ q B, maka q...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Implikasi." },
-    { q: "q S dan p ⇒ q B, maka p...", opts: ["Benar", "Salah"], ans: "Salah", exp: "Modus Tollens." },
-    { q: "p B dan p ⇒ q B, maka q...", opts: ["Benar", "Salah"], ans: "Benar", exp: "Modus Ponens." }
+// ═══════════════════════════════════════════════════
+//  LEVEL CARD ENTRANCE ANIMATION
+// ═══════════════════════════════════════════════════
+function animateLevelCards() {
+  const cards = document.querySelectorAll('.level-card');
+  cards.forEach((card, i) => {
+    card.style.animationDelay = (1.5 + i * 0.18) + 's';
+    card.classList.add('card-in');
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  FLOATING PARTICLES — logic symbols
+// ═══════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  const SYMBOLS = ['∧','∨','⇒','⇔','~','∀','∃','¬','≡','⊕'];
+  let particles = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: H + 30,
+      symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+      size: 12 + Math.random() * 16,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -(0.3 + Math.random() * 0.5),
+      opacity: 0,
+      maxOpacity: 0.06 + Math.random() * 0.08,
+      life: 0,
+      maxLife: 180 + Math.random() * 120,
+      rotation: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.02
+    };
+  }
+
+  for (let i = 0; i < 28; i++) {
+    const p = makeParticle();
+    p.y = Math.random() * H;
+    p.life = Math.random() * p.maxLife;
+    particles.push(p);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (Math.random() < 0.04 && particles.length < 40) {
+      particles.push(makeParticle());
+    }
+
+    particles = particles.filter(p => p.y > -40);
+
+    particles.forEach(p => {
+      p.life++;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotV;
+
+      const fadeLen = 30;
+      if (p.life < fadeLen) p.opacity = p.maxOpacity * (p.life / fadeLen);
+      else if (p.life > p.maxLife - fadeLen) p.opacity = p.maxOpacity * ((p.maxLife - p.life) / fadeLen);
+      else p.opacity = p.maxOpacity;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.font = `${p.size}px 'DM Mono', monospace`;
+      ctx.fillStyle = `rgba(26,26,46,${p.opacity})`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.symbol, 0, 0);
+      ctx.restore();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  setTimeout(() => {
+    canvas.classList.add('visible');
+    draw();
+  }, 400);
+})();
+
+// ═══════════════════════════════════════════════════
+//  RIPPLE EFFECT on level card click
+// ═══════════════════════════════════════════════════
+function startQuizWithRipple(e, level) {
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const x = e.clientX - rect.left - size / 2;
+  const y = e.clientY - rect.top - size / 2;
+
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+  card.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+
+  setTimeout(() => startQuiz(level), 200);
+}
+
+// ═══════════════════════════════════════════════════
+//  BACK TO LEVEL SELECT from quiz
+// ═══════════════════════════════════════════════════
+function backToLevelSelect() {
+  if (state.timerID) clearInterval(state.timerID);
+  showScreen('startScreen');
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT ANIMATIONS
+// ═══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  animateTitle();
+  animateLevelCards();
+});
+
+
+// ─────────────────────────────────────────────
+//  DATA SOAL  (30 easy, 30 medium, 30 hard)
+//  Setiap soal: 5 pilihan (a–e)
+// ─────────────────────────────────────────────
+const ALL_QUESTIONS = [
+
+// ═══════════════ EASY (index 0-29) ═══════════════
+{
+  q: "Jika p bernilai Benar (B) dan q bernilai Salah (S), maka nilai dari p ∧ q adalah...",
+  opts: ["Benar, karena p benar", "Salah, karena konjungsi butuh keduanya benar", "Benar, karena salah satu benar", "Tidak dapat ditentukan", "Salah, karena q tidak benar dan p juga salah"],
+  ans: 1,
+  exp: { title: "Konjungsi (p ∧ q)", body: "Konjungsi (∧) hanya bernilai BENAR jika kedua komponen benar. Karena q = Salah, maka p ∧ q = B ∧ S = SALAH.\n\nTabel:\nB∧B = B | B∧S = S | S∧B = S | S∧S = S" }
+},
+{
+  q: "Negasi dari pernyataan 'Hari ini hujan lebat' adalah...",
+  opts: ["Hari ini cerah", "Hari ini tidak hujan lebat", "Hari ini gerimis", "Kemarin tidak hujan lebat", "Besok tidak hujan lebat"],
+  ans: 1,
+  exp: { title: "Negasi Pernyataan", body: "Negasi (~p) dari suatu pernyataan p dibentuk dengan menambahkan 'tidak' atau 'bukan' pada pernyataan.\n\nJika p = 'Hari ini hujan lebat'\nMaka ~p = 'Hari ini TIDAK hujan lebat'\n\nBukan mengganti dengan kata lain seperti 'cerah' atau 'gerimis'." }
+},
+{
+  q: "Disjungsi p ∨ q bernilai SALAH hanya ketika...",
+  opts: ["p benar, q salah", "p salah, q benar", "p salah, q salah", "p benar, q benar", "Tidak mungkin salah"],
+  ans: 2,
+  exp: { title: "Disjungsi (p ∨ q)", body: "Disjungsi (∨) hanya bernilai SALAH jika KEDUA komponen salah.\n\nTabel:\nB∨B = B | B∨S = B | S∨B = B | S∨S = S\n\nJadi hanya kondisi p=S dan q=S yang menghasilkan S." }
+},
+{
+  q: "Jika p = Salah dan q = Salah, maka biimplikasi p ⇔ q adalah...",
+  opts: ["Salah, karena keduanya salah", "Benar, karena nilai keduanya sama", "Salah, karena tidak ada yang benar", "Benar, karena salah satu harus benar", "Tidak dapat ditentukan"],
+  ans: 1,
+  exp: { title: "Biimplikasi (p ⇔ q)", body: "Biimplikasi (⇔) bernilai BENAR jika kedua komponen memiliki nilai yang SAMA (sama-sama B atau sama-sama S).\n\nKarena p=S dan q=S (nilai sama), maka p ⇔ q = BENAR.\n\nTabel:\nB⇔B = B | B⇔S = S | S⇔B = S | S⇔S = B" }
+},
+{
+  q: "Simbol logika 'p ⇒ q' dibaca sebagai...",
+  opts: ["p dan q", "p atau q", "Jika p maka q", "p jika dan hanya jika q", "Bukan p atau q"],
+  ans: 2,
+  exp: { title: "Implikasi (⇒)", body: "Simbol ⇒ adalah lambang IMPLIKASI.\n\n'p ⇒ q' dibaca: 'Jika p maka q'\n\nDalam implikasi:\n- p disebut anteseden (sebab/hipotesis)\n- q disebut konsekuen (akibat/kesimpulan)" }
+},
+{
+  q: "Nilai kebenaran pernyataan '2 + 2 = 4 atau 3 > 5' adalah...",
+  opts: ["Salah, karena 3 > 5 salah", "Benar, karena 2+2=4 benar", "Salah, karena disjungsi membutuhkan keduanya benar", "Tidak dapat ditentukan", "Benar, karena keduanya benar"],
+  ans: 1,
+  exp: { title: "Disjungsi dalam Soal Nyata", body: "Pernyataan: '2+2=4 atau 3>5'\n\np = '2+2=4' → BENAR\nq = '3>5' → SALAH\n\np ∨ q = B ∨ S = BENAR\n\nDisjungsi cukup butuh SATU pernyataan benar." }
+},
+{
+  q: "Kata hubung logika 'DAN' dalam logika matematika disimbolkan dengan...",
+  opts: ["∨ (konjungsi)", "∧ (konjungsi)", "⇒ (implikasi)", "⇔ (biimplikasi)", "~ (negasi)"],
+  ans: 1,
+  exp: { title: "Simbol-Simbol Logika", body: "Kata 'DAN' = Konjungsi = ∧\nKata 'ATAU' = Disjungsi = ∨\nKata 'TIDAK/BUKAN' = Negasi = ~\n'JIKA...MAKA' = Implikasi = ⇒\n'...JIKA DAN HANYA JIKA...' = Biimplikasi = ⇔" }
+},
+{
+  q: "Jika ~p (negasi p) bernilai Salah, maka nilai p adalah...",
+  opts: ["Salah", "Benar", "Tidak dapat ditentukan", "Tergantung nilai q", "Selalu Salah"],
+  ans: 1,
+  exp: { title: "Hukum Negasi Ganda", body: "Negasi membalikkan nilai kebenaran:\n- Jika p = Benar → ~p = Salah\n- Jika p = Salah → ~p = Benar\n\nDiketahui ~p = Salah, berarti p = BENAR." }
+},
+{
+  q: "Nilai kebenaran dari ekspresi (B ∧ B) adalah...",
+  opts: ["Salah", "Benar", "Tidak dapat ditentukan", "Tergantung konteks", "Salah, karena konjungsi"],
+  ans: 1,
+  exp: { title: "Konjungsi Keduanya Benar", body: "Tabel konjungsi:\nB ∧ B = BENAR ✓\nB ∧ S = SALAH\nS ∧ B = SALAH\nS ∧ S = SALAH\n\nJika kedua komponen Benar, konjungsi = BENAR." }
+},
+{
+  q: "Pernyataan 'Jika 5 > 2 maka 2 < 5' bernilai...",
+  opts: ["Salah, karena tidak logis", "Benar, karena implikasi B ⇒ B", "Salah, karena 2 < 5 tidak relevan", "Tidak dapat ditentukan", "Benar, karena 5 > 2 saja sudah benar"],
+  ans: 1,
+  exp: { title: "Implikasi dengan Nilai Benar-Benar", body: "p = '5 > 2' → BENAR\nq = '2 < 5' → BENAR\n\np ⇒ q = B ⇒ B = BENAR\n\nTabel implikasi:\nB⇒B = B | B⇒S = S | S⇒B = B | S⇒S = B\n\nImplikasi hanya SALAH ketika p=B dan q=S." }
+},
+{
+  q: "Jika p = Benar dan q = Benar, maka p ∧ q adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung q", "Selalu benar"],
+  ans: 1,
+  exp: { title: "Konjungsi B∧B", body: "B ∧ B = BENAR. Konjungsi benar hanya jika kedua komponen benar, dan memang keduanya benar." }
+},
+{
+  q: "Jika p = Salah dan q = Benar, maka p ∨ q adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung p", "Salah, karena p salah"],
+  ans: 1,
+  exp: { title: "Disjungsi S∨B", body: "S ∨ B = BENAR. Disjungsi benar jika minimal satu komponen benar. Di sini q = Benar, sehingga disjungsi = BENAR." }
+},
+{
+  q: "Nilai dari ~(Benar) adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Benar lagi", "Tergantung p"],
+  ans: 1,
+  exp: { title: "Negasi dari Benar", body: "~(B) = SALAH. Negasi membalikkan nilai:\n~B = S dan ~S = B" }
+},
+{
+  q: "Nilai dari ~(Salah) adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Salah lagi", "Tergantung konteks"],
+  ans: 1,
+  exp: { title: "Negasi dari Salah", body: "~(S) = BENAR. Negasi membalikkan nilai:\n~S = B dan ~B = S" }
+},
+{
+  q: "Jika p = Benar dan q = Salah, maka p ⇒ q adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung q", "Selalu benar"],
+  ans: 1,
+  exp: { title: "Implikasi B⇒S", body: "B ⇒ S = SALAH\n\nImplikasi hanya SALAH pada kondisi ini saja (p=B, q=S). Ini kondisi 'premis benar, kesimpulan salah' yang tidak valid." }
+},
+{
+  q: "Jika p = Salah dan q = Benar, maka p ⇒ q adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung p", "Selalu salah"],
+  ans: 1,
+  exp: { title: "Implikasi S⇒B", body: "S ⇒ B = BENAR. Ketika p = Salah, implikasi selalu bernilai BENAR, apapun nilai q.\n\nAturan: jika premis salah, implikasi otomatis benar." }
+},
+{
+  q: "Jika p = Salah dan q = Salah, maka p ⇒ q adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung p", "Bergantung q"],
+  ans: 1,
+  exp: { title: "Implikasi S⇒S", body: "S ⇒ S = BENAR. Ketika p = Salah, implikasi selalu BENAR.\n\nTabel implikasi:\nB⇒B=B | B⇒S=S | S⇒B=B | S⇒S=B" }
+},
+{
+  q: "Nilai dari (B ∨ B) adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Tergantung", "Bergantung nilai lain"],
+  ans: 1,
+  exp: { title: "Disjungsi B∨B", body: "B ∨ B = BENAR. Disjungsi benar jika minimal satu komponen benar." }
+},
+{
+  q: "Nilai dari (S ∧ S) adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Tergantung", "Selalu benar"],
+  ans: 1,
+  exp: { title: "Konjungsi S∧S", body: "S ∧ S = SALAH. Konjungsi hanya benar jika KEDUANYA benar, sedangkan keduanya salah." }
+},
+{
+  q: "Jika p ⇔ q dan p = Benar, q = Benar, maka nilainya...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung pernyataan", "Selalu salah"],
+  ans: 1,
+  exp: { title: "Biimplikasi B⇔B", body: "B ⇔ B = BENAR. Biimplikasi benar jika kedua nilai SAMA (B-B atau S-S)." }
+},
+{
+  q: "Jika p ⇔ q dan p = Salah, q = Benar, maka nilainya...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Selalu benar"],
+  ans: 1,
+  exp: { title: "Biimplikasi S⇔B", body: "S ⇔ B = SALAH. Biimplikasi salah jika nilai keduanya BERBEDA." }
+},
+{
+  q: "Penulisan 'tidak benar bahwa p' secara simbolis adalah...",
+  opts: ["p", "q", "~p", "p ∧ q", "p ∨ q"],
+  ans: 2,
+  exp: { title: "Simbol Negasi", body: "'Tidak benar bahwa p' = ~p\n\nLambang ~ (tilde) berarti NEGASI. Dibaca 'tidak' atau 'bukan'." }
+},
+{
+  q: "Jika p = Benar, maka ~(~p) adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Tergantung q", "Bergantung konteks"],
+  ans: 1,
+  exp: { title: "Negasi Ganda", body: "~(~p) = p (hukum negasi ganda)\n\nJika p = B:\n~p = S\n~(~p) = ~S = B\n\nNegasi dua kali = kembali ke nilai asal." }
+},
+{
+  q: "Jika p = Salah, maka ~(~p) adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Tergantung q", "Selalu benar"],
+  ans: 1,
+  exp: { title: "Negasi Ganda pada Nilai Salah", body: "~(~p) = p\n\nJika p = S:\n~p = B\n~(~p) = ~B = S\n\nNegasi ganda kembali ke nilai asal." }
+},
+{
+  q: "Pernyataan 'p atau q' dalam logika disebut...",
+  opts: ["Konjungsi", "Implikasi", "Disjungsi", "Biimplikasi", "Negasi"],
+  ans: 2,
+  exp: { title: "Nama Operasi Logika", body: "'p atau q' = DISJUNGSI (∨)\n\nRingkasan:\n- DAN = Konjungsi (∧)\n- ATAU = Disjungsi (∨)\n- TIDAK = Negasi (~)\n- JIKA...MAKA = Implikasi (⇒)\n- JIKA DAN HANYA JIKA = Biimplikasi (⇔)" }
+},
+{
+  q: "Pernyataan 'jika p maka q' dalam logika disebut...",
+  opts: ["Konjungsi", "Disjungsi", "Biimplikasi", "Implikasi", "Negasi"],
+  ans: 3,
+  exp: { title: "Nama Implikasi", body: "'Jika p maka q' = IMPLIKASI = p ⇒ q\n\n- p = anteseden (premis/sebab)\n- q = konsekuen (kesimpulan/akibat)" }
+},
+{
+  q: "Jika p ∧ q = Benar, maka dapat dipastikan...",
+  opts: ["p salah", "q salah", "p dan q keduanya benar", "salah satu salah", "tidak bisa ditentukan"],
+  ans: 2,
+  exp: { title: "Konsekuensi Konjungsi Benar", body: "Jika p ∧ q = BENAR, maka dipastikan p = BENAR dan q = BENAR.\n\nKarena konjungsi hanya benar jika KEDUA komponen benar." }
+},
+{
+  q: "Jika p ∨ q = Salah, maka dapat dipastikan...",
+  opts: ["p benar, q benar", "p atau q benar", "p dan q keduanya salah", "p salah saja", "q benar saja"],
+  ans: 2,
+  exp: { title: "Konsekuensi Disjungsi Salah", body: "Jika p ∨ q = SALAH, maka dipastikan p = SALAH dan q = SALAH.\n\nKarena disjungsi hanya salah jika KEDUA komponen salah." }
+},
+{
+  q: "Jika p ⇒ q benar dan p = Benar, maka q...",
+  opts: ["Pasti salah", "Pasti benar", "Tidak tentu", "Bergantung kasus", "Selalu salah"],
+  ans: 1,
+  exp: { title: "Modus Ponens Dasar", body: "Modus Ponens:\nPremis 1: p ⇒ q (Benar)\nPremis 2: p (Benar)\nKesimpulan: q = BENAR\n\nIni adalah aturan penarikan kesimpulan paling dasar." }
+},
+{
+  q: "Jika p ⇒ q benar dan q = Salah, maka p...",
+  opts: ["Pasti benar", "Pasti salah", "Tidak tentu", "Bergantung kasus", "Bisa benar atau salah"],
+  ans: 1,
+  exp: { title: "Modus Tollens Dasar", body: "Modus Tollens:\nPremis 1: p ⇒ q (Benar)\nPremis 2: ~q (q = Salah)\nKesimpulan: ~p → p = SALAH\n\nJika konsekuen salah, maka anteseden pasti salah." }
+},
+
+// ═══════════════ MEDIUM (index 30-59) ═══════════════
+{
+  q: "Negasi dari pernyataan p ⇒ q adalah...",
+  opts: ["~p ⇒ ~q", "~p ∨ q", "p ∧ ~q", "~p ∧ ~q", "p ⇒ ~q"],
+  ans: 2,
+  exp: { title: "Negasi Implikasi", body: "~(p ⇒ q) = p ∧ ~q\n\nImplikasi p ⇒ q ekuivalen dengan ~p ∨ q.\nNegasinya: ~(~p ∨ q) = p ∧ ~q (De Morgan)\n\nArtinya: 'p benar DAN q salah'" }
+},
+{
+  q: "Invers dari implikasi p ⇒ q adalah...",
+  opts: ["q ⇒ p", "~q ⇒ ~p", "~p ⇒ ~q", "p ⇒ ~q", "~p ⇒ q"],
+  ans: 2,
+  exp: { title: "Invers Implikasi", body: "Dari p ⇒ q, bentuk-bentuk turunannya:\n\n• Konvers: q ⇒ p (tukar posisi)\n• Invers: ~p ⇒ ~q (negasikan keduanya)\n• Kontraposisi: ~q ⇒ ~p (tukar DAN negasikan)\n\nInvers dibuat dengan NEGASIKAN keduanya tanpa menukar posisi." }
+},
+{
+  q: "Kontraposisi dari 'Jika lapar maka makan' adalah...",
+  opts: ["Jika tidak lapar maka tidak makan", "Jika makan maka lapar", "Jika tidak makan maka tidak lapar", "Jika lapar maka tidak makan", "Jika tidak makan maka lapar"],
+  ans: 2,
+  exp: { title: "Kontraposisi", body: "Kontraposisi dari p ⇒ q adalah ~q ⇒ ~p\n(Tukar posisi DAN negasikan keduanya)\n\np = 'lapar', q = 'makan'\n~q = 'tidak makan', ~p = 'tidak lapar'\n\nKontraposisi: 'Jika tidak makan maka tidak lapar'\n\nKontraposisi SELALU ekuivalen dengan pernyataan aslinya!" }
+},
+{
+  q: "Nilai kebenaran (~B ∨ S) adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung p", "Bergantung q"],
+  ans: 1,
+  exp: { title: "Evaluasi Ekspresi Campuran", body: "~B ∨ S\n= S ∨ S   (karena ~B = S)\n= SALAH\n\nLangkah: Hitung negasi dulu, lalu operasi utama." }
+},
+{
+  q: "Konvers dari implikasi p ⇒ q adalah...",
+  opts: ["~p ⇒ ~q", "~q ⇒ ~p", "q ⇒ p", "p ⇒ ~q", "~p ⇒ q"],
+  ans: 2,
+  exp: { title: "Konvers Implikasi", body: "Konvers dari p ⇒ q adalah q ⇒ p.\n(Tukar posisi p dan q saja, tanpa dinegasikan)\n\nPerhatian: Konvers TIDAK ekuivalen dengan pernyataan asli!\nHanya kontraposisi yang ekuivalen dengan aslinya." }
+},
+{
+  q: "Pernyataan yang nilai kebenarannya selalu BENAR disebut...",
+  opts: ["Kontradiksi", "Kontingensi", "Tautologi", "Ekuivalensi", "Biimplikasi"],
+  ans: 2,
+  exp: { title: "Tautologi", body: "TAUTOLOGI = pernyataan yang selalu BENAR untuk semua kemungkinan nilai.\n\nContoh: p ∨ ~p selalu benar.\n\nKontradiksi = selalu SALAH (contoh: p ∧ ~p)\nKontingensi = kadang benar, kadang salah" }
+},
+{
+  q: "Negasi dari 'Semua siswa memakai seragam' adalah...",
+  opts: ["Semua siswa tidak memakai seragam", "Tidak ada siswa memakai seragam", "Ada siswa yang tidak memakai seragam", "Beberapa siswa memakai seragam", "Semua siswa kadang memakai seragam"],
+  ans: 2,
+  exp: { title: "Negasi Kuantor Universal", body: "Aturan Negasi Kuantor:\n\n~(∀x, P(x)) = ∃x, ~P(x)\n'Tidak semua x' = 'Ada x yang tidak'\n\n~('Semua siswa memakai seragam')\n= 'Ada siswa yang TIDAK memakai seragam'\n\nBukan 'semua tidak', melainkan 'ada yang tidak'!" }
+},
+{
+  q: "Implikasi p ⇒ q bernilai SALAH hanya ketika...",
+  opts: ["p Benar, q Benar", "p Salah, q Benar", "p Benar, q Salah", "p Salah, q Salah", "Tidak mungkin salah"],
+  ans: 2,
+  exp: { title: "Kondisi Implikasi Salah", body: "Tabel kebenaran implikasi:\nB ⇒ B = B\nB ⇒ S = S  ← SATU-SATUNYA kondisi salah!\nS ⇒ B = B\nS ⇒ S = B\n\nImplikasi salah HANYA jika p=Benar dan q=Salah.\n(Premis benar tapi kesimpulan salah)" }
+},
+{
+  q: "Bentuk ~p ∨ q ekuivalen dengan...",
+  opts: ["p ∧ q", "p ∧ ~q", "p ⇒ q", "p ⇔ q", "~p ∧ q"],
+  ans: 2,
+  exp: { title: "Ekuivalensi Implikasi", body: "p ⇒ q ≡ ~p ∨ q\n\nIni adalah ekuivalensi penting yang sering digunakan:\n'Jika p maka q' sama artinya dengan 'Tidak p atau q'" }
+},
+{
+  q: "Negasi dari 'p atau q' (~(p ∨ q)) adalah...",
+  opts: ["~p atau ~q", "p dan ~q", "~p atau q", "~p dan ~q", "p dan q"],
+  ans: 3,
+  exp: { title: "Hukum De Morgan I", body: "Hukum De Morgan:\n~(p ∨ q) = ~p ∧ ~q\n\nArtinya: Negasi dari 'p atau q' = 'tidak p DAN tidak q'" }
+},
+{
+  q: "Negasi dari 'p dan q' (~(p ∧ q)) adalah...",
+  opts: ["~p dan ~q", "p atau ~q", "~p dan q", "~p atau ~q", "p dan q"],
+  ans: 3,
+  exp: { title: "Hukum De Morgan II", body: "Hukum De Morgan:\n~(p ∧ q) = ~p ∨ ~q\n\nArtinya: Negasi dari 'p dan q' = 'tidak p ATAU tidak q'" }
+},
+{
+  q: "Jika q ⇒ p, bentuk ekuivalennya adalah...",
+  opts: ["~p ∨ q", "p ∧ ~q", "~q ∨ p", "p ∨ ~q", "~p ∧ q"],
+  ans: 2,
+  exp: { title: "Bentuk Ekuivalen Implikasi", body: "q ⇒ p ≡ ~q ∨ p\n\nRumus umum: a ⇒ b ≡ ~a ∨ b\n\nJadi q ⇒ p ≡ ~q ∨ p" }
+},
+{
+  q: "Pernyataan yang nilai kebenarannya selalu SALAH disebut...",
+  opts: ["Tautologi", "Kontingensi", "Implikasi", "Kontradiksi", "Ekuivalensi"],
+  ans: 3,
+  exp: { title: "Kontradiksi", body: "KONTRADIKSI = pernyataan yang selalu SALAH untuk semua kemungkinan nilai.\n\nContoh paling klasik: p ∧ ~p\nJika p=B: B∧S=S\nJika p=S: S∧B=S\nSelalu SALAH!" }
+},
+{
+  q: "Jika (~p ∧ q) = Benar, maka nilai p dan q adalah...",
+  opts: ["p Benar, q Benar", "p Benar, q Salah", "p Salah, q Benar", "p Salah, q Salah", "Tidak dapat ditentukan"],
+  ans: 2,
+  exp: { title: "Analisis Konjungsi Campuran", body: "(~p ∧ q) = Benar\n\nAgar konjungsi benar, KEDUA komponen harus benar:\n~p = Benar → p = SALAH\nq = Benar\n\nJadi: p = Salah, q = Benar" }
+},
+{
+  q: "Nilai dari (~S ∧ B) adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung konteks", "Bergantung nilai lain"],
+  ans: 1,
+  exp: { title: "Evaluasi Campuran (~S ∧ B)", body: "~S ∧ B\n= B ∧ B   (karena ~S = B)\n= BENAR" }
+},
+{
+  q: "Jika p ⇔ q = Salah, maka hubungan nilai p dan q adalah...",
+  opts: ["p dan q sama-sama benar", "p dan q sama-sama salah", "p dan q nilainya berbeda", "p benar saja", "q benar saja"],
+  ans: 2,
+  exp: { title: "Kondisi Biimplikasi Salah", body: "Biimplikasi p ⇔ q:\n- BENAR jika p dan q bernilai SAMA (B-B atau S-S)\n- SALAH jika p dan q bernilai BERBEDA (B-S atau S-B)\n\nJadi jika p ⇔ q = Salah, maka p ≠ q." }
+},
+{
+  q: "Ekuivalensi dari ~(p ⇒ q) adalah...",
+  opts: ["~p ∧ q", "~p ∨ q", "~p ∧ ~q", "p ∧ ~q", "~p ⇒ ~q"],
+  ans: 3,
+  exp: { title: "Negasi Implikasi", body: "~(p ⇒ q)\n= ~(~p ∨ q)      (ubah implikasi)\n= p ∧ ~q          (De Morgan)\n\nJadi ~(p ⇒ q) = p ∧ ~q" }
+},
+{
+  q: "Jika p = Benar dan (~p ∨ q) = Benar, maka nilai q adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung nilai lain", "Bisa benar atau salah"],
+  ans: 1,
+  exp: { title: "Analisis Logis", body: "Diketahui p = Benar.\n\n~p ∨ q = Benar\nS ∨ q = Benar\n\nAgar S ∨ q = B, maka q harus = BENAR" }
+},
+{
+  q: "Nilai dari (B ⇒ S) adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Tergantung", "Benar dalam kondisi tertentu"],
+  ans: 1,
+  exp: { title: "Implikasi B⇒S", body: "B ⇒ S = SALAH\n\nIni adalah SATU-SATUNYA kondisi implikasi yang salah:\n'Premis benar, kesimpulan salah' = tidak valid logis." }
+},
+{
+  q: "Nilai dari (S ⇒ B) adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung q", "Bergantung p"],
+  ans: 1,
+  exp: { title: "Implikasi S⇒B", body: "S ⇒ B = BENAR\n\nKetika premis (p) = Salah, implikasi SELALU benar, apapun nilai konsekuen." }
+},
+{
+  q: "Sifat transitif: jika p ⇒ q dan q ⇒ r, maka kesimpulannya adalah...",
+  opts: ["r ⇒ p", "p ⇔ r", "q ⇒ p", "p ⇒ r", "r ⇒ q"],
+  ans: 3,
+  exp: { title: "Silogisme Hipotetis", body: "Silogisme Hipotetis (sifat transitif implikasi):\n\nJika p ⇒ q dan q ⇒ r, maka p ⇒ r\n\nContoh:\n'Jika belajar maka pintar' dan 'jika pintar maka sukses'\n→ 'Jika belajar maka sukses'" }
+},
+{
+  q: "Negasi dari pernyataan 'Jika p maka q' adalah...",
+  opts: ["~p ∧ q", "~p ∨ ~q", "~p ⇒ ~q", "p ∧ ~q", "~p ∨ q"],
+  ans: 3,
+  exp: { title: "Negasi Implikasi", body: "~(p ⇒ q) = p ∧ ~q\n\nBukti:\np ⇒ q ≡ ~p ∨ q\n~(~p ∨ q) = p ∧ ~q (De Morgan)\n\nNegasi implikasi bukan ~p ⇒ ~q (itu invers, bukan negasi)!" }
+},
+{
+  q: "Jika p = Benar, q = Salah, maka p ⇔ q adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Selalu benar"],
+  ans: 1,
+  exp: { title: "Biimplikasi B⇔S", body: "B ⇔ S = SALAH\n\nBiimplikasi salah ketika nilai kedua komponen BERBEDA.\np=B, q=S (berbeda) → p ⇔ q = SALAH" }
+},
+{
+  q: "Jika p = Salah, q = Salah, maka p ⇔ q adalah...",
+  opts: ["Salah", "Benar", "Tidak tentu", "Bergantung", "Selalu salah"],
+  ans: 1,
+  exp: { title: "Biimplikasi S⇔S", body: "S ⇔ S = BENAR\n\nBiimplikasi benar ketika nilai kedua komponen SAMA.\np=S, q=S (sama) → p ⇔ q = BENAR" }
+},
+{
+  q: "~(~p) ekuivalen dengan...",
+  opts: ["~p", "p ∧ p", "p ∨ ~p", "p", "~p ∧ ~p"],
+  ans: 3,
+  exp: { title: "Hukum Negasi Ganda (Involusi)", body: "~(~p) = p\n\nIni disebut Hukum Involusi atau Negasi Ganda.\nNegasi dua kali menghasilkan pernyataan asal." }
+},
+{
+  q: "Jika (~p ∨ ~q) = Benar, maka yang dapat disimpulkan adalah...",
+  opts: ["p dan q keduanya benar", "p dan q keduanya salah", "p dan q keduanya benar", "p atau q (minimal satu) bernilai salah", "tidak ada kesimpulan"],
+  ans: 3,
+  exp: { title: "Analisis Disjungsi Negasi", body: "~p ∨ ~q = Benar\n\nDisjungsi benar jika minimal satu komponen benar.\nJadi: ~p = B ATAU ~q = B\nArtinya: p = S ATAU q = S\n\nKesimpulan: minimal satu dari p atau q bernilai SALAH." }
+},
+{
+  q: "Jika (p ∧ q) = Salah, maka yang dapat disimpulkan adalah...",
+  opts: ["p dan q keduanya benar", "p dan q keduanya salah", "p dan q nilainya sama", "minimal satu dari p atau q bernilai salah", "p benar dan q salah"],
+  ans: 3,
+  exp: { title: "Implikasi dari Konjungsi Salah", body: "p ∧ q = Salah\n\nKonjungsi salah jika MINIMAL SATU komponen salah.\n\nKemungkinan:\n- p=B, q=S ✓\n- p=S, q=B ✓\n- p=S, q=S ✓\n\nJadi: minimal satu bernilai salah." }
+},
+{
+  q: "Jika (p ∨ q) = Benar, maka yang dapat disimpulkan adalah...",
+  opts: ["p dan q keduanya salah", "p dan q keduanya benar", "p dan q nilainya sama", "minimal satu dari p atau q bernilai benar", "tidak ada yang dapat disimpulkan"],
+  ans: 3,
+  exp: { title: "Implikasi dari Disjungsi Benar", body: "p ∨ q = Benar\n\nDisjungsi benar jika MINIMAL SATU komponen benar.\n\nKemungkinan:\n- p=B, q=B ✓\n- p=B, q=S ✓\n- p=S, q=B ✓\n\nJadi: minimal satu bernilai benar." }
+},
+{
+  q: "Jika (~p ⇒ q) = Salah, maka nilai ~p dan q adalah...",
+  opts: ["~p Salah, q Benar", "~p Benar, q Benar", "~p Salah, q Salah", "~p Benar, q Salah", "tidak dapat ditentukan"],
+  ans: 3,
+  exp: { title: "Implikasi Bernilai Salah", body: "Implikasi (a ⇒ b) = Salah HANYA jika a=B dan b=S.\n\nDi sini: ~p ⇒ q = Salah\nBerarti: ~p = Benar dan q = Salah\n\nJadi: ~p = B (artinya p = S) dan q = S." }
+},
+{
+  q: "Jika p ⇒ q = Benar dan q ⇒ p = Benar, maka...",
+  opts: ["p ⇒ q saja", "~p ∨ q saja", "p ∧ q", "p ⇔ q", "tidak ada kesimpulan"],
+  ans: 3,
+  exp: { title: "Biimplikasi dari Dua Implikasi", body: "Jika p ⇒ q dan q ⇒ p keduanya benar,\nmaka p ⇔ q (biimplikasi).\n\nDefinisi biimplikasi:\np ⇔ q ≡ (p ⇒ q) ∧ (q ⇒ p)" }
+},
+
+// ═══════════════ HARD (index 60-89) ═══════════════
+{
+  q: "Aturan penarikan kesimpulan: p ⇒ q, q ⇒ r, maka p ⇒ r. Ini disebut...",
+  opts: ["Modus Ponens", "Modus Tollens", "Dilemma", "Silogisme Hipotetis", "Simplifikasi"],
+  ans: 3,
+  exp: { title: "Silogisme Hipotetis", body: "Silogisme Hipotetis:\nP1: p ⇒ q\nP2: q ⇒ r\n─────────\nK:  p ⇒ r\n\nPenyambungan rantai implikasi. Disebut juga 'transitivitas implikasi'." }
+},
+{
+  q: "Aturan: p ⇒ q, ~q benar, kesimpulan ~p. Ini disebut...",
+  opts: ["Modus Ponens", "Silogisme", "Dilemma", "Simplifikasi", "Modus Tollens"],
+  ans: 4,
+  exp: { title: "Modus Tollens", body: "Modus Tollens:\nP1: p ⇒ q\nP2: ~q (q salah)\n─────────\nK:  ~p (p salah)\n\nLogika: jika q tidak terjadi padahal p ⇒ q benar, maka p juga tidak terjadi." }
+},
+{
+  q: "Aturan: p ⇒ q, p benar, kesimpulan q. Ini disebut...",
+  opts: ["Modus Tollens", "Silogisme", "Modus Ponens", "Dilemma", "Simplifikasi"],
+  ans: 2,
+  exp: { title: "Modus Ponens", body: "Modus Ponens:\nP1: p ⇒ q\nP2: p (p benar)\n─────────\nK:  q (q benar)\n\nPenegasan anteseden menghasilkan konsekuen." }
+},
+{
+  q: "Negasi dari 'Ada manusia yang tidak berdosa' adalah...",
+  opts: ["Semua manusia tidak berdosa", "Ada manusia yang berdosa", "Semua manusia berdosa", "Tidak ada manusia berdosa", "Ada manusia yang berdosa dan tidak berdosa"],
+  ans: 2,
+  exp: { title: "Negasi Kuantor Eksistensial", body: "Aturan: ~(∃x, ~P(x)) = ∀x, P(x)\n\nPernyataan: 'Ada manusia yang TIDAK berdosa'\n= ∃x, ~berdosa(x)\n\nNegasinya: ~(∃x, ~berdosa(x))\n= ∀x, berdosa(x)\n= 'Semua manusia berdosa'" }
+},
+{
+  q: "Nilai dari (B ⇔ S) ∧ B adalah...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Benar jika B bernilai benar"],
+  ans: 1,
+  exp: { title: "Evaluasi Kompleks", body: "Langkah 1: B ⇔ S = SALAH (nilai berbeda)\nLangkah 2: S ∧ B = SALAH\n\nKonjungsi salah karena satu komponen (B⇔S) bernilai salah." }
+},
+{
+  q: "Jika hujan maka jalan basah. Jalan tidak basah. Kesimpulan yang valid adalah...",
+  opts: ["Pasti hujan", "Mungkin tidak hujan", "Tidak hujan", "Jalan kering", "Tidak dapat disimpulkan"],
+  ans: 2,
+  exp: { title: "Aplikasi Modus Tollens", body: "P1: Hujan ⇒ Jalan basah\nP2: ~(Jalan basah)\n─────────────────────────────\nK:  ~Hujan = TIDAK HUJAN\n\nIni adalah Modus Tollens: p ⇒ q, ~q, ∴ ~p" }
+},
+{
+  q: "Ekuivalensi dari ~(p ⇔ q) adalah...",
+  opts: ["~p ⇔ ~q", "p ∧ q", "(p∧q)∨(~p∧~q)", "p ⇔ ~q", "~p ∧ q"],
+  ans: 3,
+  exp: { title: "Negasi Biimplikasi", body: "~(p ⇔ q) = p ⇔ ~q\n\nBukti:\n~(p ⇔ q) = (p∧~q) ∨ (~p∧q)\n= p ⇔ ~q\n\nArtinya biimplikasi negasi = XOR (exclusive or)." }
+},
+{
+  q: "Sederhanakan: (p ∧ q) ∨ (p ∧ ~q)",
+  opts: ["q", "~p", "p ∨ q", "p", "~q"],
+  ans: 3,
+  exp: { title: "Hukum Distributif", body: "(p ∧ q) ∨ (p ∧ ~q)\n= p ∧ (q ∨ ~q)    [hukum distributif]\n= p ∧ T            [q ∨ ~q = tautologi = T]\n= p                [konjungsi dengan tautologi]" }
+},
+{
+  q: "Manakah yang merupakan KONTRADIKSI?",
+  opts: ["p ∨ ~p", "p ⇒ p", "~p ⇒ ~p", "p ∧ ~p", "p ⇔ p"],
+  ans: 3,
+  exp: { title: "Identifikasi Kontradiksi", body: "Kontradiksi = selalu SALAH.\n\n• p ∨ ~p = Tautologi (selalu benar)\n• p ⇒ p = Tautologi\n• p ∧ ~p = KONTRADIKSI ✓\n  Jika p=B: B∧S=S\n  Jika p=S: S∧B=S → selalu salah!\n• p ⇔ p = Tautologi" }
+},
+{
+  q: "p ⇒ q ekuivalen dengan...",
+  opts: ["q ⇒ p (konvers)", "p ∧ ~q", "~p ⇒ ~q (invers)", "~q ⇒ ~p (kontraposisi)", "p ⇔ q"],
+  ans: 3,
+  exp: { title: "Ekuivalensi dengan Kontraposisi", body: "p ⇒ q ekuivalen dengan ~q ⇒ ~p (kontraposisi).\n\nKonvers dan invers TIDAK ekuivalen dengan aslinya.\nHanya kontraposisi yang ekuivalen!" }
+},
+{
+  q: "Negasi dari 'p dan (~q atau r)' adalah...",
+  opts: ["~p dan (q atau ~r)", "~p atau (q dan ~r)", "~p dan (q dan ~r)", "p atau (q dan ~r)", "~p atau (~q dan r)"],
+  ans: 1,
+  exp: { title: "De Morgan Bertingkat", body: "~[p ∧ (~q ∨ r)]\n= ~p ∨ ~(~q ∨ r)      [De Morgan]\n= ~p ∨ (q ∧ ~r)       [De Morgan lagi]\n\nDibaca: 'tidak p atau (q dan tidak r)'" }
+},
+{
+  q: "Jika p ⇒ q = Benar dan p = Salah, maka nilai q...",
+  opts: ["Pasti salah", "Pasti benar", "Bisa benar atau salah (tidak tentu)", "Selalu benar", "Selalu salah"],
+  ans: 2,
+  exp: { title: "Implikasi dengan Premis Salah", body: "Jika p = Salah, implikasi benar untuk SEMUA nilai q:\nS ⇒ B = B ✓\nS ⇒ S = B ✓\n\nSehingga kita TIDAK BISA menyimpulkan nilai q.\nq bisa Benar atau Salah, keduanya valid." }
+},
+{
+  q: "Jika p ⇒ q = Salah, maka nilai p dan q pasti...",
+  opts: ["p Salah, q Salah", "p Salah, q Benar", "p Benar, q Salah", "p Benar, q Benar", "Tidak dapat ditentukan"],
+  ans: 2,
+  exp: { title: "Kondisi Tunggal Implikasi Salah", body: "Implikasi p ⇒ q = Salah HANYA pada satu kondisi:\np = Benar, q = Salah\n\nIni adalah satu-satunya baris di tabel yang menghasilkan S." }
+},
+{
+  q: "Jika p ⇔ q = Benar dan p = Salah, maka q pasti...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Tergantung konteks", "Bisa benar atau salah"],
+  ans: 1,
+  exp: { title: "Biimplikasi Benar dengan p Salah", body: "p ⇔ q = Benar berarti p dan q bernilai SAMA.\n\nDiketahui p = Salah.\nAgar p ⇔ q = B, maka q harus = SALAH juga.\n\nKarena S ⇔ S = B ✓" }
+},
+{
+  q: "Jika p ⇔ q = Salah dan p = Benar, maka q pasti...",
+  opts: ["Benar", "Salah", "Tidak tentu", "Tergantung", "Bisa benar atau salah"],
+  ans: 1,
+  exp: { title: "Biimplikasi Salah dengan p Benar", body: "p ⇔ q = Salah berarti p dan q bernilai BERBEDA.\n\nDiketahui p = Benar.\nAgar p ⇔ q = S, maka q harus = SALAH.\n\nB ⇔ S = S ✓" }
+},
+{
+  q: "Nilai dari (p ∨ ~p) untuk semua nilai p adalah...",
+  opts: ["Selalu Salah", "Tergantung nilai p", "Selalu Benar (Tautologi)", "Kadang benar kadang salah", "Tidak dapat ditentukan"],
+  ans: 2,
+  exp: { title: "Tautologi p ∨ ~p", body: "p ∨ ~p adalah TAUTOLOGI.\n\nJika p=B: B ∨ S = B ✓\nJika p=S: S ∨ B = B ✓\n\nSelalu benar! Hukum Tertium Exclusum." }
+},
+{
+  q: "Nilai dari (p ∧ ~p) untuk semua nilai p adalah...",
+  opts: ["Selalu Benar", "Tergantung nilai p", "Kadang benar", "Selalu Salah (Kontradiksi)", "Tidak dapat ditentukan"],
+  ans: 3,
+  exp: { title: "Kontradiksi p ∧ ~p", body: "p ∧ ~p adalah KONTRADIKSI.\n\nJika p=B: B ∧ S = S ✓\nJika p=S: S ∧ B = S ✓\n\nSelalu salah! Hukum Non-Kontradiksi." }
+},
+{
+  q: "Apakah p ⇒ (q ⇒ p) merupakan tautologi, kontradiksi, atau kontingensi?",
+  opts: ["Kontradiksi (selalu salah)", "Kontingensi (kadang benar)", "Tautologi (selalu benar)", "Tidak dapat ditentukan", "Bergantung nilai q"],
+  ans: 2,
+  exp: { title: "Analisis p ⇒ (q ⇒ p)", body: "Cek semua kemungkinan:\np=B,q=B: B⇒(B⇒B) = B⇒B = B ✓\np=B,q=S: B⇒(S⇒B) = B⇒B = B ✓\np=S,q=B: S⇒(B⇒S) = S⇒S = B ✓\np=S,q=S: S⇒(S⇒S) = S⇒B = B ✓\n\nSelalu BENAR → TAUTOLOGI!" }
+},
+{
+  q: "Bentuk ekuivalen dari p ⇔ q adalah...",
+  opts: ["p ∧ q", "p ∨ q", "(p⇒q) ∧ (q⇒p)", "~p ∨ ~q", "p ∧ ~q"],
+  ans: 2,
+  exp: { title: "Definisi Formal Biimplikasi", body: "p ⇔ q ≡ (p ⇒ q) ∧ (q ⇒ p)\n\nBiimplikasi berarti 'implikasi dari dua arah':\n1. p ⇒ q (jika p maka q)\n2. q ⇒ p (jika q maka p)\n\nKeduanya harus benar agar p ⇔ q benar." }
+},
+{
+  q: "Dari (p ⇒ q) ∧ p, kesimpulan yang valid adalah...",
+  opts: ["~p", "~q", "q benar", "p salah", "q ⇒ p"],
+  ans: 2,
+  exp: { title: "Modus Ponens Formal", body: "(p ⇒ q) ∧ p → q\n\nModus Ponens:\nP1: p ⇒ q\nP2: p (benar)\n─────────\nK:  q BENAR" }
+},
+{
+  q: "Dari (p ⇒ q) ∧ ~q, kesimpulan yang valid adalah...",
+  opts: ["q", "p benar", "~p benar", "p ⇒ ~q", "tidak ada kesimpulan"],
+  ans: 2,
+  exp: { title: "Modus Tollens Formal", body: "(p ⇒ q) ∧ ~q → ~p\n\nModus Tollens:\nP1: p ⇒ q\nP2: ~q (q salah)\n─────────\nK:  ~p (p salah) BENAR" }
+},
+{
+  q: "Diberikan p ⇒ q, q ⇒ r, dan p = Benar. Nilai r adalah...",
+  opts: ["Pasti salah", "Tidak tentu", "Bisa benar atau salah", "Pasti benar", "Bergantung nilai q"],
+  ans: 3,
+  exp: { title: "Silogisme + Modus Ponens", body: "Langkah 1 — Silogisme:\np ⇒ q, q ⇒ r → p ⇒ r\n\nLangkah 2 — Modus Ponens:\np ⇒ r, p=Benar → r = BENAR" }
+},
+{
+  q: "Jika p ∧ q = Salah, maka yang pasti dapat disimpulkan adalah...",
+  opts: ["p dan q keduanya salah", "p salah saja", "q salah saja", "minimal satu dari p atau q bernilai salah", "p dan q berbeda nilai"],
+  ans: 3,
+  exp: { title: "Analisis Konjungsi Salah", body: "p ∧ q = Salah berarti minimal satu bernilai salah.\n\nKemungkinan:\n- p=B, q=S ✓\n- p=S, q=B ✓\n- p=S, q=S ✓\n\nTidak bisa memastikan yang mana salah." }
+},
+{
+  q: "Jika p ∨ q = Salah, maka yang pasti dapat disimpulkan adalah...",
+  opts: ["minimal satu benar", "p benar saja", "q benar saja", "p atau q berbeda nilai", "kedua-duanya salah"],
+  ans: 4,
+  exp: { title: "Disjungsi Salah — Implikasinya", body: "p ∨ q = Salah HANYA jika p = Salah DAN q = Salah.\n\nS ∨ S = S (satu-satunya kondisi)\n\nJadi jika p ∨ q = Salah, maka p = Salah DAN q = Salah." }
+},
+{
+  q: "Ekuivalen dari ~(p ∧ q) adalah...",
+  opts: ["~p ∧ ~q", "p ∨ q", "~p ∧ q", "~p ∨ q", "~p ∨ ~q"],
+  ans: 4,
+  exp: { title: "De Morgan: Negasi Konjungsi", body: "~(p ∧ q) = ~p ∨ ~q  [Hukum De Morgan]\n\nVerifikasi:\np=B,q=B: ~(B∧B)=S; S∨S=S ✓\np=B,q=S: ~(B∧S)=B; S∨B=B ✓\np=S,q=B: B; B∨S=B ✓\np=S,q=S: B; B∨B=B ✓" }
+},
+{
+  q: "Jika ~(p ∨ q) = Benar, maka nilai p dan q adalah...",
+  opts: ["p Benar, q Benar", "p Benar, q Salah", "p Salah, q Benar", "minimal satu Benar", "p Salah, q Salah"],
+  ans: 4,
+  exp: { title: "Analisis Negasi Disjungsi", body: "~(p ∨ q) = Benar\nBerarti: p ∨ q = Salah\n\nDisjungsi salah HANYA jika keduanya salah:\np = Salah DAN q = Salah\n\nDe Morgan: ~(p ∨ q) = ~p ∧ ~q = Benar → p=S, q=S" }
+},
+{
+  q: "Jika p ⇒ q dan q ⇒ p keduanya benar, maka hubungannya adalah...",
+  opts: ["p ⇒ q saja", "~p ∨ q saja", "p ∧ q", "p ⇔ q (biimplikasi)", "tidak ada hubungan khusus"],
+  ans: 3,
+  exp: { title: "Dua Implikasi → Biimplikasi", body: "Definisi biimplikasi:\np ⇔ q ≡ (p ⇒ q) ∧ (q ⇒ p)\n\nJika p ⇒ q = B dan q ⇒ p = B, maka:\n(p ⇒ q) ∧ (q ⇒ p) = B ∧ B = B\n\nArtinya p ⇔ q = BENAR." }
+},
+{
+  q: "Jika p = Salah dan p ⇒ q = Benar, maka nilai q...",
+  opts: ["Pasti benar", "Pasti salah", "Tidak dapat ditentukan (bisa keduanya)", "Selalu salah", "Selalu benar"],
+  ans: 2,
+  exp: { title: "Implikasi dengan Premis Salah", body: "p ⇒ q = B dengan p = Salah.\n\nImplikasi dengan p=S SELALU benar:\nS ⇒ B = B ✓\nS ⇒ S = B ✓\n\nKita tidak bisa menyimpulkan nilai q — bisa B atau S, keduanya valid." }
+},
+{
+  q: "Jika q = Salah dan p ⇒ q = Benar, maka nilai p...",
+  opts: ["Pasti benar", "Bisa benar atau salah", "Tidak dapat ditentukan", "Pasti salah", "Tergantung q"],
+  ans: 3,
+  exp: { title: "Modus Tollens — Kepastian p", body: "p ⇒ q = B dan q = Salah.\n\nModus Tollens:\np ⇒ q, ~q → ~p\n\nJika q = Salah dan implikasi benar,\nmaka p PASTI SALAH." }
+},
+{
+  q: "Jika p = Benar dan p ⇒ q = Benar, maka nilai q...",
+  opts: ["Pasti salah", "Tidak tentu", "Bisa benar atau salah", "Pasti benar", "Tergantung r"],
+  ans: 3,
+  exp: { title: "Modus Ponens — Kepastian q", body: "p ⇒ q = B dan p = Benar.\n\nModus Ponens:\np ⇒ q, p → q\n\nJika p = Benar dan implikasi benar,\nmaka q PASTI BENAR." }
+}
 ];
 
+// ─────────────────────────────────────────────
+//  GAME STATE
+// ─────────────────────────────────────────────
+const LEVELS = {
+  easy:   { start: 0,  count: 10, time: 30*60, label: 'Easy',   fillClass: 'fill-easy',   badgeClass: 'badge-easy'   },
+  medium: { start: 30, count: 20, time: 40*60, label: 'Medium', fillClass: 'fill-medium', badgeClass: 'badge-medium' },
+  hard:   { start: 60, count: 30, time: 50*60, label: 'Hard',   fillClass: 'fill-hard',   badgeClass: 'badge-hard'   }
+};
+
+let state = {
+  level: null,
+  questions: [],
+  current: 0,
+  answers: [],
+  score: 0,
+  timeLeft: 0,
+  timerID: null,
+  reviewed: false
+};
+
+const LETTERS = ['a','b','c','d','e'];
+
+// ─────────────────────────────────────────────
+//  SCREEN NAVIGATION
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+//  START QUIZ
+// ─────────────────────────────────────────────
 function startQuiz(level) {
-    currentIndex = 0;
-    score = 0;
-    selected = null;
-    timeLeft = 7200; 
-    
-    if(level === 'easy') {
-        quizData = rawQuestions.slice(0, 30);
-    } else if(level === 'medium') {
-        quizData = rawQuestions.slice(30, 60);
-    } else if(level === 'hard') {
-        quizData = rawQuestions.slice(60, 90);
+  const cfg = LEVELS[level];
+  state.level = level;
+  state.questions = ALL_QUESTIONS.slice(cfg.start, cfg.start + cfg.count);
+  state.current = 0;
+  state.answers = new Array(state.questions.length).fill(null);
+  state.timeLeft = cfg.time;
+  state.reviewed = false;
+
+  const badge = document.getElementById('levelBadge');
+  badge.textContent = cfg.label;
+  badge.className = 'quiz-level-badge ' + cfg.badgeClass;
+
+  document.getElementById('progressFill').className = 'progress-fill ' + cfg.fillClass;
+
+  buildDots();
+  renderQuestion();
+  startTimer();
+  showScreen('quizScreen');
+}
+
+function buildDots() {
+  const row = document.getElementById('dotRow');
+  row.innerHTML = '';
+  state.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.title = 'Soal ' + (i+1);
+    d.onclick = () => jumpTo(i);
+    row.appendChild(d);
+  });
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    d.className = 'dot';
+    const a = state.answers[i];
+    if (i === state.current) { d.classList.add('current'); return; }
+    if (a === null) return;
+    if (a === -2) { d.classList.add('skipped'); return; }
+    d.classList.add(a === state.questions[i].ans ? 'answered-correct' : 'answered-wrong');
+  });
+}
+
+// ─────────────────────────────────────────────
+//  RENDER QUESTION
+// ─────────────────────────────────────────────
+function renderQuestion() {
+  const q = state.questions[state.current];
+  const n = state.current;
+  const total = state.questions.length;
+  const answered = state.answers[n];
+
+  document.getElementById('qNumber').textContent = `SOAL ${n+1} DARI ${total}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qCounter').textContent = `${n+1} / ${total}`;
+  document.getElementById('progressFill').style.width = ((n / total) * 100) + '%';
+
+  const list = document.getElementById('optsList');
+  list.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
+
+    if (answered !== null && answered !== -2) {
+      div.classList.add('locked');
+      if (i === q.ans) div.classList.add('correct');
+      else if (i === answered) div.classList.add('wrong');
+    } else if (answered !== -2) {
+      div.onclick = () => selectAnswer(i);
     }
+    list.appendChild(div);
+  });
 
-    document.getElementById('total-q-display').innerText = quizData.length;
-    document.getElementById('startScreen').classList.add('hidden');
-    document.getElementById('quizScreen').classList.remove('hidden');
-    document.getElementById('resultScreen').classList.add('hidden');
-    
-    showQuestion();
-    startTimer();
+  const expBox = document.getElementById('expBox');
+  if (answered !== null && answered !== -2) {
+    document.getElementById('expTitle').textContent = q.exp.title;
+    document.getElementById('expBody').textContent = q.exp.body;
+    expBox.classList.add('show');
+  } else {
+    expBox.classList.remove('show');
+  }
+
+  const isLast = n === total - 1;
+  const skipBtn = document.getElementById('skipBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (answered !== null && answered !== -2) {
+    skipBtn.style.display = 'none';
+    nextBtn.className = isLast ? 'nav-btn btn-finish' : 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  } else {
+    skipBtn.style.display = '';
+    skipBtn.textContent = isLast ? 'Lewati & Selesai' : 'Lewati ›';
+    nextBtn.className = 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  }
+
+  updateDots();
 }
 
-function showQuestion() {
-    let q = quizData[currentIndex];
-    document.getElementById('question').innerHTML = `Soal ${currentIndex+1}:<br>${q.q}`;
-    
-    let html = '';
-    q.opts.forEach(opt => {
-        html += `<div class='option' onclick='selectAnswer(this, "${opt}")'>${opt}</div>`;
-    });
-    
-    document.getElementById('options').innerHTML = html;
-    document.getElementById('explanation').classList.add('hidden');
-    updateProgress();
+function selectAnswer(i) {
+  state.answers[state.current] = i;
+  renderQuestion();
 }
 
-function selectAnswer(el, val) {
-    if(selected !== null) return;
-    selected = val;
-    let q = quizData[currentIndex];
-
-    if(val === q.ans) {
-        el.classList.add('correct');
-        score++;
-    } else {
-        el.classList.add('wrong');
-        document.querySelectorAll('.option').forEach(o => {
-            if(o.innerText === q.ans) o.classList.add('correct');
-        });
-    }
-    
-    let expDiv = document.getElementById('explanation');
-    expDiv.innerText = "Penjelasan: " + q.exp;
-    expDiv.classList.remove('hidden');
+function goToNext() {
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
 }
 
-function nextQuestion() {
-    if (selected === null) { alert("Pilih jawaban terlebih dahulu!"); return; }
-    
-    currentIndex++;
-    selected = null;
-    if(currentIndex < quizData.length) {
-        showQuestion();
-    } else {
-        endQuiz();
-    }
+function goToPrev() {
+  if (state.current > 0) {
+    state.current--;
+    renderQuestion();
+  }
 }
 
+function jumpTo(i) {
+  state.current = i;
+  renderQuestion();
+}
+
+function skipQuestion() {
+  if (state.answers[state.current] === null) {
+    state.answers[state.current] = -2;
+  }
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+// ─────────────────────────────────────────────
+//  TIMER
+// ─────────────────────────────────────────────
 function startTimer() {
-    if(timer) clearInterval(timer);
-    timer = setInterval(() => {
-        timeLeft--;
-        let m = Math.floor(timeLeft/60);
-        let s = timeLeft%60;
-        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
-        if(timeLeft <= 0) endQuiz();
-    }, 1000);
+  if (state.timerID) clearInterval(state.timerID);
+  updateTimerDisplay();
+  state.timerID = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay();
+    if (state.timeLeft <= 0) endQuiz();
+  }, 1000);
 }
 
-function updateProgress() {
-    let p = (currentIndex / quizData.length) * 100;
-    document.getElementById('progressBar').style.width = p + '%';
+function updateTimerDisplay() {
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  const pill = document.getElementById('timerPill');
+  pill.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+  pill.className = state.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
+// ─────────────────────────────────────────────
+//  END QUIZ
+// ─────────────────────────────────────────────
 function endQuiz() {
-    clearInterval(timer);
-    document.getElementById('quizScreen').classList.add('hidden');
-    document.getElementById('resultScreen').classList.remove('hidden');
-    document.getElementById('score-display').innerText = score;
+  clearInterval(state.timerID);
+
+  let correct = 0, wrong = 0, skipped = 0;
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    if (a === null || a === -2) skipped++;
+    else if (a === q.ans) correct++;
+    else wrong++;
+  });
+
+  const total = state.questions.length;
+  const pct = total > 0 ? correct / total : 0;
+
+  let grade, msg, color;
+  if (pct >= 0.9) {
+    grade = '🏆 Sangat Istimewa';
+    msg = 'Luar biasa! Penguasaan logikamu sangat baik. Kamu siap menghadapi tantangan yang lebih tinggi.';
+    color = '#c9a227';
+  } else if (pct >= 0.7) {
+    grade = '⭐ Bagus!';
+    msg = 'Pemahaman yang solid. Terus berlatih untuk mencapai hasil sempurna.';
+    color = '#2e7d58';
+  } else if (pct >= 0.5) {
+    grade = '📚 Cukup Baik';
+    msg = 'Kamu sudah memahami konsep dasar. Review kembali materi yang salah dan coba lagi!';
+    color = '#1a5fa8';
+  } else {
+    grade = '💪 Terus Berlatih!';
+    msg = 'Jangan menyerah! Pelajari kembali pembahasannya dan ulangi latihan ini.';
+    color = '#8b1a1a';
+  }
+
+  document.getElementById('rScoreNum').textContent = correct;
+  document.getElementById('rScoreDen').textContent = '/ ' + total;
+  document.getElementById('rScoreNum').style.color = color;
+  document.getElementById('rGrade').textContent = grade;
+  document.getElementById('rMessage').textContent = msg;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkipped').textContent = skipped;
+
+  const circ = 2 * Math.PI * 70;
+  setTimeout(() => {
+    const arc = document.getElementById('arcCircle');
+    arc.style.stroke = color;
+    arc.style.strokeDashoffset = circ * (1 - pct);
+  }, 100);
+
+  buildReview();
+  document.getElementById('retryBtn').onclick = retryLevel;
+  showScreen('resultScreen');
 }
 
-function goHome() { window.location.href='../../index.html?page=materi'; }
+function buildReview() {
+  const panel = document.getElementById('reviewPanel');
+  panel.innerHTML = '';
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    let cls, status;
+    if (a === null || a === -2) { cls = 'ri-skipped'; status = 'Dilewati'; }
+    else if (a === q.ans) { cls = 'ri-correct'; status = 'Benar: ' + q.opts[q.ans]; }
+    else { cls = 'ri-wrong'; status = 'Salah → ' + q.opts[q.ans]; }
+
+    const item = document.createElement('div');
+    item.className = `review-item ${cls}`;
+    item.innerHTML = `<div class="ri-dot"></div><div class="ri-q">Soal ${i+1}: ${q.q.substring(0,60)}...</div><div class="ri-a">${status}</div>`;
+    panel.appendChild(item);
+  });
+}
+
+function toggleReview() {
+  const panel = document.getElementById('reviewPanel');
+  const btn = document.getElementById('reviewToggle');
+  state.reviewed = !state.reviewed;
+  panel.className = state.reviewed ? 'review-panel open' : 'review-panel';
+  btn.querySelector('span').textContent = state.reviewed ? '▴' : '▾';
+}
+
+function retryLevel() { startQuiz(state.level); }
+function goHome() { showScreen('startScreen'); }
 </script>
 </body>
 </html>
