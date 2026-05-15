@@ -1,443 +1,1838 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quiz Pohon - Matematika Diskrit</title>
-    <style>
-        :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --secondary: #64748b;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quiz Pohon Matematika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #2d2d4e;
+    --paper: #f8f6f1;
+    --cream: #fdf9f3;
+    --accent-easy: #2e7d58;
+    --accent-easy-light: #d4edde;
+    --accent-medium: #1a5fa8;
+    --accent-medium-light: #d0e4f7;
+    --accent-hard: #8b1a1a;
+    --accent-hard-light: #fde8e8;
+    --gold: #c9a227;
+    --gold-light: #fdf3d7;
+    --correct: #2e7d58;
+    --wrong: #c0392b;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+  }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Times New Roman", Times, serif; /* Font disesuaikan contoh */
-            background: var(--bg-gradient);
-            color: #1e293b;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-        }
+  body {
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 16px 40px;
+    overflow-x: hidden;
+  }
 
-        .container {
-            width: 100%;
-            max-width: 550px;
-            padding: 15px;
-            margin: auto;
-        }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,160,42,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(46,125,88,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: clamp(15px, 5vw, 30px);
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.04);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            width: 100%;
-        }
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 680px; }
 
-        h2 {
-            margin-top: 0;
-            color: #1e3a8a; /* Warna teks judul contoh 1 */
-            font-size: clamp(1.2rem, 5vw, 1.8rem);
-        }
+  /* ── FLOATING LOGIC PARTICLES ── */
+  #particle-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  #particle-canvas.visible { opacity: 1; }
 
-        p {
-            color: #475569;
-            line-height: 1.6;
-            font-size: clamp(14px, 4vw, 16px);
-        }
+  /* ── TOP NAV ── */
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.12);
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .back-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-        button {
-            display: block;
-            width: 100%; 
-            padding: 14px 20px;
-            margin: 10px 0; 
-            font-family: inherit;
-            font-size: clamp(16px, 4vw, 18px); 
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            border: none;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb); /* Gradasi biru contoh 1 */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            word-wrap: break-word;
-        }
+  /* ── SCREEN SHARED ── */
+  .screen { display: none; animation: fadeUp .45s ease both; }
+  .screen.active { display: block; }
 
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -5px rgba(59, 130, 246, 0.4);
-        }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-        #timer {
-            font-weight: bold;
-            font-family: monospace;
-            background: #1e293b;
-            color: #fff;
-            padding: 6px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
+  /* ── START SCREEN ── */
+  .start-header {
+    text-align: center;
+    padding: 36px 0 28px;
+  }
 
-        .progress {
-            height: 10px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
+  /* Eyebrow animation */
+  .start-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: eyebrowIn .6s ease .2s both;
+  }
+  @keyframes eyebrowIn {
+    from { opacity: 0; letter-spacing: .4em; }
+    to   { opacity: 1; letter-spacing: .18em; }
+  }
 
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.4s ease;
-        }
+  /* Title char-by-char animation */
+  .start-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .start-title em { font-style: italic; color: var(--gold); }
 
-        #question {
-            font-size: clamp(1rem, 4.5vw, 1.2rem);
-            margin-bottom: 20px;
-            font-weight: 700;
-            text-align: left;
-            line-height: 1.4;
-        }
+  .title-word {
+    display: inline-block;
+  }
+  .title-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px) rotate(8deg);
+    animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes charIn {
+    to { opacity: 1; transform: translateY(0) rotate(0deg); }
+  }
 
-        .option {
-            text-align: left;
-            margin: 10px 0;
-            padding: 12px 15px;
-            border-radius: 12px;
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: clamp(14px, 4vw, 16px);
-            line-height: 1.3;
-        }
+  /* Subtitle fade */
+  .start-subtitle {
+    font-size: 15px;
+    color: #5a5a7a;
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp .7s ease 1.2s both;
+  }
 
-        .option:hover {
-            border-color: var(--primary);
-            background: #eff6ff;
-        }
+  /* Animated underline on title */
+  .title-underline {
+    display: block;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), rgba(201,162,39,0.2));
+    border-radius: 3px;
+    margin: 6px auto 0;
+    animation: underlineGrow .8s ease 1.4s both;
+  }
+  @keyframes underlineGrow {
+    to { width: 200px; }
+  }
 
-        .correct { 
-            background: var(--success) !important; 
-            border-color: var(--success) !important; 
-            color: white; 
-        }
-        
-        .wrong { 
-            background: var(--danger) !important; 
-            border-color: var(--danger) !important; 
-            color: white; 
-        }
+  .divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin: 20px auto;
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadeUp .5s ease 1s both;
+  }
 
-        .explanation {
-            margin-top: 15px;
-            text-align: left;
-            font-size: 14px;
-            background: #fffbeb;
-            padding: 15px;
-            border-left: 4px solid var(--warning);
-            border-radius: 8px;
-            color: #92400e;
-            white-space: pre-line;
-            max-height: 200px;
-            overflow-y: auto;
-        }
+  /* Level cards */
+  .level-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 28px 0;
+  }
 
-        .hidden { display: none; }
-        
-        #score-display { 
-            font-size: clamp(60px, 15vw, 80px); 
-            font-weight: 800; 
-            color: var(--primary); 
-            margin: 10px 0;
-        }
-        
-        .nav-buttons { 
-            margin-top: 20px; 
-            display: flex; 
-            gap: 10px; 
-            flex-wrap: nowrap;
-        }
-        
-        .nav-buttons button { margin: 0; }
+  .level-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1.5px solid transparent;
+    padding: 28px 28px 28px 32px;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    text-align: left;
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  .level-card.card-in {
+    animation: cardSlideIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes cardSlideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
 
-        @media (max-width: 360px) {
-            .card { padding: 15px; }
-            .nav-buttons { flex-direction: column; }
-        }
-    </style>
+  /* Logic symbol watermark on card */
+  .level-card::after {
+    content: attr(data-symbol);
+    position: absolute;
+    right: 20px;
+    bottom: -10px;
+    font-size: 80px;
+    font-family: var(--mono);
+    font-weight: 700;
+    opacity: 0.07;
+    line-height: 1;
+    transition: all .4s ease;
+    pointer-events: none;
+    transform: rotate(-10deg);
+  }
+  .level-card:hover::after {
+    opacity: 0.15;
+    transform: rotate(-5deg) scale(1.1);
+    bottom: -5px;
+  }
+
+  .level-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 20px 0 0 20px;
+  }
+  .level-card:hover { transform: translateX(6px) scale(1.01); }
+
+  /* Ripple on click */
+  .level-card .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: rippleAnim .6s linear;
+    background: rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  .level-card.easy   { background: var(--accent-easy-light); border-color: rgba(46,125,88,.25); }
+  .level-card.easy::before { background: var(--accent-easy); }
+  .level-card.medium { background: var(--accent-medium-light); border-color: rgba(26,95,168,.25); }
+  .level-card.medium::before { background: var(--accent-medium); }
+  .level-card.hard   { background: var(--accent-hard-light); border-color: rgba(139,26,26,.25); }
+  .level-card.hard::before { background: var(--accent-hard); }
+
+  .level-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .level-card:hover .level-icon { transform: scale(1.2) rotate(-5deg); }
+
+  .level-info { flex: 1; }
+  .level-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    margin-bottom: 4px;
+  }
+  .level-card.easy   .level-name { color: var(--accent-easy); }
+  .level-card.medium .level-name { color: var(--accent-medium); }
+  .level-card.hard   .level-name { color: var(--accent-hard); }
+
+  .level-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 8px; }
+  .level-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+  .easy   .tag { background: rgba(46,125,88,.15); color: var(--accent-easy); }
+  .medium .tag { background: rgba(26,95,168,.15); color: var(--accent-medium); }
+  .hard   .tag { background: rgba(139,26,26,.15); color: var(--accent-hard); }
+
+  .level-arrow {
+    font-size: 20px; opacity: .4; flex-shrink: 0;
+    transition: all .3s ease;
+  }
+  .level-card:hover .level-arrow { opacity: 1; transform: translateX(6px); }
+
+  /* Quote box */
+  .quote-box {
+    margin-top: 8px;
+    background: var(--gold-light);
+    border: 1px solid rgba(201,162,39,.3);
+    border-radius: 14px;
+    padding: 18px 22px;
+    font-style: italic;
+    font-size: 14px;
+    color: #6b4d0a;
+    line-height: 1.65;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp .6s ease 1.8s both;
+  }
+  .quote-box cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; opacity: .7; font-family: var(--mono); }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+  .quiz-level-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .quiz-level-badge:hover {
+    opacity: 0.75;
+    transform: scale(0.97);
+  }
+  .badge-easy   { background: var(--accent-easy-light);   color: var(--accent-easy); }
+  .badge-medium { background: var(--accent-medium-light); color: var(--accent-medium); }
+  .badge-hard   { background: var(--accent-hard-light);   color: var(--accent-hard); }
+
+  /* Back to level button in quiz */
+  .back-to-level-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .back-to-level-btn:hover {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .back-to-level-btn svg {
+    width: 12px; height: 12px;
+    flex-shrink: 0;
+  }
+
+  .timer-pill {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--ink);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: .04em;
+    transition: background .3s;
+  }
+  .timer-pill.urgent { background: var(--wrong); animation: pulse .6s ease infinite alternate; }
+  @keyframes pulse { from { opacity:1 } to { opacity:.7 } }
+
+  .q-counter {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #888;
+    letter-spacing: .06em;
+  }
+
+  /* Progress track */
+  .progress-track {
+    height: 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 6px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .fill-easy   { background: linear-gradient(90deg, var(--accent-easy), #52b788); }
+  .fill-medium { background: linear-gradient(90deg, var(--accent-medium), #4895ef); }
+  .fill-hard   { background: linear-gradient(90deg, var(--accent-hard), #e76f51); }
+
+  /* Dot row */
+  .dot-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #e0ddd6;
+    transition: all .3s;
+    cursor: pointer;
+  }
+  .dot.answered-correct { background: var(--correct); }
+  .dot.answered-wrong   { background: var(--wrong); }
+  .dot.skipped          { background: var(--gold); }
+  .dot.current          { background: var(--ink); transform: scale(1.3); }
+
+  /* Question card */
+  .q-card {
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.08);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  }
+  .q-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: clamp(15px, 3.5vw, 17px);
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all .22s;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    text-align: left;
+  }
+  .opt:hover:not(.locked) {
+    border-color: var(--ink);
+    background: #fafafa;
+    transform: translateX(4px);
+  }
+  .opt-letter {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.06);
+    color: var(--ink-soft);
+    letter-spacing: .05em;
+    transition: all .2s;
+    margin-top: 1px;
+  }
+  .opt.selected { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .opt.selected .opt-letter { background: rgba(255,255,255,.2); color: #fff; }
+
+  .opt.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
+  .opt.correct .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+  .opt.wrong   { background: var(--wrong);   border-color: var(--wrong);   color: #fff; }
+  .opt.wrong   .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+
+  /* Explanation */
+  .explanation-box {
+    display: none;
+    background: var(--gold-light);
+    border: 1.5px solid rgba(201,162,39,.35);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    animation: slideIn .3s ease;
+  }
+  .explanation-box.show { display: block; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
+
+  .exp-header {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600;
+  }
+  .exp-title { font-size: 13px; font-weight: 700; color: #6b4d0a; margin-bottom: 6px; }
+  .exp-body { font-size: 14px; color: #7a5515; line-height: 1.65; }
+
+  /* Nav buttons */
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .nav-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 20px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+  .btn-prev {
+    background: #fff;
+    border-color: rgba(0,0,0,0.15);
+    color: var(--ink);
+    flex: 0 0 auto;
+  }
+  .btn-prev:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .btn-skip {
+    background: var(--gold-light);
+    border-color: rgba(201,162,39,.4);
+    color: #8b5e00;
+    flex: 1;
+  }
+  .btn-skip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+  .btn-next {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+    flex: 2;
+  }
+  .btn-next:hover { background: var(--ink-soft); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+  .btn-finish {
+    background: var(--gold);
+    color: #fff;
+    border-color: var(--gold);
+    flex: 2;
+  }
+  .btn-finish:hover { background: #a8821e; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,162,39,.4); }
+
+  /* ── RESULT SCREEN ── */
+  .result-container {
+    text-align: center;
+    padding: 16px 0;
+  }
+  .result-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+  }
+  .result-circle {  
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .result-circle svg {
+    position: absolute; inset: 0; transform: rotate(-90deg);
+  }
+  .result-score-num {
+    font-size: 54px; font-weight: 700; line-height: 1;
+    position: relative; z-index: 1;
+  }
+  .result-score-den {
+    font-family: var(--mono); font-size: 14px; color: #888;
+    position: relative; z-index: 1;
+  }
+
+  .result-grade {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 700; margin-bottom: 8px;
+  }
+  .result-message { font-size: 15px; color: #666; line-height: 1.65; margin-bottom: 28px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-box {
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 16px 10px;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; }
+  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #888; margin-top: 4px; }
+
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-action {
+    font-family: var(--serif);
+    font-size: 15px; font-weight: 600;
+    padding: 15px;
+    border-radius: 14px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+  }
+  .btn-retry { background: var(--ink); color: #fff; }
+  .btn-retry:hover { background: var(--ink-soft); transform: translateY(-2px); }
+  .btn-home  { background: #fff; border-color: rgba(0,0,0,.15); color: var(--ink); }
+  .btn-home:hover { background: var(--ink); color: #fff; }
+
+  /* Review panel */
+  .review-toggle {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; color: #888;
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    margin: 0 auto 16px;
+    transition: color .2s;
+  }
+  .review-toggle:hover { color: var(--ink); }
+
+  .review-panel { display: none; margin-bottom: 16px; }
+  .review-panel.open { display: block; }
+
+  .review-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,.07);
+  }
+  .ri-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .ri-correct .ri-dot { background: var(--correct); }
+  .ri-wrong   .ri-dot { background: var(--wrong); }
+  .ri-skipped .ri-dot { background: var(--gold); }
+  .ri-q { flex: 1; color: #444; line-height: 1.4; }
+  .ri-a { font-family: var(--mono); font-size: 11px; color: #888; }
+
+  @media (max-width: 420px) {
+    .level-card { padding: 20px 18px; gap: 16px; }
+    .q-card { padding: 20px; }
+    .nav-row { flex-wrap: wrap; }
+    .btn-prev { flex: 0 0 46px; padding: 13px; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-    <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
-            Kembali ke Materi
-    </button>
 
-<div class="container">
-    <div id="startScreen" class="card">
-        <h2>Soal & Jawaban Pohon (Tree)</h2>
-        <p>Pohon dalam teori graf adalah konsep yang penting dan menarik untuk dipahami. 
-        Secara sederhana, pohon merupakan graf yang saling terhubung tetapi tidak memiliki sirkuit, sehingga setiap simpul terhubung melalui jalur yang unik tanpa adanya perputaran.</p>
-        
-        <div style="margin: 20px 0;">
-            <button onclick="startQuiz('easy')">Easy</button>
-            <button onclick="startQuiz('medium')" style="background: linear-gradient(135deg, #4f46e5, #4338ca);">Medium</button>
-            <button onclick="startQuiz('hard')" style="background: linear-gradient(135deg, #3730a3, #1e1b4b);">Hard</button>
-        </div>
+<!-- FLOATING LOGIC PARTICLES CANVAS -->
+<canvas id="particle-canvas"></canvas>
 
-        <div style="background: #f1f5f9; padding: 12px; border-radius: 12px; text-align: left; font-size: 12px;">
-            <strong>Detail Ujian:</strong>
-            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
-                <li>Total 90 Soal Materi Pohon</li>
-                <li>Waktu total: 1 Jam 50 Menit</li>
-                <li>Pembahasan lengkap setiap nomor</li>
-            </ul>
-        </div>
+<div class="wrap">
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <a href="../../index.html?page=materi" class="back-btn">← Kembali ke Materi</a>
+  </div>
+
+  <!-- ══════════════════ START SCREEN ══════════════════ -->
+  <div id="startScreen" class="screen active">
+    <div class="start-header">
+      <div class="start-eyebrow">✦ Matematika · Tree ✦</div>
+      <h1 class="start-title" id="mainTitle">
+        <span class="title-word" id="word1"></span><br>
+        <em><span class="title-word" id="word2"></span></em>
+        <span class="title-underline"></span>
+      </h1>
+      <div class="divider"></div>
+      <p class="start-subtitle">Uji kemampuan pemahamanmu terhadap materi <strong> (tree) </strong> dalam struktur data dan teori <strong>graf</strong> melalui soal-soal yang terstruktur. Pilih level yang sesuai dengan kesiapanmu untuk memahami konsep seperti akar (root), simpul (node), cabang (branch), dan lintasan (path).</p>
     </div>
 
-    <div id="quizScreen" class="card hidden">
-        <div id="timer">Waktu: 110:00</div>
-        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-        
-        <div id="question"></div>
-        <div id="options"></div>
-        
-        <div class="explanation hidden" id="explanation"></div>
-        
-        <div class="nav-buttons">
-            <button onclick="nextQuestion()" style="flex: 2;">Berikutnya</button>
-            <button onclick="goHome()" style="flex: 1; background: #94a3b8; font-size: 12px;">Kembali</button>
+    <div class="level-grid">
+      <div class="level-card easy" data-symbol="⟡" onclick="startQuizWithRipple(event,'easy')">
+        <div class="level-icon">🌿</div>
+        <div class="level-info">
+          <div class="level-name">Easy — Dasar Pohon (Tree)</div>
+          <div class="level-desc">Mulai dari konsep dasar pohon dalam struktur data: simpul (node), akar (root), daun (leaf), dan hubungan parent-child.</div>
+          <div class="level-tags">
+            <span class="tag">10 Soal</span>
+            <span class="tag">30 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
         </div>
+        <div class="level-arrow">›</div>
+      </div>
+
+      <div class="level-card medium" data-symbol="T↳" onclick="startQuizWithRipple(event,'medium')">
+        <div class="level-icon">🌳</div>
+        <div class="level-info">
+          <div class="level-name">Medium — Struktur Pohon (Tree)</div>
+          <div class="level-desc">Memahami traversal pohon (preorder, inorder, postorder), level node, serta relasi parent-child lebih kompleks.</div>
+          <div class="level-tags">
+            <span class="tag">20 Soal</span>
+            <span class="tag">40 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="level-arrow">›</div>
+      </div>
+
+      <div class="level-card hard" data-symbol="⟲" onclick="startQuizWithRipple(event,'hard')">
+        <div class="level-icon">🪵</div>
+        <div class="level-info">
+          <div class="level-name">Hard — Pohon Lanjutan (Tree)</div>
+          <div class="level-desc">Traversal kompleks (DFS, BFS), pohon biner, ekspresi pohon, serta analisis struktur dan optimasi pohon.</div>
+          <div class="level-tags">
+            <span class="tag">30 Soal</span>
+            <span class="tag">50 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="level-arrow">›</div>
+      </div>
     </div>
 
-    <div id="resultScreen" class="card hidden">
-        <h2>Hasil Akhir</h2>
-        <div id="score-display">0</div>
-        <p id="resultMsg">Jawaban benar.</p>
-        <button onclick="goHome()">Ulangi Latihan</button>
+    <div class="quote-box">
+      "Logika membawa kamu dari A ke B. Imajinasi membawa kamu ke mana saja."
+      <cite>— Albert Einstein</cite>
     </div>
+  </div>
+
+  <!-- ══════════════════ QUIZ SCREEN ══════════════════ -->
+  <div id="quizScreen" class="screen">
+    <div class="quiz-topbar">
+      <button class="back-to-level-btn" onclick="backToLevelSelect()" title="Kembali ke pilihan level">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2L4 6L8 10"/>
+        </svg>
+        Level
+      </button>
+      <span id="levelBadge" class="quiz-level-badge badge-easy">Easy</span>
+      <span id="qCounter" class="q-counter">1 / 10</span>
+      <div id="timerPill" class="timer-pill">30:00</div>
+    </div>
+
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
+    </div>
+
+    <div class="dot-row" id="dotRow"></div>
+
+    <div class="q-card">
+      <div class="q-number" id="qNumber">SOAL 1</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options-list" id="optsList"></div>
+
+    <div class="explanation-box" id="expBox">
+      <div class="exp-header">💡 Pembahasan</div>
+      <div class="exp-title" id="expTitle"></div>
+      <div class="exp-body" id="expBody"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn btn-prev" onclick="goToPrev()" title="Soal Sebelumnya">‹</button>
+      <button class="nav-btn btn-skip" id="skipBtn" onclick="skipQuestion()">Lewati ›</button>
+      <button class="nav-btn btn-next" id="nextBtn" onclick="goToNext()">Berikutnya →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ RESULT SCREEN ══════════════════ -->
+  <div id="resultScreen" class="screen">
+    <div class="result-container">
+      <div class="result-eyebrow">✦ Hasil Quiz ✦</div>
+
+      <div class="result-circle" id="resultCircle">
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#e8e5de" stroke-width="8"/>
+          <circle id="arcCircle" cx="80" cy="80" r="70" fill="none" stroke="#c9a227" stroke-width="8"
+                  stroke-dasharray="439.82" stroke-dashoffset="439.82"
+                  stroke-linecap="round" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+        </svg>
+        <div class="result-score-num" id="rScoreNum">0</div>
+        <div class="result-score-den" id="rScoreDen">/ 10</div>
+      </div>
+
+      <div class="result-grade" id="rGrade"></div>
+      <p class="result-message" id="rMessage"></p>
+
+      <div class="result-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="rCorrect" style="color:var(--correct)">0</div>
+          <div class="stat-label">Benar</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rWrong" style="color:var(--wrong)">0</div>
+          <div class="stat-label">Salah</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rSkipped" style="color:var(--gold)">0</div>
+          <div class="stat-label">Dilewati</div>
+        </div>
+      </div>
+
+      <button class="review-toggle" onclick="toggleReview()" id="reviewToggle">
+        <span>▾</span> Lihat Review Soal
+      </button>
+      <div class="review-panel" id="reviewPanel"></div>
+
+      <div class="result-actions">
+        <button class="btn-action btn-retry" id="retryBtn" onclick="retryLevel()">Ulangi Level Ini</button>
+        <button class="btn-action btn-home" onclick="goHome()">← Kembali ke Pilihan Level</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-let quizData = [];
-let currentIndex = 0;
-let score = 0;
-let selected = null;
-let timer;
-let timeLeft = 6600; // 110 menit
+// ═══════════════════════════════════════════════════
+//  TITLE ANIMATION — char by char
+// ═══════════════════════════════════════════════════
+function animateTitle() {
+  const line1 = 'Quiz';
+  const line2 = 'Pohon (Tree)';
 
-// BANK SOAL TERUKUR (30 Easy, 30 Medium, 30 Hard)
-const questionsBank = {
-    easy: [
-        { q: "Apa definisi graf yang disebut pohon tak berakar?", opts: ["Graf terhubung", "Graf bersirkuit", "Graf terhubung tanpa sirkuit", "Graf lengkap"], ans: "Graf terhubung tanpa sirkuit", exp: "Pohon tak berarah didefinisikan sebagai graf tak berarah terhubung tanpa sirkuit sederhana." },
-        { q: "Simpul pada pohon berakar yang derajat masuknya nol disebut...", opts: ["Leaf", "Parent", "Akar", "Ancestor"], ans: "Akar", exp: "Akar (Root) adalah simpul di level 0, tidak memiliki orang tua." },
-        { q: "Simpul terminal adalah nama lain untuk...", opts: ["Internal Node", "Akar", "Daun (Leaf)", "Descendant"], ans: "Daun (Leaf)", exp: "Daun adalah simpul yang tidak memiliki anak (derajat keluar 0)." },
-        { q: "Jika n adalah jumlah simpul pohon, berapa jumlah sisinya?", opts: ["n", "n+1", "n-1", "2n"], ans: "n-1", exp: "Teorema dasar pohon menyatakan e = n-1 sisi." },
-        { q: "Simpul yang memiliki parent yang sama disebut...", opts: ["Ancestor", "Child", "Sibling", "Grandparent"], ans: "Sibling", exp: "Sibling berarti saudara kandung." },
-        { q: "Maksimal anak pada pohon biner di setiap simpul internal adalah...", opts: ["1", "2", "3", "Tak terbatas"], ans: "2", exp: "Binary tree membatasi derajat anak maksimal 2." },
-        { q: "Notasi T = (V, E) mewakili...", opts: ["Tautologi", "Tree (Pohon)", "Total Derajat", "Trace"], ans: "Tree (Pohon)", exp: "T untuk Tree, V untuk Vertex, E untuk Edge." },
-        { q: "Kumpulan pohon yang tidak saling terhubung disebut...", opts: ["Kebun", "Hutan (Forest)", "Sirkuit", "Semak"], ans: "Hutan (Forest)", exp: "Hutan terdiri dari beberapa komponen pohon." },
-        { q: "Level tertinggi simpul dalam pohon disebut...", opts: ["Tinggi pohon", "Kedalaman total", "Derajat total", "Hutan"], ans: "Tinggi pohon", exp: "Tinggi adalah level maksimum dari daun ter dalam." },
-        { q: "Berapa jumlah sisi pohon jika simpulnya 1?", opts: ["1", "0", "2", "3"], ans: "0", exp: "e = 1 - 1 = 0." },
-        { q: "Lintasan antar dua simpul pada pohon bersifat...", opts: ["Banyak", "Tidak ada", "Unik", "Sirkuler"], ans: "Unik", exp: "Hanya ada 1 jalan sederhana antara tiap pasang titik." },
-        { q: "Simpul internal adalah simpul yang...", opts: ["Tidak punya anak", "Bukan daun", "Bukan akar", "Hanya satu anak"], ans: "Bukan daun", exp: "Simpul internal memiliki minimal satu anak." },
-        { q: "Tingkat level akar biasanya dimulai dari...", opts: ["1", "2", "0", "-1"], ans: "0", exp: "Secara konvensional dimulai dari level 0." },
-        { q: "Derajat pohon n-ary adalah...", opts: ["n simpul", "n anak maksimal", "n total sisi", "n daun"], ans: "n anak maksimal", exp: "Definisi n-ary tree." },
-        { q: "Pohon biner miring (skewed) memiliki bentuk...", opts: ["Seimbang", "Seperti garis lurus", "Penuh", "Lengkap"], ans: "Like a straight line", exp: "Cenderung memanjang ke satu sisi." },
-        { q: "Graf dengan n simpul dan n-1 sisi yang terhubung adalah...", opts: ["Sirkuit", "Bukan pohon", "Pohon tak berakar", "Graf lengkap"], ans: "Pohon tak berakar", exp: "Teorema kesetaraan pohon tak berakar." },
-        { q: "Jumlah simpul pada level h dalam pohon biner lengkap adalah...", opts: ["2h", "2^h", "h^2", "h+1"], ans: "2^h", exp: "Pertumbuhan eksponensial di setiap level." },
-        { q: "Subpohon yang akarnya adalah anak dari simpul v disebut...", opts: ["Akar utama", "Anak subpohon", "Subpohon dari v", "Leluhur v"], ans: "Subpohon dari v", exp: "Struktur rekursif sub-struktur." },
-        { q: "Pohon ekspresi biner menggunakan internal node untuk...", opts: ["Operan", "Angka", "Operator", "Daun"], ans: "Operator", exp: "Akar subpohon menyimpan operasi." },
-        { q: "Akar dari subpohon disebut...", opts: ["Descendant", "Ancestor", "Anak lokasinya", "Parent"], ans: "Anak lokasinya", exp: "Relasi hierarkis." },
-        { q: "Total derajat pohon tak berakar adalah...", opts: ["n", "e", "2e", "e-1"], ans: "2e", exp: "Handshaking lemma berlaku untuk semua graf tak berarah." },
-        { q: "Parent dari akar adalah...", opts: ["Akar", "Descendant", "Tidak ada", "Child"], ans: "Tidak ada", exp: "Puncak hierarki." },
-        { q: "Anak dari daun adalah...", opts: ["Akar", "Internal node", "Tidak ada", "Sibling"], ans: "Tidak ada", exp: "Terminal simpul." },
-        { q: "Kedalaman simpul dalah lintasan ke...", opts: ["Akar", "Daun terkecil", "Sibling", "Hutan"], ans: "Akar", exp: "Jarak ke puncak." },
-        { q: "Manakah yang bukan sifat pohon tak berakar?", opts: ["Punya loop", "Terhubung", "Sisi = n-1", "Tidak punya sirkuit"], ans: "Punya loop", exp: "Pohon anti loop." },
-        { q: "Setiap simpul internal pohon biner penuh punya tepat...", opts: ["1 anak", "2 anak", "0 anak", "3 anak"], ans: "2 anak", exp: "Definisi 'Full'." },
-        { q: "Berapa banyak sisi pada pohon dengan 5 simpul?", opts: ["4", "5", "6", "10"], ans: "4", exp: "5-1 = 4." },
-        { q: "Ancestor dalah leluhur, descendant dalah...", opts: ["Cucu saja", "Anak saja", "Keturunan", "Orang tua"], ans: "Keturunan", exp: "Descendant mencakup seluruh level di bawahnya." },
-        { q: "BST (Binary Search Tree) meletakkan data lebih besar di...", opts: ["Kiri", "Atas", "Kanan", "Bawah"], ans: "Kanan", exp: "Kiri < Akar < Kanan." },
-        { q: "Hutan dengan 3 pohon dan 10 simpul total punya...", opts: ["7 sisi", "13 sisi", "10 sisi", "9 sisi"], ans: "7 sisi", exp: "10 simpul - 3 pohon = 7 sisi." }
-    ],
-    medium: [
-        { q: "Berapa jumlah daun (L) pada pohon m-ary penuh dengan 10 simpul internal (i=10)? (m=3)", opts: ["31", "30", "20", "21"], ans: "21", exp: "Rumus: L = (m-1)i + 1 = (3-1)*10 + 1 = 2*10+1 = 21." },
-        { q: "Total simpul (n) pada pohon biner penuh (m=2) dengan i=15 adalah...", opts: ["30", "31", "29", "16"], ans: "31", exp: "n = 2i+1 = 2*15+1 = 31." },
-        { q: "Aplikasi Spanning Tree dalah untuk mencari...", opts: ["Sirkuit terpendek", "Subgraf terhubung minimal", "Graf lengkap", "Derajat total"], ans: "Subgraf terhubung minimal", exp: "Menghubungkan semua titik tanpa loop dengan sisi minimal." },
-        { q: "Tinggi maksimum pohon biner dengan n=7 adalah...", opts: ["2", "3", "6", "7"], ans: "6", exp: "Bentuk skewed: level 0 ke level 6." },
-        { q: "Jumlah maksimal simpul pohon biner tinggi h adalah...", opts: ["2h", "2^(h+1)-1", "h^2", "h+1"], ans: "2^(h+1)-1", exp: "Setiap level penuh." },
-        { q: "Pohon biner penuh n=15, berapa daunnya?", opts: ["7", "8", "9", "10"], ans: "8", exp: "L = (15+1)/2 = 8." },
-        { q: "Traversal yang menghasilkan notasi postfix dalah...", opts: ["Preorder", "Inorder", "Postorder", "Levelorder"], ans: "Postorder", exp: "Postorder mengunjungi akar terakhir." },
-        { q: "Traversal (Kiri-Akar-Kanan) dalah urutan...", opts: ["Inorder", "Preorder", "Postorder", "Depth-first"], ans: "Inorder", exp: "Akar di tengah." },
-        { q: "Jumlah sisi hutan dengan n=50 dan e=40. Berapa pohon (k)?", opts: ["10", "11", "9", "5"], ans: "10", exp: "k = 50 - 40 = 10." },
-        { q: "Akar subpohon (A+B) dalam ekspresi (A+B)*C adalah simpul...", opts: ["A", "B", "+", "*"], ans: "+", exp: "Akar lokal sub-operasi." },
-        { q: "Pohon seimbang (balanced) jika perbedaan tinggi subpohon kiri dan kanan maks...", opts: ["0", "1", "2", "3"], ans: "1", exp: "Standar keseimbangan AVL." },
-        { q: "Jumlah simpul n pada pohon m-ary penuh dengan L=16 dan m=4 dalah...", opts: ["21", "20", "16", "17"], ans: "21", exp: "i=(16-1)/(4-1)=15/3=5. n=mi+1=4(5)+1=21." },
-        { q: "Binary Search Tree input: 10, 5, 15. Simpul 15 terletak di...", opts: ["Kiri 10", "Kanan 10", "Atas 10", "Bawah 5"], ans: "Kanan 10", exp: "15 > 10." },
-        { q: "Pohon ekspresi biner dari prefix '* + A B C' adalah...", opts: ["(A*B)+C", "A*(B+C)", "(A+B)*C", "A+B*C"], ans: "(A+B)*C", exp: "* (akar utama) mendahului + (akar subpohon)." },
-        { q: "Berapa internal node pada pohon biner penuh n=63?", opts: ["31", "32", "62", "30"], ans: "31", exp: "i = (63-1)/2 = 31." },
-        { q: "Tinggi minimum pohon biner lengkap n=31 dalah...", opts: ["3", "4", "5", "6"], ans: "4", exp: "Level penuh hingga h=4 (total 31 simpul)." },
-        { q: "Spanning Tree Minimum mencari pohon rentang dengan bobot total...", opts: ["Maksimum", "Minimum", "Rata-rata", "Nol"], ans: "Minimum", exp: "Efisiensi biaya lintasan." },
-        { q: "Rumus n=mi+1 berlaku untuk pohon m-ary yang...", opts: ["Seimbang", "Penuh (Full)", "Lengkap (Complete)", "Berderajat total genap"], ans: "Penuh (Full)", exp: "Syarat rumus." },
-        { q: "Tinggi minimal pohon biner lengkap dengan n=10 dalah...", opts: ["2", "3", "4", "10"], ans: "3", exp: "2^3=8 < 10+1 <= 2^4=16." },
-        { q: "Pohon rentang dari graf lengkap K3 adalah pohon dengan berapa sisi?", opts: ["3", "2", "1", "0"], ans: "2", exp: "n=3 -> e=2." },
-        { q: "BST input: 8, 3, 1. Posisi 1 ada di...", opts: ["Kiri 8", "Kanan 3", "Kiri 3", "Atas 8"], ans: "Kiri 3", exp: "1 < 3 < 8." },
-        { q: "Jumlah daun pohon m-ary penuh h=2, m=3 dalah...", opts: ["6", "9", "8", "3"], ans: "9", exp: "L = 3^2 = 9 (asumsi balanced penuh)." },
-        { q: "Pohon terurut (ordered tree) memperhatikan...", opts: ["Nomor simpul", "Warna sisi", "Urutan anak", "Bentuk graf"], ans: "Urutan anak", exp: "Hierarki kiri ke kanan diperhitungkan." },
-        { q: "Berapa internal node biner penuh L=100?", opts: ["99", "100", "101", "50"], ans: "99", exp: "i = 100-1 = 99." },
-        { q: "Postfix dari (A+B) dalah...", opts: ["+AB", "AB+", "A+B", "BA+"], ans: "AB+", exp: "Kiri-Kanan-Akar." },
-        { q: "Prefix dari (A+B) dalah...", opts: ["+AB", "AB+", "A+B", "BA+"], ans: "+AB", exp: "Akar-Kiri-Kanan." },
-        { q: "Jika m=5, i=2. Berapa total derajat pohon m-ary penuh n?", opts: ["11", "22", "10", "20"], ans: "20", exp: "n=5*2+1=11. Total derajat = 2e = 2*10=20." },
-        { q: "Sifat (m-1)i + 1 dalah untuk mencari...", opts: ["Total simpul n", "Total internal node i", "Total daun L", "Total sisi e"], ans: "Total daun L", exp: "Rumus L dari i." },
-        { q: "BST input: 2, 5, 1. Akar dalah simpul...", opts: ["2", "5", "1", "Tidak ada"], ans: "2", exp: "Input pertama dalah akar." },
-        { q: "Inorder traversal (Akar di tengah) dari pohon biner BST menghasilkan data yang...", opts: ["Teracak", "Urut menaik", "Urut menurun", "Sirkuler"], ans: "Urut menaik", exp: "Kiri < Akar < Kanan." }
-    ],
-    hard: [
-        { q: "Berapa banyak pohon rentang yang berbeda dari graf lengkap K5?", opts: ["5", "25", "125", "625"], ans: "125", exp: "Rumus Cayley: n^(n-2) = 5^(5-2) = 5^3 = 125." },
-        { q: "Hasil traversal Inorder: 4-2-5-1-3 dan Preorder: 1-2-4-5-3. Manakah akarnya?", opts: ["4", "2", "1", "3"], ans: "1", exp: "Preorder selalu memulai kunjungan dari akar utama." },
-        { q: "Jika urutan preorder sebuah pohon dalah A-B-C, manakah kemungkinan Postordernya?", opts: ["C-B-A", "A-B-C", "B-A-C", "C-A-B"], ans: "C-B-A", exp: "Salah satu kemungkinan Postorder: subpohon kiri C, kanan kosong -> C-B-A." },
-        { q: "Algoritma Huffman digunakan untuk...", opts: ["Mencari lintasan terpendek", "Kompresi data", "Enkripsi", "Penyortiran"], ans: "Kompresi data", exp: "Menciptakan kode biner variabel berdasarkan frekuensi kemunculan." },
-        { q: "Pohon m-ary penuh (m=3) i=10. Jika pohon tersebut seimbang, berapa tinggi minimalnya?", opts: ["2", "3", "4", "10"], ans: "3", exp: "L=21. log3(21) approx 2.7 -> tinggi 3." },
-        { q: "Algoritma Prim membangun MST dengan dasar...", opts: ["Memilih simpul acak", "Memilih sisi bobot terkecil di seluruh graf", "Memilih simpul yang sudah terhubung", "Memilih lintasan terpendek"], ans: "Memilih simpul yang sudah terhubung", exp: "Prim mengembang dari satu simpul dengan memilih sisi terkecil ke simpul baru." },
-        { q: "Algoritma Kruskal membangun MST dengan dasar...", opts: ["Memilih simpul acak", "Memilih sisi bobot terkecil di seluruh graf selama tidak loop", "Memilih simpul terhubung", "Memilih derajat total"], ans: "Memilih sisi bobot terkecil di seluruh graf selama tidak loop", exp: "Kruskal menggabungkan hutan komponen menjadi satu pohon." },
-        { q: "Huffman Coding frekuensi: A=10, B=5, C=15, D=80. Karakter mana yang kodenya paling pendek?", opts: ["A", "B", "C", "D"], ans: "D", exp: "Frekuensi tertinggi D (80/110) akan dekat dengan akar." },
-        { q: "Tinggi minimal pohon biner seimbang dengan L=100 daun dalah...", opts: ["6", "7", "100", "10"], ans: "7", exp: "log2(100) approx 6.64. ceil(6.64)=7." },
-        { q: "Internal node biner penuh i=20. Berapa L?", opts: ["20", "21", "19", "40"], ans: "21", exp: "20+1 = 21." },
-        { q: "Prefix dari expression pohon: * / A + B C D dalah notasi...", opts: ["(A/B+C)*D", "(A/(B+C))*D", "A/B+C*D", "A/(B+C)*D"], ans: "(A/(B+C))*D", exp: "* utama, / kiri, + kanan di bawah /." },
-        { q: "Postfix pohon: AB+C*D- dalah notasi...", opts: ["((A+B)*C)-D", "(A+B)*C-D", "A+B*(C-D)", "A+(B*C)-D"], ans: "((A+B)*C)-D", exp: "A+B dikali C, lalu dikurangi D." },
-        { q: "Spanning Tree dari K10 memiliki berapa sisi?", opts: ["9", "10", "45", "90"], ans: "9", exp: "n=10 -> e=9." },
-        { q: "Berapa banyak pohon rentang K4?", opts: ["4", "16", "12", "64"], ans: "16", exp: "4^(4-2) = 16." },
-        { q: "Pohon 4-ary penuh h=3. Berapa daun maksimal?", opts: ["64", "256", "12", "81"], ans: "64", exp: "4^3 = 64." },
-        { q: "Traversal Preorder + Inorder dapat digunakan untuk merekonstruksi pohon...", opts: ["Tidak bisa", "Sangat bisa", "Hanya jika biner penuh", "Hanya jika seimbang"], ans: "Sangat bisa", exp: "Preorder untuk akar, inorder untuk pemisahan kiri/kanan." },
-        { q: "Matrix Tree Theorem menggunakan determinan dari...", opts: ["Laplacian Matrix minor", "Adjacency Matrix", "Incedence Matrix", "Identity"], ans: "Laplacian Matrix minor", exp: "Sisi teorema matriks pohon." },
-        { q: "Tinggi pohon biner lengkap n=1000 dalah...", opts: ["9", "10", "11", "100"], ans: "9", exp: "ceil(log2(1001)-1) = ceil(9.96-1)=9." },
-        { q: "internal node biner h=5, i=10. Jika pohon tersebut seimbang penuh, berapa i sebenarnya?", opts: ["31", "15", "63", "16"], ans: "15", exp: "i maks = 2^h-1 = 2^4-1 = 15." },
-        { q: "Berapa n jika m=3, L=21 pada pohon m-ary penuh?", opts: ["31", "30", "21", "22"], ans: "31", exp: "i=(21-1)/(3-1)=10. n=3(10)+1=31." },
-        { q: "Kode Huffman untuk A, B, C dengan frekuensi 1, 1, 2. Salah satu kodenya dalah...", opts: ["00, 01, 1", "0, 10, 11", "0, 1, 10", "0, 1, 2"], ans: "00, 01, 1", exp: "A(1)+B(1)->Node(2), Node(2)+C(2)->Root(4). Kode: A=10, B=11, C=0 (terbalik pos kiri/kanan bebas)." },
-        { q: "BST input: 5, 2, 8, 1, 3. Inorder dalah...", opts: ["5-2-8-1-3", "1-2-3-5-8", "8-5-3-2-1", "1-3-2-8-5"], ans: "1-2-3-5-8", exp: "Sorting input." },
-        { q: "Preorder BST input 5,2,8 dalah...", opts: ["5-2-8", "2-5-8", "8-5-2", "5-8-2"], ans: "5-2-8", exp: "Root-Left-Right." },
-        { q: "Jumlah sisi hutan k pohon total simpul n dalah...", opts: ["n-1", "n-k", "n+k", "k(n-1)"], ans: "n-k", exp: "e = Sum (ni-1) = Sum ni - Sum 1 = n - k." },
-        { q: "Pohon keputusan biner untuk memilah 8 hasil butuh tinggi minimal...", opts: ["3", "4", "2", "8"], ans: "3", exp: "log2(8) = 3." },
-        { q: "Dalam pohon ekspresi prefix * + A B + C D dalah notasi...", opts: ["A+B * C+D", "(A+B)*(C+D)", "A+(B*(C+D))", "(A+(B*C))+D"], ans: "(A+B)*(C+D)", exp: "* dalah akar utama." },
-        { q: " internal node pohon biner penuh i maks tinggi h=4 dalah...", opts: ["7", "15", "8", "31"], ans: "15", exp: "2^4-1 = 15." },
-        { q: "Is Isomorfisme berlaku pada pohon?", opts: ["Tidak", "Iya", "Tergantung akar", "Tergantung daun"], ans: "Iya", exp: "Pohon dalah graf, sifat isomorfisme berlaku." },
-        { q: "Berapa n biner penuh L=10?", opts: ["19", "20", "21", "11"], ans: "19", exp: "2(10)-1=19." },
-        { q: "BST input 2,1,3. Postorder dalah...", opts: ["1-2-3", "1-3-2", "3-1-2", "2-1-3"], ans: "1-3-2", exp: "1(kiri)-3(kanan)-2(akar)." }
-    ]
+  function buildWord(el, text, baseDelay) {
+    el.innerHTML = '';
+    [...text].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'title-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.animationDelay = (baseDelay + i * 0.05) + 's';
+      el.appendChild(span);
+    });
+  }
+
+  buildWord(document.getElementById('word1'), line1, 0.3);
+  buildWord(document.getElementById('word2'), line2, 0.7);
+}
+
+// ═══════════════════════════════════════════════════
+//  LEVEL CARD ENTRANCE ANIMATION
+// ═══════════════════════════════════════════════════
+function animateLevelCards() {
+  const cards = document.querySelectorAll('.level-card');
+  cards.forEach((card, i) => {
+    card.style.animationDelay = (1.5 + i * 0.18) + 's';
+    card.classList.add('card-in');
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  FLOATING PARTICLES — logic symbols
+// ═══════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  const SYMBOLS = ['🌳','🌿','🌲','🔗','↳','⟶','🧩','⛓️','🪵','🌱']
+  let particles = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: H + 30,
+      symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+      size: 12 + Math.random() * 16,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -(0.3 + Math.random() * 0.5),
+      opacity: 0,
+      maxOpacity: 0.06 + Math.random() * 0.08,
+      life: 0,
+      maxLife: 180 + Math.random() * 120,
+      rotation: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.02
+    };
+  }
+
+  for (let i = 0; i < 28; i++) {
+    const p = makeParticle();
+    p.y = Math.random() * H;
+    p.life = Math.random() * p.maxLife;
+    particles.push(p);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (Math.random() < 0.04 && particles.length < 40) {
+      particles.push(makeParticle());
+    }
+
+    particles = particles.filter(p => p.y > -40);
+
+    particles.forEach(p => {
+      p.life++;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotV;
+
+      const fadeLen = 30;
+      if (p.life < fadeLen) p.opacity = p.maxOpacity * (p.life / fadeLen);
+      else if (p.life > p.maxLife - fadeLen) p.opacity = p.maxOpacity * ((p.maxLife - p.life) / fadeLen);
+      else p.opacity = p.maxOpacity;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.font = `${p.size}px 'DM Mono', monospace`;
+      ctx.fillStyle = `rgba(26,26,46,${p.opacity})`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.symbol, 0, 0);
+      ctx.restore();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  setTimeout(() => {
+    canvas.classList.add('visible');
+    draw();
+  }, 400);
+})();
+
+// ═══════════════════════════════════════════════════
+//  RIPPLE EFFECT on level card click
+// ═══════════════════════════════════════════════════
+function startQuizWithRipple(e, level) {
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const x = e.clientX - rect.left - size / 2;
+  const y = e.clientY - rect.top - size / 2;
+
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+  card.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+
+  setTimeout(() => startQuiz(level), 200);
+}
+
+// ═══════════════════════════════════════════════════
+//  BACK TO LEVEL SELECT from quiz
+// ═══════════════════════════════════════════════════
+function backToLevelSelect() {
+  if (state.timerID) clearInterval(state.timerID);
+  showScreen('startScreen');
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT ANIMATIONS
+// ═══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  animateTitle();
+  animateLevelCards();
+});
+
+
+// ─────────────────────────────────────────────
+//  DATA SOAL  (30 easy, 30 medium, 30 hard)
+//  Setiap soal: 5 pilihan (a–e)
+// ─────────────────────────────────────────────
+const ALL_QUESTIONS = [
+
+// ═══════════════ EASY (index 0-29) ═══════════════
+{
+  q: "Dalam struktur data pohon, simpul disebut juga sebagai...",
+  opts: ["Edge", "Node", "Root", "Leaf", "Graph"],
+  ans: 1,
+  exp: { title: "Node (Simpul)", body: "Node adalah titik atau simpul dalam struktur pohon yang dapat menyimpan data dan memiliki hubungan dengan node lain." }
+},
+{
+  q: "Simpul paling atas pada pohon disebut...",
+  opts: ["Leaf", "Child", "Root", "Edge", "Branch"],
+  ans: 2,
+  exp: { title: "Root", body: "Root adalah simpul paling atas dalam pohon dan menjadi awal dari seluruh struktur." }
+},
+{
+  q: "Simpul yang tidak memiliki anak disebut...",
+  opts: ["Root", "Parent", "Leaf", "Edge", "Branch"],
+  ans: 2,
+  exp: { title: "Leaf Node", body: "Leaf adalah simpul yang tidak memiliki anak (child) dalam struktur pohon." }
+},
+{
+  q: "Hubungan antara parent dan child dalam pohon disebut...",
+  opts: ["Edge", "Node", "Root", "Leaf", "Path"],
+  ans: 0,
+  exp: { title: "Edge", body: "Edge adalah garis penghubung antara node parent dan child." }
+},
+{
+  q: "Satu node yang memiliki node di bawahnya disebut...",
+  opts: ["Leaf", "Child", "Parent", "Root", "Edge"],
+  ans: 2,
+  exp: { title: "Parent Node", body: "Parent adalah node yang memiliki satu atau lebih child." }
+},
+{
+  q: "Struktur data pohon termasuk struktur data...",
+  opts: ["Linear", "Non-linear", "Sequential", "Stack-based", "Array"],
+  ans: 1,
+  exp: { title: "Non-linear", body: "Tree adalah struktur data non-linear karena tidak tersusun secara berurutan seperti array atau linked list." }
+},
+{
+  q: "Root pada pohon hanya berjumlah...",
+  opts: ["0", "1", "2", "Banyak", "Tergantung"],
+  ans: 1,
+  exp: { title: "Root Tunggal", body: "Dalam satu pohon hanya ada satu root." }
+},
+{
+  q: "Node yang berada di bawah parent disebut...",
+  opts: ["Root", "Child", "Leaf", "Edge", "Sibling"],
+  ans: 1,
+  exp: { title: "Child Node", body: "Child adalah node yang berada di bawah parent." }
+},
+{
+  q: "Node yang memiliki parent yang sama disebut...",
+  opts: ["Child", "Sibling", "Leaf", "Root", "Edge"],
+  ans: 1,
+  exp: { title: "Sibling", body: "Sibling adalah node yang memiliki parent yang sama." }
+},
+{
+  q: "Garis penghubung antar node dalam tree disebut...",
+  opts: ["Node", "Edge", "Root", "Leaf", "Tree"],
+  ans: 1,
+  exp: { title: "Edge", body: "Edge adalah penghubung antar node dalam tree." }
+},
+
+{
+  q: "Level paling atas dalam tree adalah...",
+  opts: ["Leaf", "Root", "Child", "Edge", "Branch"],
+  ans: 1,
+  exp: { title: "Root Level", body: "Level paling atas dalam tree adalah root (level 0 atau 1 tergantung definisi)." }
+},
+{
+  q: "Struktur tree selalu dimulai dari...",
+  opts: ["Leaf", "Edge", "Root", "Child", "Sibling"],
+  ans: 2,
+  exp: { title: "Awal Tree", body: "Tree selalu dimulai dari root sebagai titik awal struktur." }
+},
+{
+  q: "Node yang tidak memiliki child disebut...",
+  opts: ["Root", "Leaf", "Parent", "Edge", "Branch"],
+  ans: 1,
+  exp: { title: "Leaf Node", body: "Leaf adalah node yang tidak memiliki anak." }
+},
+{
+  q: "Hubungan langsung antara parent dan child disebut...",
+  opts: ["Edge", "Node", "Root", "Leaf", "Graph"],
+  ans: 0,
+  exp: { title: "Edge", body: "Edge menghubungkan parent dan child secara langsung." }
+},
+{
+  q: "Tree termasuk struktur data yang...",
+  opts: ["Berurutan", "Linear", "Hierarkis", "Acak", "Tabel"],
+  ans: 2,
+  exp: { title: "Hierarki", body: "Tree memiliki struktur hierarki dari root ke child." }
+},
+
+{
+  q: "Node paling atas disebut juga...",
+  opts: ["Leaf", "Root", "Edge", "Child", "Sibling"],
+  ans: 1,
+  exp: { title: "Root", body: "Root adalah node paling atas dalam tree." }
+},
+{
+  q: "Node yang tidak memiliki cabang disebut...",
+  opts: ["Root", "Leaf", "Parent", "Edge", "Tree"],
+  ans: 1,
+  exp: { title: "Leaf", body: "Leaf tidak memiliki child." }
+},
+{
+  q: "Setiap node dalam tree kecuali root pasti memiliki...",
+  opts: ["Child", "Parent", "Sibling", "Edge", "Leaf"],
+  ans: 1,
+  exp: { title: "Parent", body: "Setiap node (kecuali root) memiliki parent." }
+},
+{
+  q: "Hubungan antar node dalam tree bersifat...",
+  opts: ["Random", "Hierarkis", "Linear", "Bebas", "Tidak terstruktur"],
+  ans: 1,
+  exp: { title: "Hierarki", body: "Tree bersifat hierarkis dari root ke leaf." }
+},
+{
+  q: "Root tidak memiliki...",
+  opts: ["Child", "Parent", "Edge", "Node", "Tree"],
+  ans: 1,
+  exp: { title: "Root", body: "Root tidak memiliki parent." }
+},
+
+{
+  q: "Leaf node berada di bagian...",
+  opts: ["Atas", "Tengah", "Bawah", "Samping", "Root"],
+  ans: 2,
+  exp: { title: "Leaf Position", body: "Leaf biasanya berada di bagian paling bawah tree." }
+},
+{
+  q: "Struktur tree digunakan untuk merepresentasikan...",
+  opts: ["Data acak", "Hierarki", "Angka saja", "Tabel", "Stack"],
+  ans: 1,
+  exp: { title: "Representasi Hierarki", body: "Tree digunakan untuk merepresentasikan data hierarki seperti folder." }
+},
+{
+  q: "Contoh nyata struktur tree adalah...",
+  opts: ["Array", "Linked list", "Struktur folder", "Stack", "Queue"],
+  ans: 2,
+  exp: { title: "Contoh Tree", body: "Struktur folder di komputer adalah contoh tree." }
+},
+{
+  q: "Node yang berada satu level di bawah root disebut...",
+  opts: ["Leaf", "Child", "Parent", "Edge", "Root"],
+  ans: 1,
+  exp: { title: "Child Level", body: "Node di bawah root adalah child." }
+},
+{
+  q: "Setiap node dalam tree dapat memiliki...",
+  opts: ["1 child saja", "2 child saja", "0 atau lebih child", "Tidak punya child", "Hanya root"],
+  ans: 2,
+  exp: { title: "Jumlah Child", body: "Node dapat memiliki 0 atau lebih child tergantung jenis tree." }
+},
+
+{
+  q: "Root dalam tree selalu berada di level...",
+  opts: ["Terakhir", "Tengah", "Pertama", "Acak", "Tidak ada level"],
+  ans: 2,
+  exp: { title: "Level Root", body: "Root selalu berada di level paling atas." }
+},
+{
+  q: "Node yang tidak memiliki hubungan ke bawah disebut...",
+  opts: ["Root", "Leaf", "Parent", "Edge", "Branch"],
+  ans: 1,
+  exp: { title: "Leaf Node", body: "Leaf tidak memiliki child." }
+},
+{
+  q: "Struktur tree tersusun dari...",
+  opts: ["Node dan Edge", "Array dan Stack", "Queue dan List", "Table dan Row", "File dan Folder"],
+  ans: 0,
+  exp: { title: "Komponen Tree", body: "Tree tersusun dari node (simpul) dan edge (hubungan)." }
+},
+{
+  q: "Hubungan parent-child pada tree bersifat...",
+  opts: ["Horizontal", "Vertikal/hierarki", "Acak", "Linear", "Tidak tetap"],
+  ans: 1,
+  exp: { title: "Relasi Tree", body: "Hubungan dalam tree bersifat hierarki (vertikal)." }
+},
+{
+  q: "Satu root pada tree dapat memiliki...",
+  opts: ["Tidak ada child", "Satu child saja", "Banyak child", "Tidak boleh child", "Sama sekali tidak boleh node"],
+  ans: 2,
+  exp: { title: "Root Children", body: "Root dapat memiliki banyak child." }
+},
+
+// ═══════════════ MEDIUM (index 30-59) ═══════════════
+{
+  q: "Preorder traversal pada pohon dilakukan dengan urutan...",
+  opts: ["Left - Root - Right", "Root - Left - Right", "Left - Right - Root", "Root - Right - Left", "Right - Root - Left"],
+  ans: 1,
+  exp: { title: "Preorder Traversal", body: "Preorder: Root → Left → Right (Root dikunjungi terlebih dahulu)." }
+},
+{
+  q: "Inorder traversal pada binary tree adalah...",
+  opts: ["Root - Left - Right", "Left - Root - Right", "Left - Right - Root", "Right - Root - Left", "Root - Right - Left"],
+  ans: 1,
+  exp: { title: "Inorder Traversal", body: "Inorder: Left → Root → Right." }
+},
+{
+  q: "Postorder traversal dilakukan dengan urutan...",
+  opts: ["Root - Left - Right", "Left - Root - Right", "Left - Right - Root", "Right - Left - Root", "Right - Root - Left"],
+  ans: 2,
+  exp: { title: "Postorder Traversal", body: "Postorder: Left → Right → Root." }
+},
+{
+  q: "Level root dalam tree biasanya bernilai...",
+  opts: ["-1", "0 atau 1", "2", "Tergantung child", "Tidak punya level"],
+  ans: 1,
+  exp: { title: "Level Root", body: "Root biasanya berada di level 0 atau 1 tergantung definisi." }
+},
+{
+  q: "Level node menunjukkan...",
+  opts: ["Jumlah child", "Jarak dari root", "Jumlah leaf", "Jumlah edge total", "Jumlah sibling"],
+  ans: 1,
+  exp: { title: "Level Node", body: "Level node adalah jarak node dari root." }
+},
+{
+  q: "Subtree adalah...",
+  opts: ["Node tunggal", "Bagian tree yang juga tree", "Root saja", "Leaf saja", "Edge saja"],
+  ans: 1,
+  exp: { title: "Subtree", body: "Subtree adalah bagian dari tree yang juga merupakan tree." }
+},
+{
+  q: "Binary tree adalah tree yang setiap node memiliki maksimal...",
+  opts: ["1 child", "2 child", "3 child", "Tidak terbatas", "0 child"],
+  ans: 1,
+  exp: { title: "Binary Tree", body: "Binary tree membatasi maksimal 2 child per node." }
+},
+{
+  q: "Node kiri pada binary tree disebut...",
+  opts: ["Right child", "Left child", "Parent", "Root", "Sibling"],
+  ans: 1,
+  exp: { title: "Left Child", body: "Left child adalah anak kiri dari node." }
+},
+{
+  q: "Node kanan pada binary tree disebut...",
+  opts: ["Left child", "Right child", "Root", "Leaf", "Edge"],
+  ans: 1,
+  exp: { title: "Right Child", body: "Right child adalah anak kanan dari node." }
+},
+{
+  q: "Traversal yang mengunjungi root di akhir adalah...",
+  opts: ["Preorder", "Inorder", "Postorder", "Level order", "Random order"],
+  ans: 2,
+  exp: { title: "Postorder", body: "Postorder mengunjungi root paling akhir." }
+},
+
+{
+  q: "Traversal yang mengunjungi root terlebih dahulu adalah...",
+  opts: ["Postorder", "Inorder", "Preorder", "Level order", "Random"],
+  ans: 2,
+  exp: { title: "Preorder", body: "Preorder: root dikunjungi pertama." }
+},
+{
+  q: "Traversal inorder selalu mengunjungi...",
+  opts: ["Root dulu", "Left dulu", "Right dulu", "Leaf dulu", "Sibling dulu"],
+  ans: 1,
+  exp: { title: "Inorder", body: "Inorder dimulai dari subtree kiri." }
+},
+{
+  q: "Node tanpa child disebut...",
+  opts: ["Root", "Leaf", "Parent", "Sibling", "Edge"],
+  ans: 1,
+  exp: { title: "Leaf Node", body: "Leaf adalah node tanpa child." }
+},
+{
+  q: "Node yang memiliki parent yang sama disebut...",
+  opts: ["Leaf", "Sibling", "Root", "Edge", "Branch"],
+  ans: 1,
+  exp: { title: "Sibling", body: "Sibling adalah node dengan parent yang sama." }
+},
+{
+  q: "Traversal level order menggunakan konsep...",
+  opts: ["Stack", "Queue", "Array", "Linked list", "Graph cycle"],
+  ans: 1,
+  exp: { title: "Level Order", body: "Level order traversal menggunakan queue (BFS)." }
+},
+
+{
+  q: "Root berada di level...",
+  opts: ["-1", "0", "1", "2", "Tergantung"],
+  ans: 1,
+  exp: { title: "Root Level", body: "Root berada di level 0." }
+},
+{
+  q: "Setiap node kecuali root pasti memiliki...",
+  opts: ["Child", "Parent", "Sibling", "Edge", "Leaf"],
+  ans: 1,
+  exp: { title: "Parent Node", body: "Setiap node kecuali root memiliki parent." }
+},
+{
+  q: "Subtree selalu dimulai dari...",
+  opts: ["Edge", "Node tertentu", "Leaf saja", "Root saja", "Sibling"],
+  ans: 1,
+  exp: { title: "Subtree", body: "Subtree dimulai dari sebuah node dan semua turunannya." }
+},
+{
+  q: "Binary tree dapat memiliki maksimal child sebanyak...",
+  opts: ["1", "2", "3", "4", "Tak terbatas"],
+  ans: 1,
+  exp: { title: "Binary Tree", body: "Binary tree hanya boleh memiliki maksimal 2 child." }
+},
+{
+  q: "Traversal yang menggunakan antrian (queue) adalah...",
+  opts: ["Preorder", "Inorder", "Postorder", "Level order", "DFS"],
+  ans: 3,
+  exp: { title: "BFS Tree", body: "Level order traversal menggunakan queue (BFS)." }
+},
+
+{
+  q: "DFS pada tree biasanya mencakup...",
+  opts: ["Level order saja", "Preorder, inorder, postorder", "Hanya leaf", "Hanya root", "Queue saja"],
+  ans: 1,
+  exp: { title: "DFS Tree", body: "DFS mencakup preorder, inorder, postorder." }
+},
+{
+  q: "Node yang berada satu tingkat di bawah root disebut...",
+  opts: ["Leaf", "Child", "Sibling", "Edge", "Root"],
+  ans: 1,
+  exp: { title: "Child Level", body: "Node di bawah root disebut child." }
+},
+{
+  q: "Struktur tree bersifat...",
+  opts: ["Linear", "Non-linear", "Sequential", "Random", "Array-based"],
+  ans: 1,
+  exp: { title: "Tree Structure", body: "Tree adalah struktur data non-linear." }
+},
+{
+  q: "Leaf node selalu berada di...",
+  opts: ["Atas tree", "Tengah tree", "Akar tree", "Bagian bawah tree", "Sisi kiri saja"],
+  ans: 3,
+  exp: { title: "Leaf Position", body: "Leaf biasanya berada di bagian paling bawah tree." }
+},
+{
+  q: "Traversal preorder cocok digunakan untuk...",
+  opts: ["Menghapus tree", "Membuat salinan tree", "Mencari leaf saja", "Menghapus root saja", "Tidak ada fungsi"],
+  ans: 1,
+  exp: { title: "Preorder Use Case", body: "Preorder sering digunakan untuk copy tree structure." }
+},
+
+{
+  q: "Traversal inorder pada binary search tree menghasilkan...",
+  opts: ["Acak", "Urutan terbalik", "Urutan terurut", "Hanya root", "Hanya leaf"],
+  ans: 2,
+  exp: { title: "BST Inorder", body: "Inorder pada BST menghasilkan data terurut." }
+},
+{
+  q: "Level order traversal juga disebut...",
+  opts: ["DFS", "BFS", "Pre DFS", "Post DFS", "In DFS"],
+  ans: 1,
+  exp: { title: "BFS Tree", body: "Level order = Breadth First Search (BFS)." }
+},
+{
+  q: "Traversal postorder sering digunakan untuk...",
+  opts: ["Menghapus tree", "Menambah node", "Mencari root", "Mencari sibling", "Sorting"],
+  ans: 0,
+  exp: { title: "Postorder Use Case", body: "Postorder sering dipakai untuk delete tree safely." }
+},
+{
+  q: "Tree traversal yang mengunjungi node per level adalah...",
+  opts: ["Preorder", "Inorder", "Postorder", "Level order", "Random"],
+  ans: 3,
+  exp: { title: "Level Order", body: "Level order mengunjungi node per tingkat." }
+},
+{
+  q: "DFS pada tree dilakukan dengan bantuan...",
+  opts: ["Queue", "Stack", "Heap", "Array saja", "Graph saja"],
+  ans: 1,
+  exp: { title: "DFS", body: "DFS menggunakan stack (atau rekursi)." }
+},
+
+// ═══════════════ HARD (index 60-89) ═══════════════
+{
+  q: "DFS pada binary tree secara umum menggunakan struktur data...",
+  opts: ["Queue", "Stack atau rekursi", "Array saja", "Heap", "Graph matrix"],
+  ans: 1,
+  exp: { title: "DFS Tree", body: "DFS (Depth First Search) pada tree menggunakan stack atau rekursi untuk menelusuri node secara mendalam." }
+},
+{
+  q: "BFS pada tree identik dengan traversal...",
+  opts: ["Preorder", "Inorder", "Postorder", "Level order", "Random order"],
+  ans: 3,
+  exp: { title: "BFS Tree", body: "BFS pada tree = level order traversal menggunakan queue." }
+},
+{
+  q: "Kompleksitas waktu BFS pada tree dengan n node adalah...",
+  opts: ["O(log n)", "O(n log n)", "O(n)", "O(1)", "O(n²)"],
+  ans: 2,
+  exp: { title: "Kompleksitas BFS", body: "BFS mengunjungi setiap node sekali → O(n)." }
+},
+{
+  q: "Kompleksitas DFS pada tree adalah...",
+  opts: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
+  ans: 2,
+  exp: { title: "Kompleksitas DFS", body: "DFS mengunjungi setiap node sekali → O(n)." }
+},
+{
+  q: "Height dari leaf node adalah...",
+  opts: ["1", "0", "-1", "2", "Tergantung tree"],
+  ans: 1,
+  exp: { title: "Height Leaf", body: "Height leaf node = 0 karena tidak memiliki child." }
+},
+
+{
+  q: "Height tree adalah...",
+  opts: ["Jumlah node total", "Jarak root ke leaf terjauh", "Jumlah leaf", "Jumlah edge total", "Jumlah sibling"],
+  ans: 1,
+  exp: { title: "Height Tree", body: "Height tree = panjang jalur terpanjang dari root ke leaf." }
+},
+{
+  q: "BST (Binary Search Tree) memiliki sifat...",
+  opts: ["Semua node sama", "Left < Root < Right", "Root < semua node", "Random struktur", "Tidak beraturan"],
+  ans: 1,
+  exp: { title: "BST Property", body: "BST: kiri lebih kecil, kanan lebih besar dari root." }
+},
+{
+  q: "Traversal inorder pada BST menghasilkan...",
+  opts: ["Acak", "Descending", "Ascending", "Root saja", "Leaf saja"],
+  ans: 2,
+  exp: { title: "BST Inorder", body: "Inorder BST menghasilkan urutan ascending." }
+},
+{
+  q: "Expression tree digunakan untuk...",
+  opts: ["Sorting data", "Evaluasi ekspresi matematika", "Menyimpan file", "Stack operasi", "Graph traversal"],
+  ans: 1,
+  exp: { title: "Expression Tree", body: "Expression tree digunakan untuk evaluasi ekspresi matematika." }
+},
+{
+  q: "Operator dalam expression tree biasanya berada di...",
+  opts: ["Leaf", "Root saja", "Internal node", "Sibling", "Edge"],
+  ans: 2,
+  exp: { title: "Expression Tree", body: "Operator berada di internal node, operand di leaf." }
+},
+
+{
+  q: "Operand dalam expression tree berada di...",
+  opts: ["Internal node", "Leaf node", "Root saja", "Edge", "Sibling"],
+  ans: 1,
+  exp: { title: "Expression Tree", body: "Operand biasanya berada di leaf node." }
+},
+{
+  q: "Jika tree tidak seimbang (skewed), kompleksitas search BST menjadi...",
+  opts: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
+  ans: 2,
+  exp: { title: "Worst Case BST", body: "Skewed tree berubah menjadi linked list → O(n)." }
+},
+{
+  q: "Balanced tree memiliki height sekitar...",
+  opts: ["O(n)", "O(log n)", "O(1)", "O(n²)", "O(n log n)"],
+  ans: 1,
+  exp: { title: "Balanced Tree", body: "Balanced tree memiliki height O(log n)." }
+},
+{
+  q: "Delete node pada BST paling kompleks karena harus mempertimbangkan...",
+  opts: ["Leaf saja", "Parent saja", "3 kasus (leaf, 1 child, 2 child)", "Root saja", "Sibling"],
+  ans: 2,
+  exp: { title: "BST Delete Case", body: "Delete BST memiliki 3 kasus: leaf, 1 child, 2 child." }
+},
+{
+  q: "Traversal yang digunakan untuk evaluasi expression tree adalah...",
+  opts: ["Preorder", "Inorder saja", "Postorder", "Level order", "Random"],
+  ans: 2,
+  exp: { title: "Expression Evaluation", body: "Postorder digunakan untuk evaluasi expression tree." }
+},
+
+{
+  q: "BFS menggunakan struktur data...",
+  opts: ["Stack", "Queue", "Heap", "Tree", "Graph"],
+  ans: 1,
+  exp: { title: "BFS", body: "BFS menggunakan queue." }
+},
+{
+  q: "DFS menggunakan struktur data...",
+  opts: ["Queue", "Stack", "Heap", "Array", "Graph matrix"],
+  ans: 1,
+  exp: { title: "DFS", body: "DFS menggunakan stack atau rekursi." }
+},
+{
+  q: "Jumlah maksimal node pada level k pada binary tree adalah...",
+  opts: ["k", "2^k", "2^(k-1)", "k²", "log k"],
+  ans: 2,
+  exp: { title: "Binary Tree Level", body: "Max node level k = 2^(k-1)." }
+},
+{
+  q: "Jumlah total node pada complete binary tree dengan height h adalah...",
+  opts: ["h²", "2^h - 1", "h log n", "n log h", "2h"],
+  ans: 1,
+  exp: { title: "Complete Binary Tree", body: "Total node = 2^h - 1." }
+},
+{
+  q: "Leaf node dalam tree selalu memiliki...",
+  opts: ["Child", "Parent", "Tidak ada child", "Sibling saja", "Root saja"],
+  ans: 2,
+  exp: { title: "Leaf Node", body: "Leaf tidak memiliki child." }
+},
+
+{
+  q: "Internal node adalah node yang...",
+  opts: ["Tidak punya child", "Punya minimal 1 child", "Root saja", "Leaf saja", "Edge saja"],
+  ans: 1,
+  exp: { title: "Internal Node", body: "Internal node memiliki minimal satu child." }
+},
+{
+  q: "Inorder traversal pada tree non-BST menghasilkan...",
+  opts: ["Selalu terurut", "Tidak tentu urutannya", "Descending", "Ascending", "Root saja"],
+  ans: 1,
+  exp: { title: "Inorder Non-BST", body: "Inorder pada non-BST tidak menjamin urutan tertentu." }
+},
+{
+  q: "Worst case search pada BST adalah...",
+  opts: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
+  ans: 2,
+  exp: { title: "Worst BST", body: "Worst case BST (skewed) = O(n)." }
+},
+{
+  q: "Balanced BST bertujuan untuk...",
+  opts: ["Mempercepat operasi O(log n)", "Membuat tree acak", "Menghapus node", "Menambah root", "Menghapus leaf"],
+  ans: 0,
+  exp: { title: "Balanced BST", body: "Balanced BST menjaga height tetap O(log n)." }
+},
+{
+  q: "Rotasi pada AVL tree digunakan untuk...",
+  opts: ["Sorting", "Balancing tree", "Delete node", "BFS", "Traversal"],
+  ans: 1,
+  exp: { title: "AVL Rotation", body: "Rotasi digunakan untuk menjaga tree tetap seimbang." }
+},
+
+{
+  q: "Expression tree untuk operasi (+ a b) hasil preorder adalah...",
+  opts: ["a + b", "+ a b", "a b +", "b + a", "+ b a"],
+  ans: 1,
+  exp: { title: "Expression Tree Preorder", body: "Preorder expression tree: operator → operand kiri → operand kanan." }
+},
+{
+  q: "Postorder expression tree digunakan karena...",
+  opts: ["Lebih cepat", "Operator diproses terakhir", "Root dulu", "Leaf dulu", "Random"],
+  ans: 1,
+  exp: { title: "Postorder", body: "Postorder memastikan operand dihitung sebelum operator." }
+},
+{
+  q: "DFS lebih cocok untuk...",
+  opts: ["Shortest path BFS", "Exploration mendalam tree", "Level per level", "Sorting", "Queue processing"],
+  ans: 1,
+  exp: { title: "DFS Usage", body: "DFS cocok untuk eksplorasi mendalam struktur tree." }
+},
+{
+  q: "BFS lebih cocok untuk...",
+  opts: ["Deep traversal", "Shortest path level tree", "Recursion", "Postorder", "Expression evaluation"],
+  ans: 1,
+  exp: { title: "BFS Usage", body: "BFS cocok untuk mencari level terdekat (shortest path)." }
+},
+{
+  q: "Jika tree sangat dalam (deep), DFS berisiko...",
+  opts: ["Lebih cepat", "Stack overflow", "Lebih optimal", "Lebih seimbang", "Tidak ada efek"],
+  ans: 1,
+  exp: { title: "DFS Risk", body: "DFS rekursif pada tree dalam dapat menyebabkan stack overflow." }
+}
+];
+
+// ─────────────────────────────────────────────
+//  GAME STATE
+// ─────────────────────────────────────────────
+const LEVELS = {
+  easy:   { start: 0,  count: 10, time: 30*60, label: 'Easy',   fillClass: 'fill-easy',   badgeClass: 'badge-easy'   },
+  medium: { start: 30, count: 20, time: 40*60, label: 'Medium', fillClass: 'fill-medium', badgeClass: 'badge-medium' },
+  hard:   { start: 60, count: 30, time: 50*60, label: 'Hard',   fillClass: 'fill-hard',   badgeClass: 'badge-hard'   }
 };
 
-// JAVASCRIPT LOGIC DISAMAKAN PERSIS
+let state = {
+  level: null,
+  questions: [],
+  current: 0,
+  answers: [],
+  score: 0,
+  timeLeft: 0,
+  timerID: null,
+  reviewed: false
+};
+
+const LETTERS = ['a','b','c','d','e'];
+
+// ─────────────────────────────────────────────
+//  SCREEN NAVIGATION
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+//  START QUIZ
+// ─────────────────────────────────────────────
 function startQuiz(level) {
-    currentIndex = 0;
-    score = 0;
-    selected = null;
-    timeLeft = 6600; 
-    quizData = questionsBank[level]; 
+  const cfg = LEVELS[level];
+  state.level = level;
+  state.questions = ALL_QUESTIONS.slice(cfg.start, cfg.start + cfg.count);
+  state.current = 0;
+  state.answers = new Array(state.questions.length).fill(null);
+  state.timeLeft = cfg.time;
+  state.reviewed = false;
 
-    document.getElementById('startScreen').classList.add('hidden');
-    document.getElementById('quizScreen').classList.remove('hidden');
-    document.getElementById('resultScreen').classList.add('hidden');
-    
-    showQuestion();
-    startTimer();
+  const badge = document.getElementById('levelBadge');
+  badge.textContent = cfg.label;
+  badge.className = 'quiz-level-badge ' + cfg.badgeClass;
+
+  document.getElementById('progressFill').className = 'progress-fill ' + cfg.fillClass;
+
+  buildDots();
+  renderQuestion();
+  startTimer();
+  showScreen('quizScreen');
 }
 
-function showQuestion() {
-    let q = quizData[currentIndex];
-    document.getElementById('question').innerHTML = `Soal ${currentIndex+1}:<br>${q.q}`;
-    
-    let html = '';
-    // Acak opsi agar tidak hafal posisi
-    let shuffledOpts = [...q.opts].sort(() => Math.random() - 0.5);
-    shuffledOpts.forEach(opt => {
-        html += `<div class='option' onclick='selectAnswer(this, "${opt}")'>${opt}</div>`;
-    });
-    
-    document.getElementById('options').innerHTML = html;
-    document.getElementById('explanation').classList.add('hidden');
-    updateProgress();
+function buildDots() {
+  const row = document.getElementById('dotRow');
+  row.innerHTML = '';
+  state.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.title = 'Soal ' + (i+1);
+    d.onclick = () => jumpTo(i);
+    row.appendChild(d);
+  });
 }
 
-function selectAnswer(el, val) {
-    if(selected !== null) return;
-    selected = val;
-    let q = quizData[currentIndex];
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    d.className = 'dot';
+    const a = state.answers[i];
+    if (i === state.current) { d.classList.add('current'); return; }
+    if (a === null) return;
+    if (a === -2) { d.classList.add('skipped'); return; }
+    d.classList.add(a === state.questions[i].ans ? 'answered-correct' : 'answered-wrong');
+  });
+}
 
-    if(val === q.ans) {
-        el.classList.add('correct');
-        score++;
-    } else {
-        el.classList.add('wrong');
-        document.querySelectorAll('.option').forEach(o => {
-            if(o.innerText === q.ans) o.classList.add('correct');
-        });
+// ─────────────────────────────────────────────
+//  RENDER QUESTION
+// ─────────────────────────────────────────────
+function renderQuestion() {
+  const q = state.questions[state.current];
+  const n = state.current;
+  const total = state.questions.length;
+  const answered = state.answers[n];
+
+  document.getElementById('qNumber').textContent = `SOAL ${n+1} DARI ${total}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qCounter').textContent = `${n+1} / ${total}`;
+  document.getElementById('progressFill').style.width = ((n / total) * 100) + '%';
+
+  const list = document.getElementById('optsList');
+  list.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
+
+    if (answered !== null && answered !== -2) {
+      div.classList.add('locked');
+      if (i === q.ans) div.classList.add('correct');
+      else if (i === answered) div.classList.add('wrong');
+    } else if (answered !== -2) {
+      div.onclick = () => selectAnswer(i);
     }
-    
-    let expDiv = document.getElementById('explanation');
-    expDiv.innerText = "Penjelasan: " + q.exp;
-    expDiv.classList.remove('hidden');
+    list.appendChild(div);
+  });
+
+  const expBox = document.getElementById('expBox');
+  if (answered !== null && answered !== -2) {
+    document.getElementById('expTitle').textContent = q.exp.title;
+    document.getElementById('expBody').textContent = q.exp.body;
+    expBox.classList.add('show');
+  } else {
+    expBox.classList.remove('show');
+  }
+
+  const isLast = n === total - 1;
+  const skipBtn = document.getElementById('skipBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (answered !== null && answered !== -2) {
+    skipBtn.style.display = 'none';
+    nextBtn.className = isLast ? 'nav-btn btn-finish' : 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  } else {
+    skipBtn.style.display = '';
+    skipBtn.textContent = isLast ? 'Lewati & Selesai' : 'Lewati ›';
+    nextBtn.className = 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  }
+
+  updateDots();
 }
 
-function nextQuestion() {
-    if (selected === null) { alert("Pilih jawaban terlebih dahulu!"); return; }
-    
-    currentIndex++;
-    selected = null;
-    if(currentIndex < quizData.length) {
-        showQuestion();
-    } else {
-        endQuiz();
-    }
+function selectAnswer(i) {
+  state.answers[state.current] = i;
+  renderQuestion();
 }
 
+function goToNext() {
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+function goToPrev() {
+  if (state.current > 0) {
+    state.current--;
+    renderQuestion();
+  }
+}
+
+function jumpTo(i) {
+  state.current = i;
+  renderQuestion();
+}
+
+function skipQuestion() {
+  if (state.answers[state.current] === null) {
+    state.answers[state.current] = -2;
+  }
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+// ─────────────────────────────────────────────
+//  TIMER
+// ─────────────────────────────────────────────
 function startTimer() {
-    if(timer) clearInterval(timer);
-    timer = setInterval(() => {
-        timeLeft--;
-        let m = Math.floor(timeLeft/60);
-        let s = timeLeft%60;
-        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
-        if(timeLeft <= 0) endQuiz();
-    }, 1000);
+  if (state.timerID) clearInterval(state.timerID);
+  updateTimerDisplay();
+  state.timerID = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay();
+    if (state.timeLeft <= 0) endQuiz();
+  }, 1000);
 }
 
-function updateProgress() {
-    let p = (currentIndex / quizData.length) * 100;
-    document.getElementById('progressBar').style.width = p + '%';
+function updateTimerDisplay() {
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  const pill = document.getElementById('timerPill');
+  pill.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+  pill.className = state.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
+// ─────────────────────────────────────────────
+//  END QUIZ
+// ─────────────────────────────────────────────
 function endQuiz() {
-    clearInterval(timer);
-    document.getElementById('quizScreen').classList.add('hidden');
-    document.getElementById('resultScreen').classList.remove('hidden');
-    document.getElementById('score-display').innerText = score;
-    document.getElementById('resultMsg').innerText = `Latihan selesai. Anda menjawab benar ${score} dari ${quizData.length} soal.`;
+  clearInterval(state.timerID);
+
+  let correct = 0, wrong = 0, skipped = 0;
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    if (a === null || a === -2) skipped++;
+    else if (a === q.ans) correct++;
+    else wrong++;
+  });
+
+  const total = state.questions.length;
+  const pct = total > 0 ? correct / total : 0;
+
+  let grade, msg, color;
+  if (pct >= 0.9) {
+    grade = '🏆 Sangat Istimewa';
+    msg = 'Luar biasa! Penguasaan logikamu sangat baik. Kamu siap menghadapi tantangan yang lebih tinggi.';
+    color = '#c9a227';
+  } else if (pct >= 0.7) {
+    grade = '⭐ Bagus!';
+    msg = 'Pemahaman yang solid. Terus berlatih untuk mencapai hasil sempurna.';
+    color = '#2e7d58';
+  } else if (pct >= 0.5) {
+    grade = '📚 Cukup Baik';
+    msg = 'Kamu sudah memahami konsep dasar. Review kembali materi yang salah dan coba lagi!';
+    color = '#1a5fa8';
+  } else {
+    grade = '💪 Terus Berlatih!';
+    msg = 'Jangan menyerah! Pelajari kembali pembahasannya dan ulangi latihan ini.';
+    color = '#8b1a1a';
+  }
+
+  document.getElementById('rScoreNum').textContent = correct;
+  document.getElementById('rScoreDen').textContent = '/ ' + total;
+  document.getElementById('rScoreNum').style.color = color;
+  document.getElementById('rGrade').textContent = grade;
+  document.getElementById('rMessage').textContent = msg;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkipped').textContent = skipped;
+
+  const circ = 2 * Math.PI * 70;
+  setTimeout(() => {
+    const arc = document.getElementById('arcCircle');
+    arc.style.stroke = color;
+    arc.style.strokeDashoffset = circ * (1 - pct);
+  }, 100);
+
+  buildReview();
+  document.getElementById('retryBtn').onclick = retryLevel;
+  showScreen('resultScreen');
 }
 
-function goHome() { location.reload(); }
+function buildReview() {
+  const panel = document.getElementById('reviewPanel');
+  panel.innerHTML = '';
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    let cls, status;
+    if (a === null || a === -2) { cls = 'ri-skipped'; status = 'Dilewati'; }
+    else if (a === q.ans) { cls = 'ri-correct'; status = 'Benar: ' + q.opts[q.ans]; }
+    else { cls = 'ri-wrong'; status = 'Salah → ' + q.opts[q.ans]; }
+
+    const item = document.createElement('div');
+    item.className = `review-item ${cls}`;
+    item.innerHTML = `<div class="ri-dot"></div><div class="ri-q">Soal ${i+1}: ${q.q.substring(0,60)}...</div><div class="ri-a">${status}</div>`;
+    panel.appendChild(item);
+  });
+}
+
+function toggleReview() {
+  const panel = document.getElementById('reviewPanel');
+  const btn = document.getElementById('reviewToggle');
+  state.reviewed = !state.reviewed;
+  panel.className = state.reviewed ? 'review-panel open' : 'review-panel';
+  btn.querySelector('span').textContent = state.reviewed ? '▴' : '▾';
+}
+
+function retryLevel() { startQuiz(state.level); }
+function goHome() { showScreen('startScreen'); }
 </script>
 </body>
 </html>
