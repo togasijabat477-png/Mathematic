@@ -164,11 +164,11 @@ var materiData = {
 
 var gameData = [
   {icon:"🎮",title:"Game Matematika Diskrit",items:[
-    {num:"01",title:"Truth Table Challenge",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Dasar",file:"game/matdis/truth-table.html"},
-    {num:"02",title:"Set Match Game",description:"Cocokkan elemen himpunan dengan cepat",tag:"Dasar",file:"game/matdis/set-match.html"},
-    {num:"03",title:"Hitung Peluang!",description:"Tantangan kombinatorika dan peluang",tag:"Dasar",file:"game/matdis/hitung-peluang.html"},
-    {num:"04",title:"Temukan Jalannya!",description:"Traversal graf dan pencarian jalur",tag:"Dasar",file:"game/matdis/temukan-jalan.html"},
-    {num:"05",title:"Benar atau Salah?",description:"Uji kemampuan logika proposisimu",tag:"Dasar",file:"game/matdis/truth-table.html"}
+    {num:"01",title:"Binary Maze Escape",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Dasar",file:"game/matdis/binary-maze-escape.html"},
+    {num:"02",title:"Graph Kingdom",description:"Cocokkan elemen himpunan dengan cepat",tag:"Dasar",file:"game/matdis/graph_kingdom.html"},
+    {num:"03",title:"Logic Detective",description:"Tantangan kombinatorika dan peluang",tag:"Dasar",file:"game/matdis/hitung-peluang.html"},
+    {num:"04",title:"Recursion Dungeon",description:"Traversal graf dan pencarian jalur",tag:"Dasar",file:"game/matdis/temukan-jalan.html"},
+    {num:"05",title:"Set Collector Arena",description:"Uji kemampuan logika proposisimu",tag:"Dasar",file:"game/matdis/truth-table.html"}
   ]},
   {icon:"👾",title:"Game Aljabar Linear",items:[
     {num:"01",title:"⚔ Matrix Battle Arena",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
