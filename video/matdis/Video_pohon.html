@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran Pohon (Tree) | Struktur Data & Teori Graf</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0c29;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #cfd8dc;
+        }
+
+        .main-player {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: black;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #currentVideoTitle {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #currentVideoDescription {
+            margin-top: 8px;
+            text-align: center;
+            color: #cfd8dc;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 14px;
+        }
+
+        .video-info h4 {
+            font-size: 16px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #d7dde1;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .fallback-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .fallback-link a {
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .fallback-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; border-radius: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pohon (Tree)</h1>
+            <p>Playlist pembelajaran: pengertian pohon, terminologi pohon, jenis-jenis pohon, pohon biner, dan aplikasi pohon</p>
+        </div>
+
+        <div class="main-player">
+            <div class="video-wrapper">
+                <iframe
+                    id="youtubePlayer"
+                    src="https://www.youtube.com/embed/C1PZ9qX8yA0?rel=0&playsinline=1"
+                    title="Pengertian Pohon (Tree) dalam Struktur Data dan Teori Graf"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div id="currentVideoTitle">Pengertian Pohon (Tree) dalam Struktur Data dan Teori Graf</div>
+            <div id="currentVideoDescription">Materi dasar pohon: definisi, sifat-sifat pohon, dan perbedaan dengan graf pada umumnya</div>
+        </div>
+
+        <div class="video-grid">
+            <!-- Video 1 - Pengertian Pohon -->
+            <div class="video-card" data-id="C1PZ9qX8yA0" data-title="Pengertian Pohon (Tree) dalam Struktur Data" data-description="Definisi pohon, sifat-sifat pohon, dan perbedaan pohon dengan graf pada umumnya">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/C1PZ9qX8yA0/mqdefault.jpg" alt="Pengertian Pohon" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pengertian Pohon (Tree) dalam Struktur Data</h4>
+                    <p>Definisi pohon, sifat-sifat pohon, dan perbedaan pohon dengan graf pada umumnya</p>
+                </div>
+            </div>
+
+            <!-- Video 2 - Terminologi Dasar Pohon -->
+            <div class="video-card" data-id="D2Q0A8rY9zB1" data-title="Terminologi Dasar Pohon" data-description="Root, parent, child, sibling, leaf, internal node, subtree, level, height, depth">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/D2Q0A8rY9zB1/mqdefault.jpg" alt="Terminologi Pohon" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Terminologi Dasar Pohon</h4>
+                    <p>Root, parent, child, sibling, leaf, internal node, subtree, level, height, depth</p>
+                </div>
+            </div>
+
+            <!-- Video 3 - Jenis-jenis Pohon -->
+            <div class="video-card" data-id="E3R1B9sZ0aC2" data-title="Jenis-jenis Pohon" data-description="Pohon berakar, pohon tak berakar, pohon terurut, pohon m-ary, pohon biner">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/E3R1B9sZ0aC2/mqdefault.jpg" alt="Jenis-jenis Pohon" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Jenis-jenis Pohon</h4>
+                    <p>Pohon berakar, pohon tak berakar, pohon terurut, pohon m-ary, pohon biner</p>
+                </div>
+            </div>
+
+            <!-- Video 4 - Pohon Biner (Binary Tree) -->
+            <div class="video-card" data-id="F4S2C0tA1bD3" data-title="Pohon Biner (Binary Tree)" data-description="Pengertian pohon biner, karakteristik, dan contoh pohon biner lengkap dan penuh">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/F4S2C0tA1bD3/mqdefault.jpg" alt="Pohon Biner" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon Biner (Binary Tree)</h4>
+                    <p>Pengertian pohon biner, karakteristik, pohon biner lengkap (full) dan penuh (complete)</p>
+                </div>
+            </div>
+
+            <!-- Video 5 - Pohon Biner Terurut (Binary Search Tree) -->
+            <div class="video-card" data-id="G5T3D1uB2cE4" data-title="Pohon Biner Terurut (Binary Search Tree - BST)" data-description="Sifat BST, operasi insert, search, dan delete pada BST">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/G5T3D1uB2cE4/mqdefault.jpg" alt="Binary Search Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon Biner Terurut (Binary Search Tree - BST)</h4>
+                    <p>Sifat BST, operasi insert, search, dan delete pada BST</p>
+                </div>
+            </div>
+
+            <!-- Video 6 - Pohon Biner Miring (Skewed Tree) -->
+            <div class="video-card" data-id="H6U4E2vC3dF5" data-title="Pohon Biner Miring (Skewed Tree)" data-description="Pohon biner kiri miring dan kanan miring, serta kompleksitasnya">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/H6U4E2vC3dF5/mqdefault.jpg" alt="Skewed Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon Biner Miring (Skewed Tree)</h4>
+                    <p>Pohon biner kiri miring dan kanan miring, serta kompleksitasnya</p>
+                </div>
+            </div>
+
+            <!-- Video 7 - Traversal Pohon Biner -->
+            <div class="video-card" data-id="I7V5F3wD4eG6" data-title="Traversal Pohon Biner" data-description="Preorder, inorder, postorder, dan level order traversal">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/I7V5F3wD4eG6/mqdefault.jpg" alt="Traversal Pohon Biner" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Traversal Pohon Biner</h4>
+                    <p>Preorder, inorder, postorder, dan level order traversal beserta contoh implementasi</p>
+                </div>
+            </div>
+
+            <!-- Video 8 - Pohon Ekspresi (Expression Tree) -->
+            <div class="video-card" data-id="J8W6G4xE5fH7" data-title="Pohon Ekspresi (Expression Tree)" data-description="Membuat pohon dari ekspresi aritmatika, infix, prefix, postfix">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/J8W6G4xE5fH7/mqdefault.jpg" alt="Expression Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon Ekspresi (Expression Tree)</h4>
+                    <p>Membuat pohon dari ekspresi aritmatika, infix, prefix, postfix</p>
+                </div>
+            </div>
+
+            <!-- Video 9 - Pohon Merah-Hitam (Red-Black Tree) -->
+            <div class="video-card" data-id="K9X7H5yF6gI8" data-title="Pohon Merah-Hitam (Red-Black Tree)" data-description="Sifat-sifat pohon merah-hitam, rotasi, dan operasi insert">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/K9X7H5yF6gI8/mqdefault.jpg" alt="Red-Black Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon Merah-Hitam (Red-Black Tree)</h4>
+                    <p>Sifat-sifat pohon merah-hitam, rotasi, dan operasi insert</p>
+                </div>
+            </div>
+
+            <!-- Video 10 - Pohon AVL (AVL Tree) -->
+            <div class="video-card" data-id="L0Y8I6zG7hJ9" data-title="Pohon AVL (AVL Tree)" data-description="Balance factor, rotasi kiri, rotasi kanan, double rotation">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/L0Y8I6zG7hJ9/mqdefault.jpg" alt="AVL Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon AVL (AVL Tree)</h4>
+                    <p>Balance factor, rotasi kiri, rotasi kanan, double rotation, dan operasi insert</p>
+                </div>
+            </div>
+
+            <!-- Video 11 - Pohon B (B-Tree) -->
+            <div class="video-card" data-id="M1Z9J7aH8iK0" data-title="Pohon B (B-Tree)" data-description="Pengertian B-Tree, orde, properti, dan operasi pada B-Tree">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/M1Z9J7aH8iK0/mqdefault.jpg" alt="B-Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon B (B-Tree)</h4>
+                    <p>Pengertian B-Tree, orde, properti, dan operasi pada B-Tree</p>
+                </div>
+            </div>
+
+            <!-- Video 12 - Pohon Rentang (Spanning Tree) -->
+            <div class="video-card" data-id="N2A0K8bI9jL1" data-title="Pohon Rentang (Spanning Tree)" data-description="Pengertian spanning tree, contoh, dan cara mencari spanning tree pada graf">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/N2A0K8bI9jL1/mqdefault.jpg" alt="Spanning Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon Rentang (Spanning Tree)</h4>
+                    <p>Pengertian spanning tree, contoh, dan cara mencari spanning tree pada graf</p>
+                </div>
+            </div>
+
+            <!-- Video 13 - Pohon Rentang Minimum (MST) -->
+            <div class="video-card" data-id="O3B1L9cJ0kM2" data-title="Pohon Rentang Minimum (Minimum Spanning Tree - MST)" data-description="Algoritma Prim dan Kruskal untuk mencari MST">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/O3B1L9cJ0kM2/mqdefault.jpg" alt="Minimum Spanning Tree" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pohon Rentang Minimum (Minimum Spanning Tree - MST)</h4>
+                    <p>Algoritma Prim dan Kruskal untuk mencari MST</p>
+                </div>
+            </div>
+
+            <!-- Video 14 - Implementasi Pohon dalam Pemrograman -->
+            <div class="video-card" data-id="P4C2M0dK1lN3" data-title="Implementasi Pohon dalam Pemrograman" data-description="Representasi pohon menggunakan array dan linked list">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/P4C2M0dK1lN3/mqdefault.jpg" alt="Implementasi Pohon" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Implementasi Pohon dalam Pemrograman</h4>
+                    <p>Representasi pohon menggunakan array dan linked list, serta implementasi dasar</p>
+                </div>
+            </div>
+
+            <!-- Video 15 - Aplikasi Pohon dalam Kehidupan -->
+            <div class="video-card" data-id="Q5D3N1eL2mO4" data-title="Aplikasi Pohon dalam Kehidupan Sehari-hari" data-description="Penerapan pohon dalam sistem file, struktur organisasi, parsing, dan AI">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/Q5D3N1eL2mO4/mqdefault.jpg" alt="Aplikasi Pohon" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Aplikasi Pohon dalam Kehidupan Sehari-hari</h4>
+                    <p>Penerapan pohon dalam sistem file, struktur organisasi, parsing, AI, dan basis data</p>
+                </div>
+            </div>
+
+            <!-- Video 16 - Latihan Soal Pohon -->
+            <div class="video-card" data-id="R6E4O2fM3nP5" data-title="Latihan Soal Pohon" data-description="Kumpulan soal dan pembahasan materi pohon (traversal, BST, AVL, spanning tree)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/R6E4O2fM3nP5/mqdefault.jpg" alt="Latihan Soal Pohon" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Latihan Soal Pohon</h4>
+                    <p>Kumpulan soal dan pembahasan materi pohon (traversal, BST, AVL, spanning tree)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fallback-link">
+            <a
+                id="fallbackLink"
+                href="https://www.youtube.com/watch?v=C1PZ9qX8yA0"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Tonton langsung di YouTube
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+
+        document.querySelectorAll('.video-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                const title = card.dataset.title;
+                const description = card.dataset.description;
+
+                player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+                player.title = title;
+                currentTitle.textContent = title;
+                currentDescription.textContent = description;
+                fallbackLink.href = `https://www.youtube.com/watch?v=${id}`;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

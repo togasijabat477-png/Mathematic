@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran Relasi dan Fungsi | Matematika</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0c29;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #cfd8dc;
+        }
+
+        .main-player {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: black;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #currentVideoTitle {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #currentVideoDescription {
+            margin-top: 8px;
+            text-align: center;
+            color: #cfd8dc;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 14px;
+        }
+
+        .video-info h4 {
+            font-size: 16px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #d7dde1;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .fallback-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .fallback-link a {
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .fallback-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; border-radius: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Relasi dan Fungsi</h1>
+            <p>Playlist pembelajaran: pengertian relasi, fungsi, domain, kodomain, range, jenis-jenis fungsi, dan aplikasinya</p>
+        </div>
+
+        <div class="main-player">
+            <div class="video-wrapper">
+                <iframe
+                    id="youtubePlayer"
+                    src="https://www.youtube.com/embed/8u9QaVXp5nM?rel=0&playsinline=1"
+                    title="Pengertian Relasi dan Fungsi | Matematika Kelas 8"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div id="currentVideoTitle">Pengertian Relasi dan Fungsi</div>
+            <div id="currentVideoDescription">Materi dasar relasi dan fungsi: definisi, perbedaan, dan contoh dalam kehidupan sehari-hari</div>
+        </div>
+
+        <div class="video-grid">
+            <!-- Video 1 - Pengertian Relasi dan Fungsi -->
+            <div class="video-card" data-id="8u9QaVXp5nM" data-title="Pengertian Relasi dan Fungsi | Matematika Kelas 8" data-description="Materi dasar relasi dan fungsi: definisi, perbedaan, dan contoh dalam kehidupan sehari-hari">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/8u9QaVXp5nM/mqdefault.jpg" alt="Pengertian Relasi dan Fungsi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pengertian Relasi dan Fungsi</h4>
+                    <p>Materi dasar relasi dan fungsi: definisi, perbedaan, dan contoh</p>
+                </div>
+            </div>
+
+            <!-- Video 2 - Cara Menyatakan Relasi -->
+            <div class="video-card" data-id="9v0RbWYq6oP" data-title="Cara Menyatakan Relasi" data-description="Diagram panah, diagram Cartesius, dan himpunan pasangan berurutan">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/9v0RbWYq6oP/mqdefault.jpg" alt="Cara Menyatakan Relasi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Cara Menyatakan Relasi</h4>
+                    <p>Diagram panah, diagram Cartesius, dan himpunan pasangan berurutan</p>
+                </div>
+            </div>
+
+            <!-- Video 3 - Domain, Kodomain, dan Range -->
+            <div class="video-card" data-id="0w1ScXZr7qQ" data-title="Domain, Kodomain, dan Range (Daerah Asal, Daerah Kawan, Daerah Hasil)" data-description="Pengertian dan cara menentukan domain, kodomain, dan range suatu fungsi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/0w1ScXZr7qQ/mqdefault.jpg" alt="Domain Kodomain Range" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Domain, Kodomain, dan Range</h4>
+                    <p>Pengertian dan cara menentukan domain, kodomain, dan range suatu fungsi</p>
+                </div>
+            </div>
+
+            <!-- Video 4 - Notasi dan Nilai Fungsi -->
+            <div class="video-card" data-id="1x2TdYas8rR" data-title="Notasi Fungsi dan Nilai Fungsi" data-description="Cara membaca notasi fungsi f(x) dan menentukan nilai fungsi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/1x2TdYas8rR/mqdefault.jpg" alt="Notasi dan Nilai Fungsi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Notasi Fungsi dan Nilai Fungsi</h4>
+                    <p>Cara membaca notasi fungsi f(x) dan menentukan nilai fungsi</p>
+                </div>
+            </div>
+
+            <!-- Video 5 - Menentukan Rumus Fungsi -->
+            <div class="video-card" data-id="2y3UeZbt9sS" data-title="Menentukan Rumus Fungsi Jika Nilai Diketahui" data-description="Cara menentukan rumus fungsi linear jika diketahui beberapa nilai fungsi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/2y3UeZbt9sS/mqdefault.jpg" alt="Menentukan Rumus Fungsi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Menentukan Rumus Fungsi Jika Nilai Diketahui</h4>
+                    <p>Cara menentukan rumus fungsi linear jika diketahui beberapa nilai fungsi</p>
+                </div>
+            </div>
+
+            <!-- Video 6 - Fungsi Linear -->
+            <div class="video-card" data-id="3z4VfAcu0tT" data-title="Fungsi Linear" data-description="Pengertian, grafik, dan contoh soal fungsi linear f(x) = ax + b">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/3z4VfAcu0tT/mqdefault.jpg" alt="Fungsi Linear" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Fungsi Linear</h4>
+                    <p>Pengertian, grafik, dan contoh soal fungsi linear f(x) = ax + b</p>
+                </div>
+            </div>
+
+            <!-- Video 7 - Fungsi Konstan dan Identitas -->
+            <div class="video-card" data-id="4a5WgBdv1uU" data-title="Fungsi Konstan dan Fungsi Identitas" data-description="Pengertian dan contoh fungsi konstan (f(x)=c) dan fungsi identitas (f(x)=x)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/4a5WgBdv1uU/mqdefault.jpg" alt="Fungsi Konstan dan Identitas" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Fungsi Konstan dan Fungsi Identitas</h4>
+                    <p>Pengertian dan contoh fungsi konstan (f(x)=c) dan fungsi identitas (f(x)=x)</p>
+                </div>
+            </div>
+
+            <!-- Video 8 - Fungsi Surjektif, Injektif, Bijektif -->
+            <div class="video-card" data-id="5b6XhCew2vV" data-title="Fungsi Surjektif, Injektif, dan Bijektif (Fungsi Into, One-to-One, Onto)" data-description="Jenis-jenis fungsi berdasarkan sifatnya">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/5b6XhCew2vV/mqdefault.jpg" alt="Fungsi Surjektif Injektif Bijektif" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Fungsi Surjektif, Injektif, dan Bijektif</h4>
+                    <p>Jenis-jenis fungsi berdasarkan sifatnya (into, one-to-one, onto)</p>
+                </div>
+            </div>
+
+            <!-- Video 9 - Fungsi Komposisi -->
+            <div class="video-card" data-id="6c7YiDfx3wW" data-title="Fungsi Komposisi (Komposisi Fungsi)" data-description="Pengertian dan cara menentukan (fog)(x) dan (gof)(x)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/6c7YiDfx3wW/mqdefault.jpg" alt="Fungsi Komposisi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Fungsi Komposisi (Komposisi Fungsi)</h4>
+                    <p>Pengertian dan cara menentukan (fog)(x) dan (gof)(x)</p>
+                </div>
+            </div>
+
+            <!-- Video 10 - Sifat Fungsi Komposisi -->
+            <div class="video-card" data-id="7d8ZjEgx4xX" data-title="Sifat-sifat Fungsi Komposisi" data-description="Sifat komutatif, asosiatif, dan fungsi identitas pada komposisi fungsi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/7d8ZjEgx4xX/mqdefault.jpg" alt="Sifat Fungsi Komposisi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Sifat-sifat Fungsi Komposisi</h4>
+                    <p>Sifat komutatif, asosiatif, dan fungsi identitas pada komposisi fungsi</p>
+                </div>
+            </div>
+
+            <!-- Video 11 - Fungsi Invers -->
+            <div class="video-card" data-id="8e9AkFh5yY" data-title="Fungsi Invers" data-description="Pengertian fungsi invers dan cara menentukan invers suatu fungsi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/8e9AkFh5yY/mqdefault.jpg" alt="Fungsi Invers" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Fungsi Invers</h4>
+                    <p>Pengertian fungsi invers dan cara menentukan invers suatu fungsi</p>
+                </div>
+            </div>
+
+            <!-- Video 12 - Invers dari Fungsi Komposisi -->
+            <div class="video-card" data-id="9f0BlGi6zZ" data-title="Invers dari Fungsi Komposisi" data-description="Menentukan (fog)^-1(x) dan (gof)^-1(x)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/9f0BlGi6zZ/mqdefault.jpg" alt="Invers Fungsi Komposisi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Invers dari Fungsi Komposisi</h4>
+                    <p>Menentukan invers dari fungsi komposisi (fog)^-1(x) dan (gof)^-1(x)</p>
+                </div>
+            </div>
+
+            <!-- Video 13 - Grafik Fungsi -->
+            <div class="video-card" data-id="0g1CmHj7aA" data-title="Menggambar Grafik Fungsi" data-description="Cara menggambar grafik fungsi linear dan fungsi kuadrat">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/0g1CmHj7aA/mqdefault.jpg" alt="Grafik Fungsi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Menggambar Grafik Fungsi</h4>
+                    <p>Cara menggambar grafik fungsi linear dan fungsi kuadrat</p>
+                </div>
+            </div>
+
+            <!-- Video 14 - Aplikasi Fungsi dalam Kehidupan Sehari-hari -->
+            <div class="video-card" data-id="1h2DnIk8bB" data-title="Aplikasi Fungsi dalam Kehidupan Sehari-hari" data-description="Contoh penerapan konsep fungsi dalam masalah nyata">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/1h2DnIk8bB/mqdefault.jpg" alt="Aplikasi Fungsi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Aplikasi Fungsi dalam Kehidupan Sehari-hari</h4>
+                    <p>Contoh penerapan konsep fungsi dalam masalah nyata</p>
+                </div>
+            </div>
+
+            <!-- Video 15 - Latihan Soal Relasi dan Fungsi -->
+            <div class="video-card" data-id="2i3EoJl9cC" data-title="Latihan Soal Relasi dan Fungsi" data-description="Kumpulan soal dan pembahasan materi relasi dan fungsi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/2i3EoJl9cC/mqdefault.jpg" alt="Latihan Soal Relasi dan Fungsi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Latihan Soal Relasi dan Fungsi</h4>
+                    <p>Kumpulan soal dan pembahasan materi relasi dan fungsi</p>
+                </div>
+            </div>
+
+            <!-- Video 16 - Soal HOTS Relasi dan Fungsi -->
+            <div class="video-card" data-id="3j4FpKm0dD" data-title="Pembahasan Soal HOTS Relasi dan Fungsi" data-description="Soal Higher Order Thinking Skills (HOTS) tentang relasi dan fungsi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/3j4FpKm0dD/mqdefault.jpg" alt="Soal HOTS Relasi dan Fungsi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pembahasan Soal HOTS Relasi dan Fungsi</h4>
+                    <p>Soal Higher Order Thinking Skills (HOTS) tentang relasi dan fungsi</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fallback-link">
+            <a
+                id="fallbackLink"
+                href="https://www.youtube.com/watch?v=8u9QaVXp5nM"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Tonton langsung di YouTube
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+
+        document.querySelectorAll('.video-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                const title = card.dataset.title;
+                const description = card.dataset.description;
+
+                player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+                player.title = title;
+                currentTitle.textContent = title;
+                currentDescription.textContent = description;
+                fallbackLink.href = `https://www.youtube.com/watch?v=${id}`;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
