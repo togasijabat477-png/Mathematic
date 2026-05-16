@@ -97,12 +97,12 @@ var materiData = {
    icon:"📼", title:"Video Pembelajaran Matematika Diskrit",
     items:[
       {num:"01",title:"Logika Matematika",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/matdis/video_Logika.html"},
-      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",tag:"Watch",file:"video/matdis/Himpunan.html"},
-      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",tag:"Watch",file:"video/matdis/Relasi_dan_Fungsi.html"},
-      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",tag:"Watch",file:"video/matdis/teori_graf_gabungan.html"},
-      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",tag:"Watch",file:"video/matdis/Aljabar_Bolean.html"},
-      {num:"06",title:"Pohon",description:"Karakteristik Pohon",tag:"Watch",file:"video/matdis/Pohon.html"},
-      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",tag:"Watch",file:"video/matdis/numberoftheory.html"}
+      {num:"02",title:"Himpunan",description:"Konsep dasar dan operasi pada himpunan",tag:"Watch",file:"video/matdis/video Himpunan.html"},
+      {num:"03",title:"Relasi & Fungsi",description:"Sifat-sifat relasi dan jenis-jenis fungsi",tag:"Watch",file:"video/matdis/VIdeo_relasi&fungsi.html"},
+      {num:"04",title:"Teori Graf",description:"Representasi dan algoritma graf",tag:"Watch",file:"video/matdis/video_graf.html"},
+      {num:"05",title:"Aljabar Bolean",description:"materi Aljabar Bolean",tag:"Watch",file:"video/matdis/video_aljabar_boolean.html"},
+      {num:"06",title:"Pohon",description:"Karakteristik Pohon",tag:"Watch",file:"video/matdis/Video_pohon.html"},
+      {num:"07",title:"Number Of Theory",description:"Aritmatika Modulo",tag:"Watch",file:"video/matdis/Video_NOT.html"}
     ]
   },{
     icon:"📝", title:"Latihan Soal Matematika Diskrit",
