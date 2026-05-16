@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Binary Maze Escape - Game Edukasi Logika Biner</title>
+  <meta name="description" content="Game edukasi matematika diskrit tentang biner, boolean, dan gerbang logika." />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0-9..40,700;1,9..40,400&family=Playfair+Display:wght@700;800;900&display=swap" />
+  <style>
+    /* ═════════════════════════════════════════════════════════════════
+       BINARY MAZE ESCAPE — Game Edukasi Logika Biner
+       Design System: Cyberpunk Digital / Neon Future
+       ═════════════════════════════════════════════════════════════════ */
+
+    /* Reset & CSS Variables */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Color Palette (sesuai website Mathematic) */
+      --bg: 220 18% 7%;
+      --bg2: 220 15% 10%;
+      --bg3: 220 14% 13%;
+      --fg: 210 25% 92%;
+      --fg2: 210 15% 70%;
+      --fg3: 210 12% 50%;
+      --primary: 174 72% 52%;
+      --teal: 174 72% 52%;
+      --teal-dim: 174 50% 32%;
+      --danger: 0 84% 60%;
+      --success: 142 71% 45%;
+      --amber: 38 95% 58%;
+      --purple: 265 65% 65%;
+
+      /* Fonts */
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: hsl(var(--bg));
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: hsl(var(--bg));
+      color: hsl(var(--fg));
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Digital Grid Background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(hsl(174 72% 52% / 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(174 72% 52% / 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridScroll 8s linear infinite;
+    }
+
+    @keyframes gridScroll {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 40px; }
+    }
+
+    /* Glitch Effect */
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes glitchColor {
+      0% { color: hsl(var(--teal)); text-shadow: -2px 0 hsl(var(--danger)), 2px 0 hsl(var(--purple)); }
+      50% { color: hsl(var(--teal)); text-shadow: 2px 0 hsl(var(--danger)), -2px 0 hsl(var(--purple)); }
+      100% { color: hsl(var(--teal)); text-shadow: -2px 0 hsl(var(--danger)), 2px 0 hsl(var(--purple)); }
+    }
+
+    @keyframes neonGlow {
+      0%, 100% { text-shadow: 0 0 10px hsl(var(--teal)), 0 0 20px hsl(var(--teal) / 0.5); }
+      50% { text-shadow: 0 0 20px hsl(var(--teal)), 0 0 40px hsl(var(--teal) / 0.8); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       SCREEN MANAGEMENT
+       ════════════════════════════════════════════════════════════════ */
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      display: none;
+      min-height: 100vh;
+      padding: 20px;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       MAIN MENU SCREEN
+       ════════════════════════════════════════════════════════════════ */
+
+    #menuScreen {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 30px;
+    }
+
+    .menu-content {
+      max-width: 600px;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .game-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      animation: neonGlow 2s ease-in-out infinite;
+      color: hsl(var(--teal));
+    }
+
+    .game-subtitle {
+      font-size: 1.25rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 30px;
+      font-family: var(--font-mono);
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .btn-menu {
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: 2px solid hsl(var(--teal));
+      border-radius: 8px;
+      background: transparent;
+      color: hsl(var(--teal));
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-mono);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-menu::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: hsl(var(--teal));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+      z-index: -1;
+    }
+
+    .btn-menu:hover {
+      color: hsl(var(--bg));
+      box-shadow: 0 0 20px hsl(var(--teal) / 0.5);
+    }
+
+    .btn-menu:hover::before {
+      transform: scaleX(1);
+    }
+
+    .menu-info {
+      font-size: 0.9rem;
+      color: hsl(var(--fg3));
+      margin-top: 30px;
+      line-height: 1.8;
+    }
+
+    .info-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      background: hsl(var(--teal) / 0.1);
+      border: 1px solid hsl(var(--teal) / 0.3);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: hsl(var(--teal));
+      margin: 5px;
+      font-family: var(--font-mono);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       GAMEPLAY SCREEN
+       ════════════════════════════════════════════════════════════════ */
+
+    #gameScreen {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .game-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      padding: 20px;
+      background: hsl(var(--bg2) / 0.6);
+      border: 1px solid hsl(var(--teal) / 0.2);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .game-info {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .info-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .info-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: hsl(var(--teal));
+      font-family: var(--font-mono);
+    }
+
+    .timer {
+      font-size: 2rem;
+      font-weight: 900;
+      color: hsl(var(--teal));
+    }
+
+    .timer.warning {
+      color: hsl(var(--amber));
+      animation: pulse 0.5s ease-in-out infinite;
+    }
+
+    .timer.danger {
+      color: hsl(var(--danger));
+      animation: pulse 0.3s ease-in-out infinite;
+    }
+
+    .maze-container {
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 1;
+      background: hsl(var(--bg3));
+      border: 2px solid hsl(var(--teal) / 0.3);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 30px;
+      box-shadow: 0 0 30px hsl(var(--teal) / 0.2);
+    }
+
+    .maze-grid {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 2px;
+      padding: 10px;
+      background: hsl(var(--bg2));
+    }
+
+    .maze-cell {
+      border: 1px solid hsl(var(--teal) / 0.2);
+      border-radius: 4px;
+      background: hsl(var(--bg3));
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .maze-cell:hover {
+      border-color: hsl(var(--teal) / 0.5);
+      background: hsl(var(--teal) / 0.1);
+    }
+
+    .maze-cell.wall {
+      background: hsl(var(--bg2));
+      cursor: not-allowed;
+      border-color: hsl(var(--fg3));
+    }
+
+    .maze-cell.player {
+      background: hsl(var(--teal) / 0.3);
+      border-color: hsl(var(--teal));
+      box-shadow: 0 0 15px hsl(var(--teal) / 0.5);
+      animation: neonGlow 1.5s ease-in-out infinite;
+    }
+
+    .maze-cell.exit {
+      background: hsl(var(--success) / 0.2);
+      border-color: hsl(var(--success));
+      animation: bounce 1s ease-in-out infinite;
+    }
+
+    .maze-cell.door {
+      background: hsl(var(--amber) / 0.2);
+      border-color: hsl(var(--amber));
+      cursor: pointer;
+      position: relative;
+    }
+
+    .maze-cell.door.locked {
+      border-color: hsl(var(--danger) / 0.5);
+      background: hsl(var(--danger) / 0.1);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       LOGIC PUZZLE MODAL
+       ════════════════════════════════════════════════════════════════ */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: hsl(0 0% 0% / 0.8);
+      z-index: 100;
+      animation: fadeIn 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: hsl(var(--bg2));
+      border: 2px solid hsl(var(--teal));
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      animation: popIn 0.3s ease;
+      box-shadow: 0 0 40px hsl(var(--teal) / 0.3);
+    }
+
+    .modal-title {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      color: hsl(var(--teal));
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+
+    .puzzle-description {
+      font-size: 0.95rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 25px;
+      line-height: 1.7;
+    }
+
+    .puzzle-type {
+      background: hsl(var(--bg3));
+      border-left: 3px solid hsl(var(--teal));
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    .bit-inputs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .bit-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .bit-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+    }
+
+    .bit-toggle {
+      width: 60px;
+      height: 60px;
+      border: 2px solid hsl(var(--teal) / 0.3);
+      border-radius: 6px;
+      background: hsl(var(--bg3));
+      color: hsl(var(--fg));
+      font-weight: 700;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-mono);
+    }
+
+    .bit-toggle:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.1);
+    }
+
+    .bit-toggle.active {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      border-color: hsl(var(--teal));
+      box-shadow: 0 0 15px hsl(var(--teal) / 0.6);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .btn-modal {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid hsl(var(--teal));
+      border-radius: 6px;
+      background: transparent;
+      color: hsl(var(--teal));
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    .btn-modal:hover {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+    }
+
+    .btn-modal.danger {
+      border-color: hsl(var(--danger));
+      color: hsl(var(--danger));
+    }
+
+    .btn-modal.danger:hover {
+      background: hsl(var(--danger));
+      color: hsl(var(--bg));
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       RESULT SCREENS
+       ════════════════════════════════════════════════════════════════ */
+
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: hsl(0 0% 0% / 0.9);
+      z-index: 110;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .popup-overlay.active {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .popup-content {
+      text-align: center;
+      background: hsl(var(--bg2));
+      border: 2px solid hsl(var(--teal));
+      border-radius: 12px;
+      padding: 50px 40px;
+      max-width: 500px;
+      width: 90%;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .popup-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+
+    .popup-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 15px;
+      letter-spacing: -0.02em;
+    }
+
+    .popup-success .popup-title {
+      color: hsl(var(--success));
+    }
+
+    .popup-error .popup-title {
+      color: hsl(var(--danger));
+      animation: shake 0.4s ease-in-out;
+    }
+
+    .popup-message {
+      font-size: 1.05rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 30px;
+      line-height: 1.7;
+    }
+
+    .popup-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-popup {
+      padding: 12px 28px;
+      border: 2px solid hsl(var(--teal));
+      border-radius: 6px;
+      background: transparent;
+      color: hsl(var(--teal));
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    .btn-popup:hover {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      box-shadow: 0 0 20px hsl(var(--teal) / 0.5);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       RESPONSIVE DESIGN
+       ════════════════════════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+      .game-header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .game-info {
+        width: 100%;
+        justify-content: space-around;
+      }
+
+      .maze-container {
+        max-width: 100%;
+      }
+
+      .modal-content {
+        padding: 20px;
+      }
+
+      .bit-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+
+      .popup-content {
+        padding: 30px 20px;
+      }
+
+      .popup-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN: MAIN MENU
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="screen active" id="menuScreen">
+  <div class="menu-content">
+    <div class="game-title">Binary Maze Escape</div>
+    <div class="game-subtitle">Game Edukasi Logika Biner</div>
+    <div class="menu-buttons">
+      <button class="btn-menu" onclick="startGame()">MULAI PERMAINAN</button>
+      <button class="btn-menu" onclick="showInstructions()">PANDUAN</button>
+      <button class="btn-menu" onclick="showAbout()">TENTANG GAME</button>
+    </div>
+    <div class="menu-info">
+      <p style="margin-bottom: 15px;">Keluar dari labirin digital dengan memecahkan gerbang logika dan operasi biner!</p>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
+        <div class="info-badge">Binary</div>
+        <div class="info-badge">Boolean</div>
+        <div class="info-badge">Logic Gates</div>
+        <div class="info-badge">Discrete Math</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN: GAMEPLAY
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="screen" id="gameScreen">
+  <div class="game-header">
+    <div class="game-info">
+      <div class="info-item">
+        <span class="info-label">Level</span>
+        <span class="info-value" id="levelDisplay">1</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Skor</span>
+        <span class="info-value" id="scoreDisplay">0</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Nyawa</span>
+        <span class="info-value" id="livesDisplay">3</span>
+      </div>
+    </div>
+    <div class="info-item" style="justify-content: center;">
+      <span class="info-label">Waktu</span>
+      <span class="timer" id="timerDisplay">60</span>
+    </div>
+    <div class="info-item">
+      <button class="btn-menu" onclick="pauseGame()" style="padding: 8px 16px; font-size: 0.9rem;">PAUSE</button>
+    </div>
+  </div>
+
+  <div class="maze-container">
+    <div class="maze-grid" id="mazeGrid"></div>
+  </div>
+
+  <button class="btn-menu" onclick="mainMenu()" style="margin-top: 20px;">KEMBALI KE MENU</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL: LOGIC PUZZLE
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="puzzleModal">
+  <div class="modal-content">
+    <div class="modal-title" id="puzzleTitle">Gerbang AND</div>
+    <div class="puzzle-description" id="puzzleDesc">
+      Tentukan output dari gerbang logika dengan input berikut:
+    </div>
+    <div class="puzzle-type" id="puzzleType">
+      A AND B = ?
+    </div>
+    <div class="bit-inputs" id="bitInputs"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal" onclick="submitAnswer()">SUBMIT</button>
+      <button class="btn-modal danger" onclick="skipPuzzle()">SKIP</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     POPUP: SUCCESS / ERROR
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="popup-overlay" id="resultPopup">
+  <div class="popup-content popup-success" id="popupContent">
+    <div class="popup-icon" id="popupIcon">✓</div>
+    <div class="popup-title" id="popupTitle">BENAR!</div>
+    <div class="popup-message" id="popupMessage">
+      Pintu telah terbuka! Lanjutkan petualanganmu.
+    </div>
+    <div class="popup-buttons">
+      <button class="btn-popup" onclick="closeResultPopup()">LANJUT</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     POPUP: GAME OVER / WIN
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="popup-overlay" id="gameEndPopup">
+  <div class="popup-content" id="gameEndContent">
+    <div class="popup-icon" id="gameEndIcon">🎊</div>
+    <div class="popup-title" id="gameEndTitle">SELAMAT!</div>
+    <div class="popup-message" id="gameEndMessage">
+      Kamu berhasil keluar dari labirin! Total Skor: 1000
+    </div>
+    <div class="popup-buttons">
+      <button class="btn-popup" onclick="mainMenu()">MAIN LAGI</button>
+      <button class="btn-popup" onclick="nextLevel()">LEVEL BERIKUTNYA</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT GAME ENGINE
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+  // ═════════════════════════════════════════════════════════════════
+  // GAME CONFIGURATION & STATE
+  // ═════════════════════════════════════════════════════════════════
+
+  const GAME_CONFIG = {
+    gridSize: 5,
+    timeLimit: 60,
+    initialLives: 3,
+    maxLevels: 6
+  };
+
+  const LOGIC_GATES = {
+    AND: {
+      name: 'Gerbang AND',
+      desc: 'Output 1 jika SEMUA input adalah 1',
+      formula: 'A AND B = A ∧ B',
+      calculate: (a, b) => a && b ? 1 : 0
+    },
+    OR: {
+      name: 'Gerbang OR',
+      desc: 'Output 1 jika MINIMAL SATU input adalah 1',
+      formula: 'A OR B = A ∨ B',
+      calculate: (a, b) => a || b ? 1 : 0
+    },
+    XOR: {
+      name: 'Gerbang XOR',
+      desc: 'Output 1 jika input BERBEDA',
+      formula: 'A XOR B = A ⊕ B',
+      calculate: (a, b) => a !== b ? 1 : 0
+    },
+    NOT: {
+      name: 'Gerbang NOT',
+      desc: 'Output adalah kebalikan dari input',
+      formula: 'NOT A = ¬A',
+      calculate: (a) => a ? 0 : 1
+    }
+  };
+
+  // Game State
+  let gameState = {
+    currentLevel: 1,
+    score: 0,
+    lives: GAME_CONFIG.initialLives,
+    timeRemaining: GAME_CONFIG.timeLimit,
+    playerPos: null,
+    mazeLayout: [],
+    doors: [],
+    currentPuzzle: null,
+    isPaused: false,
+    gameActive: true,
+    timerInterval: null
+  };
+
+  // ═════════════════════════════════════════════════════════════════
+  // INITIALIZATION & SCREEN MANAGEMENT
+  // ═════════════════════════════════════════════════════════════════
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  function mainMenu() {
+    clearInterval(gameState.timerInterval);
+    showScreen('menuScreen');
+    gameState.isPaused = false;
+  }
+
+  function startGame() {
+    gameState = {
+      currentLevel: 1,
+      score: 0,
+      lives: GAME_CONFIG.initialLives,
+      timeRemaining: GAME_CONFIG.timeLimit,
+      playerPos: null,
+      mazeLayout: [],
+      doors: [],
+      currentPuzzle: null,
+      isPaused: false,
+      gameActive: true,
+      timerInterval: null
+    };
+    loadLevel();
+    showScreen('gameScreen');
+    startTimer();
+  }
+
+  function loadLevel() {
+    generateMaze();
+    renderMaze();
+    updateDisplay();
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // MAZE GENERATION & RENDERING
+  // ═════════════════════════════════════════════════════════════════
+
+  function generateMaze() {
+    const size = GAME_CONFIG.gridSize;
+    gameState.mazeLayout = Array(size * size).fill(0);
+    gameState.doors = [];
+
+    // Mulai dari posisi (0, 0)
+    gameState.playerPos = { x: 0, y: 0 };
+    gameState.mazeLayout[0] = 1; // Player start
+
+    // Exit di pojok kanan bawah
+    const exitPos = (size - 1) * size + (size - 1);
+    gameState.mazeLayout[exitPos] = 3; // 3 = exit
+
+    // Tambah beberapa dinding
+    for (let i = 0; i < size * size; i++) {
+      if (i !== 0 && i !== exitPos && Math.random() < 0.2) {
+        gameState.mazeLayout[i] = -1; // -1 = wall
+      }
+    }
+
+    // Tambah pintu logika (1 + level)
+    const doorsCount = Math.min(1 + gameState.currentLevel, 4);
+    for (let i = 0; i < doorsCount; i++) {
+      let doorPos = Math.floor(Math.random() * (size * size));
+      while (gameState.mazeLayout[doorPos] !== 0) {
+        doorPos = Math.floor(Math.random() * (size * size));
+      }
+      gameState.mazeLayout[doorPos] = 2; // 2 = door
+      gameState.doors.push({
+        pos: doorPos,
+        locked: true,
+        gateType: Object.keys(LOGIC_GATES)[Math.floor(Math.random() * 4)]
+      });
+    }
+  }
+
+  function renderMaze() {
+    const grid = document.getElementById('mazeGrid');
+    grid.innerHTML = '';
+    const size = GAME_CONFIG.gridSize;
+
+    for (let i = 0; i < size * size; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'maze-cell';
+
+      const cellType = gameState.mazeLayout[i];
+      const x = i % size;
+      const y = Math.floor(i / size);
+
+      if (cellType === -1) {
+        cell.classList.add('wall');
+        cell.textContent = '█';
+      } else if (cellType === 1) {
+        cell.classList.add('player');
+        cell.textContent = '◉';
+      } else if (cellType === 3) {
+        cell.classList.add('exit');
+        cell.textContent = '⬛';
+      } else if (cellType === 2) {
+        cell.classList.add('door');
+        const door = gameState.doors.find(d => d.pos === i);
+        if (door && door.locked) {
+          cell.classList.add('locked');
+          cell.textContent = '🔒';
+        } else {
+          cell.textContent = '🔓';
+        }
+        cell.onclick = () => !door.locked && movePlayer(x, y);
+      } else {
+        cell.onclick = () => movePlayer(x, y);
+        cell.textContent = '·';
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function movePlayer(x, y) {
+    if (!gameState.gameActive || gameState.isPaused) return;
+
+    const newPos = y * GAME_CONFIG.gridSize + x;
+    const cellType = gameState.mazeLayout[newPos];
+
+    if (cellType === -1) {
+      showErrorPopup('Menabrak dinding!', 'Jangan memasuki area terlarang!');
+      gameState.lives--;
+      updateDisplay();
+      if (gameState.lives <= 0) endGame(false);
+      return;
+    }
+
+    if (cellType === 2) {
+      const door = gameState.doors.find(d => d.pos === newPos);
+      if (door && door.locked) {
+        openPuzzleModal(door);
+        return;
+      }
+    }
+
+    // Pindahkan player
+    const oldPos = gameState.playerPos.y * GAME_CONFIG.gridSize + gameState.playerPos.x;
+    gameState.mazeLayout[oldPos] = 0;
+    gameState.playerPos = { x, y };
+    gameState.mazeLayout[newPos] = 1;
+
+    // Cek exit
+    if (cellType === 3) {
+      endGame(true);
+      return;
+    }
+
+    renderMaze();
+    gameState.score += 10;
+    updateDisplay();
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // LOGIC PUZZLE SYSTEM
+  // ═════════════════════════════════════════════════════════════════
+
+  function openPuzzleModal(door) {
+    const gateType = door.gateType;
+    const gate = LOGIC_GATES[gateType];
+
+    // Generate random inputs
+    const inputA = Math.random() > 0.5 ? 1 : 0;
+    const inputB = gateType === 'NOT' ? null : (Math.random() > 0.5 ? 1 : 0);
+
+    gameState.currentPuzzle = {
+      door: door,
+      gateType: gateType,
+      inputA: inputA,
+      inputB: inputB,
+      correctAnswer: gateType === 'NOT' 
+        ? gate.calculate(inputA)
+        : gate.calculate(inputA, inputB)
+    };
+
+    // Update modal
+    document.getElementById('puzzleTitle').textContent = gate.name;
+    document.getElementById('puzzleDesc').textContent = gate.desc;
+
+    if (gateType === 'NOT') {
+      document.getElementById('puzzleType').textContent = `${gate.formula} | Input: A = ${inputA}`;
+    } else {
+      document.getElementById('puzzleType').textContent = `${gate.formula} | A = ${inputA}, B = ${inputB}`;
+    }
+
+    // Render bit inputs
+    const bitInputsContainer = document.getElementById('bitInputs');
+    bitInputsContainer.innerHTML = '';
+
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'bit-input-group';
+    inputGroup.innerHTML = `
+      <span class="bit-label">Jawaban Output</span>
+      <div style="display: flex; gap: 10px;">
+        <button class="bit-toggle" data-bit="0" onclick="selectBit(0)">0</button>
+        <button class="bit-toggle" data-bit="1" onclick="selectBit(1)">1</button>
+      </div>
+    `;
+    bitInputsContainer.appendChild(inputGroup);
+
+    document.getElementById('puzzleModal').classList.add('active');
+  }
+
+  function selectBit(bit) {
+    document.querySelectorAll('.bit-toggle').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-bit="${bit}"]`).classList.add('active');
+    gameState.currentPuzzle.selectedAnswer = bit;
+  }
+
+  function submitAnswer() {
+    const puzzle = gameState.currentPuzzle;
+    const selectedAnswer = puzzle.selectedAnswer;
+
+    if (selectedAnswer === undefined) {
+      showErrorPopup('Pilih jawaban!', 'Pilih 0 atau 1 sebagai output.');
+      return;
+    }
+
+    document.getElementById('puzzleModal').classList.remove('active');
+
+    if (selectedAnswer === puzzle.correctAnswer) {
+      puzzle.door.locked = false;
+      gameState.score += 50 * gameState.currentLevel;
+      renderMaze();
+      updateDisplay();
+      showSuccessPopup('Benar!', `Jawaban ${puzzle.correctAnswer} benar! Pintu terbuka.`);
+    } else {
+      gameState.lives--;
+      updateDisplay();
+      if (gameState.lives <= 0) {
+        endGame(false);
+      } else {
+        showErrorPopup('Salah!', `Jawaban yang benar adalah ${puzzle.correctAnswer}`);
+      }
+    }
+  }
+
+  function skipPuzzle() {
+    document.getElementById('puzzleModal').classList.remove('active');
+    gameState.currentPuzzle = null;
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // TIMER & GAME CONTROL
+  // ═════════════════════════════════════════════════════════════════
+
+  function startTimer() {
+    gameState.timerInterval = setInterval(() => {
+      if (!gameState.isPaused) {
+        gameState.timeRemaining--;
+        updateTimerDisplay();
+
+        if (gameState.timeRemaining <= 0) {
+          clearInterval(gameState.timerInterval);
+          endGame(false);
+        }
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const timerEl = document.getElementById('timerDisplay');
+    timerEl.textContent = gameState.timeRemaining;
+
+    if (gameState.timeRemaining <= 10) {
+      timerEl.classList.add('danger');
+    } else if (gameState.timeRemaining <= 20) {
+      timerEl.classList.add('warning');
+    } else {
+      timerEl.classList.remove('danger', 'warning');
+    }
+  }
+
+  function pauseGame() {
+    gameState.isPaused = !gameState.isPaused;
+    if (gameState.isPaused) {
+      alert('Game dijeda. Tekan OK untuk melanjutkan.');
+    }
+    gameState.isPaused = false;
+  }
+
+  function updateDisplay() {
+    document.getElementById('levelDisplay').textContent = gameState.currentLevel;
+    document.getElementById('scoreDisplay').textContent = gameState.score;
+    document.getElementById('livesDisplay').textContent = gameState.lives;
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // GAME END LOGIC
+  // ═════════════════════════════════════════════════════════════════
+
+  function endGame(won) {
+    gameState.gameActive = false;
+    clearInterval(gameState.timerInterval);
+
+    const endPopup = document.getElementById('gameEndPopup');
+    const endContent = document.getElementById('gameEndContent');
+
+    if (won) {
+      endContent.classList.remove('popup-error');
+      endContent.classList.add('popup-success');
+      document.getElementById('gameEndIcon').textContent = '🎊';
+      document.getElementById('gameEndTitle').textContent = 'SELAMAT!';
+      document.getElementById('gameEndMessage').textContent = `Level ${gameState.currentLevel} selesai! Skor: ${gameState.score}`;
+    } else {
+      endContent.classList.remove('popup-success');
+      endContent.classList.add('popup-error');
+      document.getElementById('gameEndIcon').textContent = '💀';
+      document.getElementById('gameEndTitle').textContent = 'GAME OVER';
+      document.getElementById('gameEndMessage').textContent = `Total Skor: ${gameState.score}`;
+      if (gameState.currentLevel < GAME_CONFIG.maxLevels) {
+        document.querySelector('#gameEndPopup .popup-buttons').innerHTML = `
+          <button class="btn-popup" onclick="mainMenu()">MAIN LAGI</button>
+          <button class="btn-popup" onclick="nextLevel()">LANJUT KE LEVEL ${gameState.currentLevel + 1}</button>
+        `;
+      }
+    }
+
+    endPopup.classList.add('active');
+  }
+
+  function nextLevel() {
+    if (gameState.currentLevel < GAME_CONFIG.maxLevels) {
+      gameState.currentLevel++;
+      document.getElementById('gameEndPopup').classList.remove('active');
+      startGame();
+    } else {
+      alert('Kamu telah menyelesaikan semua level!');
+      mainMenu();
+    }
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // POPUP HELPERS
+  // ═════════════════════════════════════════════════════════════════
+
+  function showSuccessPopup(title, message) {
+    const popup = document.getElementById('resultPopup');
+    const content = popup.querySelector('.popup-content');
+    
+    content.classList.remove('popup-error');
+    content.classList.add('popup-success');
+    
+    document.getElementById('popupIcon').textContent = '✓';
+    document.getElementById('popupTitle').textContent = title;
+    document.getElementById('popupMessage').textContent = message;
+    
+    popup.classList.add('active');
+  }
+
+  function showErrorPopup(title, message) {
+    const popup = document.getElementById('resultPopup');
+    const content = popup.querySelector('.popup-content');
+    
+    content.classList.remove('popup-success');
+    content.classList.add('popup-error');
+    
+    document.getElementById('popupIcon').textContent = '✕';
+    document.getElementById('popupTitle').textContent = title;
+    document.getElementById('popupMessage').textContent = message;
+    
+    popup.classList.add('active');
+  }
+
+  function closeResultPopup() {
+    document.getElementById('resultPopup').classList.remove('active');
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // INSTRUCTIONS & ABOUT
+  // ═════════════════════════════════════════════════════════════════
+
+  function showInstructions() {
+    alert(`
+PANDUAN BINARY MAZE ESCAPE
+
+📖 CARA BERMAIN:
+1. Navigasi labirin dengan mengklik sel-sel
+2. Hindari dinding (█) - akan kehilangan nyawa
+3. Buka pintu (🔒) dengan menjawab soal logika
+4. Capai exit (⬛) di pojok kanan bawah
+
+🔐 GERBANG LOGIKA:
+• AND: Output 1 jika SEMUA input = 1
+• OR: Output 1 jika MINIMAL 1 input = 1
+• XOR: Output 1 jika input BERBEDA
+• NOT: Output kebalikan dari input
+
+⏱️ SISTEM:
+• Timer: 60 detik per level
+• Nyawa: 3 kesempatan
+• Skor: +10 per langkah, +50 per pintu dibuka
+• Level: 1-6 dengan kesulitan bertingkat
+
+💡 TIPS:
+• Pelajari pola gerbang logika
+• Rencanakan jalur sebelum bergerak
+• Setiap level lebih sulit dari sebelumnya
+    `);
+  }
+
+  function showAbout() {
+    alert(`
+TENTANG GAME
+
+Nama: Binary Maze Escape
+Tipe: Educational Game - Discrete Mathematics
+Subjek: Binary Numbers, Boolean Logic, Logic Gates
+
+Tujuan pembelajaran:
+✓ Memahami operasi biner (0 dan 1)
+✓ Menguasai logika boolean
+✓ Mengaplikasikan gerbang logika (AND, OR, XOR, NOT)
+✓ Berpikir logis dalam pemecahan masalah
+
+Dikembangkan untuk platform pembelajaran Mathematic
+    `);
+  }
+
+  // ═════════════════════════════════════════════════════════════════
+  // INITIALIZATION
+  // ═════════════════════════════════════════════════════════════════
+
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('[Binary Maze Escape] Game loaded successfully');
+  });
+</script>
+
+</body>
+</html>
