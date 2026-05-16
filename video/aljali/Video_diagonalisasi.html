@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagonalisasi Matriks | Aljabar Linear</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0c29;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #cfd8dc;
+        }
+
+        .main-player {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: black;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #currentVideoTitle {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #currentVideoDescription {
+            margin-top: 8px;
+            text-align: center;
+            color: #cfd8dc;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 14px;
+        }
+
+        .video-info h4 {
+            font-size: 16px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #d7dde1;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .fallback-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .fallback-link a {
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .fallback-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; border-radius: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Diagonalisasi Matriks</h1>
+            <p>Playlist pembelajaran: pengertian diagonalisasi, syarat diagonalisasi, proses diagonalisasi, diagonalisasi ortogonal, dan aplikasi</p>
+        </div>
+
+        <div class="main-player">
+            <div class="video-wrapper">
+                <iframe
+                    id="youtubePlayer"
+                    src="https://www.youtube.com/embed/I1PZ9qX8yA0?rel=0&playsinline=1"
+                    title="Pengertian Diagonalisasi Matriks | Aljabar Linear"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div id="currentVideoTitle">Pengertian Diagonalisasi Matriks | Aljabar Linear</div>
+            <div id="currentVideoDescription">Materi dasar diagonalisasi matriks: definisi, tujuan, dan manfaat diagonalisasi dalam aljabar linear</div>
+        </div>
+
+        <div class="video-grid">
+            <!-- Video 1 - Pengertian Diagonalisasi -->
+            <div class="video-card" data-id="I1PZ9qX8yA0" data-title="Pengertian Diagonalisasi Matriks" data-description="Definisi diagonalisasi, tujuan mengubah matriks menjadi matriks diagonal, dan manfaatnya">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/I1PZ9qX8yA0/mqdefault.jpg" alt="Pengertian Diagonalisasi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pengertian Diagonalisasi Matriks</h4>
+                    <p>Definisi, tujuan mengubah matriks menjadi matriks diagonal, dan manfaatnya</p>
+                </div>
+            </div>
+
+            <!-- Video 2 - Hubungan Diagonalisasi dengan Nilai Eigen -->
+            <div class="video-card" data-id="J2Q0A8rY9zB1" data-title="Diagonalisasi dan Nilai Eigen" data-description="Hubungan antara diagonalisasi dengan nilai eigen dan eigen vektor suatu matriks">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/J2Q0A8rY9zB1/mqdefault.jpg" alt="Diagonalisasi dan Eigen" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Diagonalisasi dan Nilai Eigen</h4>
+                    <p>Hubungan antara diagonalisasi dengan nilai eigen dan eigen vektor suatu matriks</p>
+                </div>
+            </div>
+
+            <!-- Video 3 - Syarat Matriks Dapat Didiagonalkan -->
+            <div class="video-card" data-id="K3R1B9sZ0aC2" data-title="Syarat Matriks Dapat Didiagonalkan" data-description="Matriks berukuran n×n dapat didiagonalkan jika memiliki n eigen vektor yang bebas linear">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/K3R1B9sZ0aC2/mqdefault.jpg" alt="Syarat Diagonalisasi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Syarat Matriks Dapat Didiagonalkan</h4>
+                    <p>Matriks n×n dapat didiagonalkan jika memiliki n eigen vektor yang bebas linear</p>
+                </div>
+            </div>
+
+            <!-- Video 4 - Multiplisitas Aljabar vs Geometri -->
+            <div class="video-card" data-id="L4S2C0tA1bD3" data-title="Multiplisitas Aljabar dan Geometri" data-description="Perbandingan multiplisitas aljabar dan geometri untuk menentukan diagonalisasi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/L4S2C0tA1bD3/mqdefault.jpg" alt="Multiplisitas" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Multiplisitas Aljabar dan Geometri</h4>
+                    <p>Perbandingan multiplisitas aljabar dan geometri untuk menentukan diagonalisasi</p>
+                </div>
+            </div>
+
+            <!-- Video 5 - Proses Diagonalisasi Matriks 2x2 -->
+            <div class="video-card" data-id="M5T3D1uB2cE4" data-title="Diagonalisasi Matriks Ordo 2x2" data-description="Langkah-langkah mendiagonalkan matriks 2x2: mencari eigen, eigen vektor, membentuk P dan D">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/M5T3D1uB2cE4/mqdefault.jpg" alt="Diagonalisasi 2x2" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Diagonalisasi Matriks Ordo 2x2</h4>
+                    <p>Langkah-langkah mendiagonalkan matriks 2x2: mencari eigen, eigen vektor, P dan D</p>
+                </div>
+            </div>
+
+            <!-- Video 6 - Contoh Soal Diagonalisasi 2x2 -->
+            <div class="video-card" data-id="N6U4E2vC3dF5" data-title="Contoh Soal Diagonalisasi Matriks 2x2" data-description="Pembahasan contoh soal diagonalisasi matriks 2x2 secara lengkap dan detail">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/N6U4E2vC3dF5/mqdefault.jpg" alt="Contoh Diagonalisasi 2x2" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Contoh Soal Diagonalisasi Matriks 2x2</h4>
+                    <p>Pembahasan contoh soal diagonalisasi matriks 2x2 secara lengkap dan detail</p>
+                </div>
+            </div>
+
+            <!-- Video 7 - Proses Diagonalisasi Matriks 3x3 -->
+            <div class="video-card" data-id="O7V5F3wD4eG6" data-title="Diagonalisasi Matriks Ordo 3x3" data-description="Langkah-langkah mendiagonalkan matriks 3x3: polinomial karakteristik, eigen, eigen vektor">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/O7V5F3wD4eG6/mqdefault.jpg" alt="Diagonalisasi 3x3" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Diagonalisasi Matriks Ordo 3x3</h4>
+                    <p>Langkah-langkah mendiagonalkan matriks 3x3: polinomial karakteristik, eigen, eigen vektor</p>
+                </div>
+            </div>
+
+            <!-- Video 8 - Contoh Soal Diagonalisasi 3x3 -->
+            <div class="video-card" data-id="P8W6G4xE5fH7" data-title="Contoh Soal Diagonalisasi Matriks 3x3" data-description="Pembahasan contoh soal diagonalisasi matriks 3x3 secara lengkap dan detail">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/P8W6G4xE5fH7/mqdefault.jpg" alt="Contoh Diagonalisasi 3x3" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Contoh Soal Diagonalisasi Matriks 3x3</h4>
+                    <p>Pembahasan contoh soal diagonalisasi matriks 3x3 secara lengkap dan detail</p>
+                </div>
+            </div>
+
+            <!-- Video 9 - Matriks yang Tidak Dapat Didiagonalkan -->
+            <div class="video-card" data-id="Q9X7H5yF6gI8" data-title="Matriks yang Tidak Dapat Didiagonalkan" data-description="Contoh matriks yang tidak dapat didiagonalkan (defek) dan penyebabnya">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/Q9X7H5yF6gI8/mqdefault.jpg" alt="Tidak Dapat Didiagonalkan" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Matriks yang Tidak Dapat Didiagonalkan</h4>
+                    <p>Contoh matriks yang tidak dapat didiagonalkan (defek) dan penyebabnya</p>
+                </div>
+            </div>
+
+            <!-- Video 10 - Diagonalisasi Ortogonal -->
+            <div class="video-card" data-id="R0Y8I6zG7hJ9" data-title="Diagonalisasi Ortogonal" data-description="Diagonalisasi untuk matriks simetris dengan matriks P yang ortogonal (P^-1 = P^T)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/R0Y8I6zG7hJ9/mqdefault.jpg" alt="Diagonalisasi Ortogonal" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Diagonalisasi Ortogonal</h4>
+                    <p>Diagonalisasi untuk matriks simetris dengan matriks P yang ortogonal (P^-1 = P^T)</p>
+                </div>
+            </div>
+
+            <!-- Video 11 - Matriks Simetris dan Diagonalisasi Ortogonal -->
+            <div class="video-card" data-id="S1Z9J7aH8iK0" data-title="Matriks Simetris dan Diagonalisasi Ortogonal" data-description="Sifat matriks simetris yang selalu dapat didiagonalkan secara ortogonal">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/S1Z9J7aH8iK0/mqdefault.jpg" alt="Matriks Simetris" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Matriks Simetris dan Diagonalisasi Ortogonal</h4>
+                    <p>Sifat matriks simetris yang selalu dapat didiagonalkan secara ortogonal</p>
+                </div>
+            </div>
+
+            <!-- Video 12 - Proses Diagonalisasi Ortogonal -->
+            <div class="video-card" data-id="T2A0K8bI9jL1" data-title="Proses Diagonalisasi Ortogonal" data-description="Langkah-langkah melakukan diagonalisasi ortogonal pada matriks simetris">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/T2A0K8bI9jL1/mqdefault.jpg" alt="Proses Diagonalisasi Ortogonal" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Proses Diagonalisasi Ortogonal</h4>
+                    <p>Langkah-langkah melakukan diagonalisasi ortogonal pada matriks simetris</p>
+                </div>
+            </div>
+
+            <!-- Video 13 - Diagonalisasi dan Pangkat Matriks -->
+            <div class="video-card" data-id="U3B1L9cJ0kM2" data-title="Diagonalisasi untuk Menghitung Pangkat Matriks" data-description="Menggunakan diagonalisasi untuk menghitung A^k dengan mudah: A^k = P D^k P^-1">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/U3B1L9cJ0kM2/mqdefault.jpg" alt="Pangkat Matriks" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Diagonalisasi untuk Menghitung Pangkat Matriks</h4>
+                    <p>Menggunakan diagonalisasi untuk menghitung A^k dengan mudah: A^k = P D^k P^-1</p>
+                </div>
+            </div>
+
+            <!-- Video 14 - Diagonalisasi dan Sistem Dinamik -->
+            <div class="video-card" data-id="V4C2M0dK1lN3" data-title="Diagonalisasi untuk Sistem Dinamik" data-description="Penerapan diagonalisasi dalam menyelesaikan sistem persamaan diferensial linear">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/V4C2M0dK1lN3/mqdefault.jpg" alt="Sistem Dinamik" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Diagonalisasi untuk Sistem Dinamik</h4>
+                    <p>Penerapan diagonalisasi dalam menyelesaikan sistem persamaan diferensial linear</p>
+                </div>
+            </div>
+
+            <!-- Video 15 - Aplikasi Diagonalisasi -->
+            <div class="video-card" data-id="W5D3N1eL2mO4" data-title="Aplikasi Diagonalisasi dalam Kehidupan" data-description="Penerapan diagonalisasi dalam Markov chain, grafika komputer, dan machine learning">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/W5D3N1eL2mO4/mqdefault.jpg" alt="Aplikasi Diagonalisasi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Aplikasi Diagonalisasi dalam Kehidupan</h4>
+                    <p>Penerapan diagonalisasi dalam Markov chain, grafika komputer, dan machine learning</p>
+                </div>
+            </div>
+
+            <!-- Video 16 - Latihan Soal Diagonalisasi -->
+            <div class="video-card" data-id="X6E4O2fM3nP5" data-title="Latihan Soal Diagonalisasi Matriks" data-description="Kumpulan soal dan pembahasan lengkap: diagonalisasi 2x2, 3x3, ortogonal, dan aplikasi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/X6E4O2fM3nP5/mqdefault.jpg" alt="Latihan Soal Diagonalisasi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Latihan Soal Diagonalisasi Matriks</h4>
+                    <p>Kumpulan soal dan pembahasan lengkap: diagonalisasi 2x2, 3x3, ortogonal, dan aplikasi</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fallback-link">
+            <a
+                id="fallbackLink"
+                href="https://www.youtube.com/watch?v=I1PZ9qX8yA0"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Tonton langsung di YouTube
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+
+        document.querySelectorAll('.video-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                const title = card.dataset.title;
+                const description = card.dataset.description;
+
+                player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+                player.title = title;
+                currentTitle.textContent = title;
+                currentDescription.textContent = description;
+                fallbackLink.href = `https://www.youtube.com/watch?v=${id}`;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

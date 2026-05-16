@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Persamaan Linear | Matematika Aljabar</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0c29;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #cfd8dc;
+        }
+
+        .main-player {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: black;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #currentVideoTitle {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #currentVideoDescription {
+            margin-top: 8px;
+            text-align: center;
+            color: #cfd8dc;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 14px;
+        }
+
+        .video-info h4 {
+            font-size: 16px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #d7dde1;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .fallback-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .fallback-link a {
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .fallback-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; border-radius: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistem Persamaan Linear</h1>
+            <p>Playlist pembelajaran: persamaan linear, sistem persamaan linear dua variabel (SPLDV), tiga variabel (SPLTV), metode penyelesaian, dan aplikasi</p>
+        </div>
+
+        <div class="main-player">
+            <div class="video-wrapper">
+                <iframe
+                    id="youtubePlayer"
+                    src="https://www.youtube.com/embed/E1PZ9qX8yA0?rel=0&playsinline=1"
+                    title="Pengertian Sistem Persamaan Linear | Matematika Aljabar"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div id="currentVideoTitle">Pengertian Sistem Persamaan Linear | Matematika Aljabar</div>
+            <div id="currentVideoDescription">Materi dasar sistem persamaan linear: definisi, bentuk umum, dan contoh dalam kehidupan sehari-hari</div>
+        </div>
+
+        <div class="video-grid">
+            <!-- Video 1 - Pengertian Sistem Persamaan Linear -->
+            <div class="video-card" data-id="E1PZ9qX8yA0" data-title="Pengertian Sistem Persamaan Linear" data-description="Definisi sistem persamaan linear, bentuk umum, dan contoh dalam kehidupan sehari-hari">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/E1PZ9qX8yA0/mqdefault.jpg" alt="Pengertian SPL" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pengertian Sistem Persamaan Linear</h4>
+                    <p>Definisi, bentuk umum, dan contoh dalam kehidupan sehari-hari</p>
+                </div>
+            </div>
+
+            <!-- Video 2 - Persamaan Linear Satu Variabel -->
+            <div class="video-card" data-id="F2Q0A8rY9zB1" data-title="Persamaan Linear Satu Variabel (PLSV)" data-description="Pengertian, bentuk umum ax + b = 0, dan cara menyelesaikan PLSV">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/F2Q0A8rY9zB1/mqdefault.jpg" alt="PLSV" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Persamaan Linear Satu Variabel (PLSV)</h4>
+                    <p>Pengertian, bentuk umum ax + b = 0, dan cara menyelesaikan PLSV</p>
+                </div>
+            </div>
+
+            <!-- Video 3 - Persamaan Linear Dua Variabel -->
+            <div class="video-card" data-id="G3R1B9sZ0aC2" data-title="Persamaan Linear Dua Variabel (PLDV)" data-description="Bentuk umum ax + by = c, himpunan penyelesaian, dan grafik persamaan linear">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/G3R1B9sZ0aC2/mqdefault.jpg" alt="PLDV" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Persamaan Linear Dua Variabel (PLDV)</h4>
+                    <p>Bentuk umum ax + by = c, himpunan penyelesaian, dan grafik persamaan linear</p>
+                </div>
+            </div>
+
+            <!-- Video 4 - Sistem Persamaan Linear Dua Variabel (SPLDV) -->
+            <div class="video-card" data-id="H4S2C0tA1bD3" data-title="SPLDV - Sistem Persamaan Linear Dua Variabel" data-description="Pengertian SPLDV, bentuk umum, dan jenis-jenis penyelesaian (unik, tak hingga, tidak ada)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/H4S2C0tA1bD3/mqdefault.jpg" alt="SPLDV" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>SPLDV - Sistem Persamaan Linear Dua Variabel</h4>
+                    <p>Pengertian, bentuk umum, dan jenis-jenis penyelesaian (unik, tak hingga, tidak ada)</p>
+                </div>
+            </div>
+
+            <!-- Video 5 - Metode Grafik SPLDV -->
+            <div class="video-card" data-id="I5T3D1uB2cE4" data-title="Metode Grafik SPLDV" data-description="Menyelesaikan SPLDV dengan menggambar grafik dan menentukan titik potong">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/I5T3D1uB2cE4/mqdefault.jpg" alt="Metode Grafik" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Grafik SPLDV</h4>
+                    <p>Menyelesaikan SPLDV dengan menggambar grafik dan menentukan titik potong</p>
+                </div>
+            </div>
+
+            <!-- Video 6 - Metode Substitusi SPLDV -->
+            <div class="video-card" data-id="J6U4E2vC3dF5" data-title="Metode Substitusi SPLDV" data-description="Cara menyelesaikan SPLDV dengan metode substitusi (mengganti variabel)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/J6U4E2vC3dF5/mqdefault.jpg" alt="Metode Substitusi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Substitusi SPLDV</h4>
+                    <p>Cara menyelesaikan SPLDV dengan metode substitusi (mengganti variabel)</p>
+                </div>
+            </div>
+
+            <!-- Video 7 - Metode Eliminasi SPLDV -->
+            <div class="video-card" data-id="K7V5F3wD4eG6" data-title="Metode Eliminasi SPLDV" data-description="Menyelesaikan SPLDV dengan menghilangkan salah satu variabel">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/K7V5F3wD4eG6/mqdefault.jpg" alt="Metode Eliminasi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Eliminasi SPLDV</h4>
+                    <p>Menyelesaikan SPLDV dengan menghilangkan (mengeliminasi) salah satu variabel</p>
+                </div>
+            </div>
+
+            <!-- Video 8 - Metode Campuran (Eliminasi-Substitusi) -->
+            <div class="video-card" data-id="L8W6G4xE5fH7" data-title="Metode Campuran (Eliminasi dan Substitusi) SPLDV" data-description="Kombinasi metode eliminasi dan substitusi untuk menyelesaikan SPLDV">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/L8W6G4xE5fH7/mqdefault.jpg" alt="Metode Campuran" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Campuran (Eliminasi dan Substitusi) SPLDV</h4>
+                    <p>Kombinasi metode eliminasi dan substitusi untuk menyelesaikan SPLDV</p>
+                </div>
+            </div>
+
+            <!-- Video 9 - Sistem Persamaan Linear Tiga Variabel (SPLTV) -->
+            <div class="video-card" data-id="M9X7H5yF6gI8" data-title="SPLTV - Sistem Persamaan Linear Tiga Variabel" data-description="Pengertian SPLTV, bentuk umum ax + by + cz = d, dan contoh soal">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/M9X7H5yF6gI8/mqdefault.jpg" alt="SPLTV" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>SPLTV - Sistem Persamaan Linear Tiga Variabel</h4>
+                    <p>Pengertian SPLTV, bentuk umum ax + by + cz = d, dan contoh soal</p>
+                </div>
+            </div>
+
+            <!-- Video 10 - Metode Substitusi SPLTV -->
+            <div class="video-card" data-id="N0Y8I6zG7hJ9" data-title="Metode Substitusi SPLTV" data-description="Menyelesaikan SPLTV dengan metode substitusi bertahap">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/N0Y8I6zG7hJ9/mqdefault.jpg" alt="Substitusi SPLTV" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Substitusi SPLTV</h4>
+                    <p>Menyelesaikan SPLTV dengan metode substitusi bertahap</p>
+                </div>
+            </div>
+
+            <!-- Video 11 - Metode Eliminasi SPLTV -->
+            <div class="video-card" data-id="O1Z9J7aH8iK0" data-title="Metode Eliminasi SPLTV" data-description="Menyelesaikan SPLTV dengan eliminasi variabel secara bertahap">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/O1Z9J7aH8iK0/mqdefault.jpg" alt="Eliminasi SPLTV" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Eliminasi SPLTV</h4>
+                    <p>Menyelesaikan SPLTV dengan eliminasi variabel secara bertahap</p>
+                </div>
+            </div>
+
+            <!-- Video 12 - Metode Determinan (Aturan Cramer) -->
+            <div class="video-card" data-id="P2A0K8bI9jL1" data-title="Metode Determinan (Aturan Cramer) untuk SPL" data-description="Menyelesaikan SPL menggunakan determinan matriks dan aturan Cramer">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/P2A0K8bI9jL1/mqdefault.jpg" alt="Aturan Cramer" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Determinan (Aturan Cramer) untuk SPL</h4>
+                    <p>Menyelesaikan SPL menggunakan determinan matriks dan aturan Cramer</p>
+                </div>
+            </div>
+
+            <!-- Video 13 - Metode Matriks Invers -->
+            <div class="video-card" data-id="Q3B1L9cJ0kM2" data-title="Metode Matriks Invers untuk SPL" data-description="Menyelesaikan SPL dengan AX = B, maka X = A^(-1) B">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/Q3B1L9cJ0kM2/mqdefault.jpg" alt="Matriks Invers" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Metode Matriks Invers untuk SPL</h4>
+                    <p>Menyelesaikan SPL dengan bentuk AX = B, maka X = A^(-1) B</p>
+                </div>
+            </div>
+
+            <!-- Video 14 - Sistem Persamaan Linear Homogen -->
+            <div class="video-card" data-id="R4C2M0dK1lN3" data-title="Sistem Persamaan Linear Homogen" data-description="Bentuk SPL dengan ruas kanan = 0, solusi trivial dan non-trivial">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/R4C2M0dK1lN3/mqdefault.jpg" alt="SPL Homogen" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Sistem Persamaan Linear Homogen</h4>
+                    <p>Bentuk SPL dengan ruas kanan = 0, solusi trivial dan non-trivial</p>
+                </div>
+            </div>
+
+            <!-- Video 15 - Aplikasi SPL dalam Kehidupan -->
+            <div class="video-card" data-id="S5D3N1eL2mO4" data-title="Aplikasi Sistem Persamaan Linear dalam Kehidupan" data-description="Penerapan SPL dalam ekonomi, teknik, campuran, dan masalah sehari-hari">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/S5D3N1eL2mO4/mqdefault.jpg" alt="Aplikasi SPL" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Aplikasi Sistem Persamaan Linear dalam Kehidupan</h4>
+                    <p>Penerapan SPL dalam ekonomi, teknik, campuran, dan masalah sehari-hari</p>
+                </div>
+            </div>
+
+            <!-- Video 16 - Latihan Soal Sistem Persamaan Linear -->
+            <div class="video-card" data-id="T6E4O2fM3nP5" data-title="Latihan Soal Sistem Persamaan Linear" data-description="Kumpulan soal dan pembahasan SPLDV, SPLTV, metode grafik, substitusi, eliminasi, dan determinan">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/T6E4O2fM3nP5/mqdefault.jpg" alt="Latihan Soal SPL" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Latihan Soal Sistem Persamaan Linear</h4>
+                    <p>Kumpulan soal dan pembahasan SPLDV, SPLTV, metode grafik, substitusi, eliminasi, dan determinan</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fallback-link">
+            <a
+                id="fallbackLink"
+                href="https://www.youtube.com/watch?v=E1PZ9qX8yA0"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Tonton langsung di YouTube
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+
+        document.querySelectorAll('.video-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                const title = card.dataset.title;
+                const description = card.dataset.description;
+
+                player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+                player.title = title;
+                currentTitle.textContent = title;
+                currentDescription.textContent = description;
+                fallbackLink.href = `https://www.youtube.com/watch?v=${id}`;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

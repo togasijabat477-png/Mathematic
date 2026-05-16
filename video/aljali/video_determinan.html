@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Determinan Matriks | Aljabar Linear</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0c29;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #cfd8dc;
+        }
+
+        .main-player {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: black;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #currentVideoTitle {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #currentVideoDescription {
+            margin-top: 8px;
+            text-align: center;
+            color: #cfd8dc;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 14px;
+        }
+
+        .video-info h4 {
+            font-size: 16px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #d7dde1;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .fallback-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .fallback-link a {
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .fallback-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; border-radius: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Determinan Matriks</h1>
+            <p>Playlist pembelajaran: pengertian determinan, determinan ordo 2x2, determinan ordo 3x3, metode Sarrus, ekspansi kofaktor, dan sifat-sifat determinan</p>
+        </div>
+
+        <div class="main-player">
+            <div class="video-wrapper">
+                <iframe
+                    id="youtubePlayer"
+                    src="https://www.youtube.com/embed/G1PZ9qX8yA0?rel=0&playsinline=1"
+                    title="Pengertian Determinan Matriks | Aljabar Linear"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div id="currentVideoTitle">Pengertian Determinan Matriks | Aljabar Linear</div>
+            <div id="currentVideoDescription">Materi dasar determinan: definisi, sejarah, dan kegunaan determinan dalam matematika</div>
+        </div>
+
+        <div class="video-grid">
+            <!-- Video 1 - Pengertian Determinan -->
+            <div class="video-card" data-id="G1PZ9qX8yA0" data-title="Pengertian Determinan Matriks" data-description="Definisi determinan, sejarah, dan kegunaan determinan dalam matematika dan aljabar linear">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/G1PZ9qX8yA0/mqdefault.jpg" alt="Pengertian Determinan" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pengertian Determinan Matriks</h4>
+                    <p>Definisi determinan, sejarah, dan kegunaan dalam matematika</p>
+                </div>
+            </div>
+
+            <!-- Video 2 - Determinan Matriks Ordo 1x1 dan 2x2 -->
+            <div class="video-card" data-id="H2Q0A8rY9zB1" data-title="Determinan Matriks Ordo 1x1 dan 2x2" data-description="Cara menghitung determinan matriks 1x1 dan determinan 2x2 dengan rumus ad - bc">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/H2Q0A8rY9zB1/mqdefault.jpg" alt="Determinan 1x1 2x2" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan Matriks Ordo 1x1 dan 2x2</h4>
+                    <p>Determinan 1x1 = a, determinan 2x2 = ad - bc, lengkap dengan contoh soal</p>
+                </div>
+            </div>
+
+            <!-- Video 3 - Determinan Matriks Ordo 3x3 (Metode Sarrus) -->
+            <div class="video-card" data-id="I3R1B9sZ0aC2" data-title="Determinan Ordo 3x3 - Metode Sarrus" data-description="Cara cepat menghitung determinan matriks 3x3 dengan metode Sarrus (untuk ordo 3x3 saja)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/I3R1B9sZ0aC2/mqdefault.jpg" alt="Metode Sarrus" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan Matriks Ordo 3x3 - Metode Sarrus</h4>
+                    <p>Cara cepat menghitung determinan matriks 3x3 dengan metode Sarrus</p>
+                </div>
+            </div>
+
+            <!-- Video 4 - Minor dan Kofaktor Matriks -->
+            <div class="video-card" data-id="J4S2C0tA1bD3" data-title="Minor dan Kofaktor Matriks" data-description="Pengertian minor (Mij) dan kofaktor (Cij) sebagai dasar ekspansi determinan">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/J4S2C0tA1bD3/mqdefault.jpg" alt="Minor Kofaktor" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Minor dan Kofaktor Matriks</h4>
+                    <p>Pengertian minor (Mij) dan kofaktor (Cij) = (-1)^(i+j) × Mij</p>
+                </div>
+            </div>
+
+            <!-- Video 5 - Determinan Matriks Ordo 3x3 (Ekspansi Kofaktor) -->
+            <div class="video-card" data-id="K5T3D1uB2cE4" data-title="Determinan 3x3 - Metode Ekspansi Kofaktor" data-description="Menghitung determinan matriks 3x3 dengan ekspansi kofaktor sepanjang baris/kolom tertentu">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/K5T3D1uB2cE4/mqdefault.jpg" alt="Ekspansi Kofaktor" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan 3x3 - Metode Ekspansi Kofaktor</h4>
+                    <p>Menghitung determinan dengan ekspansi kofaktor sepanjang baris/kolom tertentu</p>
+                </div>
+            </div>
+
+            <!-- Video 6 - Determinan Matriks Ordo 4x4 (Ekspansi Kofaktor) -->
+            <div class="video-card" data-id="L6U4E2vC3dF5" data-title="Determinan Matriks Ordo 4x4 dengan Ekspansi Kofaktor" data-description="Cara menghitung determinan matriks 4x4 menggunakan metode ekspansi kofaktor">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/L6U4E2vC3dF5/mqdefault.jpg" alt="Determinan 4x4" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan Matriks Ordo 4x4 (Ekspansi Kofaktor)</h4>
+                    <p>Cara menghitung determinan matriks 4x4 dengan ekspansi kofaktor</p>
+                </div>
+            </div>
+
+            <!-- Video 7 - Determinan Matriks Segitiga dan Diagonal -->
+            <div class="video-card" data-id="M7V5F3wD4eG6" data-title="Determinan Matriks Segitiga dan Diagonal" data-description="Determinan matriks segitiga atas/bawah dan matriks diagonal adalah hasil kali elemen diagonal utama">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/M7V5F3wD4eG6/mqdefault.jpg" alt="Determinan Matriks Segitiga" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan Matriks Segitiga dan Diagonal</h4>
+                    <p>Determinan matriks segitiga = hasil kali elemen diagonal utama</p>
+                </div>
+            </div>
+
+            <!-- Video 8 - Sifat-sifat Determinan (Bagian 1) -->
+            <div class="video-card" data-id="N8W6G4xE5fH7" data-title="Sifat-sifat Determinan (Bagian 1)" data-description="Sifat: det(A^T)=det(A), jika ada baris/kolom nol maka determinan=0, pertukaran baris mengubah tanda">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/N8W6G4xE5fH7/mqdefault.jpg" alt="Sifat Determinan 1" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Sifat-sifat Determinan (Bagian 1)</h4>
+                    <p>det(A^T)=det(A), baris/kolom nol determinan=0, pertukaran baris mengubah tanda</p>
+                </div>
+            </div>
+
+            <!-- Video 9 - Sifat-sifat Determinan (Bagian 2) -->
+            <div class="video-card" data-id="O9X7H5yF6gI8" data-title="Sifat-sifat Determinan (Bagian 2)" data-description="Sifat: det(kA)=k^n×det(A), det(AB)=det(A)×det(B), determinan matriks invers">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/O9X7H5yF6gI8/mqdefault.jpg" alt="Sifat Determinan 2" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Sifat-sifat Determinan (Bagian 2)</h4>
+                    <p>det(kA)=k^n×det(A), det(AB)=det(A)×det(B), det(A^-1)=1/det(A)</p>
+                </div>
+            </div>
+
+            <!-- Video 10 - Determinan dan Operasi Baris Elementer (OBE) -->
+            <div class="video-card" data-id="P0Y8I6zG7hJ9" data-title="Determinan dan Operasi Baris Elementer (OBE)" data-description="Pengaruh operasi baris elementer terhadap nilai determinan">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/P0Y8I6zG7hJ9/mqdefault.jpg" alt="OBE dan Determinan" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan dan Operasi Baris Elementer (OBE)</h4>
+                    <p>Pengaruh OBE terhadap nilai determinan (pertukaran, perkalian, penjumlahan baris)</p>
+                </div>
+            </div>
+
+            <!-- Video 11 - Menghitung Determinan dengan Reduksi Baris -->
+            <div class="video-card" data-id="Q1Z9J7aH8iK0" data-title="Menghitung Determinan dengan Reduksi Baris" data-description="Mengubah matriks ke bentuk segitiga atas menggunakan OBE untuk memudahkan perhitungan determinan">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/Q1Z9J7aH8iK0/mqdefault.jpg" alt="Reduksi Baris" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Menghitung Determinan dengan Reduksi Baris</h4>
+                    <p>Mengubah matriks ke bentuk segitiga atas untuk memudahkan perhitungan determinan</p>
+                </div>
+            </div>
+
+            <!-- Video 12 - Determinan dan Matriks Singular -->
+            <div class="video-card" data-id="R2A0K8bI9jL1" data-title="Determinan dan Matriks Singular" data-description="Matriks singular memiliki determinan = 0, matriks non-singular memiliki determinan ≠ 0">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/R2A0K8bI9jL1/mqdefault.jpg" alt="Matriks Singular" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan dan Matriks Singular</h4>
+                    <p>Matriks singular (det=0) tidak memiliki invers, matriks non-singular (det≠0) memiliki invers</p>
+                </div>
+            </div>
+
+            <!-- Video 13 - Determinan dan Sistem Persamaan Linear (Aturan Cramer) -->
+            <div class="video-card" data-id="S3B1L9cJ0kM2" data-title="Aturan Cramer - Menyelesaikan SPL dengan Determinan" data-description="Menyelesaikan SPL menggunakan determinan: x_i = det(A_i)/det(A)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/S3B1L9cJ0kM2/mqdefault.jpg" alt="Aturan Cramer" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Aturan Cramer (Menyelesaikan SPL dengan Determinan)</h4>
+                    <p>Menyelesaikan SPL menggunakan determinan: x_i = det(A_i)/det(A)</p>
+                </div>
+            </div>
+
+            <!-- Video 14 - Determinan dan Luas Bangun Datar -->
+            <div class="video-card" data-id="T4C2M0dK1lN3" data-title="Determinan untuk Menghitung Luas Bangun Datar" data-description="Menggunakan determinan untuk menghitung luas segitiga dan luas poligon">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/T4C2M0dK1lN3/mqdefault.jpg" alt="Luas dengan Determinan" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Determinan untuk Menghitung Luas Bangun Datar</h4>
+                    <p>Luas segitiga = 1/2 × |det| dari vektor posisi titik-titik sudut</p>
+                </div>
+            </div>
+
+            <!-- Video 15 - Aplikasi Determinan dalam Kehidupan -->
+            <div class="video-card" data-id="U5D3N1eL2mO4" data-title="Aplikasi Determinan dalam Kehidupan" data-description="Penerapan determinan dalam kriptografi, grafika komputer, dan analisis data">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/U5D3N1eL2mO4/mqdefault.jpg" alt="Aplikasi Determinan" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Aplikasi Determinan dalam Kehidupan</h4>
+                    <p>Penerapan determinan dalam kriptografi, grafika komputer, dan analisis data</p>
+                </div>
+            </div>
+
+            <!-- Video 16 - Latihan Soal Determinan -->
+            <div class="video-card" data-id="V6E4O2fM3nP5" data-title="Latihan Soal Determinan Matriks" data-description="Kumpulan soal dan pembahasan lengkap: determinan 2x2, 3x3, sifat determinan, dan aturan Cramer">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/V6E4O2fM3nP5/mqdefault.jpg" alt="Latihan Soal Determinan" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Latihan Soal Determinan Matriks</h4>
+                    <p>Kumpulan soal dan pembahasan lengkap: determinan 2x2, 3x3, sifat determinan, dan aturan Cramer</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fallback-link">
+            <a
+                id="fallbackLink"
+                href="https://www.youtube.com/watch?v=G1PZ9qX8yA0"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Tonton langsung di YouTube
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+
+        document.querySelectorAll('.video-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                const title = card.dataset.title;
+                const description = card.dataset.description;
+
+                player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+                player.title = title;
+                currentTitle.textContent = title;
+                currentDescription.textContent = description;
+                fallbackLink.href = `https://www.youtube.com/watch?v=${id}`;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
