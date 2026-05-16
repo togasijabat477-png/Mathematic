@@ -1,382 +1,2129 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Soal & Jawaban Matriks</title>
-    <style>
-        :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            --text-main: #1e293b;
-            --success: #22c55e;
-            --danger: #ef4444;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quiz Matriks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #2d2d4e;
+    --paper: #f8f6f1;
+    --cream: #fdf9f3;
+    --accent-easy: #2e7d58;
+    --accent-easy-light: #d4edde;
+    --accent-medium: #1a5fa8;
+    --accent-medium-light: #d0e4f7;
+    --accent-hard: #8b1a1a;
+    --accent-hard-light: #fde8e8;
+    --gold: #c9a227;
+    --gold-light: #fdf3d7;
+    --correct: #2e7d58;
+    --wrong: #c0392b;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+  }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Times New Roman", Times, serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  body {
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 16px 40px;
+    overflow-x: hidden;
+  }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            padding: 15px;
-        }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,160,42,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(46,125,88,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        .card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 24px;
-            border-radius: 24px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 680px; }
 
-        h2 { color: #1e3a8a; margin-top: 0; font-size: 22px; }
+  /* ── FLOATING LOGIC PARTICLES ── */
+  #particle-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  #particle-canvas.visible { opacity: 1; }
 
-         button {
-            display: block;
-            width: 100%; 
-            padding: 16px 25px;
-            margin: 12px 0; 
-            font-family: "Times New Roman", Times, serif;
-            font-size: 18px; 
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            border: none;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            -webkit-tap-highlight-color: transparent; 
-        }
+  /* ── TOP NAV ── */
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.12);
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .back-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 
+  /* ── SCREEN SHARED ── */
+  .screen { display: none; animation: fadeUp .45s ease both; }
+  .screen.active { display: block; }
 
-        button:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.4);
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-        button:active {
-            transform: translateY(-2px) scale(0.98);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            background: #1d4ed8;
-        }
+  /* ── START SCREEN ── */
+  .start-header {
+    text-align: center;
+    padding: 36px 0 28px;
+  }
 
-        .matrix-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-        }
+  /* Eyebrow animation */
+  .start-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: eyebrowIn .6s ease .2s both;
+  }
+  @keyframes eyebrowIn {
+    from { opacity: 0; letter-spacing: .4em; }
+    to   { opacity: 1; letter-spacing: .18em; }
+  }
 
-        .matrix {
-            display: inline-grid;
-            grid-template-columns: repeat(2, auto);
-            gap: 10px 20px;
-            padding: 10px 15px;
-            position: relative;
-            font-size: 20px;
-            font-weight: bold;
-            color: #1e40af;
-        }
+  /* Title char-by-char animation */
+  .start-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .start-title em { font-style: italic; color: var(--gold); }
 
-        .matrix::before, .matrix::after {
-            content: "";
-            position: absolute;
-            top: 0; bottom: 0;
-            width: 8px;
-            border: 2px solid #1e3a8a;
-        }
+  .title-word {
+    display: inline-block;
+  }
+  .title-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px) rotate(8deg);
+    animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes charIn {
+    to { opacity: 1; transform: translateY(0) rotate(0deg); }
+  }
 
-        .matrix::before { left: 0; border-right: none; border-radius: 6px 0 0 6px; }
-        .matrix::after { right: 0; border-left: none; border-radius: 0 6px 6px 0; }
-        #timer {
-            background: #1e293b;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-family: monospace;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
+  /* Subtitle fade */
+  .start-subtitle {
+    font-size: 15px;
+    color: #5a5a7a;
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp .7s ease 1.2s both;
+  }
 
-        .progress {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
+  /* Animated underline on title */
+  .title-underline {
+    display: block;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), rgba(201,162,39,0.2));
+    border-radius: 3px;
+    margin: 6px auto 0;
+    animation: underlineGrow .8s ease 1.4s both;
+  }
+  @keyframes underlineGrow {
+    to { width: 200px; }
+  }
 
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: 0.4s ease;
-        }
+  .divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin: 20px auto;
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadeUp .5s ease 1s both;
+  }
 
-        .option {
-            text-align: left;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 12px;
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.2s;
-        }
+  /* Level cards */
+  .level-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 28px 0;
+  }
 
-        .correct { background: var(--success) !important; color: white; border-color: var(--success); }
-        .wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
+  .level-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1.5px solid transparent;
+    padding: 28px 28px 28px 32px;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    text-align: left;
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  .level-card.card-in {
+    animation: cardSlideIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes cardSlideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
 
-        .explanation {
-            margin-top: 15px;
-            text-align: left;
-            font-size: 14px;
-            padding: 15px;
-            background: #fffbeb;
-            border-left: 4px solid #f59e0b;
-            border-radius: 8px;
-            color: #92400e;
-            line-height: 1.5;
-        }
+  /* Logic symbol watermark on card */
+  .level-card::after {
+    content: attr(data-symbol);
+    position: absolute;
+    right: 20px;
+    bottom: -10px;
+    font-size: 80px;
+    font-family: var(--mono);
+    font-weight: 700;
+    opacity: 0.07;
+    line-height: 1;
+    transition: all .4s ease;
+    pointer-events: none;
+    transform: rotate(-10deg);
+  }
+  .level-card:hover::after {
+    opacity: 0.15;
+    transform: rotate(-5deg) scale(1.1);
+    bottom: -5px;
+  }
 
-        .hidden { display: none; }
+  .level-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 20px 0 0 20px;
+  }
+  .level-card:hover { transform: translateX(6px) scale(1.01); }
 
-        .info-box {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: left;
-            font-size: 13px;
-            margin-top: 20px;
-        }
-    </style>
+  /* Ripple on click */
+  .level-card .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: rippleAnim .6s linear;
+    background: rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  .level-card.easy   { background: var(--accent-easy-light); border-color: rgba(46,125,88,.25); }
+  .level-card.easy::before { background: var(--accent-easy); }
+  .level-card.medium { background: var(--accent-medium-light); border-color: rgba(26,95,168,.25); }
+  .level-card.medium::before { background: var(--accent-medium); }
+  .level-card.hard   { background: var(--accent-hard-light); border-color: rgba(139,26,26,.25); }
+  .level-card.hard::before { background: var(--accent-hard); }
+
+  .level-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .level-card:hover .level-icon { transform: scale(1.2) rotate(-5deg); }
+
+  .level-info { flex: 1; }
+  .level-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    margin-bottom: 4px;
+  }
+  .level-card.easy   .level-name { color: var(--accent-easy); }
+  .level-card.medium .level-name { color: var(--accent-medium); }
+  .level-card.hard   .level-name { color: var(--accent-hard); }
+
+  .level-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 8px; }
+  .level-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+  .easy   .tag { background: rgba(46,125,88,.15); color: var(--accent-easy); }
+  .medium .tag { background: rgba(26,95,168,.15); color: var(--accent-medium); }
+  .hard   .tag { background: rgba(139,26,26,.15); color: var(--accent-hard); }
+
+  .level-arrow {
+    font-size: 20px; opacity: .4; flex-shrink: 0;
+    transition: all .3s ease;
+  }
+  .level-card:hover .level-arrow { opacity: 1; transform: translateX(6px); }
+
+  /* Quote box */
+  .quote-box {
+    margin-top: 8px;
+    background: var(--gold-light);
+    border: 1px solid rgba(201,162,39,.3);
+    border-radius: 14px;
+    padding: 18px 22px;
+    font-style: italic;
+    font-size: 14px;
+    color: #6b4d0a;
+    line-height: 1.65;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp .6s ease 1.8s both;
+  }
+  .quote-box cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; opacity: .7; font-family: var(--mono); }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+  .quiz-level-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .quiz-level-badge:hover {
+    opacity: 0.75;
+    transform: scale(0.97);
+  }
+  .badge-easy   { background: var(--accent-easy-light);   color: var(--accent-easy); }
+  .badge-medium { background: var(--accent-medium-light); color: var(--accent-medium); }
+  .badge-hard   { background: var(--accent-hard-light);   color: var(--accent-hard); }
+
+  /* Back to level button in quiz */
+  .back-to-level-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .back-to-level-btn:hover {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .back-to-level-btn svg {
+    width: 12px; height: 12px;
+    flex-shrink: 0;
+  }
+
+  .timer-pill {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--ink);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: .04em;
+    transition: background .3s;
+  }
+  .timer-pill.urgent { background: var(--wrong); animation: pulse .6s ease infinite alternate; }
+  @keyframes pulse { from { opacity:1 } to { opacity:.7 } }
+
+  .q-counter {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #888;
+    letter-spacing: .06em;
+  }
+
+  /* Progress track */
+  .progress-track {
+    height: 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 6px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .fill-easy   { background: linear-gradient(90deg, var(--accent-easy), #52b788); }
+  .fill-medium { background: linear-gradient(90deg, var(--accent-medium), #4895ef); }
+  .fill-hard   { background: linear-gradient(90deg, var(--accent-hard), #e76f51); }
+
+  /* Dot row */
+  .dot-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #e0ddd6;
+    transition: all .3s;
+    cursor: pointer;
+  }
+  .dot.answered-correct { background: var(--correct); }
+  .dot.answered-wrong   { background: var(--wrong); }
+  .dot.skipped          { background: var(--gold); }
+  .dot.current          { background: var(--ink); transform: scale(1.3); }
+
+  /* Question card */
+  .q-card {
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.08);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  }
+  .q-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: clamp(15px, 3.5vw, 17px);
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all .22s;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    text-align: left;
+  }
+  .opt:hover:not(.locked) {
+    border-color: var(--ink);
+    background: #fafafa;
+    transform: translateX(4px);
+  }
+  .opt-letter {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.06);
+    color: var(--ink-soft);
+    letter-spacing: .05em;
+    transition: all .2s;
+    margin-top: 1px;
+  }
+  .opt.selected { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .opt.selected .opt-letter { background: rgba(255,255,255,.2); color: #fff; }
+
+  .opt.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
+  .opt.correct .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+  .opt.wrong   { background: var(--wrong);   border-color: var(--wrong);   color: #fff; }
+  .opt.wrong   .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+
+  /* Explanation */
+  .explanation-box {
+    display: none;
+    background: var(--gold-light);
+    border: 1.5px solid rgba(201,162,39,.35);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    animation: slideIn .3s ease;
+  }
+  .explanation-box.show { display: block; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
+
+  .exp-header {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600;
+  }
+  .exp-title { font-size: 13px; font-weight: 700; color: #6b4d0a; margin-bottom: 6px; }
+  .exp-body { font-size: 14px; color: #7a5515; line-height: 1.65; }
+
+  /* Nav buttons */
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .nav-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 20px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+  .btn-prev {
+    background: #fff;
+    border-color: rgba(0,0,0,0.15);
+    color: var(--ink);
+    flex: 0 0 auto;
+  }
+  .btn-prev:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .btn-skip {
+    background: var(--gold-light);
+    border-color: rgba(201,162,39,.4);
+    color: #8b5e00;
+    flex: 1;
+  }
+  .btn-skip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+  .btn-next {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+    flex: 2;
+  }
+  .btn-next:hover { background: var(--ink-soft); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+  .btn-finish {
+    background: var(--gold);
+    color: #fff;
+    border-color: var(--gold);
+    flex: 2;
+  }
+  .btn-finish:hover { background: #a8821e; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,162,39,.4); }
+
+  /* ── RESULT SCREEN ── */
+  .result-container {
+    text-align: center;
+    padding: 16px 0;
+  }
+  .result-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+  }
+  .result-circle {  
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .result-circle svg {
+    position: absolute; inset: 0; transform: rotate(-90deg);
+  }
+  .result-score-num {
+    font-size: 54px; font-weight: 700; line-height: 1;
+    position: relative; z-index: 1;
+  }
+  .result-score-den {
+    font-family: var(--mono); font-size: 14px; color: #888;
+    position: relative; z-index: 1;
+  }
+
+  .result-grade {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 700; margin-bottom: 8px;
+  }
+  .result-message { font-size: 15px; color: #666; line-height: 1.65; margin-bottom: 28px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-box {
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 16px 10px;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; }
+  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #888; margin-top: 4px; }
+
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-action {
+    font-family: var(--serif);
+    font-size: 15px; font-weight: 600;
+    padding: 15px;
+    border-radius: 14px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+  }
+  .btn-retry { background: var(--ink); color: #fff; }
+  .btn-retry:hover { background: var(--ink-soft); transform: translateY(-2px); }
+  .btn-home  { background: #fff; border-color: rgba(0,0,0,.15); color: var(--ink); }
+  .btn-home:hover { background: var(--ink); color: #fff; }
+
+  /* Review panel */
+  .review-toggle {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; color: #888;
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    margin: 0 auto 16px;
+    transition: color .2s;
+  }
+  .review-toggle:hover { color: var(--ink); }
+
+  .review-panel { display: none; margin-bottom: 16px; }
+  .review-panel.open { display: block; }
+
+  .review-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,.07);
+  }
+  .ri-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .ri-correct .ri-dot { background: var(--correct); }
+  .ri-wrong   .ri-dot { background: var(--wrong); }
+  .ri-skipped .ri-dot { background: var(--gold); }
+  .ri-q { flex: 1; color: #444; line-height: 1.4; }
+  .ri-a { font-family: var(--mono); font-size: 11px; color: #888; }
+
+  @media (max-width: 420px) {
+    .level-card { padding: 20px 18px; gap: 16px; }
+    .q-card { padding: 20px; }
+    .nav-row { flex-wrap: wrap; }
+    .btn-prev { flex: 0 0 46px; padding: 13px; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
-            Kembali ke Materi
-        </button>
-      
 
-<div class="container">
-    <div id="startScreen" class="card">
-        <h2>Soal & Jawaban Matriks</h2>
-        <p style="color: #64748b; font-size: 14px;">
-            Ketika determinan hidupmu menyentuh angka nol, 
-            janganlah berkecil hati; itu hanyalah sebuah pengingat bahwa sistemmu sedang berada dalam titik singular, 
-            sebuah jeda untuk merenung sebelum menyusun elemen baru yang lebih bermakna. 
-            Uji ketajamanmu dalam menghitung determinan matriks 2x2.</p>
-        
-        <div style="margin: 20px 0;">
-            <button onclick="startQuiz('Mudah')">Easy</button>
-            <button onclick="startQuiz('Normal')" style="background:#6366f1">Medium</button>
-            <button onclick="startQuiz('Susah')" style="background:#4338ca">Hard</button>
-        </div>
+<!-- FLOATING LOGIC PARTICLES CANVAS -->
+<canvas id="particle-canvas"></canvas>
 
-        <div class="info-box">
-            <strong>Detail Ujian:</strong>
-            <ul style="margin: 5px 0 0 0; padding-left: 18px;">
-                <li>30 Soal Matriks</li>
-                <li>Waktu: 2 Jam</li>
-                <li>Pembahasan lengkap setiap nomor</li>
-            </ul>
-        </div>
-        <div id="lastScore" style="margin-top:20px; font-weight:bold; font-size: 14px;"></div>
+<div class="wrap">
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <a href="../../index.html?page=materi&tab=aljabar" class="back-btn">← Kembali ke Materi</a>
+  </div>
+
+  <!-- ══════════════════ START SCREEN ══════════════════ -->
+  <div id="startScreen" class="screen active">
+    <div class="start-header">
+      <div class="start-eyebrow">✦ Matematika · Matriks ✦</div>
+      <h1 class="start-title" id="mainTitle">
+        <span class="title-word" id="word1"></span><br>
+        <em><span class="title-word" id="word2"></span></em>
+        <span class="title-underline"></span>
+      </h1>
+      <div class="divider"></div>
+      <p class="start-subtitle">Uji kemampuan pemahamanmu dengan soal-soal <strong>Matriks Matematika</strong> yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
     </div>
 
-    <div id="quizScreen" class="card hidden">
-        <div id="timer">Waktu: 120:00</div>
-        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-        
-        <div id="question-text" style="font-weight: 600; margin-bottom: 10px;"></div>
-        <div class="matrix-container" id="matrix-display"></div>
-        
-        <div id="options"></div>
-        <div class="explanation hidden" id="explanation"></div>
-        
-        <div style="margin-top: 20px; display: flex; gap: 10px;">
-            <button onclick="nextQuestion()" style="flex: 2;">Lanjut</button>
-            <button onclick="goHome()" style="flex: 1; background: #8d8d8d; font-size: 14px;">Kembali</button>
+    <div class="level-grid">
+      <div class="level-card easy" data-symbol="∥" onclick="startQuizWithRipple(event,'easy')">
+        <div class="level-icon">🔢</div>
+        <div class="level-info">
+          <div class="level-name">Easy — Dasar Matriks</div>
+          <div class="level-desc"> Mulai dari pengenalan matriks, elemen matriks, ordo matriks, serta operasi dasar seperti penjumlahan dan pengurangan matriks sederhana.</div>
+          <div class="level-tags">
+            <span class="tag">10 Soal</span>
+            <span class="tag">30 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
         </div>
+        <div class="level-arrow">›</div>
+      </div>
+
+      <div class="level-card medium" data-symbol="M₂×₂" onclick="startQuizWithRipple(event,'medium')">
+        <div class="level-icon">🧮</div>
+        <div class="level-info">
+          <div class="level-name">Medium — Matriks (Operasi & Determinan)</div>
+          <div class="level-desc">Operasi matriks lanjutan seperti perkalian matriks, determinan ordo 2×2, serta konsep invers matriks sederhana.</div>
+          <div class="level-tags">
+            <span class="tag">20 Soal</span>
+            <span class="tag">40 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="level-arrow">›</div>
+      </div>
+
+      <div class="level-card hard" data-symbol="|A|₃×₃" onclick="startQuizWithRipple(event,'hard')">
+        <div class="level-icon">🧠</div>
+        <div class="level-info">
+          <div class="level-name">Hard — Matriks Lanjutan</div>
+          <div class="level-desc">Determinan ordo 3×3, invers matriks kompleks, matriks adjoint, eigenvalue dasar, serta diagonal matriks.</div>
+          <div class="level-tags">
+            <span class="tag">30 Soal</span>
+            <span class="tag">50 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="level-arrow">›</div>
+      </div>
     </div>
 
-    <div id="resultScreen" class="card hidden">
-        <h2>Hasil Akhir</h2>
-        <div id="score" style="font-size: 64px; font-weight: 800; color: var(--primary); margin: 10px 0;">0</div>
-        <p>Benar dari 30 Soal</p>
-        <button onclick="goHome()">Main Lagi</button>
+    <div class="quote-box">
+      "Matriks adalah bahasa dasar dari aljabar linear yang memungkinkan kita menyederhanakan sistem kompleks menjadi bentuk terstruktur."
+      <cite>— David C. Lay</cite>
     </div>
+  </div>
+
+  <!-- ══════════════════ QUIZ SCREEN ══════════════════ -->
+  <div id="quizScreen" class="screen">
+    <div class="quiz-topbar">
+      <button class="back-to-level-btn" onclick="backToLevelSelect()" title="Kembali ke pilihan level">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2L4 6L8 10"/>
+        </svg>
+        Level
+      </button>
+      <span id="levelBadge" class="quiz-level-badge badge-easy">Easy</span>
+      <span id="qCounter" class="q-counter">1 / 10</span>
+      <div id="timerPill" class="timer-pill">30:00</div>
+    </div>
+
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
+    </div>
+
+    <div class="dot-row" id="dotRow"></div>
+
+    <div class="q-card">
+      <div class="q-number" id="qNumber">SOAL 1</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options-list" id="optsList"></div>
+
+    <div class="explanation-box" id="expBox">
+      <div class="exp-header">💡 Pembahasan</div>
+      <div class="exp-title" id="expTitle"></div>
+      <div class="exp-body" id="expBody"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn btn-prev" onclick="goToPrev()" title="Soal Sebelumnya">‹</button>
+      <button class="nav-btn btn-skip" id="skipBtn" onclick="skipQuestion()">Lewati ›</button>
+      <button class="nav-btn btn-next" id="nextBtn" onclick="goToNext()">Berikutnya →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ RESULT SCREEN ══════════════════ -->
+  <div id="resultScreen" class="screen">
+    <div class="result-container">
+      <div class="result-eyebrow">✦ Hasil Quiz ✦</div>
+
+      <div class="result-circle" id="resultCircle">
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#e8e5de" stroke-width="8"/>
+          <circle id="arcCircle" cx="80" cy="80" r="70" fill="none" stroke="#c9a227" stroke-width="8"
+                  stroke-dasharray="439.82" stroke-dashoffset="439.82"
+                  stroke-linecap="round" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+        </svg>
+        <div class="result-score-num" id="rScoreNum">0</div>
+        <div class="result-score-den" id="rScoreDen">/ 10</div>
+      </div>
+
+      <div class="result-grade" id="rGrade"></div>
+      <p class="result-message" id="rMessage"></p>
+
+      <div class="result-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="rCorrect" style="color:var(--correct)">0</div>
+          <div class="stat-label">Benar</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rWrong" style="color:var(--wrong)">0</div>
+          <div class="stat-label">Salah</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rSkipped" style="color:var(--gold)">0</div>
+          <div class="stat-label">Dilewati</div>
+        </div>
+      </div>
+
+      <button class="review-toggle" onclick="toggleReview()" id="reviewToggle">
+        <span>▾</span> Lihat Review Soal
+      </button>
+      <div class="review-panel" id="reviewPanel"></div>
+
+      <div class="result-actions">
+        <button class="btn-action btn-retry" id="retryBtn" onclick="retryLevel()">Ulangi Level Ini</button>
+        <button class="btn-action btn-home" onclick="goHome()">← Kembali ke Pilihan Level</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-let questions=[];
-let index=0;
-let score=0;
-let selected=null;
-let timer;
-let timeLeft=7200; // 2 Jam dalam detik
+// ═══════════════════════════════════════════════════
+//  TITLE ANIMATION — char by char
+// ═══════════════════════════════════════════════════
+function animateTitle() {
+  const line1 = 'Quiz';
+  const line2 = 'Matriks';
 
-window.onload=function(){
-    let last=localStorage.getItem('scoreM');
-    if(last){document.getElementById('lastScore').innerText="Skor terakhir: "+last+"/30";}
-}
-
-function startQuiz(level){
-    document.getElementById('startScreen').classList.add('hidden');
-    document.getElementById('quizScreen').classList.remove('hidden');
-    generateQuestions(level);
-    showQuestion();
-    startTimer();
-}
-
-function generateQuestions(level){
-    questions=[];
-    for(let i=1;i<=30;i++){
-        let a, b, c, d;
-        
-        if(level === 'Mudah') {
-            // Angka positif kecil (1-10)
-            a = Math.floor(Math.random() * 10) + 1;
-            b = Math.floor(Math.random() * 5) + 1;
-            c = Math.floor(Math.random() * 5) + 1;
-            d = Math.floor(Math.random() * 10) + 1;
-        } else if(level === 'Normal') {
-            // Kombinasi angka positif & negatif (-15 sampai 15)
-            a = Math.floor(Math.random() * 31) - 15;
-            b = Math.floor(Math.random() * 21) - 10;
-            c = Math.floor(Math.random() * 21) - 10;
-            d = Math.floor(Math.random() * 31) - 15;
-        } else {
-            // Angka lebih besar dan lebih kompleks (-50 sampai 50)
-            a = Math.floor(Math.random() * 101) - 50;
-            b = Math.floor(Math.random() * 81) - 40;
-            c = Math.floor(Math.random() * 81) - 40;
-            d = Math.floor(Math.random() * 101) - 50;
-        }
-
-        let det = (a * d) - (b * c);
-        let opts = new Set();
-        opts.add(det);
-        
-        while(opts.size < 5) {
-            // Membuat jebakan jawaban yang mirip (selisih kecil)
-            let offset = (Math.floor(Math.random() * 10) + 1) * (Math.random() < 0.5 ? 1 : -1);
-            let salah = det + offset;
-            if(salah !== det) opts.add(salah);
-        }
-        let finalOpts = Array.from(opts).sort(() => Math.random() - 0.5);
-
-        questions.push({
-            a, b, c, d,
-            options: finalOpts,
-            answer: det,
-            explanation: `Penyelesaian:\nDet = (a × d) - (b × c)\nDet = (${a} × ${d}) - (${b} × ${c})\nDet = ${a*d} - (${b*c})\nDet = ${det}`
-        });
-    }
-}
-
-function showQuestion(){
-    let q=questions[index];
-    document.getElementById('question-text').innerText = `Soal ${index+1} dari 30: Determinan dari`;
-    document.getElementById('matrix-display').innerHTML = `
-        <div class="matrix">
-            <div>${q.a}</div><div>${q.b}</div>
-            <div>${q.c}</div><div>${q.d}</div>
-        </div>`;
-    
-    let letters=['A','B','C','D','E'];
-    let html='';
-    q.options.forEach((o,i)=>{
-        html+=`<div class='option' onclick='selectAnswer(this,${o})'><b>${letters[i]}.</b> ${o}</div>`;
+  function buildWord(el, text, baseDelay) {
+    el.innerHTML = '';
+    [...text].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'title-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.animationDelay = (baseDelay + i * 0.05) + 's';
+      el.appendChild(span);
     });
-    document.getElementById('options').innerHTML=html;
-    document.getElementById('explanation').classList.add('hidden');
-    updateProgress();
+  }
+
+  buildWord(document.getElementById('word1'), line1, 0.3);
+  buildWord(document.getElementById('word2'), line2, 0.7);
 }
 
-function selectAnswer(el,val){
-    if(selected!==null)return;
-    selected=val;
-    let q=questions[index];
-    let options=document.querySelectorAll('.option');
-    
-    options.forEach(opt=>{
-        let valOpsi = parseInt(opt.innerText.split('. ')[1]);
-        if(valOpsi === q.answer){opt.classList.add('correct');}
+// ═══════════════════════════════════════════════════
+//  LEVEL CARD ENTRANCE ANIMATION
+// ═══════════════════════════════════════════════════
+function animateLevelCards() {
+  const cards = document.querySelectorAll('.level-card');
+  cards.forEach((card, i) => {
+    card.style.animationDelay = (1.5 + i * 0.18) + 's';
+    card.classList.add('card-in');
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  FLOATING PARTICLES — logic symbols
+// ═══════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  const SYMBOLS = ['[]', 'A', 'Aᵀ', 'A⁻¹', '|A|', 'I', '0', 'λ', 'M₂×₂', 'Mₙ×ₙ'];
+  let particles = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: H + 30,
+      symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+      size: 12 + Math.random() * 16,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -(0.3 + Math.random() * 0.5),
+      opacity: 0,
+      maxOpacity: 0.06 + Math.random() * 0.08,
+      life: 0,
+      maxLife: 180 + Math.random() * 120,
+      rotation: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.02
+    };
+  }
+
+  for (let i = 0; i < 28; i++) {
+    const p = makeParticle();
+    p.y = Math.random() * H;
+    p.life = Math.random() * p.maxLife;
+    particles.push(p);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (Math.random() < 0.04 && particles.length < 40) {
+      particles.push(makeParticle());
+    }
+
+    particles = particles.filter(p => p.y > -40);
+
+    particles.forEach(p => {
+      p.life++;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotV;
+
+      const fadeLen = 30;
+      if (p.life < fadeLen) p.opacity = p.maxOpacity * (p.life / fadeLen);
+      else if (p.life > p.maxLife - fadeLen) p.opacity = p.maxOpacity * ((p.maxLife - p.life) / fadeLen);
+      else p.opacity = p.maxOpacity;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.font = `${p.size}px 'DM Mono', monospace`;
+      ctx.fillStyle = `rgba(26,26,46,${p.opacity})`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.symbol, 0, 0);
+      ctx.restore();
     });
 
-    if(val===q.answer){
-        score++;
-    } else {
-        el.classList.add('wrong');
+    requestAnimationFrame(draw);
+  }
+
+  setTimeout(() => {
+    canvas.classList.add('visible');
+    draw();
+  }, 400);
+})();
+
+// ═══════════════════════════════════════════════════
+//  RIPPLE EFFECT on level card click
+// ═══════════════════════════════════════════════════
+function startQuizWithRipple(e, level) {
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const x = e.clientX - rect.left - size / 2;
+  const y = e.clientY - rect.top - size / 2;
+
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+  card.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+
+  setTimeout(() => startQuiz(level), 200);
+}
+
+// ═══════════════════════════════════════════════════
+//  BACK TO LEVEL SELECT from quiz
+// ═══════════════════════════════════════════════════
+function backToLevelSelect() {
+  if (state.timerID) clearInterval(state.timerID);
+  showScreen('startScreen');
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT ANIMATIONS
+// ═══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  animateTitle();
+  animateLevelCards();
+});
+
+
+// ─────────────────────────────────────────────
+//  DATA SOAL  (30 easy, 30 medium, 30 hard)
+//  Setiap soal: 5 pilihan (a–e)
+// ─────────────────────────────────────────────
+const ALL_QUESTIONS = [
+
+// ═══════════════ EASY (index 0-29) ═══════════════
+{
+  q: "Matriks adalah...",
+  opts: [
+    "Kumpulan bilangan dalam bentuk baris dan kolom",
+    "Persamaan linear satu variabel",
+    "Fungsi trigonometri",
+    "Operasi akar",
+    "Bilangan berpangkat"
+  ],
+  ans: 0,
+  exp: { title: "Definisi Matriks", body: "Matriks adalah susunan bilangan dalam baris dan kolom." }
+},
+{
+  q: "Elemen matriks adalah...",
+  opts: [
+    "Jumlah baris",
+    "Angka di dalam matriks",
+    "Jumlah kolom",
+    "Ordo matriks",
+    "Determinan"
+  ],
+  ans: 1,
+  exp: { title: "Elemen", body: "Elemen adalah nilai yang terdapat dalam matriks." }
+},
+{
+  q: "Ordo matriks 2×3 artinya...",
+  opts: [
+    "2 kolom 3 baris",
+    "2 baris 3 kolom",
+    "3 baris 2 kolom",
+    "2×2 matriks identitas",
+    "Matriks nol"
+  ],
+  ans: 1,
+  exp: { title: "Ordo", body: "2×3 berarti 2 baris dan 3 kolom." }
+},
+{
+  q: "Matriks A = [[1,2],[3,4]] berordo...",
+  opts: ["1×4", "2×2", "2×3", "3×2", "4×1"],
+  ans: 1,
+  exp: { title: "Ordo", body: "Memiliki 2 baris dan 2 kolom." }
+},
+{
+  q: "Elemen baris pertama kolom kedua dari [[5,7],[1,3]] adalah...",
+  opts: ["5", "7", "1", "3", "0"],
+  ans: 1,
+  exp: { title: "Elemen", body: "Baris 1 kolom 2 = 7." }
+},
+{
+  q: "Matriks nol adalah matriks yang semua elemennya...",
+  opts: ["1", "bilangan negatif", "0", "tak terhingga", "acak"],
+  ans: 2,
+  exp: { title: "Matriks Nol", body: "Semua elemen bernilai 0." }
+},
+{
+  q: "Matriks identitas memiliki diagonal utama bernilai...",
+  opts: ["0", "1", "2", "-1", "acak"],
+  ans: 1,
+  exp: { title: "Identitas", body: "Diagonal utama bernilai 1." }
+},
+{
+  q: "Ordo matriks [[1,2,3],[4,5,6]] adalah...",
+  opts: ["2×2", "2×3", "3×2", "3×3", "1×6"],
+  ans: 1,
+  exp: { title: "Ordo", body: "2 baris dan 3 kolom." }
+},
+{
+  q: "Jumlah baris pada matriks [[1,2],[3,4],[5,6]] adalah...",
+  opts: ["2", "3", "4", "5", "6"],
+  ans: 1,
+  exp: { title: "Baris", body: "Ada 3 baris." }
+},
+{
+  q: "Jumlah kolom pada matriks [[1,2,3],[4,5,6]] adalah...",
+  opts: ["1", "2", "3", "4", "5"],
+  ans: 2,
+  exp: { title: "Kolom", body: "Ada 3 kolom." }
+},
+
+{
+  q: "Hasil [[1,2]] + [[3,4]] adalah...",
+  opts: [
+    "[[4,6]]",
+    "[[3,4]]",
+    "[[1,2]]",
+    "[[5,6]]",
+    "[[2,2]]"
+  ],
+  ans: 0,
+  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
+},
+{
+  q: "[[5,7]] - [[2,3]] = ...",
+  opts: [
+    "[[3,4]]",
+    "[[7,10]]",
+    "[[2,3]]",
+    "[[5,7]]",
+    "[[1,1]]"
+  ],
+  ans: 0,
+  exp: { title: "Pengurangan", body: "Kurangkan elemen seposisi." }
+},
+{
+  q: "Matriks A = [[2,3],[4,5]] maka A berordo...",
+  opts: ["1×4", "2×2", "2×3", "3×2", "4×1"],
+  ans: 1,
+  exp: { title: "Ordo", body: "2 baris 2 kolom." }
+},
+{
+  q: "Elemen a₁₁ dari [[9,8],[7,6]] adalah...",
+  opts: ["9", "8", "7", "6", "0"],
+  ans: 0,
+  exp: { title: "Elemen", body: "a₁₁ = baris 1 kolom 1 = 9." }
+},
+{
+  q: "Jika A = [[1,0],[0,1]] maka A adalah...",
+  opts: [
+    "Matriks nol",
+    "Matriks identitas",
+    "Matriks baris",
+    "Matriks kolom",
+    "Matriks persegi panjang"
+  ],
+  ans: 1,
+  exp: { title: "Identitas", body: "Diagonal utama 1, lainnya 0." }
+},
+
+{
+  q: "Penjumlahan matriks hanya bisa dilakukan jika...",
+  opts: [
+    "Ordo berbeda",
+    "Jumlah elemen sama",
+    "Ordo sama",
+    "Tidak ada syarat",
+    "Harus 3×3"
+  ],
+  ans: 2,
+  exp: { title: "Syarat", body: "Harus memiliki ordo yang sama." }
+},
+{
+  q: "[[2,2],[2,2]] + [[1,1],[1,1]] = ...",
+  opts: [
+    "[[3,3],[3,3]]",
+    "[[2,2],[2,2]]",
+    "[[1,1],[1,1]]",
+    "[[4,4],[4,4]]",
+    "[[0,0],[0,0]]"
+  ],
+  ans: 0,
+  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
+},
+{
+  q: "[[6,4]] - [[1,2]] = ...",
+  opts: [
+    "[[5,2]]",
+    "[[7,6]]",
+    "[[4,2]]",
+    "[[6,4]]",
+    "[[3,2]]"
+  ],
+  ans: 0,
+  exp: { title: "Pengurangan", body: "Kurangkan elemen seposisi." }
+},
+{
+  q: "Ordo matriks [[1],[2],[3]] adalah...",
+  opts: ["1×3", "3×1", "2×1", "3×3", "1×1"],
+  ans: 1,
+  exp: { title: "Ordo", body: "3 baris 1 kolom." }
+},
+{
+  q: "Matriks kolom adalah matriks yang memiliki...",
+  opts: [
+    "1 baris",
+    "1 kolom",
+    "2 kolom",
+    "3 kolom",
+    "Tidak tentu"
+  ],
+  ans: 1,
+  exp: { title: "Matriks Kolom", body: "Hanya memiliki satu kolom." }
+},
+
+{
+  q: "Matriks baris adalah matriks yang memiliki...",
+  opts: [
+    "1 kolom",
+    "1 baris",
+    "2 baris",
+    "3 baris",
+    "Tidak tentu"
+  ],
+  ans: 1,
+  exp: { title: "Matriks Baris", body: "Hanya memiliki satu baris." }
+},
+{
+  q: "Hasil [[3,3],[3,3]] + [[1,2],[3,4]] = ...",
+  opts: [
+    "[[4,5],[6,7]]",
+    "[[3,3],[3,3]]",
+    "[[1,2],[3,4]]",
+    "[[5,5],[5,5]]",
+    "[[0,0],[0,0]]"
+  ],
+  ans: 0,
+  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
+},
+{
+  q: "Elemen a₂₂ dari [[1,2],[3,9]] adalah...",
+  opts: ["1", "2", "3", "9", "0"],
+  ans: 3,
+  exp: { title: "Elemen", body: "Baris 2 kolom 2 = 9." }
+},
+{
+  q: "Jika A + B = C, maka operasi yang digunakan adalah...",
+  opts: [
+    "Perkalian",
+    "Penjumlahan matriks",
+    "Transpose",
+    "Invers",
+    "Determinan"
+  ],
+  ans: 1,
+  exp: { title: "Operasi", body: "A + B adalah penjumlahan matriks." }
+},
+{
+  q: "Jika A dan B tidak memiliki ordo yang sama maka...",
+  opts: [
+    "Bisa dijumlahkan",
+    "Tidak bisa dijumlahkan",
+    "Hasil nol",
+    "Hasil identitas",
+    "Selalu sama"
+  ],
+  ans: 1,
+  exp: { title: "Syarat", body: "Ordo harus sama untuk penjumlahan." }
+},
+{
+  q: "[[0,0],[0,0]] disebut...",
+  opts: [
+    "Matriks identitas",
+    "Matriks nol",
+    "Matriks diagonal",
+    "Matriks persegi",
+    "Matriks baris"
+  ],
+  ans: 1,
+  exp: { title: "Matriks Nol", body: "Semua elemen bernilai 0." }
+},
+{
+  q: "Ordo matriks identitas 2×2 adalah...",
+  opts: ["1×2", "2×2", "2×3", "3×2", "1×1"],
+  ans: 1,
+  exp: { title: "Identitas", body: "Selalu matriks persegi." }
+},
+{
+  q: "Elemen utama diagonal pada matriks identitas adalah...",
+  opts: ["0", "1", "2", "acak", "-1"],
+  ans: 1,
+  exp: { title: "Identitas", body: "Diagonal utama bernilai 1." }
+},
+{
+  q: "Hasil [[1,1],[1,1]] - [[1,1],[1,1]] adalah...",
+  opts: [
+    "[[0,0],[0,0]]",
+    "[[1,1],[1,1]]",
+    "[[2,2],[2,2]]",
+    "[[3,3],[3,3]]",
+    "[[1,0],[0,1]]"
+  ],
+  ans: 0,
+  exp: { title: "Pengurangan", body: "Semua elemen saling menghapus." }
+},
+
+// ═══════════════ MEDIUM (index 30-59) ═══════════════
+{
+  q: "Hasil perkalian skalar 2 × [[1,2],[3,4]] adalah...",
+  opts: [
+    "[[2,4],[6,8]]",
+    "[[1,2],[3,4]]",
+    "[[3,6],[7,8]]",
+    "[[2,2],[2,2]]",
+    "[[4,8],[6,10]]"
+  ],
+  ans: 0,
+  exp: { title: "Perkalian skalar", body: "Setiap elemen dikalikan 2." }
+},
+{
+  q: "Jika A = [[1,2],[3,4]] dan B = [[5,6],[7,8]], maka A + B = ...",
+  opts: [
+    "[[6,8],[10,12]]",
+    "[[5,7],[8,10]]",
+    "[[1,2],[3,4]]",
+    "[[6,6],[6,6]]",
+    "[[7,8],[9,10]]"
+  ],
+  ans: 0,
+  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
+},
+{
+  q: "Hasil [[1,2],[3,4]] × [[2,0],[1,2]] adalah...",
+  opts: [
+    "[[4,4],[10,8]]",
+    "[[2,2],[3,3]]",
+    "[[1,2],[3,4]]",
+    "[[5,5],[6,6]]",
+    "[[4,2],[8,4]]"
+  ],
+  ans: 0,
+  exp: { title: "Perkalian matriks", body: "Baris dikali kolom." }
+},
+{
+  q: "Determinan matriks [[1,2],[3,4]] adalah...",
+  opts: ["-2", "2", "4", "0", "6"],
+  ans: 0,
+  exp: { title: "Determinan", body: "ad - bc = 1×4 - 2×3 = -2" }
+},
+{
+  q: "Determinan [[2,3],[1,4]] adalah...",
+  opts: ["5", "6", "7", "8", "9"],
+  ans: 0,
+  exp: { title: "Determinan", body: "2×4 - 3×1 = 5" }
+},
+{
+  q: "Invers matriks hanya ada jika determinan...",
+  opts: ["0", "1", "≠ 0", "negatif", "positif"],
+  ans: 2,
+  exp: { title: "Invers", body: "Invers ada jika determinan tidak nol." }
+},
+{
+  q: "Matriks identitas 2×2 adalah...",
+  opts: [
+    "[[1,0],[0,1]]",
+    "[[0,0],[0,0]]",
+    "[[1,1],[1,1]]",
+    "[[2,0],[0,2]]",
+    "[[0,1],[1,0]]"
+  ],
+  ans: 0,
+  exp: { title: "Identitas", body: "Diagonal utama 1." }
+},
+{
+  q: "Transpose dari [[1,2],[3,4]] adalah...",
+  opts: [
+    "[[1,3],[2,4]]",
+    "[[1,2],[3,4]]",
+    "[[4,3],[2,1]]",
+    "[[2,1],[4,3]]",
+    "[[0,0],[0,0]]"
+  ],
+  ans: 0,
+  exp: { title: "Transpose", body: "Tukar baris menjadi kolom." }
+},
+{
+  q: "Hasil [[2,1],[0,3]] × [[1,2],[1,0]] adalah...",
+  opts: [
+    "[[3,4],[3,0]]",
+    "[[2,2],[3,3]]",
+    "[[1,1],[2,2]]",
+    "[[4,4],[6,6]]",
+    "[[3,3],[0,0]]"
+  ],
+  ans: 0,
+  exp: { title: "Perkalian", body: "Baris × kolom." }
+},
+{
+  q: "Jika A = [[a,b],[c,d]], maka determinan A adalah...",
+  opts: [
+    "ad - bc",
+    "a + b + c + d",
+    "ab + cd",
+    "a/b - c/d",
+    "ac - bd"
+  ],
+  ans: 0,
+  exp: { title: "Rumus", body: "Determinan 2×2 = ad - bc." }
+},
+
+{
+  q: "Determinan [[5,1],[2,3]] adalah...",
+  opts: ["13", "12", "11", "10", "9"],
+  ans: 0,
+  exp: { title: "Determinan", body: "5×3 - 1×2 = 13" }
+},
+{
+  q: "Jika det(A) = 0 maka matriks A...",
+  opts: [
+    "memiliki invers",
+    "tidak memiliki invers",
+    "identitas",
+    "diagonal",
+    "nol"
+  ],
+  ans: 1,
+  exp: { title: "Invers", body: "Tidak bisa dibalik jika determinan 0." }
+},
+{
+  q: "Hasil [[1,0],[0,1]] × [[2,3],[4,5]] adalah...",
+  opts: [
+    "[[2,3],[4,5]]",
+    "[[1,1],[1,1]]",
+    "[[2,2],[3,3]]",
+    "[[0,0],[0,0]]",
+    "[[5,5],[5,5]]"
+  ],
+  ans: 0,
+  exp: { title: "Identitas", body: "A × I = A." }
+},
+{
+  q: "Ordo hasil perkalian matriks 2×3 dan 3×2 adalah...",
+  opts: ["2×2", "3×3", "2×3", "3×2", "1×1"],
+  ans: 0,
+  exp: { title: "Ordo", body: "Hasil = baris pertama × kolom kedua." }
+},
+{
+  q: "Jika A = [[1,2],[3,4]] maka det(A⁻¹) adalah...",
+  opts: ["-1/2", "1/2", "-2", "2", "0"],
+  ans: 1,
+  exp: { title: "Invers", body: "det(A⁻¹) = 1/det(A)" }
+},
+
+{
+  q: "Hasil [[2,0],[0,2]] disebut...",
+  opts: [
+    "Matriks identitas skalar",
+    "Matriks nol",
+    "Matriks baris",
+    "Matriks kolom",
+    "Matriks sembarang"
+  ],
+  ans: 0,
+  exp: { title: "Skalar", body: "Identitas dikali 2." }
+},
+{
+  q: "Jika A = [[1,2],[3,4]] maka Aᵀ adalah...",
+  opts: [
+    "[[1,3],[2,4]]",
+    "[[1,2],[3,4]]",
+    "[[4,3],[2,1]]",
+    "[[2,1],[4,3]]",
+    "[[0,0],[0,0]]"
+  ],
+  ans: 0,
+  exp: { title: "Transpose", body: "Tukar baris jadi kolom." }
+},
+{
+  q: "Hasil [[1,2],[3,4]] × [[0,1],[1,0]] adalah...",
+  opts: [
+    "[[2,1],[4,3]]",
+    "[[1,2],[3,4]]",
+    "[[0,0],[0,0]]",
+    "[[3,3],[3,3]]",
+    "[[4,4],[4,4]]"
+  ],
+  ans: 0,
+  exp: { title: "Perkalian", body: "Penukaran kolom." }
+},
+{
+  q: "Matriks yang memiliki invers disebut...",
+  opts: [
+    "Singular",
+    "Invertible",
+    "Nol",
+    "Diagonal",
+    "Baris"
+  ],
+  ans: 1,
+  exp: { title: "Istilah", body: "Invertible = memiliki invers." }
+},
+{
+  q: "Jika det(A) = -5 maka...",
+  opts: [
+    "tidak punya invers",
+    "punya invers",
+    "matriks nol",
+    "matriks identitas",
+    "tidak terdefinisi"
+  ],
+  ans: 1,
+  exp: { title: "Invers", body: "Det ≠ 0 maka punya invers." }
+},
+
+{
+  q: "Hasil [[3,1],[2,1]] × [[1,2],[3,4]] adalah...",
+  opts: [
+    "[[6,10],[5,8]]",
+    "[[3,3],[2,2]]",
+    "[[1,1],[1,1]]",
+    "[[7,7],[7,7]]",
+    "[[0,0],[0,0]]"
+  ],
+  ans: 0,
+  exp: { title: "Perkalian", body: "Baris × kolom." }
+},
+{
+  q: "Determinant adalah...",
+  opts: [
+    "jumlah elemen",
+    "nilai skalar dari matriks persegi",
+    "perkalian elemen",
+    "transpose matriks",
+    "invers matriks"
+  ],
+  ans: 1,
+  exp: { title: "Definisi", body: "Determinan adalah nilai skalar matriks persegi." }
+},
+{
+  q: "Jika A = [[2,3],[1,2]] maka det(A) = ...",
+  opts: ["1", "2", "3", "4", "5"],
+  ans: 0,
+  exp: { title: "Determinan", body: "2×2 - 3×1 = 1" }
+},
+{
+  q: "Jika A⁻¹ ada maka A harus...",
+  opts: [
+    "berordo sama",
+    "det ≠ 0",
+    "berisi nol",
+    "berisi 1",
+    "bukan matriks"
+  ],
+  ans: 1,
+  exp: { title: "Invers", body: "Syarat utama determinan tidak nol." }
+},
+{
+  q: "Hasil [[1,1],[1,1]] × [[1,1],[1,1]] adalah...",
+  opts: [
+    "[[2,2],[2,2]]",
+    "[[1,1],[1,1]]",
+    "[[0,0],[0,0]]",
+    "[[3,3],[3,3]]",
+    "[[4,4],[4,4]]"
+  ],
+  ans: 0,
+  exp: { title: "Perkalian", body: "Setiap elemen dijumlahkan." }
+},
+{
+  q: "Ordo matriks hasil A(2×2) × B(2×3) adalah...",
+  opts: ["2×2", "2×3", "3×2", "3×3", "1×1"],
+  ans: 1,
+  exp: { title: "Ordo", body: "2×3 hasil perkalian." }
+},
+{
+  q: "Jika A = I maka A⁻¹ adalah...",
+  opts: [
+    "I",
+    "0",
+    "A",
+    "tidak ada",
+    "negatif A"
+  ],
+  ans: 0,
+  exp: { title: "Identitas", body: "Invers identitas adalah dirinya sendiri." }
+},
+{
+  q: "Hasil [[2,3],[4,5]] × I adalah...",
+  opts: [
+    "[[2,3],[4,5]]",
+    "[[1,1],[1,1]]",
+    "[[0,0],[0,0]]",
+    "[[5,5],[5,5]]",
+    "[[3,3],[3,3]]"
+  ],
+  ans: 0,
+  exp: { title: "Identitas", body: "A × I = A." }
+},
+
+// ═══════════════ HARD (index 60-89) ═══════════════
+{
+  q: "Determinan matriks 2×2 [[a,b],[c,d]] adalah...",
+  opts: [
+    "ad - bc",
+    "ab + cd",
+    "a + b + c + d",
+    "ac - bd",
+    "ad + bc"
+  ],
+  ans: 0,
+  exp: { title: "Determinan", body: "Rumus det 2×2 = ad - bc." }
+},
+{
+  q: "Determinan [[1,2,3],[0,1,4],[5,6,0]] adalah...",
+  opts: ["1", "2", "3", "4", "5"],
+  ans: 0,
+  exp: { title: "Determinan 3×3", body: "Hasil perhitungan determinan = 1." }
+},
+{
+  q: "Jika det(A) = 0 maka matriks A disebut...",
+  opts: ["Invertible", "Singular", "Diagonal", "Identitas", "Transpose"],
+  ans: 1,
+  exp: { title: "Singular", body: "Det = 0 berarti tidak memiliki invers." }
+},
+{
+  q: "Matriks identitas 3×3 adalah...",
+  opts: [
+    "[[1,0,0],[0,1,0],[0,0,1]]",
+    "[[1,1,1],[1,1,1],[1,1,1]]",
+    "[[0,0,0],[0,0,0],[0,0,0]]",
+    "[[2,0,0],[0,2,0],[0,0,2]]",
+    "[[1,2,3],[4,5,6],[7,8,9]]"
+  ],
+  ans: 0,
+  exp: { title: "Identitas", body: "Diagonal utama 1, lainnya 0." }
+},
+{
+  q: "Transpose matriks menukar...",
+  opts: [
+    "elemen menjadi nol",
+    "baris menjadi kolom",
+    "kolom menjadi nol",
+    "nilai menjadi negatif",
+    "diagonal saja"
+  ],
+  ans: 1,
+  exp: { title: "Transpose", body: "Baris ↔ kolom." }
+},
+
+{
+  q: "Adjoint matriks digunakan untuk mencari...",
+  opts: [
+    "penjumlahan",
+    "invers matriks",
+    "transpose",
+    "eigenvalue",
+    "trace"
+  ],
+  ans: 1,
+  exp: { title: "Adjoint", body: "Adjoint digunakan dalam rumus invers." }
+},
+{
+  q: "Rumus invers matriks adalah...",
+  opts: [
+    "A⁻¹ = adj(A) / det(A)",
+    "A⁻¹ = det(A) / adj(A)",
+    "A⁻¹ = A + I",
+    "A⁻¹ = A × A",
+    "A⁻¹ = 0"
+  ],
+  ans: 0,
+  exp: { title: "Invers", body: "Invers = adj(A) dibagi determinan." }
+},
+{
+  q: "Jika det(A) = 5 maka det(A⁻¹) adalah...",
+  opts: ["5", "1/5", "-5", "0", "10"],
+  ans: 1,
+  exp: { title: "Invers", body: "det(A⁻¹) = 1/det(A)" }
+},
+{
+  q: "Eigenvalue adalah...",
+  opts: [
+    "jumlah elemen matriks",
+    "nilai skalar khusus dari matriks",
+    "transpose matriks",
+    "invers matriks",
+    "determinant saja"
+  ],
+  ans: 1,
+  exp: { title: "Eigenvalue", body: "Nilai λ yang memenuhi Av = λv." }
+},
+{
+  q: "Matriks diagonal adalah matriks yang...",
+  opts: [
+    "semua elemen sama",
+    "hanya diagonal utama non nol",
+    "semua nol",
+    "tidak berbentuk persegi",
+    "acak"
+  ],
+  ans: 1,
+  exp: { title: "Diagonal", body: "Hanya diagonal utama yang boleh non nol." }
+},
+
+{
+  q: "Determinan matriks diagonal adalah...",
+  opts: [
+    "jumlah diagonal",
+    "hasil kali diagonal utama",
+    "nol selalu",
+    "acak",
+    "transpose"
+  ],
+  ans: 1,
+  exp: { title: "Diagonal", body: "Det = hasil kali elemen diagonal." }
+},
+{
+  q: "Jika A = I maka eigenvalue A adalah...",
+  opts: ["0", "1", "2", "-1", "tidak ada"],
+  ans: 1,
+  exp: { title: "Eigenvalue", body: "Identitas memiliki eigenvalue 1." }
+},
+{
+  q: "Matriks singular memiliki determinan...",
+  opts: ["1", "≠0", "0", "negatif", "positif"],
+  ans: 2,
+  exp: { title: "Singular", body: "Singular berarti det = 0." }
+},
+{
+  q: "Jika A = [[2,0],[0,3]] maka eigenvalue A adalah...",
+  opts: ["2 dan 3", "0 dan 1", "1 dan 2", "3 dan 4", "0 dan 0"],
+  ans: 0,
+  exp: { title: "Eigenvalue", body: "Diagonal matriks = eigenvalue." }
+},
+{
+  q: "Trace matriks adalah...",
+  opts: [
+    "jumlah semua elemen",
+    "jumlah diagonal utama",
+    "perkalian diagonal",
+    "determinant",
+    "invers"
+  ],
+  ans: 1,
+  exp: { title: "Trace", body: "Trace = jumlah elemen diagonal utama." }
+},
+
+{
+  q: "Jika A = [[1,2],[3,4]] maka trace(A) = ...",
+  opts: ["4", "5", "6", "7", "8"],
+  ans: 1,
+  exp: { title: "Trace", body: "1 + 4 = 5." }
+},
+{
+  q: "Adjoint digunakan dalam rumus...",
+  opts: [
+    "A⁻¹ = adj(A)/det(A)",
+    "A = adj(A) × det(A)",
+    "A + adj(A)",
+    "A × det(A)",
+    "tidak ada"
+  ],
+  ans: 0,
+  exp: { title: "Adjoint", body: "Digunakan dalam invers matriks." }
+},
+{
+  q: "Jika det(A) = -3 maka det(A⁻¹) = ...",
+  opts: ["-3", "1/3", "-1/3", "3", "0"],
+  ans: 2,
+  exp: { title: "Invers", body: "1/(-3) = -1/3." }
+},
+{
+  q: "Matriks identitas berfungsi sebagai...",
+  opts: [
+    "nol dalam penjumlahan",
+    "unsur netral perkalian",
+    "invers selalu",
+    "eigenvector",
+    "determinant"
+  ],
+  ans: 1,
+  exp: { title: "Identitas", body: "A × I = A." }
+},
+{
+  q: "Jika A diagonal maka A⁻¹ juga...",
+  opts: [
+    "diagonal",
+    "nol",
+    "identitas",
+    "tidak ada",
+    "acak"
+  ],
+  ans: 0,
+  exp: { title: "Diagonal", body: "Invers matriks diagonal tetap diagonal." }
+},
+
+{
+  q: "Eigenvector berkaitan dengan...",
+  opts: [
+    "skalar acak",
+    "arah tidak berubah",
+    "penjumlahan",
+    "transpose",
+    "determinant"
+  ],
+  ans: 1,
+  exp: { title: "Eigen", body: "Eigenvector tidak berubah arah saat transformasi." }
+},
+{
+  q: "Jika A = [[λ,0],[0,λ]] maka eigenvalue adalah...",
+  opts: ["0", "1", "λ", "2λ", "acak"],
+  ans: 2,
+  exp: { title: "Eigenvalue", body: "Semua diagonal = λ." }
+},
+{
+  q: "Determinant 3×3 dapat dihitung menggunakan...",
+  opts: [
+    "Sarrus rule",
+    "Substitusi",
+    "Eliminasi SPL",
+    "Integral",
+    "Limit"
+  ],
+  ans: 0,
+  exp: { title: "3×3", body: "Metode Sarrus digunakan." }
+},
+{
+  q: "Jika det(A) = 1 maka A disebut...",
+  opts: [
+    "singular",
+    "unimodular",
+    "nol",
+    "diagonal",
+    "segitiga"
+  ],
+  ans: 1,
+  exp: { title: "Unimodular", body: "Det = 1 disebut unimodular." }
+},
+{
+  q: "Matriks diagonal dapat ditulis sebagai...",
+  opts: [
+    "semua elemen sama",
+    "hanya diagonal non nol",
+    "semua nol",
+    "sembarang",
+    "tidak beraturan"
+  ],
+  ans: 1,
+  exp: { title: "Diagonal", body: "Hanya diagonal utama." }
+},
+{
+  q: "Jika A = [[1,0,0],[0,2,0],[0,0,3]] maka det(A) = ...",
+  opts: ["5", "6", "1", "2", "3"],
+  ans: 1,
+  exp: { title: "Diagonal", body: "1×2×3 = 6." }
+},
+{
+  q: "Jika A⁻¹ ada maka A harus...",
+  opts: [
+    "det = 0",
+    "det ≠ 0",
+    "semua nol",
+    "tidak persegi",
+    "acak"
+  ],
+  ans: 1,
+  exp: { title: "Invers", body: "Syarat utama det tidak nol." }
+},
+{
+  q: "Eigenvalue diperoleh dari persamaan...",
+  opts: [
+    "det(A - λI) = 0",
+    "A + I = 0",
+    "A × I = λ",
+    "A - I = 0",
+    "det(A) = λ"
+  ],
+  ans: 0,
+  exp: { title: "Eigenvalue", body: "Persamaan karakteristik." }
+}
+];
+
+// ─────────────────────────────────────────────
+//  GAME STATE
+// ─────────────────────────────────────────────
+const LEVELS = {
+  easy:   { start: 0,  count: 10, time: 30*60, label: 'Easy',   fillClass: 'fill-easy',   badgeClass: 'badge-easy'   },
+  medium: { start: 30, count: 20, time: 40*60, label: 'Medium', fillClass: 'fill-medium', badgeClass: 'badge-medium' },
+  hard:   { start: 60, count: 30, time: 50*60, label: 'Hard',   fillClass: 'fill-hard',   badgeClass: 'badge-hard'   }
+};
+
+let state = {
+  level: null,
+  questions: [],
+  current: 0,
+  answers: [],
+  score: 0,
+  timeLeft: 0,
+  timerID: null,
+  reviewed: false
+};
+
+const LETTERS = ['a','b','c','d','e'];
+
+// ─────────────────────────────────────────────
+//  SCREEN NAVIGATION
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+//  START QUIZ
+// ─────────────────────────────────────────────
+function startQuiz(level) {
+  const cfg = LEVELS[level];
+  state.level = level;
+  state.questions = ALL_QUESTIONS.slice(cfg.start, cfg.start + cfg.count);
+  state.current = 0;
+  state.answers = new Array(state.questions.length).fill(null);
+  state.timeLeft = cfg.time;
+  state.reviewed = false;
+
+  const badge = document.getElementById('levelBadge');
+  badge.textContent = cfg.label;
+  badge.className = 'quiz-level-badge ' + cfg.badgeClass;
+
+  document.getElementById('progressFill').className = 'progress-fill ' + cfg.fillClass;
+
+  buildDots();
+  renderQuestion();
+  startTimer();
+  showScreen('quizScreen');
+}
+
+function buildDots() {
+  const row = document.getElementById('dotRow');
+  row.innerHTML = '';
+  state.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.title = 'Soal ' + (i+1);
+    d.onclick = () => jumpTo(i);
+    row.appendChild(d);
+  });
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    d.className = 'dot';
+    const a = state.answers[i];
+    if (i === state.current) { d.classList.add('current'); return; }
+    if (a === null) return;
+    if (a === -2) { d.classList.add('skipped'); return; }
+    d.classList.add(a === state.questions[i].ans ? 'answered-correct' : 'answered-wrong');
+  });
+}
+
+// ─────────────────────────────────────────────
+//  RENDER QUESTION
+// ─────────────────────────────────────────────
+function renderQuestion() {
+  const q = state.questions[state.current];
+  const n = state.current;
+  const total = state.questions.length;
+  const answered = state.answers[n];
+
+  document.getElementById('qNumber').textContent = `SOAL ${n+1} DARI ${total}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qCounter').textContent = `${n+1} / ${total}`;
+  document.getElementById('progressFill').style.width = ((n / total) * 100) + '%';
+
+  const list = document.getElementById('optsList');
+  list.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
+
+    if (answered !== null && answered !== -2) {
+      div.classList.add('locked');
+      if (i === q.ans) div.classList.add('correct');
+      else if (i === answered) div.classList.add('wrong');
+    } else if (answered !== -2) {
+      div.onclick = () => selectAnswer(i);
     }
-    
-    let expEl = document.getElementById('explanation');
-    expEl.innerText = q.explanation;
-    expEl.classList.remove('hidden');
+    list.appendChild(div);
+  });
+
+  const expBox = document.getElementById('expBox');
+  if (answered !== null && answered !== -2) {
+    document.getElementById('expTitle').textContent = q.exp.title;
+    document.getElementById('expBody').textContent = q.exp.body;
+    expBox.classList.add('show');
+  } else {
+    expBox.classList.remove('show');
+  }
+
+  const isLast = n === total - 1;
+  const skipBtn = document.getElementById('skipBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (answered !== null && answered !== -2) {
+    skipBtn.style.display = 'none';
+    nextBtn.className = isLast ? 'nav-btn btn-finish' : 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  } else {
+    skipBtn.style.display = '';
+    skipBtn.textContent = isLast ? 'Lewati & Selesai' : 'Lewati ›';
+    nextBtn.className = 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  }
+
+  updateDots();
 }
 
-function nextQuestion(){
-    if(selected === null) { alert("Pilih jawaban dulu!"); return; }
-    index++;
-    selected=null;
-    if(index<questions.length){showQuestion();} else endQuiz();
+function selectAnswer(i) {
+  state.answers[state.current] = i;
+  renderQuestion();
 }
 
-function updateProgress(){
-    let percent=(index/30)*100;
-    document.getElementById('progressBar').style.width=percent+'%';
+function goToNext() {
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
 }
 
-function startTimer(){
-    if(timer) clearInterval(timer);
-    timer=setInterval(()=>{
-        timeLeft--;
-        let h=Math.floor(timeLeft/3600);
-        let m=Math.floor((timeLeft%3600)/60);
-        let s=timeLeft%60;
-        
-        // Format tampilan HH:MM:SS atau MM:SS jika < 1 jam
-        let display = (h > 0 ? h + ":" : "") + (m < 10 ? '0'+m : m) + ":" + (s < 10 ? '0' + s : s);
-        document.getElementById('timer').innerText=`Waktu: ${display}`;
-        
-        if(timeLeft<=0)endQuiz();
-    },1000);
+function goToPrev() {
+  if (state.current > 0) {
+    state.current--;
+    renderQuestion();
+  }
 }
 
-function endQuiz(){
-    clearInterval(timer);
-    document.getElementById('quizScreen').classList.add('hidden');
-    document.getElementById('resultScreen').classList.remove('hidden');
-    document.getElementById('score').innerText = score;
-    localStorage.setItem('scoreM', score);
+function jumpTo(i) {
+  state.current = i;
+  renderQuestion();
 }
 
-function goHome(){location.reload();}
+function skipQuestion() {
+  if (state.answers[state.current] === null) {
+    state.answers[state.current] = -2;
+  }
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+// ─────────────────────────────────────────────
+//  TIMER
+// ─────────────────────────────────────────────
+function startTimer() {
+  if (state.timerID) clearInterval(state.timerID);
+  updateTimerDisplay();
+  state.timerID = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay();
+    if (state.timeLeft <= 0) endQuiz();
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  const pill = document.getElementById('timerPill');
+  pill.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+  pill.className = state.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
+}
+
+// ─────────────────────────────────────────────\
+//  END QUIZ
+// ─────────────────────────────────────────────
+function endQuiz() {
+  clearInterval(state.timerID);
+
+  let correct = 0, wrong = 0, skipped = 0;
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    if (a === null || a === -2) skipped++;
+    else if (a === q.ans) correct++;
+    else wrong++;
+  });
+
+  const total = state.questions.length;
+  const pct = total > 0 ? correct / total : 0;
+
+  let grade, msg, color;
+  if (pct >= 0.9) {
+    grade = '🏆 Sangat Istimewa';
+    msg = 'Luar biasa! Penguasaan logikamu sangat baik. Kamu siap menghadapi tantangan yang lebih tinggi.';
+    color = '#c9a227';
+  } else if (pct >= 0.7) {
+    grade = '⭐ Bagus!';
+    msg = 'Pemahaman yang solid. Terus berlatih untuk mencapai hasil sempurna.';
+    color = '#2e7d58';
+  } else if (pct >= 0.5) {
+    grade = '📚 Cukup Baik';
+    msg = 'Kamu sudah memahami konsep dasar. Review kembali materi yang salah dan coba lagi!';
+    color = '#1a5fa8';
+  } else {
+    grade = '💪 Terus Berlatih!';
+    msg = 'Jangan menyerah! Pelajari kembali pembahasannya dan ulangi latihan ini.';
+    color = '#8b1a1a';
+  }
+
+  document.getElementById('rScoreNum').textContent = correct;
+  document.getElementById('rScoreDen').textContent = '/ ' + total;
+  document.getElementById('rScoreNum').style.color = color;
+  document.getElementById('rGrade').textContent = grade;
+  document.getElementById('rMessage').textContent = msg;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkipped').textContent = skipped;
+
+  const circ = 2 * Math.PI * 70;
+  setTimeout(() => {
+    const arc = document.getElementById('arcCircle');
+    arc.style.stroke = color;
+    arc.style.strokeDashoffset = circ * (1 - pct);
+  }, 100);
+
+  buildReview();
+  document.getElementById('retryBtn').onclick = retryLevel;
+  showScreen('resultScreen');
+}
+
+function buildReview() {
+  const panel = document.getElementById('reviewPanel');
+  panel.innerHTML = '';
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    let cls, status;
+    if (a === null || a === -2) { cls = 'ri-skipped'; status = 'Dilewati'; }
+    else if (a === q.ans) { cls = 'ri-correct'; status = 'Benar: ' + q.opts[q.ans]; }
+    else { cls = 'ri-wrong'; status = 'Salah → ' + q.opts[q.ans]; }
+
+    const item = document.createElement('div');
+    item.className = `review-item ${cls}`;
+    item.innerHTML = `<div class="ri-dot"></div><div class="ri-q">Soal ${i+1}: ${q.q.substring(0,60)}...</div><div class="ri-a">${status}</div>`;
+    panel.appendChild(item);
+  });
+}
+
+function toggleReview() {
+  const panel = document.getElementById('reviewPanel');
+  const btn = document.getElementById('reviewToggle');
+  state.reviewed = !state.reviewed;
+  panel.className = state.reviewed ? 'review-panel open' : 'review-panel';
+  btn.querySelector('span').textContent = state.reviewed ? '▴' : '▾';
+}
+
+function retryLevel() { startQuiz(state.level); }
+function goHome() { showScreen('startScreen'); }
 </script>
-
 </body>
 </html>
