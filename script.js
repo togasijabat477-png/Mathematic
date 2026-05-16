@@ -152,7 +152,7 @@ var materiData = {
   },{
      icon:"📼", title:"Video Pembelajaran Kriptografi",
     items:[
-      {num:"01",title:"Kriptografi",description:"dasar-dasar teori yang digunakan dalam kriptografi.",tag:"Watch",file:"video/kriptografi/kriptografi.html"},
+      {num:"01",title:"Kriptografi",description:"dasar-dasar teori yang digunakan dalam kriptografi.",tag:"Watch",file:"video/kriptografi/Video_kriptografi.html"},
     ]
   },{
     icon:"📝", title:"Latihan Soal Kriptografi",
