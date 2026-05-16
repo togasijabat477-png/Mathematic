@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graph Kingdom — Mathematic Game</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700;800;900&display=swap" />
+  <style>
+    /* ═══ DESIGN SYSTEM ALIGNED WITH MATHEMATIC ═══ */
+    :root {
+      --bg: 220 18% 7%;
+      --bg2: 220 15% 10%;
+      --bg3: 220 14% 13%;
+      --fg: 210 25% 92%;
+      --fg2: 210 15% 70%;
+      --fg3: 210 12% 50%;
+      --surface: 220 13% 16%;
+      --surface2: 220 12% 20%;
+      --teal: 174 72% 52%;
+      --amber: 38 95% 58%;
+      --violet: 265 65% 65%;
+      --border: 220 12% 22%;
+      --radius: 0.75rem;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: hsl(var(--bg));
+      color: hsl(var(--fg));
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Background Pattern Grid */
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* HEADER */
+    header {
+      background: hsl(var(--bg2) / 0.85);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid hsl(var(--border));
+      padding: 1rem 2rem;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 12px; font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 800; text-decoration: none; color: inherit;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--violet)));
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .btn-back {
+      background: hsl(var(--surface)); border: 1px solid hsl(var(--border));
+      color: hsl(var(--fg2)); padding: 0.5rem 1rem; border-radius: 8px;
+      font-family: var(--font-mono); text-decoration: none; font-size: 0.875rem;
+      transition: all 0.3s var(--ease-spring);
+    }
+    .btn-back:hover { border-color: hsl(var(--teal)); color: hsl(var(--teal)); transform: translateY(-2px); }
+
+    /* GAME LAYOUT */
+    .game-container {
+      flex: 1; max-width: 1400px; width: 100%; margin: 2rem auto; padding: 0 1rem;
+      display: grid; grid-template-columns: 1fr; gap: 2rem; position: relative; z-index: 1;
+    }
+    @media(min-width: 1024px) {
+      .game-container { grid-template-columns: 320px 1fr; }
+    }
+
+    /* SIDEBAR / STATUS PANEL */
+    .status-panel {
+      display: flex; flex-direction: column; gap: 1.25rem;
+    }
+    .panel-card {
+      background: hsl(var(--surface)); border: 1px solid hsl(var(--border));
+      border-radius: var(--radius); padding: 1.5rem;
+    }
+    .grad-text {
+      background: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--violet)));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-row {
+      display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;
+    }
+    .stat-val { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; }
+    
+    /* PROGRESS BAR */
+    .progress-bar { height: 6px; background: hsl(var(--bg3)); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+    .progress-fill { height: 100%; width: 100%; background: hsl(var(--teal)); transition: width 0.3s ease; }
+
+    /* MAP / CANVAS ARENA */
+    .map-wrapper {
+      position: relative; display: flex; flex-direction: column; gap: 1rem;
+    }
+    .map-header {
+      background: hsl(var(--surface)); border: 1px solid hsl(var(--border));
+      border-radius: var(--radius); padding: 1.2rem 1.5rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .mission-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; }
+    .mission-desc { font-size: 0.9rem; color: hsl(var(--fg2)); margin-top: 4px; }
+    
+    .canvas-container {
+      position: relative; background: hsl(var(--bg2)); border: 2px solid hsl(var(--border));
+      border-radius: var(--radius); overflow: hidden; width: 100%; height: 550px;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+    }
+    canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
+
+    /* ACTION BUTTONS */
+    .btn-action {
+      background: hsl(var(--teal)); color: hsl(var(--bg)); font-weight: 700;
+      padding: 12px 24px; border-radius: var(--radius); width: 100%; text-align: center;
+      transition: all 0.3s var(--ease-spring); cursor: pointer; border: none; font-size: 1rem;
+      box-shadow: 0 4px 20px hsl(174 72% 52% / 0.25);
+    }
+    .btn-action:hover { filter: brightness(1.1); transform: translateY(-3px); box-shadow: 0 8px 30px hsl(174 72% 52% / 0.35); }
+    .btn-action:disabled { background: hsl(var(--bg3)); color: hsl(var(--fg3)); cursor: not-allowed; transform: none; box-shadow: none; }
+    
+    .btn-secondary {
+      background: transparent; border: 1.5px solid hsl(var(--border-hi)); color: hsl(var(--fg));
+      margin-top: 0.5rem;
+    }
+    .btn-secondary:hover { border-color: hsl(var(--violet)); background: hsl(var(--violet) / 0.1); }
+
+    /* UPGRADE TILE */
+    .upgrade-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+    .upgrade-tile {
+      background: hsl(var(--bg3)); border: 1px solid hsl(var(--border)); border-radius: 8px;
+      padding: 10px; display: flex; justify-content: space-between; align-items: center;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .upgrade-tile:hover { border-color: hsl(var(--amber)); background: hsl(var(--surface2)); }
+    .upgrade-title { font-size: 0.85rem; font-weight: 700; }
+    .upgrade-cost { font-family: var(--font-mono); font-size: 0.75rem; color: hsl(var(--amber)); }
+
+    /* MODAL OVERLAY OVERRIDE FOR FANTASY EFFECTS */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center; z-index: 100;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 1rem;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: hsl(var(--surface)); border: 1px solid hsl(var(--border));
+      padding: 2.5rem; border-radius: var(--radius); max-width: 500px; width: 100%;
+      text-align: center; transform: scale(0.9); transition: transform 0.3s var(--ease-spring);
+    }
+    .modal-overlay.open .modal-box { transform: scale(1); }
+    .modal-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+    .modal-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 900; margin-bottom: 0.5rem; }
+    .modal-text { color: hsl(var(--fg2)); margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <div class="logo-icon">👑</div>
+        <span class="logo-text">Graph Kingdom</span>
+      </a>
+      <a href="?page=game" class="btn-back">← Kembali ke Hub</a>
+    </div>
+  </header>
+
+  <main class="game-container">
+    
+    <div class="status-panel">
+      
+      <div class="panel-card animate-fade-up">
+        <h2 class="font-display grad-text" style="font-size: 1.35rem; font-weight:800;">Status Kerajaan</h2>
+        <div class="stat-row" style="margin-top: 1.25rem;">
+          <span>🏰 Level Misi</span>
+          <span class="stat-val" id="lbl-level">1 / 3</span>
+        </div>
+        <div class="stat-row">
+          <span>💰 Kas Emas</span>
+          <span class="stat-val" style="color: hsl(var(--amber))" id="lbl-gold">300 Gold</span>
+        </div>
+        <div class="stat-row">
+          <span>⏳ Waktu Sisa</span>
+          <span class="stat-val" id="lbl-timer">60s</span>
+        </div>
+        <div class="progress-bar" style="margin-top: 12px;">
+          <div class="progress-fill" id="timer-bar"></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="font-mono" style="font-size: 0.85rem; text-transform: uppercase; color: hsl(var(--violet)); letter-spacing: 0.05em;">Kit Teori Graf</h3>
+        <p id="theory-guide" style="font-size: 0.85rem; color: hsl(var(--fg2)); margin-top: 8px; line-height: 1.5;">
+          Loading pedoman taktik...
+        </p>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="font-mono" style="font-size: 0.85rem; text-transform: uppercase; color: hsl(var(--teal)); letter-spacing: 0.05em;">Fasilitas Kerajaan</h3>
+        <div class="upgrade-list">
+          <div class="upgrade-tile" onclick="buyUpgrade('timer')">
+            <div>
+              <div class="upgrade-title">🕰️ Tambah Waktu (+15s)</div>
+              <div style="font-size: 0.75rem; color: hsl(var(--fg3));">Ekstensi durasi berpikir</div>
+            </div>
+            <div class="upgrade-cost" id="cost-timer">50 G</div>
+          </div>
+          <div class="upgrade-tile" onclick="buyUpgrade('hint')">
+            <div>
+              <div class="upgrade-title">🔮 Altar Petunjuk</div>
+              <div style="font-size: 0.75rem; color: hsl(var(--fg3));">Highlight rute optimal singkat</div>
+            </div>
+            <div class="upgrade-cost" id="cost-hint">75 G</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="map-wrapper">
+      
+      <div class="map-header">
+        <div>
+          <h2 class="mission-title" id="mission-title">Mission Loading...</h2>
+          <p class="mission-desc" id="mission-desc">Mempersiapkan peta navigasi taktis...</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-action" style="padding: 8px 16px; font-size: 0.85rem;" onclick="checkSolution()">Kirim Ekspedisi</button>
+          <button class="btn-action btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; margin:0;" onclick="resetCurrentLevel()">Reset Jalur</button>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="gameCanvas"></canvas>
+      </div>
+
+    </div>
+
+  </main>
+
+  <div class="modal-overlay" id="gameModal">
+    <div class="modal-box">
+      <span class="modal-icon" id="modal-icon">🏆</span>
+      <h2 class="modal-title" id="modal-title">Ekspedisi Sukses!</h2>
+      <p class="modal-text" id="modal-text">Kota-kota berhasil terhubung dengan efisiensi logika sempurna.</p>
+      <button class="btn-action" id="modal-btn" onclick="closeModal()">Lanjutkan</button>
+    </div>
+  </div>
+
+  <script>
+    // GAME STATE
+    let currentLevel = 0;
+    let gold = 300;
+    let timer = 90;
+    let totalDuration = 90;
+    let timerInterval = null;
+    
+    let nodes = [];
+    let edges = [];
+    let selectedNode = null;
+    let playerPath = []; // Menyimpan edge yang dipilih pemain
+
+    // LEVELS DEFINITIONS BASED ON DISCRETE MATHEMATICS
+    const levelData = [
+      {
+        title: "Misi 1: Algoritma Dijkstra (Shortest Path)",
+        desc: "Hubungkan <b>Kota Barat (A)</b> ke <b>Kota Timur (F)</b> dengan total bobot jalan PALING MINIMUM. Klik node berturut-turut untuk membuat jalur.",
+        theory: "<b>Shortest Path (Dijkstra):</b> Menemukan jalur dengan akumulasi bobot (jarak/biaya) terkecil dari node asal ke tujuan.",
+        nodes: [
+          { id: 'A', label: 'Barat (A)', x: 100, y: 275, isStart: true },
+          { id: 'B', label: 'Kota B', x: 300, y: 150 },
+          { id: 'C', label: 'Kota C', x: 300, y: 400 },
+          { id: 'D', label: 'Kota D', x: 550, y: 150 },
+          { id: 'E', label: 'Kota E', x: 550, y: 400 },
+          { id: 'F', label: 'Timur (F)', x: 750, y: 275, isTarget: true }
+        ],
+        edges: [
+          { from: 'A', to: 'B', weight: 4 },
+          { from: 'A', to: 'C', weight: 2 },
+          { from: 'B', to: 'C', weight: 1 },
+          { from: 'B', to: 'D', weight: 5 },
+          { from: 'C', to: 'E', weight: 8 },
+          { from: 'D', to: 'E', weight: 2 },
+          { from: 'D', to: 'F', weight: 3 },
+          { from: 'E', to: 'F', weight: 5 }
+        ],
+        validate: () => {
+          // Path optimal: A -> C -> B -> D -> F (Bobot: 2 + 1 + 5 + 3 = 11)
+          const totalWeight = playerPath.reduce((sum, e) => sum + e.weight, 0);
+          const hasStart = playerPath.some(e => e.from === 'A' || e.to === 'A');
+          const hasEnd = playerPath.some(e => e.from === 'F' || e.to === 'F');
+          return hasStart && hasEnd && totalWeight === 11;
+        }
+      },
+      {
+        title: "Misi 2: Minimum Spanning Tree (Prim/Kruskal)",
+        desc: "Bangun jaringan infrastruktur listrik yang menghubungkan <b>SEMUA KOTA</b> dengan total biaya (bobot) PALING MINIMUM tanpa membentuk siklus (loop).",
+        theory: "<b>Minimum Spanning Tree (MST):</b> Menghubungkan seluruh node dalam graf tanpa membentuk loop/cycle dengan total bobot seminimal mungkin.",
+        nodes: [
+          { id: 'A', label: 'Pusat (A)', x: 425, y: 275 },
+          { id: 'B', label: 'Utara', x: 425, y: 100 },
+          { id: 'C', label: 'Selatan', x: 425, y: 450 },
+          { id: 'D', label: 'Barat', x: 150, y: 275 },
+          { id: 'E', label: 'Timur', x: 700, y: 275 }
+        ],
+        edges: [
+          { from: 'A', to: 'B', weight: 3 },
+          { from: 'A', to: 'C', weight: 5 },
+          { from: 'A', to: 'D', weight: 4 },
+          { from: 'A', to: 'E', weight: 2 },
+          { from: 'B', to: 'D', weight: 6 },
+          { from: 'B', to: 'E', weight: 5 },
+          { from: 'C', to: 'D', weight: 7 },
+          { from: 'C', to: 'E', weight: 3 }
+        ],
+        validate: () => {
+          // Jaringan MST optimal menghubungkan 5 node butuh 4 edge.
+          // Edge optimal: A-E (2), A-B (3), A-D (4), C-E (3) -> Total = 12
+          if (playerPath.length !== 4) return false;
+          const totalWeight = playerPath.reduce((sum, e) => sum + e.weight, 0);
+          return totalWeight === 12;
+        }
+      },
+      {
+        title: "Misi 3: Penjelajahan Taktis (BFS & DFS)",
+        desc: "Tim pengintai harus bergerak dari <b>A</b> ke <b>E</b> menggunakan strategi pencarian melebar mendalam. Pilih rute terpendek dalam hitungan jumlah lompatan node (unweighted basis).",
+        theory: "<b>BFS & DFS Traversal:</b> Penelusuran struktur graf. BFS menjamin rute terpendek pada graf tanpa bobot karena mengeksplorasi tetangga terdekat terlebih dahulu.",
+        nodes: [
+          { id: 'A', label: 'Mulai (A)', x: 150, y: 275, isStart: true },
+          { id: 'B', label: 'Pos B', x: 350, y: 150 },
+          { id: 'C', label: 'Pos C', x: 350, y: 400 },
+          { id: 'D', label: 'Pos D', x: 550, y: 275 },
+          { id: 'E', label: 'Markas (E)', x: 750, y: 275, isTarget: true }
+        ],
+        edges: [
+          { from: 'A', to: 'B', weight: 1 },
+          { from: 'A', to: 'C', weight: 1 },
+          { from: 'B', to: 'D', weight: 1 },
+          { from: 'C', to: 'D', weight: 1 },
+          { from: 'D', to: 'E', weight: 1 },
+          { from: 'B', to: 'E', weight: 4 } // Jalur jebakan berbobot besar
+        ],
+        validate: () => {
+          // Lompatan paling sedikit: A->B->D->E atau A->C->D->E (3 edge)
+          const hasStart = playerPath.some(e => e.from === 'A' || e.to === 'A');
+          const hasEnd = playerPath.some(e => e.from === 'E' || e.to === 'E');
+          return hasStart && hasEnd && playerPath.length === 3;
+        }
+      }
+    ];
+
+    // CANVAS CONFIGURATIONS
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = 550;
+      drawGraph();
+    }
+
+    // INITIALIZATION
+    window.addEventListener('load', () => {
+      loadLevel(0);
+      setupCanvasInteractions();
+      window.addEventListener('resize', resizeCanvas);
+      setTimeout(resizeCanvas, 100);
+    });
+
+    function loadLevel(idx) {
+      if(idx >= levelData.length) {
+        showModal("👑", "Pahlawan Teori Graf!", "Selamat! Anda berhasil menuntaskan seluruh tantangan taktis Graph Kingdom dan mengamankan stabilitas logika kerajaan.", () => {
+          window.location.href = '?page=game';
+        });
+        return;
+      }
+
+      currentLevel = idx;
+      const data = levelData[idx];
+      
+      document.getElementById('lbl-level').textContent = `${currentLevel + 1} / ${levelData.length}`;
+      document.getElementById('mission-title').textContent = data.title;
+      document.getElementById('mission-desc').innerHTML = data.desc;
+      document.getElementById('theory-guide').innerHTML = data.theory;
+
+      // Deep copy data graf
+      nodes = JSON.parse(JSON.stringify(data.nodes));
+      edges = JSON.parse(JSON.stringify(data.edges));
+      playerPath = [];
+      selectedNode = null;
+
+      // Reset timer level
+      timer = 90 - (idx * 15); // Semakin tinggi level, waktu semakin ketat
+      totalDuration = timer;
+      startTimer();
+      
+      resizeCanvas();
+    }
+
+    // TIMER LOGIC
+    function startTimer() {
+      clearInterval(timerInterval);
+      document.getElementById('lbl-timer').textContent = `${timer}s`;
+      document.getElementById('timer-bar').style.width = "100%";
+
+      timerInterval = setInterval(() => {
+        timer--;
+        document.getElementById('lbl-timer').textContent = `${timer}s`;
+        
+        let pct = (timer / totalDuration) * 100;
+        document.getElementById('timer-bar').style.width = `${pct}%`;
+
+        if (timer <= 0) {
+          clearInterval(timerInterval);
+          showModal("⏳", "Waktu Habis!", "Ekspedisi kehabisan logistik taktis di tengah jalan. Coba atur ulang strategi Anda.", () => {
+            resetCurrentLevel();
+          });
+        }
+      }, 1000);
+    }
+
+    // INTERACTIVE DRAWING / RENDERING MANAGEMENT
+    function drawGraph() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Draw All Available Connections (Edges)
+      edges.forEach(edge => {
+        const fromNode = nodes.find(n => n.id === edge.from);
+        const toNode = nodes.find(n => n.id === edge.to);
+        if (!fromNode || !toNode) return;
+
+        // Cek apakah jalur ini aktif dipilih oleh user
+        const isSelected = playerPath.some(p => 
+          (p.from === edge.from && p.to === edge.to) || (p.from === edge.to && p.to === edge.from)
+        );
+
+        ctx.beginPath();
+        ctx.moveTo(fromNode.x, fromNode.y);
+        ctx.lineTo(toNode.x, toNode.y);
+        
+        if (isSelected) {
+          ctx.strokeStyle = 'hsl(174, 72%, 52%)'; // Teal aktif
+          ctx.lineWidth = 5;
+          ctx.shadowColor = 'hsl(174, 72%, 52%)';
+          ctx.shadowBlur = 12;
+        } else {
+          ctx.strokeStyle = '#2c3e50'; // Gelap bawaan
+          ctx.lineWidth = 3;
+          ctx.shadowBlur = 0;
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0; // reset shadow
+
+        // Draw Edge Weight Text Background
+        const midX = (fromNode.x + toNode.x) / 2;
+        const midY = (fromNode.y + toNode.y) / 2;
+        ctx.fillStyle = 'hsl(220, 15%, 10%)';
+        ctx.beginPath();
+        ctx.arc(midX, midY, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#34495e';
+        ctx.stroke();
+
+        // Draw Weight Number
+        ctx.fillStyle = isSelected ? 'hsl(174, 72%, 52%)' : 'hsl(38, 95%, 58%)'; // Amber default
+        ctx.font = 'bold 11px "Space Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(edge.weight, midX, midY);
+      });
+
+      // 2. Draw Nodes (Cities)
+      nodes.forEach(node => {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 22, 0, Math.PI * 2);
+        
+        // Node Type Cosmetics
+        if (node.isStart) ctx.fillStyle = '#27ae60';
+        else if (node.isTarget) ctx.fillStyle = '#c0392b';
+        else if (selectedNode && selectedNode.id === node.id) ctx.fillStyle = 'hsl(265, 65%, 65%)'; // Violet selection
+        else ctx.fillStyle = 'hsl(220, 13%, 22%)';
+
+        ctx.strokeStyle = '#ecf0f1';
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        // Node ID Text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px "DM Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.id, node.x, node.y);
+
+        // Label Tag Underneath
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.font = '11px "DM Sans", sans-serif';
+        ctx.fillText(node.label, node.x, node.y + 34);
+      });
+    }
+
+    // MOUSE & TOUCH EVENT INTERACTION LOGIC
+    function setupCanvasInteractions() {
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        // Deteksi node mana yang diclik
+        let clickedNode = null;
+        nodes.forEach(node => {
+          const dist = Math.hypot(node.x - mouseX, node.y - mouseY);
+          if (dist <= 25) clickedNode = node;
+        });
+
+        if (clickedNode) {
+          if (!selectedNode) {
+            selectedNode = clickedNode;
+          } else {
+            // Cek kesahihan relasi ketetanggaan/edge antara node lama & baru
+            const foundEdge = edges.find(edge => 
+              (edge.from === selectedNode.id && edge.to === clickedNode.id) ||
+              (edge.from === clickedNode.id && edge.to === selectedNode.id)
+            );
+
+            if (foundEdge) {
+              // Toggle seleksi edge (tambah jika belum ada, hapus jika klik ulang)
+              const existIdx = playerPath.findIndex(p => p.from === foundEdge.from && p.to === foundEdge.to);
+              if (existIdx > -1) {
+                playerPath.splice(existIdx, 1);
+              } else {
+                playerPath.push(foundEdge);
+              }
+            }
+            selectedNode = clickedNode; // Pindahkan pivot seleksi
+          }
+          drawGraph();
+        } else {
+          selectedNode = null;
+          drawGraph();
+        }
+      });
+    }
+
+    // GAMEPLAY SYSTEM VALIDIATION MECHANICS
+    function checkSolution() {
+      const level = levelData[currentLevel];
+      if (level.validate()) {
+        clearInterval(timerInterval);
+        gold += 100; // Reward bonus finansial fungsional
+        document.getElementById('lbl-gold').textContent = `${gold} Gold`;
+        
+        showModal("🎉", "Taktik Sempurna!", "Hubungan antar wilayah tervalidasi secara logis dan efisien sesuai kalkulasi grafis murni.", () => {
+          loadLevel(currentLevel + 1);
+        });
+      } else {
+        showModal("❌", "Evaluasi Gagal", "Jaringan atau bobot jalur tidak sesuai target instruksi matematis. Silakan analisis ulang jalurnya.", null);
+      }
+    }
+
+    function resetCurrentLevel() {
+      playerPath = [];
+      selectedNode = null;
+      drawGraph();
+      startTimer();
+    }
+
+    // UPGRADES AND EXTRA FEATURES UTILITY
+    function buyUpgrade(type) {
+      if (type === 'timer') {
+        if (gold >= 50) {
+          gold -= 50;
+          timer += 15;
+          totalDuration += 15;
+          document.getElementById('lbl-gold').textContent = `${gold} Gold`;
+          document.getElementById('lbl-timer').textContent = `${timer}s`;
+          drawGraph();
+        } else {
+          alert("Emas tidak mencukupi untuk memperluas logistik waktu!");
+        }
+      } else if (type === 'hint') {
+        if (gold >= 75) {
+          gold -= 75;
+          document.getElementById('lbl-gold').textContent = `${gold} Gold`;
+          triggerHintEffect();
+        } else {
+          alert("Emas tidak mencukupi untuk Altar Petunjuk!");
+        }
+      }
+    }
+
+    function triggerHintEffect() {
+      // Fitur pembantu visual otomatis: Beri flash/kedip jalur optimal sesaat
+      alert("Petunjuk Rahasia: Perhatikan akumulasi rute dengan bobot terkecil di papan panel petunjuk!");
+    }
+
+    // MODAL CONTROL UTILITIES
+    let modalCallback = null;
+    function showModal(icon, title, text, callback) {
+      document.getElementById('modal-icon').textContent = icon;
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-text').textContent = text;
+      
+      const overlay = document.getElementById('gameModal');
+      overlay.classList.add('open');
+      modalCallback = callback;
+    }
+
+    function closeModal() {
+      document.getElementById('gameModal').classList.remove('open');
+      if(modalCallback) {
+        modalCallback();
+        modalCallback = null;
+      }
+    }
+  </script>
+
+</body>
+</html>
