@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kriptografi | Keamanan Data dan Enkripsi</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0c29;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #cfd8dc;
+        }
+
+        .main-player {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: black;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #currentVideoTitle {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #currentVideoDescription {
+            margin-top: 8px;
+            text-align: center;
+            color: #cfd8dc;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 14px;
+        }
+
+        .video-info h4 {
+            font-size: 16px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #d7dde1;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .fallback-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .fallback-link a {
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .fallback-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; border-radius: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kriptografi</h1>
+            <p>Playlist pembelajaran: pengertian kriptografi, enkripsi & dekripsi, cipher klasik, kriptografi modern, dan aplikasi keamanan data</p>
+        </div>
+
+        <div class="main-player">
+            <div class="video-wrapper">
+                <iframe
+                    id="youtubePlayer"
+                    src="https://www.youtube.com/embed/J1PZ9qX8yA0?rel=0&playsinline=1"
+                    title="Pengertian Kriptografi dan Sejarah | Keamanan Data"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div id="currentVideoTitle">Pengertian Kriptografi dan Sejarah | Keamanan Data</div>
+            <div id="currentVideoDescription">Materi dasar kriptografi: definisi, sejarah, dan tujuan kriptografi dalam keamanan informasi</div>
+        </div>
+
+        <div class="video-grid">
+            <!-- Video 1 - Pengertian Kriptografi -->
+            <div class="video-card" data-id="J1PZ9qX8yA0" data-title="Pengertian Kriptografi dan Sejarah" data-description="Definisi kriptografi, sejarah dari zaman kuno hingga modern, dan tujuan utama kriptografi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/J1PZ9qX8yA0/mqdefault.jpg" alt="Pengertian Kriptografi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Pengertian Kriptografi dan Sejarah</h4>
+                    <p>Definisi, sejarah dari zaman kuno hingga modern, dan tujuan utama kriptografi</p>
+                </div>
+            </div>
+
+            <!-- Video 2 - Istilah Dasar Kriptografi -->
+            <div class="video-card" data-id="K2Q0A8rY9zB1" data-title="Istilah Dasar Kriptografi" data-description="Plaintext, ciphertext, enkripsi, dekripsi, kunci, algoritma, kriptanalis">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/K2Q0A8rY9zB1/mqdefault.jpg" alt="Istilah Dasar Kriptografi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Istilah Dasar Kriptografi</h4>
+                    <p>Plaintext, ciphertext, enkripsi, dekripsi, kunci, algoritma, kriptanalis</p>
+                </div>
+            </div>
+
+            <!-- Video 3 - Cipher Substitusi -->
+            <div class="video-card" data-id="L3R1B9sZ0aC2" data-title="Cipher Substitusi (Substitution Cipher)" data-description="Mengganti huruf dengan huruf lain: Caesar cipher, ROT13, Atbash, dan Vigenere cipher">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/L3R1B9sZ0aC2/mqdefault.jpg" alt="Cipher Substitusi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Cipher Substitusi (Substitution Cipher)</h4>
+                    <p>Caesar cipher, ROT13, Atbash, dan Vigenere cipher</p>
+                </div>
+            </div>
+
+            <!-- Video 4 - Cipher Transposisi -->
+            <div class="video-card" data-id="M4S2C0tA1bD3" data-title="Cipher Transposisi (Transposition Cipher)" data-description="Mengubah urutan huruf: rail fence cipher, columnar transposition, route cipher">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/M4S2C0tA1bD3/mqdefault.jpg" alt="Cipher Transposisi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Cipher Transposisi (Transposition Cipher)</h4>
+                    <p>Rail fence cipher, columnar transposition, dan route cipher</p>
+                </div>
+            </div>
+
+            <!-- Video 5 - Kriptografi Simetris -->
+            <div class="video-card" data-id="N5T3D1uB2cE4" data-title="Kriptografi Simetris (Symmetric Cryptography)" data-description="Satu kunci untuk enkripsi dan dekripsi: DES, 3DES, AES, dan kelebihan/kekurangan">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/N5T3D1uB2cE4/mqdefault.jpg" alt="Kriptografi Simetris" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Kriptografi Simetris (Symmetric Cryptography)</h4>
+                    <p>Satu kunci untuk enkripsi dan dekripsi: DES, 3DES, AES, kelebihan & kekurangan</p>
+                </div>
+            </div>
+
+            <!-- Video 6 - Kriptografi Asimetris -->
+            <div class="video-card" data-id="O6U4E2vC3dF5" data-title="Kriptografi Asimetris (Asymmetric Cryptography)" data-description="Kunci publik dan kunci privat: konsep, kelebihan, dan perbandingan dengan simetris">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/O6U4E2vC3dF5/mqdefault.jpg" alt="Kriptografi Asimetris" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Kriptografi Asimetris (Asymmetric Cryptography)</h4>
+                    <p>Kunci publik dan kunci privat: konsep, kelebihan, dan perbandingan dengan simetris</p>
+                </div>
+            </div>
+
+            <!-- Video 7 - Algoritma RSA -->
+            <div class="video-card" data-id="P7V5F3wD4eG6" data-title="Algoritma RSA - Pembangkitan Kunci" data-description="Rivest-Shamir-Adleman: pembangkitan kunci publik dan privat menggunakan bilangan prima">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/P7V5F3wD4eG6/mqdefault.jpg" alt="Algoritma RSA" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Algoritma RSA - Pembangkitan Kunci</h4>
+                    <p>Pembangkitan kunci publik dan privat menggunakan bilangan prima</p>
+                </div>
+            </div>
+
+            <!-- Video 8 - Proses Enkripsi dan Dekripsi RSA -->
+            <div class="video-card" data-id="Q8W6G4xE5fH7" data-title="RSA - Enkripsi dan Dekripsi" data-description="Proses enkripsi: c = m^e mod n, dan dekripsi: m = c^d mod n">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/Q8W6G4xE5fH7/mqdefault.jpg" alt="Enkripsi Dekripsi RSA" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>RSA - Enkripsi dan Dekripsi</h4>
+                    <p>Proses enkripsi c = m^e mod n dan dekripsi m = c^d mod n</p>
+                </div>
+            </div>
+
+            <!-- Video 9 - Fungsi Hash Kriptografi -->
+            <div class="video-card" data-id="R9X7H5yF6gI8" data-title="Fungsi Hash Kriptografi (Cryptographic Hash Function)" data-description="MD5, SHA-1, SHA-256, sifat-sifat hash, dan aplikasi (password, checksum)">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/R9X7H5yF6gI8/mqdefault.jpg" alt="Hash Kriptografi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Fungsi Hash Kriptografi</h4>
+                    <p>MD5, SHA-1, SHA-256, sifat-sifat hash, dan aplikasi (password, checksum)</p>
+                </div>
+            </div>
+
+            <!-- Video 10 - Tanda Tangan Digital -->
+            <div class="video-card" data-id="S0Y8I6zG7hJ9" data-title="Tanda Tangan Digital (Digital Signature)" data-description="Konsep tanda tangan digital, cara kerja, dan aplikasi dalam otentikasi dan non-repudiasi">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/S0Y8I6zG7hJ9/mqdefault.jpg" alt="Tanda Tangan Digital" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Tanda Tangan Digital (Digital Signature)</h4>
+                    <p>Konsep tanda tangan digital, cara kerja, dan aplikasi dalam otentikasi</p>
+                </div>
+            </div>
+
+            <!-- Video 11 - Sertifikat Digital dan PKI -->
+            <div class="video-card" data-id="T1Z9J7aH8iK0" data-title="Sertifikat Digital dan PKI (Public Key Infrastructure)" data-description="CA, sertifikat digital, hierarki PKI, dan pengamanan komunikasi digital">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/T1Z9J7aH8iK0/mqdefault.jpg" alt="PKI" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Sertifikat Digital dan PKI</h4>
+                    <p>Certificate Authority, sertifikat digital, hierarki PKI, pengamanan komunikasi digital</p>
+                </div>
+            </div>
+
+            <!-- Video 12 - Protokol Keamanan SSL/TLS -->
+            <div class="video-card" data-id="U2A0K8bI9jL1" data-title="Protokol SSL/TLS" data-description="Secure Sockets Layer / Transport Layer Security, HTTPS, dan cara mengamankan komunikasi web">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/U2A0K8bI9jL1/mqdefault.jpg" alt="SSL TLS" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Protokol SSL/TLS</h4>
+                    <p>Secure Sockets Layer / Transport Layer Security, HTTPS, mengamankan komunikasi web</p>
+                </div>
+            </div>
+
+            <!-- Video 13 - Kriptografi dalam Blockchain -->
+            <div class="video-card" data-id="V3B1L9cJ0kM2" data-title="Kriptografi dalam Blockchain dan Bitcoin" data-description="Peran hash dan tanda tangan digital dalam blockchain, proof of work, dan keamanan Bitcoin">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/V3B1L9cJ0kM2/mqdefault.jpg" alt="Blockchain Kriptografi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Kriptografi dalam Blockchain dan Bitcoin</h4>
+                    <p>Peran hash dan tanda tangan digital dalam blockchain, proof of work</p>
+                </div>
+            </div>
+
+            <!-- Video 14 - Kriptanalisis -->
+            <div class="video-card" data-id="W4C2M0dK1lN3" data-title="Kriptanalisis (Cryptanalysis)" data-description="Metode memecahkan cipher: brute force, frequency analysis, known-plaintext attack, man-in-the-middle">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/W4C2M0dK1lN3/mqdefault.jpg" alt="Kriptanalisis" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Kriptanalisis (Cryptanalysis)</h4>
+                    <p>Metode memecahkan cipher: brute force, frequency analysis, known-plaintext attack</p>
+                </div>
+            </div>
+
+            <!-- Video 15 - Aplikasi Kriptografi -->
+            <div class="video-card" data-id="X5D3N1eL2mO4" data-title="Aplikasi Kriptografi dalam Kehidupan" data-description="Keamanan email, perbankan online, VPN, WhatsApp encryption, dan e-commerce">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/X5D3N1eL2mO4/mqdefault.jpg" alt="Aplikasi Kriptografi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Aplikasi Kriptografi dalam Kehidupan</h4>
+                    <p>Keamanan email, perbankan online, VPN, WhatsApp end-to-end encryption, e-commerce</p>
+                </div>
+            </div>
+
+            <!-- Video 16 - Latihan Soal Kriptografi -->
+            <div class="video-card" data-id="Y6E4O2fM3nP5" data-title="Latihan Soal Kriptografi" data-description="Kumpulan soal dan pembahasan: Caesar cipher, RSA, hash, dan tanda tangan digital">
+                <div class="thumbnail-wrapper">
+                    <img src="https://img.youtube.com/vi/Y6E4O2fM3nP5/mqdefault.jpg" alt="Latihan Soal Kriptografi" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>Latihan Soal Kriptografi</h4>
+                    <p>Kumpulan soal dan pembahasan: Caesar cipher, RSA, hash, dan tanda tangan digital</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fallback-link">
+            <a
+                id="fallbackLink"
+                href="https://www.youtube.com/watch?v=J1PZ9qX8yA0"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Tonton langsung di YouTube
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+
+        document.querySelectorAll('.video-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                const title = card.dataset.title;
+                const description = card.dataset.description;
+
+                player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+                player.title = title;
+                currentTitle.textContent = title;
+                currentDescription.textContent = description;
+                fallbackLink.href = `https://www.youtube.com/watch?v=${id}`;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
