@@ -128,7 +128,11 @@ var materiData = {
   },{
      icon:"📼", title:"Video Pembelajaran Aljabar Linear",
     items:[
-      {num:"01",title:"Sistem Persamaan Linear",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/video.html"},
+      {num:"01",title:"Sistem Persamaan Linear",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/aljali/Video_SPL.html"},
+      {num:"02",title:"Matriks",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/aljali/video_Matriks.html"},
+      {num:"03",title:"Determinan",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/aljali/video_determinan.html"},
+      {num:"04",title:"Nilai Eigen dan Vektor Eigen",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/aljali/Video_Eigenvector.html"},
+      {num:"05",title:"Diagonalisasi",description:"Proposisi, operator logika, dan tabel kebenaran",tag:"Watch",file:"video/aljali/Video_diagonalisasi.html"}
     ]
   },{
     icon:"📝", title:"Latihan Soal Aljabar Linear",
