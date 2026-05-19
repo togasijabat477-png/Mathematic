@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Logic Detective — Mathematic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=Playfair+Display:wght@700;900&display=swap"/>
+<style>
+/* ═══ CSS VARIABLES — matching Mathematic theme ═══ */
+:root {
+  --bg:     hsl(220,18%,7%);
+  --bg2:    hsl(220,15%,10%);
+  --bg3:    hsl(220,14%,13%);
+  --surface:hsl(220,13%,16%);
+  --surface2:hsl(220,12%,20%);
+  --fg:     hsl(210,25%,92%);
+  --fg2:    hsl(210,15%,70%);
+  --fg3:    hsl(210,12%,50%);
+  --border: hsl(220,12%,22%);
+  --teal:   hsl(174,72%,52%);
+  --teal2:  hsl(174,72%,32%);
+  --amber:  hsl(38,95%,58%);
+  --violet: hsl(265,65%,65%);
+  --red:    hsl(0,75%,60%);
+  --green:  hsl(142,71%,45%);
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  --ease-smooth: cubic-bezier(0.4,0,0.2,1);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grid background */
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(hsl(220,15%,14%,.45) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(220,15%,14%,.45) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Scanlines overlay — cinematic noir effect */
+body::after {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    hsl(220,18%,3%,.06) 2px,
+    hsl(220,18%,3%,.06) 4px
+  );
+  animation: scanMove 8s linear infinite;
+}
+@keyframes scanMove { from{background-position:0 0} to{background-position:0 48px} }
+
+/* ═══ KEYFRAMES ═══ */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
+@keyframes glowRing { 0%,100%{box-shadow:0 0 0 0 hsl(174,72%,52%,.4)} 50%{box-shadow:0 0 0 10px hsl(174,72%,52%,0)} }
+@keyframes shake    { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+@keyframes modalIn  { from{opacity:0;transform:scale(.92) translateY(20px)} to{opacity:1;transform:none} }
+@keyframes rankIn   { from{opacity:0;transform:scale(.5) rotate(-10deg)} to{opacity:1;transform:none} }
+@keyframes tickerScroll { from{transform:translateX(100%)} to{transform:translateX(-100%)} }
+@keyframes caseOpen { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:none} }
+@keyframes typewriter { from{width:0} to{width:100%} }
+@keyframes waveFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes dotBlink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+@keyframes timerPulse { 0%,100%{color:var(--amber)} 50%{color:hsl(38,95%,80%)} }
+
+/* ═══ LAYOUT ═══ */
+#app {
+  position: relative; z-index:1;
+  max-width: 900px; margin: 0 auto;
+  padding: 0 1rem 4rem;
+  min-height: 100vh;
+}
+
+/* ═══ BACK BUTTON ═══ */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 1.5rem 0 0;
+  font-family: var(--font-mono); font-size: .8rem;
+  color: var(--fg3); text-decoration: none;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 14px; background: var(--surface);
+  transition: all .25s var(--ease-smooth);
+}
+.back-btn:hover { color: var(--teal); border-color: var(--teal2); background: hsl(174,72%,52%,.08); }
+
+/* ═══ HEADER ═══ */
+.game-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 0 .5rem; gap: 1rem; flex-wrap: wrap;
+}
+.logo-area { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--teal), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 900; color: var(--bg);
+  box-shadow: 0 0 16px hsl(174,72%,52%,.35);
+}
+.logo-text { font-family: var(--font-display); font-size: 1.1rem; font-weight: 900; letter-spacing: -.02em; }
+.logo-sub  { font-family: var(--font-mono); font-size: .65rem; color: var(--teal); text-transform: uppercase; letter-spacing: .08em; }
+
+/* HUD — timer + score + rank */
+.hud {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.hud-item {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); padding: 6px 12px;
+  font-family: var(--font-mono); font-size: .8rem;
+}
+.hud-item .val { font-size: 1rem; font-weight: 700; color: var(--teal); }
+.hud-item.timer-danger .val { color: var(--red); animation: timerPulse .5s ease infinite; }
+
+/* ═══ NEWS TICKER ═══ */
+.news-ticker {
+  background: hsl(38,95%,58%,.12); border: 1px solid hsl(38,95%,58%,.25);
+  border-radius: 8px; padding: 6px 0; overflow: hidden;
+  margin-bottom: 1.5rem; position: relative;
+}
+.news-ticker::before {
+  content: '⚡ BREAKING';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  display: flex; align-items: center; padding: 0 12px;
+  background: var(--amber); color: var(--bg);
+  font-family: var(--font-mono); font-size: .65rem; font-weight: 700;
+  z-index: 2; white-space: nowrap;
+}
+.ticker-track {
+  display: flex; gap: 60px;
+  padding-left: 100px;
+  animation: tickerScroll 20s linear infinite;
+  white-space: nowrap; font-family: var(--font-mono); font-size: .75rem; color: var(--amber);
+}
+
+/* ═══ SCREEN: INTRO / START ═══ */
+.screen { display: none; animation: fadeUp .5s var(--ease-smooth); }
+.screen.active { display: block; }
+
+.intro-hero {
+  text-align: center; padding: 3rem 1rem;
+}
+.intro-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  border-radius: 99px; border: 1px solid hsl(174,72%,52%,.3);
+  background: hsl(174,72%,52%,.1); padding: 6px 16px;
+  font-family: var(--font-mono); font-size: .8rem; color: var(--teal);
+  margin-bottom: 1.5rem; letter-spacing: .05em;
+}
+.intro-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -.03em;
+  margin-bottom: 1rem;
+}
+.intro-hero h1 span { 
+  background: linear-gradient(135deg, var(--teal) 20%, var(--violet));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.intro-hero p {
+  font-size: 1.1rem; color: var(--fg2); max-width: 32rem; margin: 0 auto 2rem; line-height: 1.7;
+}
+
+/* Rank badges display */
+.rank-showcase {
+  display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 2.5rem;
+}
+.rank-badge-mini {
+  padding: 6px 14px; border-radius: 99px;
+  font-family: var(--font-mono); font-size: .72rem; font-weight: 700;
+  border: 1px solid;
+}
+.rank-trainee  { border-color: hsl(210,15%,40%); color: hsl(210,15%,60%); background: hsl(210,15%,40%,.1); }
+.rank-detective{ border-color: var(--teal2);      color: var(--teal);      background: hsl(174,72%,52%,.1); }
+.rank-senior   { border-color: hsl(38,80%,40%);   color: var(--amber);     background: hsl(38,95%,58%,.1); }
+.rank-chief    { border-color: hsl(265,50%,50%);  color: var(--violet);    background: hsl(265,65%,65%,.1); }
+.rank-legend   { border-color: hsl(0,60%,50%);    color: hsl(0,75%,65%);   background: hsl(0,75%,60%,.1); }
+
+.case-select-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 16px; margin-top: 1rem;
+}
+
+/* ═══ CASE CARD ═══ */
+.case-card {
+  border: 1.5px solid var(--border); border-radius: 14px;
+  background: var(--surface); padding: 22px;
+  cursor: pointer; transition: all .35s var(--ease-spring);
+  position: relative; overflow: hidden; text-align: left;
+}
+.case-card::before {
+  content:''; position: absolute; top:0; left:0; right:0; height:3px;
+  background: linear-gradient(90deg, var(--teal), var(--violet));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .5s var(--ease-smooth);
+}
+.case-card:hover { transform: translateY(-5px); border-color: hsl(174,72%,52%,.4); box-shadow: 0 12px 35px hsl(220,18%,3%,.6); }
+.case-card:hover::before { transform: scaleX(1); }
+.case-card.locked { opacity: .5; cursor: not-allowed; filter: grayscale(.6); }
+.case-card.locked:hover { transform: none; }
+.case-card.completed { border-color: hsl(142,71%,45%,.4); background: hsl(142,71%,45%,.05); }
+
+.case-num {
+  font-family: var(--font-mono); font-size: .72rem; color: var(--fg3);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px;
+}
+.case-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+.case-desc  { font-size: .875rem; color: var(--fg2); line-height: 1.6; margin-bottom: 12px; }
+.case-meta  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.case-diff {
+  font-family: var(--font-mono); font-size: .7rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 99px;
+}
+.diff-easy   { background: hsl(142,71%,45%,.15); color: var(--green); border: 1px solid hsl(142,71%,45%,.3); }
+.diff-medium { background: hsl(38,95%,58%,.15);  color: var(--amber); border: 1px solid hsl(38,95%,58%,.3); }
+.diff-hard   { background: hsl(0,75%,60%,.15);   color: var(--red);   border: 1px solid hsl(0,75%,60%,.3); }
+.lock-icon   { margin-left: auto; font-size: 1rem; }
+
+/* ═══ INVESTIGATION SCREEN ═══ */
+.case-header {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 24px; margin-bottom: 1.5rem;
+  animation: caseOpen .5s var(--ease-spring);
+  position: relative; overflow: hidden;
+}
+.case-header::after {
+  content: '🔍'; position: absolute; right: 20px; top: 50%;
+  transform: translateY(-50%); font-size: 3rem; opacity: .06;
+}
+.case-header-top { display: flex; align-items: flex-start; gap: 12px; justify-content: space-between; }
+.case-title-area h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; }
+.case-title-area p  { font-size: .875rem; color: var(--fg2); margin-top: 4px; }
+
+/* Clue panel */
+.clues-panel {
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem;
+}
+.clue-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  animation: fadeUp .4s var(--ease-smooth) both;
+}
+.clue-icon {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+  background: hsl(174,72%,52%,.15); border: 1px solid hsl(174,72%,52%,.25);
+  display: flex; align-items: center; justify-content: center; font-size: .9rem;
+}
+.clue-label {
+  font-family: var(--font-mono); font-size: .65rem;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--teal); margin-bottom: 3px;
+}
+.clue-text { font-size: .9rem; line-height: 1.6; color: var(--fg); }
+.clue-formula {
+  font-family: var(--font-mono); font-size: .82rem;
+  color: var(--violet); background: hsl(265,65%,65%,.1);
+  border: 1px solid hsl(265,65%,65%,.2);
+  border-radius: 6px; padding: 6px 10px; margin-top: 6px;
+  display: inline-block;
+}
+
+/* NPC Dialogues */
+.npc-area { display: flex; flex-direction: column; gap: 14px; margin-bottom: 1.5rem; }
+.npc-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  animation: fadeUp .4s var(--ease-smooth) both;
+  transition: border-color .3s;
+}
+.npc-card.selected-liar { border-color: var(--red); }
+.npc-card.selected-truth { border-color: var(--green); }
+
+.npc-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+  background: var(--bg2); transition: background .2s;
+}
+.npc-header:hover { background: var(--surface2); }
+.npc-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 900; border: 2px solid;
+  flex-shrink: 0;
+}
+.avatar-a { background: hsl(265,50%,20%); border-color: hsl(265,50%,50%); }
+.avatar-b { background: hsl(38,50%,15%);  border-color: var(--amber); }
+.avatar-c { background: hsl(0,40%,18%);   border-color: var(--red); }
+.avatar-d { background: hsl(142,40%,12%); border-color: var(--green); }
+.avatar-e { background: hsl(200,50%,12%); border-color: hsl(200,72%,52%); }
+
+.npc-name { font-weight: 700; font-size: .95rem; }
+.npc-role { font-size: .75rem; color: var(--fg3); font-family: var(--font-mono); }
+.npc-body { padding: 14px 16px; }
+
+/* Statement bubble */
+.statement-bubble {
+  background: var(--bg3); border-radius: 8px; padding: 12px 14px;
+  font-size: .9rem; line-height: 1.6; margin-bottom: 10px;
+  border-left: 3px solid var(--border); position: relative;
+}
+.statement-bubble::before {
+  content: '"'; position: absolute; top: -2px; left: 8px;
+  font-size: 1.5rem; color: var(--teal); font-family: var(--font-display); line-height: 1;
+}
+.stmt-text { padding-left: 10px; }
+
+/* Logic form displayed */
+.stmt-logic {
+  font-family: var(--font-mono); font-size: .78rem; color: var(--violet);
+  background: hsl(265,65%,65%,.08); border: 1px solid hsl(265,65%,65%,.15);
+  border-radius: 6px; padding: 5px 10px; margin-top: 6px; display: inline-block;
+}
+
+/* NPC action buttons */
+.npc-actions {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 16px 14px;
+  border-top: 1px solid var(--border);
+}
+.npc-btn {
+  font-family: var(--font-mono); font-size: .75rem; font-weight: 700;
+  border-radius: 99px; padding: 6px 14px; cursor: pointer;
+  transition: all .25s var(--ease-spring); border: 1px solid;
+}
+.btn-liar  { border-color: hsl(0,60%,50%);  color: var(--red);   background: hsl(0,75%,60%,.1); }
+.btn-truth { border-color: hsl(142,50%,35%); color: var(--green); background: hsl(142,71%,45%,.1); }
+.btn-liar:hover  { background: hsl(0,75%,60%,.2);   transform: scale(1.05); }
+.btn-truth:hover { background: hsl(142,71%,45%,.2); transform: scale(1.05); }
+.btn-selected { transform: scale(1.05); }
+.btn-selected.btn-liar  { background: hsl(0,75%,60%,.3);   box-shadow: 0 0 0 2px var(--red); }
+.btn-selected.btn-truth { background: hsl(142,71%,45%,.3); box-shadow: 0 0 0 2px var(--green); }
+
+/* ═══ TRUTH TABLE ═══ */
+.truth-table-wrapper {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; margin-bottom: 1.5rem; overflow-x: auto;
+}
+.truth-table-wrapper h3 {
+  font-family: var(--font-mono); font-size: .72rem; color: var(--teal);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 12px;
+}
+table.tt {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--font-mono); font-size: .82rem;
+}
+table.tt th {
+  background: var(--bg3); color: var(--violet); padding: 8px 12px;
+  border: 1px solid var(--border); font-weight: 700; text-align: center;
+}
+table.tt td {
+  padding: 7px 12px; border: 1px solid var(--border); text-align: center;
+  transition: background .2s;
+}
+table.tt tr:hover td { background: var(--surface2); }
+table.tt td.tt-T { color: var(--green); font-weight: 700; }
+table.tt td.tt-F { color: var(--red);   font-weight: 700; }
+table.tt td.tt-highlight { background: hsl(174,72%,52%,.12); color: var(--teal); }
+
+/* ═══ CONCLUSION BUILDER ═══ */
+.conclusion-area {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 1.5rem;
+}
+.conclusion-area h3 {
+  font-family: var(--font-mono); font-size: .8rem; color: var(--amber);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.conclusion-options {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.conclusion-opt {
+  display: flex; align-items: flex-start; gap: 12px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 12px 14px; cursor: pointer;
+  transition: all .3s var(--ease-spring); text-align: left;
+  background: var(--bg3); width: 100%;
+}
+.conclusion-opt:hover:not(:disabled) {
+  border-color: hsl(38,95%,58%,.5); background: hsl(38,95%,58%,.06);
+  transform: translateX(4px);
+}
+.conclusion-opt:disabled { cursor: default; opacity: .7; }
+.conclusion-opt.c-correct { border-color: var(--green); background: hsl(142,71%,45%,.1); animation: fadeUp .3s ease; }
+.conclusion-opt.c-wrong   { border-color: var(--red);   background: hsl(0,75%,60%,.1); animation: shake .4s ease; }
+.opt-letter {
+  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: .8rem; font-weight: 700; color: var(--fg2);
+}
+.opt-text { font-size: .9rem; line-height: 1.5; color: var(--fg); }
+.opt-formula { font-family: var(--font-mono); font-size: .78rem; color: var(--violet); display: block; margin-top: 3px; }
+
+/* Submit + action area */
+.action-bar {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  margin-bottom: 1.5rem;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--teal); color: var(--bg);
+  font-family: var(--font-mono); font-size: .85rem; font-weight: 700;
+  padding: 12px 24px; border-radius: 10px; cursor: pointer;
+  border: none; transition: all .3s var(--ease-spring);
+  box-shadow: 0 6px 20px hsl(174,72%,52%,.25);
+}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-3px); }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; transform:none; filter:none; }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1.5px solid var(--border); color: var(--fg2);
+  background: var(--surface); font-family: var(--font-mono);
+  font-size: .85rem; font-weight: 700; padding: 12px 24px;
+  border-radius: 10px; cursor: pointer; transition: all .3s;
+}
+.btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+
+/* Hint button */
+.btn-hint {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px dashed hsl(38,95%,58%,.4); color: var(--amber);
+  background: hsl(38,95%,58%,.08); font-family: var(--font-mono);
+  font-size: .78rem; padding: 8px 16px; border-radius: 99px; cursor: pointer;
+  transition: all .25s; margin-left: auto;
+}
+.btn-hint:hover { background: hsl(38,95%,58%,.15); }
+.btn-hint:disabled { opacity: .4; cursor: default; }
+
+/* Hint display */
+.hint-bubble {
+  background: hsl(38,95%,58%,.08); border: 1px solid hsl(38,95%,58%,.25);
+  border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem;
+  font-size: .875rem; color: var(--amber); line-height: 1.6;
+  animation: fadeIn .3s ease;
+}
+.hint-bubble strong { display: block; margin-bottom: 4px; font-family: var(--font-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
+
+/* ═══ RESULT MODAL ═══ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: hsl(220,18%,3%,.85); backdrop-filter: blur(12px);
+  align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--bg3); border: 1.5px solid var(--border);
+  border-radius: 18px; padding: 32px; max-width: 500px; width: 100%;
+  animation: modalIn .5s var(--ease-spring); position: relative;
+  box-shadow: 0 30px 80px hsl(220,18%,3%,.6);
+  max-height: 90vh; overflow-y: auto;
+}
+.result-emoji { font-size: 3.5rem; display: block; text-align: center; margin-bottom: 12px; }
+.result-title {
+  font-family: var(--font-display); font-size: 1.8rem; font-weight: 900;
+  text-align: center; letter-spacing: -.02em; margin-bottom: 6px;
+}
+.result-subtitle { text-align: center; color: var(--fg2); font-size: .95rem; margin-bottom: 20px; }
+
+.rank-reveal {
+  text-align: center; padding: 20px;
+  background: var(--surface); border-radius: 12px;
+  border: 1.5px solid var(--border); margin-bottom: 20px;
+  animation: rankIn .6s var(--ease-spring) .2s both;
+}
+.rank-label { font-family: var(--font-mono); font-size: .7rem; color: var(--fg3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+.rank-name  { font-family: var(--font-display); font-size: 2rem; font-weight: 900; }
+
+.result-stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;
+}
+.rstat {
+  text-align: center; background: var(--surface);
+  border-radius: 10px; padding: 12px; border: 1px solid var(--border);
+}
+.rstat .v { font-size: 1.5rem; font-weight: 700; font-family: var(--font-display); color: var(--teal); }
+.rstat .l { font-size: .72rem; color: var(--fg3); font-family: var(--font-mono); margin-top: 3px; }
+
+.explanation-box {
+  background: hsl(265,65%,65%,.08); border: 1px solid hsl(265,65%,65%,.2);
+  border-radius: 10px; padding: 14px; margin-bottom: 16px;
+  font-size: .875rem; line-height: 1.7; color: var(--fg2);
+}
+.explanation-box strong { color: var(--violet); display: block; margin-bottom: 6px; font-family: var(--font-mono); font-size: .72rem; text-transform: uppercase; }
+
+.modal-actions { display: flex; gap: 10px; }
+.modal-actions .btn-primary { flex: 1; justify-content: center; }
+
+/* ═══ PROGRESS BAR ═══ */
+.progress-track {
+  height: 4px; background: var(--border); border-radius: 99px;
+  margin-bottom: 1.5rem; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--teal), var(--violet));
+  transition: width .6s var(--ease-smooth);
+}
+
+/* ═══ THINKING INDICATOR ═══ */
+.thinking {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: .8rem; color: var(--fg3);
+  padding: 8px 0;
+}
+.thinking-dots { display: flex; gap: 4px; }
+.thinking-dots span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal); animation: dotBlink 1.4s ease infinite;
+}
+.thinking-dots span:nth-child(2) { animation-delay: .2s; }
+.thinking-dots span:nth-child(3) { animation-delay: .4s; }
+
+/* ═══ MISSION BRIEF ═══ */
+.mission-brief {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px; margin-bottom: 1.5rem;
+  border-left: 4px solid var(--teal);
+  font-size: .9rem; line-height: 1.7; color: var(--fg2);
+  animation: caseOpen .5s var(--ease-smooth);
+}
+.mission-brief strong { color: var(--teal); font-family: var(--font-mono); font-size: .72rem; text-transform: uppercase; display: block; margin-bottom: 6px; }
+
+/* ═══ CONCEPT TAG ═══ */
+.concept-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.concept-tag {
+  font-family: var(--font-mono); font-size: .7rem;
+  padding: 4px 12px; border-radius: 99px; font-weight: 700;
+  border: 1px solid hsl(265,50%,50%);
+  color: var(--violet); background: hsl(265,65%,65%,.1);
+}
+
+/* ═══ SECTION DIVIDER ═══ */
+.section-label {
+  font-family: var(--font-mono); font-size: .72rem;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--fg3);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+}
+.section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+/* ═══ SCORES SCREEN ═══ */
+.scores-grid { display: grid; gap: 12px; margin-top: 1rem; }
+.score-row {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px;
+}
+.score-num { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--teal); min-width: 36px; }
+.score-name { font-weight: 600; flex: 1; }
+.score-pts { font-family: var(--font-mono); font-size: .85rem; color: var(--amber); font-weight: 700; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .hud { gap: 8px; }
+  .hud-item { padding: 5px 8px; font-size: .72rem; }
+  .result-stats { grid-template-columns: 1fr 1fr; }
+  .case-select-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back-btn" href="javascript:history.back()">← Kembali</a>
+
+  <header class="game-header">
+    <div class="logo-area">
+      <div class="logo-icon">🔍</div>
+      <div>
+        <div class="logo-text">Logic Detective</div>
+        <div class="logo-sub">by Mathematic</div>
+      </div>
+    </div>
+    <div class="hud" id="hud">
+      <div class="hud-item"><span>⏱</span><span class="val" id="timerDisplay">--:--</span></div>
+      <div class="hud-item"><span>🏆</span><span class="val" id="scoreDisplay">0</span></div>
+      <div class="hud-item"><span>🎖</span><span class="val" id="rankDisplay">Trainee</span></div>
+    </div>
+  </header>
+
+  <!-- Ticker -->
+  <div class="news-ticker">
+    <div class="ticker-track" id="ticker">
+      📰 Kasus baru ditemukan di kota logika &nbsp;•&nbsp;
+      🔐 Proposisi p ∧ ¬p selalu SALAH (Kontradiksi) &nbsp;•&nbsp;
+      💡 Implikasi p→q hanya SALAH jika p Benar dan q Salah &nbsp;•&nbsp;
+      🌐 Tautologi adalah proposisi yang selalu Benar &nbsp;•&nbsp;
+      🧠 Modus Ponens: jika p→q dan p, maka q &nbsp;•&nbsp;
+      🔍 Kamu bisa jadi Detective Legend dengan nilai sempurna! &nbsp;•
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+  <!-- ══════════════ SCREEN: INTRO ══════════════ -->
+  <div class="screen active" id="screenIntro">
+    <div class="intro-hero">
+      <div class="intro-badge">🕵️ Story Mode — 5 Kasus</div>
+      <h1><span>Logic</span><br>Detective</h1>
+      <p>Jadilah detektif logika terhebat! Selesaikan kasus menggunakan <strong>Logika Proposisional</strong> — temukan siapa yang berbohong, susun kesimpulan, dan ungkap kebenaran.</p>
+      <div class="rank-showcase">
+        <span class="rank-badge-mini rank-trainee">🎓 Trainee</span>
+        <span class="rank-badge-mini rank-detective">🔍 Detective</span>
+        <span class="rank-badge-mini rank-senior">⭐ Senior Det.</span>
+        <span class="rank-badge-mini rank-chief">💎 Chief Det.</span>
+        <span class="rank-badge-mini rank-legend">🏆 Legend</span>
+      </div>
+      <button class="btn-primary" style="font-size:1rem;padding:14px 40px;margin:0 auto 2rem;display:flex" onclick="Game.showCaseSelect()">
+        Mulai Investigasi →
+      </button>
+    </div>
+
+    <div class="section-label">Pilih Kasus</div>
+    <div class="case-select-grid" id="caseSelectGrid"></div>
+  </div>
+
+  <!-- ══════════════ SCREEN: INVESTIGATE ══════════════ -->
+  <div class="screen" id="screenInvestigate">
+    <div id="investigateContent"></div>
+  </div>
+
+  <!-- ══════════════ SCREEN: SCORES ══════════════ -->
+  <div class="screen" id="screenScores">
+    <div style="text-align:center;padding:2rem 0 1rem">
+      <h2 class="font-display" style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:.5rem">📊 Scoreboard</h2>
+      <p style="color:var(--fg2)">Total skor investigasimu</p>
+    </div>
+    <div class="scores-grid" id="scoresGrid"></div>
+    <div style="text-align:center;margin-top:1.5rem">
+      <button class="btn-primary" onclick="Game.goIntro()">← Kembali ke Menu</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   LOGIC DETECTIVE — Game Engine
+══════════════════════════════════════════ */
+
+/* ─── AUDIO ENGINE (Web Audio API) ─── */
+const Audio = {
+  ctx: null,
+  init() {
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  },
+  play(type) {
+    if (!this.ctx) return;
+    const ctx = this.ctx;
+    const g = ctx.createGain();
+    g.connect(ctx.destination);
+
+    const osc = ctx.createOscillator();
+    osc.connect(g);
+
+    const now = ctx.currentTime;
+    if (type === 'click') {
+      osc.frequency.setValueAtTime(440, now);
+      g.gain.setValueAtTime(.15, now);
+      g.gain.exponentialRampToValueAtTime(.001, now + .12);
+      osc.start(now); osc.stop(now + .12);
+    } else if (type === 'correct') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, now);
+      osc.frequency.setValueAtTime(659, now + .1);
+      osc.frequency.setValueAtTime(784, now + .2);
+      g.gain.setValueAtTime(.2, now);
+      g.gain.exponentialRampToValueAtTime(.001, now + .5);
+      osc.start(now); osc.stop(now + .5);
+    } else if (type === 'wrong') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.setValueAtTime(150, now + .1);
+      g.gain.setValueAtTime(.15, now);
+      g.gain.exponentialRampToValueAtTime(.001, now + .3);
+      osc.start(now); osc.stop(now + .3);
+    } else if (type === 'complete') {
+      [523,659,784,1047].forEach((f,i) => {
+        const o = ctx.createOscillator();
+        const gg = ctx.createGain();
+        o.connect(gg); gg.connect(ctx.destination);
+        o.type = 'sine'; o.frequency.value = f;
+        gg.gain.setValueAtTime(0, now+i*.1);
+        gg.gain.linearRampToValueAtTime(.18, now+i*.1+.05);
+        gg.gain.exponentialRampToValueAtTime(.001, now+i*.1+.4);
+        o.start(now+i*.1); o.stop(now+i*.1+.4);
+      });
+    } else if (type === 'tick') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(880, now);
+      g.gain.setValueAtTime(.06, now);
+      g.gain.exponentialRampToValueAtTime(.001, now + .05);
+      osc.start(now); osc.stop(now + .05);
+    }
+  }
+};
+
+/* ─── CASES DATA ─── */
+const CASES = [
+  // CASE 1: Logika Proposisional dasar
+  {
+    id: 1,
+    title: "Kasus Nasi Goreng Hilang",
+    subtitle: "Siapa yang mencuri nasi goreng Bu Tini?",
+    difficulty: "easy",
+    timeLimit: 120,
+    concepts: ["Negasi (¬)", "Konjungsi (∧)", "Disjungsi (∨)"],
+    brief: "Bu Tini kehilangan nasi gorengnya di kantin kampus. Tiga tersangka diperiksa: Andi, Budi, dan Cici. Detektif, gunakan logika proposisional untuk menemukan pelakunya!",
+    npcs: [
+      {
+        id: "andi", name: "Andi", role: "Mahasiswa Semester 3",
+        avatar: "avatar-a", emoji: "👨‍🎓",
+        statement: "Saya tidak mencuri nasi goreng itu. Kalau bukan saya yang mencuri, maka Budi pasti yang mencuri.",
+        logic: "¬A ∧ (¬A → B)",
+        truth: true,  // Andi berkata benar
+        explanation: "Pernyataan Andi membentuk konjungsi. Karena Andi benar, kita ketahui ¬A = T dan (¬A → B) = T, berarti B = T (Budi mencuri)."
+      },
+      {
+        id: "budi", name: "Budi", role: "Mahasiswa Semester 5",
+        avatar: "avatar-b", emoji: "👨‍💼",
+        statement: "Saya tidak mencuri! Dan Andi juga tidak mencuri. Kami berdua bersih.",
+        logic: "¬B ∧ ¬A",
+        truth: false, // Budi berbohong
+        explanation: "Budi mengklaim ¬B ∧ ¬A. Tapi dari analisis Andi yang benar, B = True. Maka ¬B = False, sehingga ¬B ∧ ¬A = False. Budi BERBOHONG!"
+      },
+      {
+        id: "cici", name: "Cici", role: "Pegawai Kantin",
+        avatar: "avatar-c", emoji: "👩‍🍳",
+        statement: "Saya melihat Budi mendekati meja Bu Tini. Entah Andi atau Cici yang mencuri, bukan Budi.",
+        logic: "(A ∨ C) ∧ ¬B",
+        truth: false, // Cici juga bohong
+        explanation: "Cici mengklaim (A ∨ C) ∧ ¬B. Karena bukti menunjukkan B yang mencuri, maka ¬B = False, sehingga seluruh pernyataan Cici = False. Cici BERBOHONG!"
+      }
+    ],
+    clues: [
+      { icon: "🔍", label: "Petunjuk Fisik", text: "Jejak kaki ditemukan di sekitar meja Bu Tini. Ukuran sepatu 42 — sama dengan ukuran Budi." },
+      { icon: "📹", label: "Rekaman CCTV", text: "Kamera merekam seseorang dengan kemeja merah mendekati meja pukul 12.05. Budi memakai kemeja merah hari itu." },
+      { icon: "🧮", label: "Analisis Logika", text: "Jika Andi berkata benar: ¬A = T, maka A tidak bersalah. Implikasi (¬A → B) bernilai T, maka B = T, artinya Budi bersalah.", formula: "¬A = T ∧ (¬A → B) = T ⊢ B = T" }
+    ],
+    truthTable: {
+      headers: ["A (Bersalah)", "B (Bersalah)", "¬A", "¬A → B", "Pernyataan Andi Valid?"],
+      rows: [
+        ["T","T","F","T","F (terbantahkan)"],
+        ["T","F","F","T","F (terbantahkan)"],
+        ["F","T","T","T","✓ VALID"],
+        ["F","F","T","F","F (kontradiksi)"],
+      ],
+      highlight: 2
+    },
+    conclusions: [
+      { id:"a", text: "Andi adalah pencurinya — ia berbohong tentang dirinya sendiri.", formula: "A = T", correct: false },
+      { id:"b", text: "Budi adalah pencurinya — pernyataan Andi terbukti benar secara logis, dan pernyataan Budi menghasilkan kontradiksi.", formula: "B = T (dari ¬A ∧ (¬A→B) ⊢ B)", correct: true },
+      { id:"c", text: "Cici adalah pencurinya — ia satu-satunya yang melihat langsung.", formula: "C = T", correct: false },
+      { id:"d", text: "Tidak ada yang mencuri — semua berkata benar.", formula: "¬A ∧ ¬B ∧ ¬C", correct: false }
+    ],
+    culprit: "budi",
+    hint: "💡 Coba evaluasi pernyataan Andi terlebih dahulu. Jika ¬A benar (Andi tidak bersalah), maka implikasi (¬A → B) bernilai apa? Ingat: implikasi hanya bernilai F jika anteseden T dan konsekuen F!",
+    explanation: "Kasus terselesaikan! Dengan menerapkan Modus Ponens: dari ¬A (premis 1) dan ¬A → B (premis 2), kita simpulkan B = True. Budi terbukti mencuri! Pernyataan Budi dan Cici menghasilkan kontradiksi dengan fakta ini.",
+    points: 100
+  },
+
+  // CASE 2: Implikasi & Modus Ponens
+  {
+    id: 2,
+    title: "Misteri Server Down",
+    subtitle: "Siapa yang mematikan server lab?",
+    difficulty: "easy",
+    timeLimit: 150,
+    concepts: ["Implikasi (→)", "Modus Ponens", "Modus Tollens"],
+    brief: "Server lab pemrograman tiba-tiba mati tengah malam. Empat tersangka: Deni (admin), Eva (mahasiswi), Fajar (teknisi), dan semua punya akses. Investigasi dimulai!",
+    npcs: [
+      {
+        id: "deni", name: "Deni", role: "Admin Lab",
+        avatar: "avatar-a", emoji: "👨‍💻",
+        statement: "Jika server dimatikan, pasti ada yang memasukkan perintah shutdown. Saya tidak memasukkan perintah apapun malam itu.",
+        logic: "(Shutdown → Cmd) ∧ ¬DeniCmd",
+        truth: true,
+        explanation: "Deni berkata benar. Ini adalah Modus Tollens: karena ¬DeniCmd, maka bukan Deni yang shutdown server lewat jalurnya."
+      },
+      {
+        id: "eva", name: "Eva", role: "Mahasiswi Semester 7",
+        avatar: "avatar-b", emoji: "👩‍💻",
+        statement: "Saya online dari rumah. Kalau saya online, maka saya tidak mungkin ada di lab. Dan tidak ada di lab berarti tidak bisa mematikan server fisik.",
+        logic: "EvaOnline → ¬EvaLab → ¬EvaShutdown",
+        truth: true,
+        explanation: "Eva membentuk rantai implikasi. Modus Ponens: EvaOnline = T, maka ¬EvaLab = T, maka ¬EvaShutdown = T. Eva tidak bersalah."
+      },
+      {
+        id: "fajar", name: "Fajar", role: "Teknisi",
+        avatar: "avatar-c", emoji: "👷",
+        statement: "Saya ada di lab, tapi hanya untuk ganti lampu. Kalau saya yang matikan server, pasti ada log-nya. Tidak ada log, berarti bukan saya.",
+        logic: "FajarShutdown → LogExists ∧ ¬LogExists → ¬FajarShutdown",
+        truth: false,
+        explanation: "Fajar mengklaim ¬LogExists. Tapi log forensik ditemukan dengan ID akses Fajar! Pernyataannya terbukti salah — Fajar BERBOHONG!"
+      }
+    ],
+    clues: [
+      { icon: "📋", label: "Log Server", text: "File log ditemukan dengan waktu akses 23:47:12. ID pengguna: FJR-042 — kode akses milik Fajar.", formula: "LogExists = TRUE" },
+      { icon: "📍", label: "Rekaman Akses", text: "Kartu akses Fajar di-swipe di pintu lab pukul 23:40 — 7 menit sebelum server mati." },
+      { icon: "🔑", label: "Analisis Modus Tollens", text: "Fajar mengklaim: FajarShutdown → LogExists. Ia juga klaim ¬LogExists. Tapi LogExists = TRUE faktanya!", formula: "¬(¬LogExists) = LogExists = T, sehingga kontradiksi!" }
+    ],
+    truthTable: {
+      headers: ["FajarShutdown", "LogExists", "F→L", "¬LogExists", "Pernyataan Fajar Konsisten?"],
+      rows: [
+        ["T","T","T","F","Mungkin — tapi ia klaim ¬Log"],
+        ["T","F","F","T","F — implikasi gagal"],
+        ["F","T","T","F","F — ia klaim ¬Log"],
+        ["F","F","T","T","'Aman' menurut Fajar"],
+      ],
+      highlight: 0
+    },
+    conclusions: [
+      { id:"a", text: "Deni yang mematikan server — ia punya akses penuh sebagai admin.", formula: "Deni = Guilty", correct: false },
+      { id:"b", text: "Eva yang mematikan server dari jarak jauh via remote access.", formula: "Eva = Guilty", correct: false },
+      { id:"c", text: "Fajar yang mematikan server. Log ditemukan dengan ID-nya, membantah klaimnya tentang tidak adanya log. Modus Tollens terbantahkan!", formula: "LogExists = T ⊢ ¬(¬LogExists) ⊢ Fajar berbohong", correct: true },
+      { id:"d", text: "Server mati sendiri karena masalah teknis — tidak ada pelaku.", formula: "¬Guilty(Semua)", correct: false }
+    ],
+    culprit: "fajar",
+    hint: "💡 Perhatikan Modus Tollens Fajar: jika P→Q dan ¬Q maka ¬P. Fajar klaim ¬LogExists (¬Q). Tapi petunjuk forensik menunjukkan apa tentang LogExists?",
+    explanation: "Brilian! Fajar menggunakan Modus Tollens sebagai alibi: 'FajarShutdown → LogExists, tapi ¬LogExists, jadi ¬FajarShutdown.' Namun bukti forensik membuktikan LogExists = TRUE, sehingga premis ¬LogExists Fajar adalah BOHONG!",
+    points: 130
+  },
+
+  // CASE 3: Tautologi & Kontradiksi
+  {
+    id: 3,
+    title: "Sandi Gembok Digital",
+    subtitle: "Temukan pernyataan mana yang tautologi!",
+    difficulty: "medium",
+    timeLimit: 180,
+    concepts: ["Tautologi", "Kontradiksi", "Biimplikasi (↔)"],
+    brief: "Sistem keamanan digital menggunakan pernyataan logika sebagai sandi. Empat saksi memberikan pernyataan logika — hanya yang TAUTOLOGI yang membuka kunci! Tentukan mana pernyataan tautologi dan siapa yang memberikan pernyataan palsu.",
+    npcs: [
+      {
+        id: "ana", name: "Ana", role: "Programmer Senior",
+        avatar: "avatar-a", emoji: "👩‍💻",
+        statement: "Sandi yang benar adalah: 'p ∨ ¬p' — ini selalu benar untuk nilai apapun.",
+        logic: "p ∨ ¬p",
+        truth: true,
+        explanation: "p ∨ ¬p adalah tautologi klasik (Hukum Eksklusi Tengah). Untuk p=T: T∨F=T. Untuk p=F: F∨T=T. Selalu True! Ana BENAR."
+      },
+      {
+        id: "bagas", name: "Bagas", role: "Security Engineer",
+        avatar: "avatar-b", emoji: "👨‍🔧",
+        statement: "Sandi yang benar adalah: 'p ∧ ¬p' — ini adalah tautologi fundamental!",
+        logic: "p ∧ ¬p",
+        truth: false,
+        explanation: "p ∧ ¬p adalah KONTRADIKSI, bukan tautologi! p=T: T∧F=F. p=F: F∧T=F. Selalu False. Bagas BERBOHONG!"
+      },
+      {
+        id: "candra", name: "Candra", role: "Junior Developer",
+        avatar: "avatar-d", emoji: "👨‍🎓",
+        statement: "Sandi yang benar: '(p → q) ↔ (¬q → ¬p)' — kontraposisi, dan ini tautologi!",
+        logic: "(p→q) ↔ (¬q→¬p)",
+        truth: true,
+        explanation: "(p→q) ↔ (¬q→¬p) adalah tautologi karena kontraposisi selalu ekuivalen dengan implikasi aslinya. Candra BENAR."
+      },
+      {
+        id: "dewi", name: "Dewi", role: "Sistem Analis",
+        avatar: "avatar-e", emoji: "👩‍🔬",
+        statement: "Sandi palsu yang harus dihindari: 'p → p' bukan tautologi — ini contingency!",
+        logic: "p → p",
+        truth: false,
+        explanation: "p→p ADALAH tautologi! p=T: T→T=T. p=F: F→F=T. Selalu True. Dewi salah menyebutnya bukan tautologi — BERBOHONG!"
+      }
+    ],
+    clues: [
+      { icon: "📊", label: "Tabel Kebenaran p∧¬p", text: "Untuk setiap nilai p, p∧¬p selalu menghasilkan F. Ini bukan sandi yang valid!", formula: "p∧¬p ≡ ⊥ (Kontradiksi)" },
+      { icon: "🔄", label: "Hukum Kontraposisi", text: "p→q selalu ekuivalen dengan ¬q→¬p. Biimplikasi dua hal yang ekuivalen = TAUTOLOGI.", formula: "(p→q) ↔ (¬q→¬p) ≡ ⊤" },
+      { icon: "💡", label: "Definisi Tautologi", text: "Tautologi: proposisi majemuk yang SELALU bernilai Benar untuk semua kombinasi nilai variabelnya.", formula: "⊤ = True untuk semua interpretasi" }
+    ],
+    truthTable: {
+      headers: ["p", "¬p", "p∨¬p (Ana)", "p∧¬p (Bagas)", "p→p (Dewi)"],
+      rows: [
+        ["T","F","T ✓","F ✗","T ✓"],
+        ["F","T","T ✓","F ✗","T ✓"],
+      ],
+      highlight: -1
+    },
+    conclusions: [
+      { id:"a", text: "Bagas dan Dewi memberikan pernyataan SALAH. p∧¬p adalah kontradiksi (bukan tautologi), dan p→p adalah tautologi (Dewi salah klaimnya).", formula: "Bagas: p∧¬p = ⊥ ; Dewi: p→p = ⊤ (bukan contingency)", correct: true },
+      { id:"b", text: "Hanya Bagas yang berbohong. p∧¬p memang bukan tautologi.", formula: "Hanya Bagas = Guilty", correct: false },
+      { id:"c", text: "Ana berbohong. p∨¬p bukan tautologi, itu hanya contingency.", formula: "Ana = Guilty", correct: false },
+      { id:"d", text: "Candra berbohong. Kontraposisi bukan tautologi.", formula: "Candra = Guilty", correct: false }
+    ],
+    culprit: "bagas",
+    hint: "💡 Buat tabel kebenaran untuk setiap pernyataan. Tautologi = SEMUA baris bernilai T. Kontradiksi = SEMUA baris bernilai F. Contingency = campuran T dan F.",
+    explanation: "Excellent! Bagas mengklaim p∧¬p adalah tautologi — padahal itu kontradiksi sempurna (selalu F)! Dewi mengklaim p→p bukan tautologi — padahal selalu T. Dua penipu sekaligus!",
+    points: 160
+  },
+
+  // CASE 4: Argumen Logis
+  {
+    id: 4,
+    title: "Sabotase Ujian Final",
+    subtitle: "Siapa yang bocorkan soal ujian?",
+    difficulty: "medium",
+    timeLimit: 200,
+    concepts: ["Argumen Valid", "Premis", "Modus Ponens", "Modus Tollens", "Silogisme Hipotetis"],
+    brief: "Soal ujian akhir semester bocor sebelum hari H! Lima tersangka diperiksa. Gunakan rantai silogisme dan argumen logis untuk menentukan pelaku kebocoran.",
+    npcs: [
+      {
+        id: "eko", name: "Eko", role: "Ketua Angkatan",
+        avatar: "avatar-a", emoji: "👨‍🎓",
+        statement: "Jika seseorang punya akses soal DAN berniat membocorkan, maka soal pasti bocor. Soal terbukti bocor. Tapi itu tidak berarti saya yang melakukannya.",
+        logic: "(Akses ∧ Niat → Bocor) ∧ Bocor",
+        truth: true,
+        explanation: "Eko benar secara logis. Ia hanya mengkonfirmasi syarat cukup bocor, bukan mengakui dirinya yang melakukan. Affirming the consequent adalah salah, tapi pernyataan Eko faktual."
+      },
+      {
+        id: "fina", name: "Fina", role: "Asisten Dosen",
+        avatar: "avatar-b", emoji: "👩‍🏫",
+        statement: "Saya tidak punya akses soal. Tanpa akses, tidak mungkin ada yang bocorkan. Jadi saya pasti tidak bersalah.",
+        logic: "¬Akses(Fina) → ¬Bocor(Fina)",
+        truth: true,
+        explanation: "Fina benar. Tidak punya akses = tidak bisa membocorkan. Modus Ponens valid. Fina terbukti tidak bersalah."
+      },
+      {
+        id: "gilang", name: "Gilang", role: "Operator Komputer Lab",
+        avatar: "avatar-c", emoji: "👨‍🔬",
+        statement: "Saya memang punya akses, tapi tidak punya niat. Tanpa niat, walaupun ada akses, soal tidak akan bocor.",
+        logic: "Akses(Gilang) ∧ ¬Niat(Gilang)",
+        truth: false,
+        explanation: "Gilang mengklaim ¬Niat. Namun ditemukan bukti chat: Gilang mengirim foto soal ke grup tertutup. Ini kontradiksi langsung — Gilang BERBOHONG!"
+      },
+      {
+        id: "hana", name: "Hana", role: "Mahasiswi Berprestasi",
+        avatar: "avatar-d", emoji: "👩‍🎓",
+        statement: "Kalau Gilang punya akses dan soal bocor, maka Gilang yang melakukan. Gilang punya akses. Soal bocor. Maka kesimpulannya valid.",
+        logic: "(Akses(G) ∧ Bocor → Guilt(G)) ∧ Akses(G) ∧ Bocor ⊢ Guilt(G)",
+        truth: true,
+        explanation: "Hana menggunakan Modus Ponens dengan benar. Argumennya valid dan terbukti dengan bukti chat yang ditemukan."
+      }
+    ],
+    clues: [
+      { icon: "💬", label: "Bukti Chat", text: "Ditemukan pesan dari akun Gilang pukul 22:15: foto halaman soal dikirim ke grup 'Belajar Bareng'. Ini kontradiksi langsung dengan klaimnya." },
+      { icon: "🔐", label: "Log Akses File", text: "File soal.pdf dibuka 3 kali dari PC-GL (komputer Gilang) antara pukul 21:00-22:00 malam sebelum ujian.", formula: "Akses(Gilang) = TRUE ∧ NiatBocor = TRUE" },
+      { icon: "🧮", label: "Silogisme Hipotetis", text: "Dari premis Hana: (Akses∧Bocor→Guilt) dan fakta Akses(G)=T, Bocor=T, maka via Modus Ponens: Guilt(G)=T", formula: "P1∧P2 ⊢ Guilt(Gilang)" }
+    ],
+    truthTable: {
+      headers: ["Akses(G)", "Niat(G)", "Bocor", "Guilty(G)", "Pernyataan Gilang (¬Niat)"],
+      rows: [
+        ["T","T","T","T","F — KONTRADIKSI ✗"],
+        ["T","T","F","F","F — tapi soal bocor"],
+        ["T","F","T","?","T — tapi bukti chat!"],
+        ["F","F","F","F","T — tapi ia punya akses"],
+      ],
+      highlight: 0
+    },
+    conclusions: [
+      { id:"a", text: "Gilang adalah pelaku. Meskipun mengklaim tak berniat, bukti chat dan log akses file membuktikan sebaliknya. Pernyataannya menghasilkan kontradiksi dengan fakta.", formula: "Akses(G)∧NiatBocor(G) ⊢ Guilty(G) — QED", correct: true },
+      { id:"b", text: "Fina adalah pelaku — sebagai asisten dosen, pasti punya akses tersembunyi.", formula: "Fina = Guilty", correct: false },
+      { id:"c", text: "Eko adalah pelaku — ia mengetahui detil tentang syarat kebocoran soal.", formula: "Eko = Guilty", correct: false },
+      { id:"d", text: "Hana adalah pelaku — ia terlalu banyak tahu tentang logika kasus ini.", formula: "Hana = Guilty", correct: false }
+    ],
+    culprit: "gilang",
+    hint: "💡 Fokus pada Silogisme Hipotetis Hana dan cocokkan dengan bukti fisik yang ada. Siapa yang memiliki Akses=T DAN bukti Niat yang terbantahkan?",
+    explanation: "Kasus terpecahkan! Gilang mengklaim ¬Niat, tapi bukti chat membuktikan Niat(G)=TRUE. Dengan Modus Ponens dari argumen Hana: Akses(G)∧Bocor∧Niat(G) ⊢ Guilt(G). Argumen valid, kasus selesai!",
+    points: 190
+  },
+
+  // CASE 5: Kasus Boss — Biimplikasi & Ekuivalensi Logis
+  {
+    id: 5,
+    title: "Konspirasi Jaringan Kriptografi",
+    subtitle: "Ungkap jaringan kebohongan kompleks!",
+    difficulty: "hard",
+    timeLimit: 240,
+    concepts: ["Biimplikasi (↔)", "Ekuivalensi Logis", "De Morgan", "Inferensi"],
+    brief: "Kasus paling rumit! Jaringan hacker membobol sistem kriptografi kampus. Tiga tersangka saling bersaksi — tapi siapa yang membentuk 'jaringan kebohongan' yang saling mendukung? Gunakan Hukum De Morgan dan ekuivalensi logis!",
+    npcs: [
+      {
+        id: "ivan", name: "Ivan", role: "Mahasiswa Cybersecurity",
+        avatar: "avatar-a", emoji: "👨‍💻",
+        statement: "Saya bersalah JIKA DAN HANYA JIKA Joko juga bersalah. Kami bekerja bersama atau tidak sama sekali.",
+        logic: "Guilty(I) ↔ Guilty(J)",
+        truth: false,
+        explanation: "Ivan mengklaim biimplikasi. Tapi bukti menunjukkan Ivan bersalah tapi Joko tidak terlibat. Guilty(I)=T, Guilty(J)=F, maka T↔F=F. Ivan BERBOHONG!"
+      },
+      {
+        id: "joko", name: "Joko", role: "Programmer Freelance",
+        avatar: "avatar-b", emoji: "👨‍🔧",
+        statement: "Bukan Ivan dan bukan saya yang bersalah — ¬(Ivan bersalah ∨ Joko bersalah).",
+        logic: "¬(Guilty(I) ∨ Guilty(J))",
+        truth: false,
+        explanation: "De Morgan: ¬(G(I)∨G(J)) = ¬G(I)∧¬G(J). Ini klaim Ivan bukan bersalah dan Joko bukan bersalah. Tapi Ivan terbukti bersalah! Joko BERBOHONG!"
+      },
+      {
+        id: "karin", name: "Karin", role: "Analis Keamanan",
+        avatar: "avatar-c", emoji: "👩‍💻",
+        statement: "Ivan atau Joko bersalah (atau keduanya). Dan dengan Hukum De Morgan: ¬(¬Ivan ∧ ¬Joko) ekuivalen dengan itu.",
+        logic: "Guilty(I) ∨ Guilty(J) ≡ ¬(¬G(I) ∧ ¬G(J))",
+        truth: true,
+        explanation: "Karin menerapkan De Morgan dengan benar: ¬(¬p∧¬q) ≡ p∨q. Pernyataannya secara logis ekuivalen dan faktual — Ivan terbukti bersalah sehingga G(I)∨G(J) = T. Karin BENAR!"
+      }
+    ],
+    clues: [
+      { icon: "🔑", label: "Hukum De Morgan", text: "De Morgan 1: ¬(p∧q) ≡ ¬p∨¬q", formula: "De Morgan 2: ¬(p∨q) ≡ ¬p∧¬q" },
+      { icon: "💡", label: "Biimplikasi", text: "p↔q = T hanya jika p dan q memiliki nilai kebenaran yang SAMA (keduanya T atau keduanya F).", formula: "p↔q ≡ (p→q)∧(q→p)" },
+      { icon: "🧬", label: "Bukti Digital Forensik", text: "IP address penyerang dilacak ke apartemen Ivan. Joko tidak memiliki akses ke sistem kriptografi pada waktu kejadian.", formula: "Guilty(Ivan) = TRUE, Guilty(Joko) = FALSE" }
+    ],
+    truthTable: {
+      headers: ["G(I)", "G(J)", "G(I)↔G(J) Ivan", "¬(G(I)∨G(J)) Joko", "G(I)∨G(J) Karin"],
+      rows: [
+        ["T","T","T","F","T"],
+        ["T","F","F","F","T ← FAKTA"],
+        ["F","T","F","F","T"],
+        ["F","F","T","T","F"],
+      ],
+      highlight: 1
+    },
+    conclusions: [
+      { id:"a", text: "Ivan adalah pelaku tunggal. G(I)=T, G(J)=F membuat biimplikasi Ivan=F (Ivan berbohong) dan klaim De Morgan Joko=F (Joko berbohong). Hanya Karin yang benar.", formula: "G(I)=T, G(J)=F ⊢ Ivan∧Joko berbohong", correct: true },
+      { id:"b", text: "Ivan dan Joko berdua bersalah — keduanya punya motif.", formula: "G(I)=T ∧ G(J)=T", correct: false },
+      { id:"c", text: "Joko adalah pelaku, Ivan hanya ikut-ikutan.", formula: "G(J)=T, G(I)=F", correct: false },
+      { id:"d", text: "Karin adalah pelaku yang sebenarnya — ia mengalihkan perhatian dengan logika.", formula: "G(K)=T", correct: false }
+    ],
+    culprit: "ivan",
+    hint: "💡 Mulai dari bukti forensik: Guilty(Ivan)=T, Guilty(Joko)=F. Substitusikan ke setiap pernyataan. Evaluasi nilai kebenaran biimplikasi Ivan dan De Morgan Joko!",
+    explanation: "Masterpiece! Dengan G(I)=T, G(J)=F: Ivan: T↔F = FALSE (Ivan berbohong). Joko: ¬(T∨F)=¬T=FALSE (Joko berbohong). Karin: T∨F=TRUE (Karin benar). Ivan adalah pelaku tunggal!",
+    points: 250
+  }
+];
+
+/* ─── GAME STATE ─── */
+const State = {
+  totalScore: 0,
+  currentCase: null,
+  completedCases: JSON.parse(localStorage.getItem('ld_completed') || '[]'),
+  caseScores: JSON.parse(localStorage.getItem('ld_scores') || '{}'),
+  timer: null,
+  timeLeft: 0,
+  hintsUsed: 0,
+  npcVotes: {},    // npcId → 'liar'|'truth'
+  conclusionPicked: null,
+  caseResolved: false,
+
+  save() {
+    localStorage.setItem('ld_completed', JSON.stringify(this.completedCases));
+    localStorage.setItem('ld_scores', JSON.stringify(this.caseScores));
+  },
+
+  getRank(score) {
+    if (score >= 700) return { label: '🏆 Legend', cls: 'rank-legend' };
+    if (score >= 450) return { label: '💎 Chief Detective', cls: 'rank-chief' };
+    if (score >= 280) return { label: '⭐ Senior Detective', cls: 'rank-senior' };
+    if (score >= 130) return { label: '🔍 Detective', cls: 'rank-detective' };
+    return { label: '🎓 Trainee', cls: 'rank-trainee' };
+  }
+};
+
+/* ─── GAME CONTROLLER ─── */
+const Game = {
+  /* ──── SCREENS ──── */
+  show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  },
+
+  goIntro() {
+    this.stopTimer();
+    this.buildCaseSelect();
+    this.updateHUD();
+    this.show('screenIntro');
+  },
+
+  showCaseSelect() {
+    this.buildCaseSelect();
+    document.getElementById('caseSelectGrid').scrollIntoView({behavior:'smooth'});
+  },
+
+  /* ──── CASE SELECT ──── */
+  buildCaseSelect() {
+    const grid = document.getElementById('caseSelectGrid');
+    grid.innerHTML = CASES.map((c, i) => {
+      const locked = i > 0 && !State.completedCases.includes(CASES[i-1].id);
+      const done   = State.completedCases.includes(c.id);
+      const score  = State.caseScores[c.id] || 0;
+      return `
+        <div class="case-card ${locked?'locked':''} ${done?'completed':''}"
+          onclick="Game.startCase(${c.id})" role="button">
+          <div class="case-num">KASUS ${String(i+1).padStart(2,'0')} ${done?'✓':''}</div>
+          <div class="case-title">${c.title}</div>
+          <div class="case-desc">${c.subtitle}</div>
+          <div class="case-meta">
+            <span class="case-diff diff-${c.difficulty}">${c.difficulty.toUpperCase()}</span>
+            <span style="font-family:var(--font-mono);font-size:.7rem;color:var(--fg3)">⏱ ${c.timeLimit}s</span>
+            <span style="font-family:var(--font-mono);font-size:.7rem;color:var(--amber)">★ ${c.points}pts</span>
+            ${done ? `<span style="margin-left:auto;font-family:var(--font-mono);font-size:.7rem;color:var(--green)">Skor: ${score}</span>` : ''}
+            ${locked ? '<span class="lock-icon">🔒</span>' : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    // Update total score display
+    State.totalScore = Object.values(State.caseScores).reduce((a,b)=>a+b,0);
+    this.updateHUD();
+  },
+
+  /* ──── START CASE ──── */
+  startCase(caseId) {
+    const idx = CASES.findIndex(c=>c.id===caseId);
+    if (idx > 0 && !State.completedCases.includes(CASES[idx-1].id)) return; // locked
+
+    Audio.init();
+    Audio.play('click');
+    State.currentCase = CASES.find(c=>c.id===caseId);
+    State.npcVotes = {};
+    State.conclusionPicked = null;
+    State.caseResolved = false;
+    State.hintsUsed = 0;
+    State.timeLeft = State.currentCase.timeLimit;
+
+    this.renderInvestigate();
+    this.show('screenInvestigate');
+    this.startTimer();
+    this.updateProgress();
+  },
+
+  /* ──── RENDER INVESTIGATE ──── */
+  renderInvestigate() {
+    const c = State.currentCase;
+    let html = `
+      <!-- Case Header -->
+      <div class="case-header">
+        <div class="case-header-top">
+          <div class="case-title-area">
+            <h2>📁 ${c.title}</h2>
+            <p>${c.subtitle}</p>
+          </div>
+          <span class="case-diff diff-${c.difficulty}" style="flex-shrink:0">${c.difficulty.toUpperCase()}</span>
+        </div>
+      </div>
+
+      <!-- Concept Tags -->
+      <div class="concept-tags">
+        ${c.concepts.map(t=>`<span class="concept-tag">${t}</span>`).join('')}
+      </div>
+
+      <!-- Mission Brief -->
+      <div class="mission-brief">
+        <strong>📋 Misi Investigasi</strong>
+        ${c.brief}
+      </div>
+
+      <!-- Clues -->
+      <div class="section-label">🔎 Petunjuk Kasus</div>
+      <div class="clues-panel">
+        ${c.clues.map((cl,i)=>`
+          <div class="clue-item" style="animation-delay:${i*.1}s">
+            <div class="clue-icon">${cl.icon}</div>
+            <div>
+              <div class="clue-label">${cl.label}</div>
+              <div class="clue-text">${cl.text}</div>
+              ${cl.formula?`<span class="clue-formula">${cl.formula}</span>`:''}
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <!-- Truth Table -->
+      <div class="section-label">📊 Tabel Kebenaran</div>
+      <div class="truth-table-wrapper">
+        <h3>Analisis Logika</h3>
+        <table class="tt">
+          <thead><tr>${c.truthTable.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${c.truthTable.rows.map((row,ri)=>`<tr>${row.map((cell,ci)=>{
+              const isT = cell==='T'||cell==='T ✓';
+              const isF = cell==='F'||cell==='F ✗';
+              const isHL = ri===c.truthTable.highlight;
+              return `<td class="${isT?'tt-T':isF?'tt-F':''} ${isHL?'tt-highlight':''}">${cell}</td>`;
+            }).join('')}</tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- NPC Dialogues -->
+      <div class="section-label">💬 Keterangan Saksi/Tersangka</div>
+      <div id="npcArea" class="npc-area">
+        ${c.npcs.map((npc,i)=>`
+          <div class="npc-card" id="npc-${npc.id}" style="animation-delay:${i*.12}s">
+            <div class="npc-header">
+              <div class="npc-avatar ${npc.avatar}">${npc.emoji}</div>
+              <div>
+                <div class="npc-name">${npc.name}</div>
+                <div class="npc-role">${npc.role}</div>
+              </div>
+            </div>
+            <div class="npc-body">
+              <div class="statement-bubble">
+                <span class="stmt-text">${npc.statement}</span>
+              </div>
+              <span class="stmt-logic">${npc.logic}</span>
+            </div>
+            <div class="npc-actions">
+              <button class="npc-btn btn-liar" id="liar-${npc.id}" onclick="Game.voteNPC('${npc.id}','liar')">
+                ✗ Berbohong
+              </button>
+              <button class="npc-btn btn-truth" id="truth-${npc.id}" onclick="Game.voteNPC('${npc.id}','truth')">
+                ✓ Berkata Benar
+              </button>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <!-- Hint -->
+      <div id="hintArea"></div>
+
+      <!-- Conclusion -->
+      <div class="conclusion-area">
+        <h3>⚖️ Susun Kesimpulan Akhir</h3>
+        <div class="conclusion-options" id="conclusionOpts">
+          ${c.conclusions.map((opt,i)=>`
+            <button class="conclusion-opt" id="copt-${opt.id}" onclick="Game.pickConclusion('${opt.id}')">
+              <span class="opt-letter">${['A','B','C','D'][i]}</span>
+              <div>
+                <span class="opt-text">${opt.text}</span>
+                <span class="opt-formula">${opt.formula}</span>
+              </div>
+            </button>`).join('')}
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-bar">
+        <button class="btn-primary" id="submitBtn" onclick="Game.submitCase()" disabled>
+          🔒 Serahkan Kesimpulan
+        </button>
+        <button class="btn-secondary" onclick="Game.goIntro()">← Kembali</button>
+        <button class="btn-hint" id="hintBtn" onclick="Game.showHint()">💡 Minta Petunjuk (-20pts)</button>
+      </div>
+    `;
+    document.getElementById('investigateContent').innerHTML = html;
+    this.refreshSubmitBtn();
+  },
+
+  /* ──── NPC VOTE ──── */
+  voteNPC(id, vote) {
+    Audio.play('click');
+    State.npcVotes[id] = vote;
+
+    // Update button styles
+    const liarBtn  = document.getElementById(`liar-${id}`);
+    const truthBtn = document.getElementById(`truth-${id}`);
+    const card = document.getElementById(`npc-${id}`);
+
+    [liarBtn,truthBtn].forEach(b=>b.classList.remove('btn-selected'));
+    if (vote==='liar')  { liarBtn.classList.add('btn-selected');  card.className = 'npc-card selected-liar'; }
+    if (vote==='truth') { truthBtn.classList.add('btn-selected'); card.className = 'npc-card selected-truth'; }
+
+    this.refreshSubmitBtn();
+  },
+
+  /* ──── PICK CONCLUSION ──── */
+  pickConclusion(id) {
+    if (State.caseResolved) return;
+    Audio.play('click');
+    State.conclusionPicked = id;
+    document.querySelectorAll('.conclusion-opt').forEach(o=>{
+      o.style.borderColor=''; o.style.background='';
+    });
+    const el = document.getElementById(`copt-${id}`);
+    if (el) { el.style.borderColor='var(--amber)'; el.style.background='hsl(38,95%,58%,.08)'; }
+    this.refreshSubmitBtn();
+  },
+
+  refreshSubmitBtn() {
+    const c = State.currentCase;
+    const allVoted = c.npcs.every(n => State.npcVotes[n.id]);
+    const hasConclusion = State.conclusionPicked !== null;
+    const btn = document.getElementById('submitBtn');
+    if (btn) btn.disabled = !(allVoted && hasConclusion) || State.caseResolved;
+  },
+
+  /* ──── HINT ──── */
+  showHint() {
+    Audio.play('click');
+    State.hintsUsed++;
+    const hintArea = document.getElementById('hintArea');
+    const hintBtn  = document.getElementById('hintBtn');
+    if (hintBtn) hintBtn.disabled = true;
+    if (hintArea) hintArea.innerHTML = `
+      <div class="hint-bubble">
+        <strong>💡 Petunjuk Detektif</strong>
+        ${State.currentCase.hint}
+      </div>`;
+  },
+
+  /* ──── SUBMIT ──── */
+  submitCase() {
+    const c = State.currentCase;
+    if (State.caseResolved) return;
+    State.caseResolved = true;
+    this.stopTimer();
+
+    // Check NPC votes
+    let npcCorrect = 0;
+    c.npcs.forEach(npc => {
+      const vote = State.npcVotes[npc.id];
+      const correct = npc.truth ? vote==='truth' : vote==='liar';
+      if (correct) npcCorrect++;
+    });
+
+    // Check conclusion
+    const chosen = c.conclusions.find(o=>o.id===State.conclusionPicked);
+    const conclusionCorrect = chosen && chosen.correct;
+
+    // Score calculation
+    const timeBonus = Math.floor(State.timeLeft * 0.5);
+    const hintPenalty = State.hintsUsed * 20;
+    const npcBonus = npcCorrect * 15;
+    const baseScore = conclusionCorrect ? c.points : Math.floor(c.points * .2);
+    const finalScore = Math.max(0, baseScore + npcBonus + timeBonus - hintPenalty);
+
+    State.caseScores[c.id] = finalScore;
+    State.totalScore = Object.values(State.caseScores).reduce((a,b)=>a+b,0);
+    if (!State.completedCases.includes(c.id)) State.completedCases.push(c.id);
+    State.save();
+
+    // Visual feedback on options
+    document.querySelectorAll('.conclusion-opt').forEach(o => {
+      const optId = o.id.replace('copt-','');
+      const opt = c.conclusions.find(x=>x.id===optId);
+      if (opt && opt.correct) { o.className='conclusion-opt c-correct'; }
+      else if (optId===State.conclusionPicked && !opt.correct) { o.className='conclusion-opt c-wrong'; }
+      o.disabled = true;
+    });
+
+    Audio.play(conclusionCorrect ? 'complete' : 'wrong');
+
+    setTimeout(()=>this.showResult(conclusionCorrect, finalScore, npcCorrect, c, timeBonus, npcBonus, hintPenalty), 600);
+    this.updateProgress();
+    this.updateHUD();
+  },
+
+  showResult(correct, score, npcCorrect, c, timeBonus, npcBonus, hintPenalty) {
+    const rank = State.getRank(State.totalScore);
+    const emoji = correct ? (score>c.points?'🏆':'✅') : '❌';
+    const title = correct ? (score>c.points?'Sempurna!':'Kasus Terpecahkan!') : 'Kurang Tepat...';
+    const nextCase = CASES.find(x => x.id === c.id+1);
+
+    document.getElementById('modalBox').innerHTML = `
+      <span class="result-emoji">${emoji}</span>
+      <div class="result-title">${title}</div>
+      <div class="result-subtitle">${correct?'Logika sempurna, Detektif!':'Jangan menyerah, coba evaluasi ulang premismu.'}</div>
+
+      <div class="rank-reveal">
+        <div class="rank-label">Rank Saat Ini</div>
+        <div class="rank-name ${rank.cls}">${rank.label}</div>
+        <div style="font-family:var(--font-mono);font-size:.78rem;color:var(--fg3);margin-top:6px">Total: ${State.totalScore} poin</div>
+      </div>
+
+      <div class="result-stats">
+        <div class="rstat"><div class="v">${score}</div><div class="l">Skor Kasus</div></div>
+        <div class="rstat"><div class="v">${npcCorrect}/${c.npcs.length}</div><div class="l">NPC Benar</div></div>
+        <div class="rstat"><div class="v">+${timeBonus}</div><div class="l">Bonus Waktu</div></div>
+      </div>
+
+      <div class="explanation-box">
+        <strong>📖 Penjelasan Logika</strong>
+        ${c.explanation}
+      </div>
+
+      <div class="modal-actions" style="flex-wrap:wrap;gap:10px">
+        ${nextCase ? `<button class="btn-primary" style="flex:1" onclick="Game.closeModal();Game.startCase(${nextCase.id})">Kasus Berikutnya →</button>` : ''}
+        <button class="${nextCase?'btn-secondary':'btn-primary'}" style="flex:1" onclick="Game.closeModal();Game.goIntro()">Menu Utama</button>
+      </div>
+    `;
+    document.getElementById('modalOverlay').classList.add('open');
+  },
+
+  closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  },
+
+  /* ──── TIMER ──── */
+  startTimer() {
+    this.stopTimer();
+    State.timer = setInterval(()=>{
+      State.timeLeft--;
+      this.updateTimerDisplay();
+      if (State.timeLeft<=10 && State.timeLeft>0) Audio.play('tick');
+      if (State.timeLeft<=0) {
+        this.stopTimer();
+        this.timeUp();
+      }
+    }, 1000);
+  },
+
+  stopTimer() {
+    if (State.timer) { clearInterval(State.timer); State.timer=null; }
+  },
+
+  updateTimerDisplay() {
+    const el = document.getElementById('timerDisplay');
+    const hud = el?.parentElement;
+    if (!el) return;
+    const m = Math.floor(State.timeLeft/60);
+    const s = State.timeLeft%60;
+    el.textContent = `${m}:${String(s).padStart(2,'0')}`;
+    if (State.timeLeft<=30) hud?.classList.add('timer-danger');
+    else hud?.classList.remove('timer-danger');
+  },
+
+  timeUp() {
+    Audio.play('wrong');
+    const c = State.currentCase;
+    State.caseResolved = true;
+    document.getElementById('modalBox').innerHTML = `
+      <span class="result-emoji">⏰</span>
+      <div class="result-title">Waktu Habis!</div>
+      <div class="result-subtitle">Kasus belum terpecahkan. Coba lagi dengan strategi berbeda!</div>
+      <div class="explanation-box">
+        <strong>📖 Solusi yang Benar</strong>
+        ${c.explanation}
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="Game.closeModal();Game.startCase(${c.id})">Coba Lagi 🔄</button>
+        <button class="btn-secondary" onclick="Game.closeModal();Game.goIntro()">Menu</button>
+      </div>
+    `;
+    document.getElementById('modalOverlay').classList.add('open');
+  },
+
+  /* ──── HUD ──── */
+  updateHUD() {
+    document.getElementById('scoreDisplay').textContent = State.totalScore;
+    const rank = State.getRank(State.totalScore);
+    document.getElementById('rankDisplay').textContent = rank.label.split(' ').slice(1).join(' ');
+    this.updateTimerDisplay();
+  },
+
+  /* ──── PROGRESS ──── */
+  updateProgress() {
+    const pct = (State.completedCases.length / CASES.length) * 100;
+    const fill = document.getElementById('progressFill');
+    if (fill) fill.style.width = pct + '%';
+  }
+};
+
+/* ─── INIT ─── */
+window.addEventListener('DOMContentLoaded', ()=>{
+  State.totalScore = Object.values(State.caseScores).reduce((a,b)=>a+b,0);
+  Game.buildCaseSelect();
+  Game.updateHUD();
+  Game.updateProgress();
+
+  // Close modal on overlay click
+  document.getElementById('modalOverlay').addEventListener('click', e=>{
+    if (e.target===document.getElementById('modalOverlay')) Game.closeModal();
+  });
+  // ESC closes modal
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') Game.closeModal(); });
+});
+</script>
+</body>
+</html>
