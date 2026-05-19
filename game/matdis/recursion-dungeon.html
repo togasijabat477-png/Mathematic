@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recursion Dungeon — Game Edukasi Diskrit Matematika</title>
+  <meta name="description" content="RPG dungeon edukasi dengan puzzle rekursi, monster battles, dan boss encounters." />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@700;800;900&display=swap" />
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       RECURSION DUNGEON — Fantasy RPG Math Education Game
+       Theme: Dark Medieval Fantasy with Teal Accents
+       ═══════════════════════════════════════════════════════════════ */
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: 220 18% 7%;
+      --bg2: 220 15% 10%;
+      --bg3: 220 14% 13%;
+      --fg: 210 25% 92%;
+      --fg2: 210 15% 70%;
+      --fg3: 210 12% 50%;
+      --primary: 174 72% 52%;
+      --teal: 174 72% 52%;
+      --danger: 0 84% 60%;
+      --success: 142 71% 45%;
+      --warning: 38 95% 58%;
+      --violet: 265 65% 65%;
+      --border: 220 12% 22%;
+      
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: hsl(var(--bg));
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: hsl(var(--bg));
+      color: hsl(var(--fg));
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(hsl(220 12% 14%) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(220 12% 14%) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes glow { 0%, 100% { text-shadow: 0 0 8px hsl(var(--teal)), 0 0 16px hsl(var(--teal) / .5); } 50% { text-shadow: 0 0 16px hsl(var(--teal)), 0 0 32px hsl(var(--teal) / .8); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    @keyframes slideDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes floatUp { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-60px); opacity: 0; } }
+    @keyframes recursiveGlow { 0% { box-shadow: 0 0 10px hsl(var(--teal)); } 50% { box-shadow: 0 0 20px hsl(var(--teal)), 0 0 40px hsl(var(--teal) / 0.5); } 100% { box-shadow: 0 0 10px hsl(var(--teal)); } }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SCREEN MANAGEMENT
+       ═══════════════════════════════════════════════════════════════ */
+
+    .screen {
+      display: none;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.6s var(--ease-smooth);
+      min-height: 100vh;
+      padding: 32px 0;
+    }
+
+    .screen.active { display: block; }
+
+    /* ─────────────────────────────────────────────────────────────
+       MAIN MENU
+       ───────────────────────────────────────────────────────────── */
+
+    #screenMainMenu {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-content {
+      text-align: center;
+      max-width: 600px;
+      animation: fadeUp 0.8s var(--ease-smooth);
+    }
+
+    .game-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--violet)));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.1s both;
+    }
+
+    .game-subtitle {
+      font-size: 1.25rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.2s both;
+    }
+
+    .player-stats-menu {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s var(--ease-smooth) 0.3s both;
+    }
+
+    .stat-card {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: hsl(var(--teal));
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 14px 36px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-spring);
+      border: 1.5px solid transparent;
+      font-family: var(--font-body);
+    }
+
+    .btn.primary {
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      box-shadow: 0 8px 32px hsl(var(--teal) / 0.25);
+    }
+
+    .btn.primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px hsl(var(--teal) / 0.4);
+    }
+
+    .btn.secondary {
+      border-color: hsl(var(--border));
+      color: hsl(var(--fg));
+    }
+
+    .btn.secondary:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.1);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       DUNGEON VIEW
+       ───────────────────────────────────────────────────────────── */
+
+    #screenDungeon {
+      min-height: 100vh;
+      display: flex !important;
+      flex-direction: column;
+    }
+
+    .dungeon-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+      animation: slideDown 0.5s var(--ease-smooth);
+    }
+
+    .dungeon-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+    }
+
+    .player-info {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hp-bar {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 8px;
+      min-width: 200px;
+    }
+
+    .hp-fill {
+      height: 20px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, hsl(var(--success)), hsl(var(--warning)));
+      transition: width 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hp-text {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-align: center;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: hsl(var(--bg));
+    }
+
+    .player-level {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: hsl(var(--fg2));
+      text-align: right;
+    }
+
+    .dungeon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+      flex: 1;
+    }
+
+    .room-tile {
+      border-radius: 12px;
+      border: 2px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 24px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s var(--ease-smooth);
+      animation: fadeUp 0.6s var(--ease-smooth) forwards;
+      opacity: 0;
+    }
+
+    .room-tile:nth-child(1) { animation-delay: 0.1s; }
+    .room-tile:nth-child(2) { animation-delay: 0.2s; }
+    .room-tile:nth-child(3) { animation-delay: 0.3s; }
+    .room-tile:nth-child(4) { animation-delay: 0.4s; }
+
+    .room-tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, hsl(var(--teal) / 0.08), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .room-tile:hover {
+      border-color: hsl(var(--teal) / 0.4);
+      background: hsl(var(--teal) / 0.03);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px hsl(220 18% 3% / 0.4);
+    }
+
+    .room-tile:hover::before { opacity: 1; }
+
+    .room-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .room-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .room-desc {
+      font-size: 0.875rem;
+      color: hsl(var(--fg3));
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .room-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: hsl(var(--teal) / 0.15);
+      color: hsl(var(--teal));
+    }
+
+    .room-type.combat { background: hsl(var(--danger) / 0.15); color: hsl(var(--danger)); }
+    .room-type.puzzle { background: hsl(var(--violet) / 0.15); color: hsl(var(--violet)); }
+    .room-type.boss { background: hsl(var(--warning) / 0.15); color: hsl(var(--warning)); }
+    .room-type.treasure { background: hsl(var(--success) / 0.15); color: hsl(var(--success)); }
+
+    /* ─────────────────────────────────────────────────────────────
+       BATTLE VIEW
+       ───────────────────────────────────────────────────────────── */
+
+    #screenBattle {
+      min-height: 100vh;
+      display: flex !important;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .battle-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s var(--ease-smooth);
+    }
+
+    .battle-entity {
+      text-align: center;
+    }
+
+    .entity-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .entity-visual {
+      font-size: 5rem;
+      margin-bottom: 24px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .entity-stats {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+
+    .stat-row-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+    }
+
+    .stat-row-value {
+      font-weight: 700;
+      color: hsl(var(--teal));
+    }
+
+    .hp-bar-battle {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 4px;
+      height: 24px;
+      overflow: hidden;
+    }
+
+    .hp-fill-battle {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, hsl(var(--success)), hsl(var(--warning)));
+      transition: width 0.3s ease;
+      position: relative;
+    }
+
+    .entity-hp-text {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-align: center;
+      color: hsl(var(--bg));
+      line-height: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .battle-actions {
+      border-radius: 12px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .actions-title {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: hsl(var(--fg3));
+      margin-bottom: 16px;
+      letter-spacing: 0.1em;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .btn-action {
+      border-radius: 6px;
+      border: 1.5px solid hsl(var(--border));
+      background: hsl(var(--bg2));
+      color: hsl(var(--fg));
+      padding: 12px 16px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-smooth);
+      font-family: var(--font-mono);
+    }
+
+    .btn-action:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.1);
+      color: hsl(var(--teal));
+    }
+
+    .btn-action.active {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+    }
+
+    .battle-log {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg2) / 0.5);
+      padding: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: hsl(var(--fg2));
+      line-height: 1.6;
+    }
+
+    .log-entry { margin-bottom: 8px; }
+    .log-entry.damage { color: hsl(var(--danger)); }
+    .log-entry.heal { color: hsl(var(--success)); }
+    .log-entry.info { color: hsl(var(--teal)); }
+
+    /* ─────────────────────────────────────────────────────────────
+       PUZZLE VIEW
+       ───────────────────────────────────────────────────────────── */
+
+    #screenPuzzle {
+      min-height: 100vh;
+      display: flex !important;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .puzzle-container {
+      max-width: 800px;
+      margin: 0 auto;
+      animation: fadeUp 0.6s var(--ease-smooth);
+    }
+
+    .puzzle-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .puzzle-box {
+      border-radius: 12px;
+      border: 2px solid hsl(var(--teal) / 0.3);
+      background: linear-gradient(135deg, hsl(var(--bg3)), hsl(var(--bg2)));
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .puzzle-description {
+      font-size: 1.1rem;
+      color: hsl(var(--fg));
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    .puzzle-formula {
+      background: hsl(var(--bg));
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: hsl(var(--teal));
+      margin-bottom: 24px;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    .puzzle-input {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-label {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: hsl(var(--fg2));
+      letter-spacing: 0.08em;
+    }
+
+    .input-box {
+      border-radius: 8px;
+      border: 1.5px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      color: hsl(var(--fg));
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      transition: all 0.25s var(--ease-smooth);
+    }
+
+    .input-box:focus {
+      outline: none;
+      border-color: hsl(var(--teal));
+      box-shadow: 0 0 12px hsl(var(--teal) / 0.2);
+    }
+
+    .puzzle-hint {
+      background: hsl(var(--teal) / 0.1);
+      border: 1px solid hsl(var(--teal) / 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      color: hsl(var(--teal));
+      margin-bottom: 24px;
+    }
+
+    .puzzle-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn.puzzle-btn {
+      padding: 12px 32px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       RESULT VIEW
+       ───────────────────────────────────────────────────────────── */
+
+    #screenResult {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-modal {
+      text-align: center;
+      max-width: 500px;
+      animation: pop 0.6s var(--ease-spring);
+    }
+
+    .result-icon {
+      font-size: 4rem;
+      margin-bottom: 24px;
+    }
+
+    .result-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .result-message {
+      font-size: 1.1rem;
+      color: hsl(var(--fg2));
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .result-rewards {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 24px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .reward-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .reward-item:last-child { border-bottom: none; }
+
+    .reward-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: hsl(var(--fg3));
+      text-transform: uppercase;
+    }
+
+    .reward-value {
+      font-weight: 700;
+      color: hsl(var(--success));
+    }
+
+    .result-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       INVENTORY
+       ───────────────────────────────────────────────────────────── */
+
+    .inventory-toggle {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 100;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      background: hsl(var(--teal));
+      color: hsl(var(--bg));
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: all 0.3s var(--ease-spring);
+      box-shadow: 0 4px 16px hsl(var(--teal) / 0.3);
+    }
+
+    .inventory-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px hsl(var(--teal) / 0.5);
+    }
+
+    .inventory-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: hsl(220 18% 3% / 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .inventory-modal.active { display: flex; align-items: center; justify-content: center; }
+
+    .inventory-content {
+      border-radius: 12px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg3));
+      padding: 32px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideDown 0.3s var(--ease-smooth);
+    }
+
+    .inventory-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .inventory-close {
+      background: none;
+      border: none;
+      color: hsl(var(--fg2));
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.25s;
+    }
+
+    .inventory-close:hover { color: hsl(var(--teal)); }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+    }
+
+    .inventory-item {
+      border-radius: 8px;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--bg2));
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .inventory-item:hover {
+      border-color: hsl(var(--teal));
+      background: hsl(var(--teal) / 0.1);
+    }
+
+    .item-icon { font-size: 2rem; margin-bottom: 8px; }
+    .item-name { font-size: 0.8rem; font-weight: 600; color: hsl(var(--fg)); }
+    .item-qty { font-family: var(--font-mono); font-size: 0.7rem; color: hsl(var(--fg3)); }
+
+    /* ─────────────────────────────────────────────────────────────
+       RESPONSIVE
+       ───────────────────────────────────────────────────────────── */
+
+    @media (max-width: 768px) {
+      .container { padding: 0 1.5rem; }
+      .battle-container { grid-template-columns: 1fr; gap: 32px; }
+      .dungeon-grid { grid-template-columns: 1fr; }
+      .action-buttons { grid-template-columns: 1fr; }
+      .inventory-toggle { bottom: 24px; right: 24px; width: 50px; height: 50px; }
+      .dungeon-header { flex-direction: column; text-align: center; }
+      .player-info { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="dungeonGame" class="container">
+  <!-- MAIN MENU -->
+  <div class="screen active" id="screenMainMenu">
+    <div class="menu-content">
+      <div class="game-title">Recursion Dungeon</div>
+      <div class="game-subtitle">Edukasi Diskrit Matematika: Rekursi & Relasi Rekurens</div>
+
+      <div class="player-stats-menu">
+        <div class="stat-card">
+          <div class="stat-label">Level</div>
+          <div class="stat-value" id="menuLevel">1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Exp</div>
+          <div class="stat-value" id="menuExp">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">HP</div>
+          <div class="stat-value" id="menuHP">100</div>
+        </div>
+      </div>
+
+      <div class="menu-buttons">
+        <button class="btn primary" onclick="startDungeon()">Masuki Dungeon</button>
+        <button class="btn secondary" onclick="showInstructions()">Panduan</button>
+        <button class="btn secondary" onclick="resetGame()">Reset Game</button>
+      </div>
+
+      <p style="color: hsl(var(--fg3)); margin-top: 32px;">
+        Jelajahi dungeon, pecahkan puzzle rekursi, dan kalahkan monster!
+      </p>
+    </div>
+  </div>
+
+  <!-- DUNGEON VIEW -->
+  <div class="screen" id="screenDungeon">
+    <div class="dungeon-header">
+      <div class="dungeon-title">Dungeon Explorer</div>
+      <div class="player-info">
+        <div>
+          <div class="player-level">Level: <span id="playerLevel">1</span> | Exp: <span id="playerExp">0</span>/<span id="playerExpMax">100</span></div>
+          <div class="hp-bar">
+            <div class="hp-fill" id="playerHPBar" style="width: 100%;">
+              <div class="hp-text"><span id="playerHPText">100/100</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dungeon-grid" id="dungeon-grid"></div>
+
+    <div style="text-align: center;">
+      <button class="btn secondary" onclick="backToMenu()">← Kembali ke Menu</button>
+    </div>
+  </div>
+
+  <!-- BATTLE VIEW -->
+  <div class="screen" id="screenBattle">
+    <div class="battle-container">
+      <div class="battle-entity">
+        <div class="entity-title">You</div>
+        <div class="entity-visual" id="playerVisual">⚔️</div>
+        <div class="entity-stats">
+          <div class="stat-row">
+            <span class="stat-row-label">HP</span>
+            <div style="flex: 1; margin: 0 12px;">
+              <div class="hp-bar-battle">
+                <div class="hp-fill-battle" id="battlePlayerHPBar" style="width: 100%;"></div>
+              </div>
+              <div class="entity-hp-text" id="battlePlayerHPText">100/100</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <span class="stat-row-label">ATK</span>
+            <span class="stat-row-value" id="playerATK">10</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-row-label">Level</span>
+            <span class="stat-row-value" id="battlePlayerLevel">1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="battle-entity">
+        <div class="entity-title" id="monsterName">Monster</div>
+        <div class="entity-visual" id="monsterVisual">👹</div>
+        <div class="entity-stats">
+          <div class="stat-row">
+            <span class="stat-row-label">HP</span>
+            <div style="flex: 1; margin: 0 12px;">
+              <div class="hp-bar-battle">
+                <div class="hp-fill-battle" id="battleMonsterHPBar" style="width: 100%;"></div>
+              </div>
+              <div class="entity-hp-text" id="battleMonsterHPText">50/50</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <span class="stat-row-label">ATK</span>
+            <span class="stat-row-value" id="monsterATK">5</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-row-label">Type</span>
+            <span class="stat-row-value" id="monsterType">Normal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="battle-actions">
+      <div class="actions-title">Pilih Aksi</div>
+      <div class="action-buttons">
+        <button class="btn-action" onclick="useAttack()">Serangan Normal</button>
+        <button class="btn-action" onclick="useSkill()">Recursive Attack</button>
+        <button class="btn-action" onclick="useItem()">Gunakan Item</button>
+        <button class="btn-action" onclick="defend()">Bertahan</button>
+      </div>
+    </div>
+
+    <div class="battle-log" id="battleLog"></div>
+  </div>
+
+  <!-- PUZZLE VIEW -->
+  <div class="screen" id="screenPuzzle">
+    <div class="puzzle-container">
+      <div class="puzzle-title" id="puzzleTitle">Recursion Puzzle</div>
+
+      <div class="puzzle-box">
+        <div class="puzzle-description" id="puzzleDesc">
+          Selesaikan puzzle ini menggunakan konsep rekursi...
+        </div>
+
+        <div class="puzzle-formula" id="puzzleFormula">
+          F(n) = F(n-1) + F(n-2)
+        </div>
+
+        <div class="puzzle-hint" id="puzzleHint">
+          💡 Gunakan relasi rekurens untuk menemukan jawabannya.
+        </div>
+
+        <div class="puzzle-input">
+          <div class="input-group">
+            <label class="input-label" id="inputLabel">Masukkan Jawaban:</label>
+            <input type="number" id="puzzleAnswer" class="input-box" placeholder="Contoh: 5">
+          </div>
+        </div>
+
+        <div class="puzzle-actions">
+          <button class="btn primary puzzle-btn" onclick="submitPuzzle()">Submit Jawaban</button>
+          <button class="btn secondary puzzle-btn" onclick="skipPuzzle()">Skip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT VIEW -->
+  <div class="screen" id="screenResult">
+    <div class="result-modal">
+      <div class="result-icon" id="resultIcon">✓</div>
+      <div class="result-title" id="resultTitle">Kemenangan!</div>
+      <div class="result-message" id="resultMessage">Kamu berhasil mengalahkan monster!</div>
+
+      <div class="result-rewards">
+        <div class="reward-item">
+          <span class="reward-label">Exp Gained</span>
+          <span class="reward-value" id="rewardExp">+50</span>
+        </div>
+        <div class="reward-item">
+          <span class="reward-label">Gold Gained</span>
+          <span class="reward-value" id="rewardGold">+25</span>
+        </div>
+        <div class="reward-item">
+          <span class="reward-label">Item Obtained</span>
+          <span class="reward-value" id="rewardItem">Potion x1</span>
+        </div>
+      </div>
+
+      <div class="result-buttons">
+        <button class="btn primary" onclick="continueDungeon()">Lanjut Eksplorasi</button>
+        <button class="btn secondary" onclick="backToMenu()">Kembali ke Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVENTORY BUTTON -->
+<button class="inventory-toggle" onclick="openInventory()">🎒</button>
+
+<!-- INVENTORY MODAL -->
+<div class="inventory-modal" id="inventoryModal">
+  <div class="inventory-content">
+    <div class="inventory-title">
+      <span>Inventory</span>
+      <button class="inventory-close" onclick="closeInventory()">✕</button>
+    </div>
+    <div class="inventory-grid" id="inventoryGrid"></div>
+  </div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════════════════════
+  // GAME STATE & DATA
+  // ═══════════════════════════════════════════════════════════════
+
+  const RECURSION_PUZZLES = [
+    {
+      type: 'fibonacci',
+      title: 'Fibonacci Sequence',
+      desc: 'Temukan nilai F(7) dalam urutan Fibonacci. F(n) = F(n-1) + F(n-2), F(1)=1, F(2)=1',
+      formula: 'F(n) = F(n-1) + F(n-2)',
+      hint: '1, 1, 2, 3, 5, 8, 13... Lanjutkan pola!',
+      answer: 13,
+      explanation: 'F(1)=1, F(2)=1, F(3)=2, F(4)=3, F(5)=5, F(6)=8, F(7)=13'
+    },
+    {
+      type: 'factorial',
+      title: 'Factorial Recursion',
+      desc: 'Hitung 5! menggunakan definisi rekursif: n! = n × (n-1)!, dengan 0!=1',
+      formula: 'n! = n × (n-1)!, 0! = 1',
+      hint: '5! = 5 × 4 × 3 × 2 × 1',
+      answer: 120,
+      explanation: '5! = 5 × 24 = 120'
+    },
+    {
+      type: 'power',
+      title: 'Power Function',
+      desc: 'Hitung 2^8 menggunakan rekursi: 2^n = 2 × 2^(n-1)',
+      formula: 'a^n = a × a^(n-1), a^0 = 1',
+      hint: '2^8 = 256',
+      answer: 256,
+      explanation: '2^8 = 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 = 256'
+    },
+    {
+      type: 'tree',
+      title: 'Recursive Tree',
+      desc: 'Pohon rekursif dengan 4 level. Jumlah node = 2^(n+1) - 1. Berapa node untuk n=3?',
+      formula: 'Nodes = 2^(n+1) - 1',
+      hint: '2^4 - 1 = 15',
+      answer: 15,
+      explanation: 'n=3: Nodes = 2^4 - 1 = 16 - 1 = 15'
+    },
+    {
+      type: 'hanoi',
+      title: 'Tower of Hanoi',
+      desc: 'Berapa minimum gerakan untuk memindahkan 5 disk? Rumus: 2^n - 1',
+      formula: 'Moves = 2^n - 1',
+      hint: '2^5 - 1 = 31',
+      answer: 31,
+      explanation: '5 disk membutuhkan 2^5 - 1 = 32 - 1 = 31 gerakan'
+    }
+  ];
+
+  const MONSTERS = [
+    { name: 'Slime Rekursif', hp: 30, atk: 5, exp: 25, gold: 15, visual: '💧', type: 'Recursion' },
+    { name: 'Bat Penjagaan', hp: 40, atk: 7, exp: 35, gold: 20, visual: '🦇', type: 'Guard' },
+    { name: 'Goblin Hitung', hp: 50, atk: 10, exp: 50, gold: 30, visual: '👹', type: 'Logic' },
+    { name: 'Wizard Rekursi', hp: 60, atk: 12, exp: 75, gold: 45, visual: '🧙', type: 'Wizard' },
+    { name: 'Dark Knight', hp: 80, atk: 15, exp: 100, gold: 60, visual: '🗡️', type: 'Knight' },
+    { name: 'Dragon Master', hp: 120, atk: 20, exp: 150, gold: 100, visual: '🐉', type: 'Boss' }
+  ];
+
+  let gameState = {
+    level: 1,
+    exp: 0,
+    expMax: 100,
+    maxHP: 100,
+    hp: 100,
+    atk: 10,
+    gold: 0,
+    inventory: { potion: 0, mana: 0, scroll: 0, crystal: 0 },
+    completedRooms: [],
+    currentMonster: null,
+    battleLog: [],
+    inBattle: false,
+    playerDamageDealt: 0,
+    monsterDamageDealt: 0,
+    currentPuzzle: null,
+    defendMode: false
+  };
+
+  function loadGameState() {
+    const saved = localStorage.getItem('recursionDungeonState');
+    if (saved) {
+      gameState = { ...gameState, ...JSON.parse(saved) };
+    }
+  }
+
+  function saveGameState() {
+    localStorage.setItem('recursionDungeonState', JSON.stringify(gameState));
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // SCREEN MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // MENU & DUNGEON FLOW
+  // ═══════════════════════════════════════════════════════════════
+
+  function startDungeon() {
+    gameState.completedRooms = [];
+    generateDungeonRooms();
+    showScreen('screenDungeon');
+  }
+
+  function generateDungeonRooms() {
+    const grid = document.getElementById('dungeon-grid');
+    grid.innerHTML = '';
+    const roomCount = Math.min(3 + gameState.level, 6);
+
+    for (let i = 0; i < roomCount; i++) {
+      const isBoss = i === roomCount - 1;
+      const isPuzzle = Math.random() > 0.4;
+      const type = isBoss ? 'boss' : (isPuzzle ? 'puzzle' : 'combat');
+
+      const tile = document.createElement('div');
+      tile.className = 'room-tile';
+      tile.onclick = () => enterRoom(type, i);
+
+      const icons = { combat: '⚔️', puzzle: '🧩', boss: '👹', treasure: '💎' };
+      const names = { combat: 'Monster Room', puzzle: 'Puzzle Room', boss: 'Boss Chamber', treasure: 'Treasure' };
+
+      tile.innerHTML = `
+        <div class="room-icon">${icons[type]}</div>
+        <div class="room-name">${names[type]}</div>
+        <div class="room-desc">${type === 'boss' ? 'Final Boss!' : 'Tantangan menanti...'}</div>
+        <div class="room-type ${type}">${type.toUpperCase()}</div>
+      `;
+
+      grid.appendChild(tile);
+    }
+  }
+
+  function enterRoom(type, roomIndex) {
+    if (gameState.completedRooms.includes(roomIndex)) return;
+
+    if (type === 'combat' || type === 'boss') {
+      startBattle(type === 'boss');
+    } else if (type === 'puzzle') {
+      startPuzzle();
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // BATTLE SYSTEM
+  // ═══════════════════════════════════════════════════════════════
+
+  function startBattle(isBoss = false) {
+    const monsterIndex = isBoss ? MONSTERS.length - 1 : Math.floor(Math.random() * (MONSTERS.length - 1));
+    gameState.currentMonster = { ...MONSTERS[monsterIndex] };
+    gameState.inBattle = true;
+    gameState.battleLog = [];
+    gameState.playerDamageDealt = 0;
+    gameState.monsterDamageDealt = 0;
+    gameState.defendMode = false;
+
+    updateBattleUI();
+    showScreen('screenBattle');
+  }
+
+  function updateBattleUI() {
+    const monster = gameState.currentMonster;
+    const playerHPPercent = (gameState.hp / gameState.maxHP) * 100;
+    const monsterHPPercent = (monster.hp / MONSTERS.find(m => m.name === monster.name).hp) * 100;
+
+    document.getElementById('monsterName').textContent = monster.name;
+    document.getElementById('monsterVisual').textContent = monster.visual;
+    document.getElementById('monsterType').textContent = monster.type;
+    document.getElementById('monsterATK').textContent = monster.atk;
+    document.getElementById('monsterHPText').textContent = `${monster.hp}/${MONSTERS.find(m => m.name === monster.name).hp}`;
+    document.getElementById('monsterHPBar').style.width = `${Math.max(0, monsterHPPercent)}%`;
+
+    document.getElementById('battlePlayerHPText').textContent = `${gameState.hp}/${gameState.maxHP}`;
+    document.getElementById('battlePlayerHPBar').style.width = `${Math.max(0, playerHPPercent)}%`;
+    document.getElementById('playerATK').textContent = gameState.atk;
+    document.getElementById('battlePlayerLevel').textContent = gameState.level;
+
+    updateBattleLog();
+  }
+
+  function updateBattleLog() {
+    const log = document.getElementById('battleLog');
+    log.innerHTML = gameState.battleLog.map(entry => 
+      `<div class="log-entry ${entry.type}">${entry.text}</div>`
+    ).join('');
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function addBattleLog(text, type = 'info') {
+    gameState.battleLog.push({ text, type });
+    if (gameState.battleLog.length > 10) {
+      gameState.battleLog.shift();
+    }
+  }
+
+  function useAttack() {
+    const baseDamage = gameState.atk + Math.floor(Math.random() * 5);
+    const damage = gameState.defendMode ? Math.floor(baseDamage * 0.7) : baseDamage;
+    
+    gameState.currentMonster.hp -= damage;
+    gameState.playerDamageDealt += damage;
+    gameState.defendMode = false;
+    
+    addBattleLog(`⚔️ Seranganmu! ${damage} damage`, 'damage');
+    
+    if (gameState.currentMonster.hp <= 0) {
+      endBattle(true);
+    } else {
+      monsterAttack();
+      updateBattleUI();
+    }
+  }
+
+  function useSkill() {
+    const multiplier = 1 + (gameState.playerDamageDealt * 0.1);
+    const baseDamage = gameState.atk * multiplier;
+    const damage = Math.floor(baseDamage);
+    
+    gameState.currentMonster.hp -= damage;
+    gameState.playerDamageDealt += damage;
+    gameState.defendMode = false;
+    
+    addBattleLog(`🌀 Recursive Attack! ${damage} damage (multiplier: ${multiplier.toFixed(2)}x)`, 'damage');
+    
+    if (gameState.currentMonster.hp <= 0) {
+      endBattle(true);
+    } else {
+      monsterAttack();
+      updateBattleUI();
+    }
+  }
+
+  function useItem() {
+    if (gameState.inventory.potion > 0) {
+      gameState.inventory.potion--;
+      const heal = 30;
+      gameState.hp = Math.min(gameState.maxHP, gameState.hp + heal);
+      addBattleLog(`🧪 Gunakan Potion! +${heal} HP`, 'heal');
+      gameState.defendMode = false;
+      monsterAttack();
+      updateBattleUI();
+    } else {
+      addBattleLog('❌ Tidak ada Potion!', 'info');
+    }
+  }
+
+  function defend() {
+    gameState.defendMode = true;
+    addBattleLog('🛡️ Posisi bertahan! Damage berkurang 30%', 'info');
+    monsterAttack();
+    updateBattleUI();
+  }
+
+  function monsterAttack() {
+    const baseDamage = gameState.currentMonster.atk + Math.floor(Math.random() * 4);
+    const damage = gameState.defendMode ? Math.floor(baseDamage * 0.7) : baseDamage;
+    
+    gameState.hp -= damage;
+    gameState.monsterDamageDealt += damage;
+    gameState.defendMode = false;
+    
+    addBattleLog(`👿 ${gameState.currentMonster.name} menyerang! ${damage} damage`, 'damage');
+    
+    if (gameState.hp <= 0) {
+      endBattle(false);
+    }
+  }
+
+  function endBattle(playerWon) {
+    gameState.inBattle = false;
+
+    if (playerWon) {
+      const monster = gameState.currentMonster;
+      const expGain = monster.exp;
+      const goldGain = monster.gold;
+      const randomItem = ['potion', 'mana', 'scroll'][Math.floor(Math.random() * 3)];
+
+      gameState.exp += expGain;
+      gameState.gold += goldGain;
+      gameState.inventory[randomItem]++;
+      gameState.hp = gameState.maxHP;
+
+      // Check level up
+      if (gameState.exp >= gameState.expMax) {
+        gameState.level++;
+        gameState.exp -= gameState.expMax;
+        gameState.expMax = Math.floor(gameState.expMax * 1.2);
+        gameState.maxHP += 20;
+        gameState.hp = gameState.maxHP;
+        gameState.atk += 2;
+      }
+
+      document.getElementById('resultIcon').textContent = '✓';
+      document.getElementById('resultTitle').textContent = 'Kemenangan!';
+      document.getElementById('resultMessage').textContent = `Kamu mengalahkan ${monster.name}!`;
+      document.getElementById('rewardExp').textContent = `+${expGain}`;
+      document.getElementById('rewardGold').textContent = `+${goldGain}`;
+      document.getElementById('rewardItem').textContent = `${randomItem} x1`;
+    } else {
+      document.getElementById('resultIcon').textContent = '✕';
+      document.getElementById('resultTitle').textContent = 'Kekalahan!';
+      document.getElementById('resultMessage').textContent = 'HP mu habis... Kembali ke Tavern!';
+      gameState.hp = gameState.maxHP;
+    }
+
+    saveGameState();
+    showScreen('screenResult');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // PUZZLE SYSTEM
+  // ═══════════════════════════════════════════════════════════════
+
+  function startPuzzle() {
+    gameState.currentPuzzle = RECURSION_PUZZLES[Math.floor(Math.random() * RECURSION_PUZZLES.length)];
+    const puzzle = gameState.currentPuzzle;
+
+    document.getElementById('puzzleTitle').textContent = puzzle.title;
+    document.getElementById('puzzleDesc').textContent = puzzle.desc;
+    document.getElementById('puzzleFormula').textContent = puzzle.formula;
+    document.getElementById('puzzleHint').textContent = '💡 ' + puzzle.hint;
+    document.getElementById('puzzleAnswer').value = '';
+
+    showScreen('screenPuzzle');
+  }
+
+  function submitPuzzle() {
+    const userAnswer = parseInt(document.getElementById('puzzleAnswer').value);
+    const puzzle = gameState.currentPuzzle;
+
+    if (userAnswer === puzzle.answer) {
+      const expGain = 40;
+      gameState.exp += expGain;
+      gameState.gold += 20;
+      gameState.inventory.scroll++;
+
+      if (gameState.exp >= gameState.expMax) {
+        gameState.level++;
+        gameState.exp -= gameState.expMax;
+        gameState.expMax = Math.floor(gameState.expMax * 1.2);
+        gameState.maxHP += 20;
+        gameState.atk += 2;
+      }
+
+      document.getElementById('resultIcon').textContent = '✓';
+      document.getElementById('resultTitle').textContent = 'Puzzle Selesai!';
+      document.getElementById('resultMessage').textContent = puzzle.explanation;
+      document.getElementById('rewardExp').textContent = `+${expGain}`;
+      document.getElementById('rewardGold').textContent = `+20`;
+      document.getElementById('rewardItem').textContent = `Scroll x1`;
+    } else {
+      document.getElementById('resultIcon').textContent = '✕';
+      document.getElementById('resultTitle').textContent = 'Jawaban Salah!';
+      document.getElementById('resultMessage').textContent = `Jawaban benar adalah: ${puzzle.answer}. ${puzzle.explanation}`;
+      document.getElementById('rewardExp').textContent = `+10`;
+      document.getElementById('rewardGold').textContent = `+5`;
+      document.getElementById('rewardItem').textContent = `(tanpa item)`;
+      gameState.exp += 10;
+      gameState.gold += 5;
+    }
+
+    saveGameState();
+    showScreen('screenResult');
+  }
+
+  function skipPuzzle() {
+    gameState.exp += 5;
+    document.getElementById('resultTitle').textContent = 'Puzzle Dilewati';
+    document.getElementById('resultMessage').textContent = `Jawaban: ${gameState.currentPuzzle.answer}`;
+    document.getElementById('rewardExp').textContent = `+5`;
+    document.getElementById('rewardGold').textContent = `+0`;
+    document.getElementById('rewardItem').textContent = `(tanpa reward)`;
+    saveGameState();
+    showScreen('screenResult');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // INVENTORY SYSTEM
+  // ═══════════════════════════════════════════════════════════════
+
+  function openInventory() {
+    const grid = document.getElementById('inventoryGrid');
+    grid.innerHTML = '';
+
+    const items = [
+      { name: 'Potion', icon: '🧪', qty: gameState.inventory.potion },
+      { name: 'Mana', icon: '💠', qty: gameState.inventory.mana },
+      { name: 'Scroll', icon: '📜', qty: gameState.inventory.scroll },
+      { name: 'Crystal', icon: '💎', qty: gameState.inventory.crystal }
+    ];
+
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'inventory-item';
+      div.innerHTML = `
+        <div class="item-icon">${item.icon}</div>
+        <div class="item-name">${item.name}</div>
+        <div class="item-qty">x${item.qty}</div>
+      `;
+      grid.appendChild(div);
+    });
+
+    document.getElementById('inventoryModal').classList.add('active');
+  }
+
+  function closeInventory() {
+    document.getElementById('inventoryModal').classList.remove('active');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // UI UPDATES
+  // ═══════════════════════════════════════════════════════════════
+
+  function updateMenuDisplay() {
+    document.getElementById('menuLevel').textContent = gameState.level;
+    document.getElementById('menuExp').textContent = gameState.exp;
+    document.getElementById('menuHP').textContent = gameState.maxHP;
+  }
+
+  function continueDungeon() {
+    startDungeon();
+  }
+
+  function backToMenu() {
+    saveGameState();
+    updateMenuDisplay();
+    showScreen('screenMainMenu');
+  }
+
+  function showInstructions() {
+    alert(`
+PANDUAN RECURSION DUNGEON
+
+TUJUAN:
+Jelajahi dungeon, pecahkan puzzle rekursi, dan kalahkan monster!
+
+GAMEPLAY:
+1. Pilih ruangan di dungeon
+2. Hadapi monster atau selesaikan puzzle rekursi
+3. Dapatkan Exp dan Gold sebagai reward
+4. Level up untuk mendapatkan stat lebih baik
+
+SISTEM PERTARUNGAN:
+- Serangan Normal: Damage tetap
+- Recursive Attack: Damage tergantung damage yang sudah diberikan
+- Gunakan Item: Gunakan potion untuk heal
+- Bertahan: Kurangi damage yang diterima 30%
+
+PUZZLE REKURSI:
+Selesaikan puzzle menggunakan konsep rekursi:
+- Fibonacci: Urutan dengan F(n) = F(n-1) + F(n-2)
+- Factorial: n! = n × (n-1)!
+- Power: a^n = a × a^(n-1)
+- Tower of Hanoi: 2^n - 1 gerakan
+- Recursive Tree: 2^(n+1) - 1 node
+
+INVENTORY:
+- Potion: Heal 30 HP
+- Mana: Mana recovery
+- Scroll: Koleksi dari puzzle
+- Crystal: Rare item
+
+Semakin tinggi level, semakin susah dungeon!
+    `);
+  }
+
+  function resetGame() {
+    if (confirm('Reset semua progress? Ini tidak bisa dibatalkan!')) {
+      localStorage.removeItem('recursionDungeonState');
+      gameState = {
+        level: 1,
+        exp: 0,
+        expMax: 100,
+        maxHP: 100,
+        hp: 100,
+        atk: 10,
+        gold: 0,
+        inventory: { potion: 0, mana: 0, scroll: 0, crystal: 0 },
+        completedRooms: [],
+        currentMonster: null,
+        battleLog: [],
+        inBattle: false,
+        playerDamageDealt: 0,
+        monsterDamageDealt: 0,
+        currentPuzzle: null,
+        defendMode: false
+      };
+      updateMenuDisplay();
+      alert('Game telah direset!');
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // INITIALIZATION
+  // ═══════════════════════════════════════════════════════════════
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadGameState();
+    updateMenuDisplay();
+  });
+</script>
+
+</body>
+</html>
