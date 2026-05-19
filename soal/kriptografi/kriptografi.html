@@ -1,234 +1,2233 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kuis Kriptografi Angka</title>
-    <style>
-            :root {
-                --primary: #8b5cf6;
-                --primary-dark: #6d28d9;
-                --bg-gradient: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-                --success: #10b981;
-                --danger: #ef4444;
-                --text-main: #1e293b;
-            }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quiz Kriptografi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #2d2d4e;
+    --paper: #f8f6f1;
+    --cream: #fdf9f3;
+    --accent-easy: #2e7d58;
+    --accent-easy-light: #d4edde;
+    --accent-medium: #1a5fa8;
+    --accent-medium-light: #d0e4f7;
+    --accent-hard: #8b1a1a;
+    --accent-hard-light: #fde8e8;
+    --gold: #c9a227;
+    --gold-light: #fdf3d7;
+    --correct: #2e7d58;
+    --wrong: #c0392b;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+  }
 
-            * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-            body {
-                margin: 0; padding: 0;
-                font-family: "Times New Roman", Times, serif;
-                background: var(--bg-gradient);
-                color: var(--text-main);
-                min-height: 100vh;
-                display: flex; justify-content: center; align-items: center;
-            }
+  body {
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 16px 40px;
+    overflow-x: hidden;
+  }
 
-            .container { width: 100%; max-width: 500px; padding: 15px; }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,160,42,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(46,125,88,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-            .card {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(10px);
-                padding: 24px; border-radius: 24px;
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-                text-align: center;
-                border: 1px solid rgba(255, 255, 255, 0.5);
-            }
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 680px; }
 
-            h2 { color: #4c1d95; margin-top: 0; font-size: 22px; }
+  /* ── FLOATING LOGIC PARTICLES ── */
+  #particle-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  #particle-canvas.visible { opacity: 1; }
 
-            button {
-                font-family: inherit;
-                display: block; width: 100%; padding: 16px;
-                margin: 12px 0; font-size: 16px; font-weight: bold;
-                color: white; border: none; border-radius: 15px;
-                background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-                cursor: pointer; transition: all 0.3s ease;
-            }
+  /* ── TOP NAV ── */
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.12);
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .back-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-            button:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(139, 92, 246, 0.3); }
+  /* ── SCREEN SHARED ── */
+  .screen { display: none; animation: fadeUp .45s ease both; }
+  .screen.active { display: block; }
 
-            .matrix-wrapper { display: flex; justify-content: center; align-items: center; margin: 20px 0; gap: 15px; }
-            .matrix {
-                display: inline-grid; gap: 10px 15px; padding: 10px 18px;
-                position: relative; border-left: 2px solid #4c1d95; border-right: 2px solid #4c1d95;
-            }
-            .matrix::before, .matrix::after {
-                content: ""; position: absolute; height: 10px; width: 10px; border-color: #4c1d95; border-style: solid;
-            }
-            .matrix::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
-            .matrix::after { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-            .m-2x2 { grid-template-columns: repeat(2, auto); }
-            .m-3x3 { grid-template-columns: repeat(3, auto); }
-            .matrix div { font-size: 1.2rem; font-weight: bold; color: #5b21b6; min-width: 30px; }
+  /* ── START SCREEN ── */
+  .start-header {
+    text-align: center;
+    padding: 36px 0 28px;
+  }
 
-            #timer { background: #1e293b; color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; margin-bottom: 15px; display: inline-block; }
-            .progress { height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-            .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 0.4s ease; }
+  /* Eyebrow animation */
+  .start-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: eyebrowIn .6s ease .2s both;
+  }
+  @keyframes eyebrowIn {
+    from { opacity: 0; letter-spacing: .4em; }
+    to   { opacity: 1; letter-spacing: .18em; }
+  }
 
-            .option {
-                text-align: left; margin: 10px 0; padding: 15px;
-                border-radius: 12px; background: #f8fafc; border: 2px solid #e2e8f0;
-                cursor: pointer; transition: 0.2s;
-            }
-            .correct { background: var(--success) !important; color: white; }
-            .wrong { background: var(--danger) !important; color: white; }
-            .explanation {
-                margin-top: 15px; text-align: left; font-size: 14px; padding: 15px;
-                background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;
-                color: #166534; white-space: pre-line;
-            }
-            .hidden { display: none; }
-        </style>
+  /* Title char-by-char animation */
+  .start-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .start-title em { font-style: italic; color: var(--gold); }
+
+  .title-word {
+    display: inline-block;
+  }
+  .title-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px) rotate(8deg);
+    animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes charIn {
+    to { opacity: 1; transform: translateY(0) rotate(0deg); }
+  }
+
+  /* Subtitle fade */
+  .start-subtitle {
+    font-size: 15px;
+    color: #5a5a7a;
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp .7s ease 1.2s both;
+  }
+
+  /* Animated underline on title */
+  .title-underline {
+    display: block;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), rgba(201,162,39,0.2));
+    border-radius: 3px;
+    margin: 6px auto 0;
+    animation: underlineGrow .8s ease 1.4s both;
+  }
+  @keyframes underlineGrow {
+    to { width: 200px; }
+  }
+
+  .divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin: 20px auto;
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadeUp .5s ease 1s both;
+  }
+
+  /* Level cards */
+  .level-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .level-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1.5px solid transparent;
+    padding: 28px 28px 28px 32px;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    text-align: left;
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  .level-card.card-in {
+    animation: cardSlideIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes cardSlideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Logic symbol watermark on card */
+  .level-card::after {
+    content: attr(data-symbol);
+    position: absolute;
+    right: 20px;
+    bottom: -10px;
+    font-size: 80px;
+    font-family: var(--mono);
+    font-weight: 700;
+    opacity: 0.07;
+    line-height: 1;
+    transition: all .4s ease;
+    pointer-events: none;
+    transform: rotate(-10deg);
+  }
+  .level-card:hover::after {
+    opacity: 0.15;
+    transform: rotate(-5deg) scale(1.1);
+    bottom: -5px;
+  }
+
+  .level-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 20px 0 0 20px;
+  }
+  .level-card:hover { transform: translateX(6px) scale(1.01); }
+
+  /* Ripple on click */
+  .level-card .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: rippleAnim .6s linear;
+    background: rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  .level-card.easy   { background: var(--accent-easy-light); border-color: rgba(46,125,88,.25); }
+  .level-card.easy::before { background: var(--accent-easy); }
+  .level-card.medium { background: var(--accent-medium-light); border-color: rgba(26,95,168,.25); }
+  .level-card.medium::before { background: var(--accent-medium); }
+  .level-card.hard   { background: var(--accent-hard-light); border-color: rgba(139,26,26,.25); }
+  .level-card.hard::before { background: var(--accent-hard); }
+
+  .level-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .level-card:hover .level-icon { transform: scale(1.2) rotate(-5deg); }
+
+  .level-info { flex: 1; }
+  .level-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    margin-bottom: 4px;
+  }
+  .level-card.easy   .level-name { color: var(--accent-easy); }
+  .level-card.medium .level-name { color: var(--accent-medium); }
+  .level-card.hard   .level-name { color: var(--accent-hard); }
+
+  .level-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 8px; }
+  .level-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+  .easy   .tag { background: rgba(46,125,88,.15); color: var(--accent-easy); }
+  .medium .tag { background: rgba(26,95,168,.15); color: var(--accent-medium); }
+  .hard   .tag { background: rgba(139,26,26,.15); color: var(--accent-hard); }
+
+  .level-arrow {
+    font-size: 20px; opacity: .4; flex-shrink: 0;
+    transition: all .3s ease;
+  }
+  .level-card:hover .level-arrow { opacity: 1; transform: translateX(6px); }
+
+  /* Quote box */
+  .quote-box {
+    margin-top: 8px;
+    background: var(--gold-light);
+    border: 1px solid rgba(201,162,39,.3);
+    border-radius: 14px;
+    padding: 18px 22px;
+    font-style: italic;
+    font-size: 14px;
+    color: #6b4d0a;
+    line-height: 1.65;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp .6s ease 1.8s both;
+  }
+  .quote-box cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; opacity: .7; font-family: var(--mono); }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+  .quiz-level-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .quiz-level-badge:hover {
+    opacity: 0.75;
+    transform: scale(0.97);
+  }
+  .badge-easy   { background: var(--accent-easy-light);   color: var(--accent-easy); }
+  .badge-medium { background: var(--accent-medium-light); color: var(--accent-medium); }
+  .badge-hard   { background: var(--accent-hard-light);   color: var(--accent-hard); }
+
+  /* Back to level button in quiz */
+  .back-to-level-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .back-to-level-btn:hover {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .back-to-level-btn svg {
+    width: 12px; height: 12px;
+    flex-shrink: 0;
+  }
+
+  .timer-pill {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--ink);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: .04em;
+    transition: background .3s;
+  }
+  .timer-pill.urgent { background: var(--wrong); animation: pulse .6s ease infinite alternate; }
+  @keyframes pulse { from { opacity:1 } to { opacity:.7 } }
+
+  .q-counter {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #888;
+    letter-spacing: .06em;
+  }
+
+  /* Progress track */
+  .progress-track {
+    height: 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 6px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .fill-easy   { background: linear-gradient(90deg, var(--accent-easy), #52b788); }
+  .fill-medium { background: linear-gradient(90deg, var(--accent-medium), #4895ef); }
+  .fill-hard   { background: linear-gradient(90deg, var(--accent-hard), #e76f51); }
+
+  /* Dot row */
+  .dot-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #e0ddd6;
+    transition: all .3s;
+    cursor: pointer;
+  }
+  .dot.answered-correct { background: var(--correct); }
+  .dot.answered-wrong   { background: var(--wrong); }
+  .dot.skipped          { background: var(--gold); }
+  .dot.current          { background: var(--ink); transform: scale(1.3); }
+
+  /* Question card */
+  .q-card {
+    background: var(--cream);
+    border: 1.5px solid rgba(0,0,0,0.08);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  }
+  .q-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: clamp(15px, 3.5vw, 17px);
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all .22s;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    text-align: left;
+  }
+  .opt:hover:not(.locked) {
+    border-color: var(--ink);
+    background: #fafafa;
+    transform: translateX(4px);
+  }
+  .opt-letter {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.06);
+    color: var(--ink-soft);
+    letter-spacing: .05em;
+    transition: all .2s;
+    margin-top: 1px;
+  }
+  .opt.selected { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .opt.selected .opt-letter { background: rgba(255,255,255,.2); color: #fff; }
+
+  .opt.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
+  .opt.correct .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+  .opt.wrong   { background: var(--wrong);   border-color: var(--wrong);   color: #fff; }
+  .opt.wrong   .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+
+  /* Explanation */
+  .explanation-box {
+    display: none;
+    background: var(--gold-light);
+    border: 1.5px solid rgba(201,162,39,.35);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    animation: slideIn .3s ease;
+  }
+  .explanation-box.show { display: block; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
+
+  .exp-header {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600;
+  }
+  .exp-title { font-size: 13px; font-weight: 700; color: #6b4d0a; margin-bottom: 6px; }
+  .exp-body { font-size: 14px; color: #7a5515; line-height: 1.65; }
+
+  /* Nav buttons */
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .nav-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 20px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+  .btn-prev {
+    background: #fff;
+    border-color: rgba(0,0,0,0.15);
+    color: var(--ink);
+    flex: 0 0 auto;
+  }
+  .btn-prev:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .btn-skip {
+    background: var(--gold-light);
+    border-color: rgba(201,162,39,.4);
+    color: #8b5e00;
+    flex: 1;
+  }
+  .btn-skip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+  .btn-next {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+    flex: 2;
+  }
+  .btn-next:hover { background: var(--ink-soft); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+  .btn-finish {
+    background: var(--gold);
+    color: #fff;
+    border-color: var(--gold);
+    flex: 2;
+  }
+  .btn-finish:hover { background: #a8821e; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,162,39,.4); }
+
+  /* ── RESULT SCREEN ── */
+  .result-container {
+    text-align: center;
+    padding: 16px 0;
+  }
+  .result-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+  }
+  .result-circle {  
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .result-circle svg {
+    position: absolute; inset: 0; transform: rotate(-90deg);
+  }
+  .result-score-num {
+    font-size: 54px; font-weight: 700; line-height: 1;
+    position: relative; z-index: 1;
+  }
+  .result-score-den {
+    font-family: var(--mono); font-size: 14px; color: #888;
+    position: relative; z-index: 1;
+  }
+
+  .result-grade {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 700; margin-bottom: 8px;
+  }
+  .result-message { font-size: 15px; color: #666; line-height: 1.65; margin-bottom: 28px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-box {
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 16px 10px;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; }
+  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #888; margin-top: 4px; }
+
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-action {
+    font-family: var(--serif);
+    font-size: 15px; font-weight: 600;
+    padding: 15px;
+    border-radius: 14px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all .22s;
+    letter-spacing: .01em;
+  }
+  .btn-retry { background: var(--ink); color: #fff; }
+  .btn-retry:hover { background: var(--ink-soft); transform: translateY(-2px); }
+  .btn-home  { background: #fff; border-color: rgba(0,0,0,.15); color: var(--ink); }
+  .btn-home:hover { background: var(--ink); color: #fff; }
+
+  /* Review panel */
+  .review-toggle {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; color: #888;
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    margin: 0 auto 16px;
+    transition: color .2s;
+  }
+  .review-toggle:hover { color: var(--ink); }
+
+  .review-panel { display: none; margin-bottom: 16px; }
+  .review-panel.open { display: block; }
+
+  .review-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    background: var(--cream);
+    border: 1px solid rgba(0,0,0,.07);
+  }
+  .ri-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .ri-correct .ri-dot { background: var(--correct); }
+  .ri-wrong   .ri-dot { background: var(--wrong); }
+  .ri-skipped .ri-dot { background: var(--gold); }
+  .ri-q { flex: 1; color: #444; line-height: 1.4; }
+  .ri-a { font-family: var(--mono); font-size: 11px; color: #888; }
+
+  @media (max-width: 420px) {
+    .level-card { padding: 20px 18px; gap: 16px; }
+    .q-card { padding: 20px; }
+    .nav-row { flex-wrap: wrap; }
+    .btn-prev { flex: 0 0 46px; padding: 13px; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
-            Kembali ke Materi
-        </button>
-    
-<div class="container">
-    <div id="startScreen" class="card">
-        <h2 style="color: #4c1d95;">Kalkulasi Kripto</h2>
-        <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Pilih tingkat kesulitan untuk memulai</p>
-        <button class="btn-lvl btn-easy" onclick="startQuiz('easy')">EASY</button>
-        <button class="btn-lvl btn-medium" onclick="startQuiz('medium')">MEDIUM</button>
-        <button class="btn-lvl btn-hard" onclick="startQuiz('hard')">HARD</button>
+<!-- FLOATING LOGIC PARTICLES CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<div class="wrap">
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <a href="../../index.html?page=materi&tab=kriptografi" class="back-btn">← Kembali ke Materi</a>
+  </div>
+
+  <!-- ══════════════════ START SCREEN ══════════════════ -->
+  <div id="startScreen" class="screen active">
+    <div class="start-header">
+      <div class="start-eyebrow">✦ Matematika · Kriptografi ✦</div>
+      <h1 class="start-title" id="mainTitle">
+        <span class="title-word" id="word1"></span><br>
+        <em><span class="title-word" id="word2"></span></em>
+        <span class="title-underline"></span>
+      </h1>
+      <div class="divider"></div>
+      <p class="start-subtitle">Uji kemampuan pemahamanmu dengan soal-soal Kriptografi <strong>(KRP)</strong> yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
     </div>
 
-    <div id="quizScreen" class="card hidden">
-        <div id="timer" style="font-weight:bold; margin-bottom:10px;">Waktu: 110:00</div>
-        <h3 id="questionTitle" style="font-size: 16px; color: #1e293b; min-height: 50px;"></h3>
-        
-        <div class="matrix-wrapper">
-            <div class="matrix" id="matrixContent"></div>
+    <div class="level-grid">
+      <div class="level-card easy" data-symbol="🔐" onclick="startQuizWithRipple(event,'easy')">
+        <div class="level-icon">🧩</div>
+        <div class="level-info">
+          <div class="level-name">Easy — Dasar Kriptografi</div>
+          <div class="level-desc">Pelajari konsep dasar kriptografi seperti enkripsi, dekripsi, cipher sederhana, dan keamanan pesan.</div>
+          <div class="level-tags">
+            <span class="tag">10 Soal</span>
+            <span class="tag">30 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
         </div>
+        <div class="level-arrow">›</div>
+      </div>
 
-        <div id="options"></div>
-        <div id="explanation" class="explanation hidden"></div>
-
-        <div class="nav-group">
-            <button class="btn-back" onclick="resetToMenu()">Kembali</button>
-            <button class="btn-next" onclick="nextQuestion()">Lanjut</button>
+      <div class="level-card medium" data-symbol="🛡️" onclick="startQuizWithRipple(event,'medium')">
+        <div class="level-icon">🔑</div>
+        <div class="level-info">
+          <div class="level-name">Medium — Teknik Kriptografi</div>
+          <div class="level-desc">Pelajari teknik kriptografi tingkat menengah seperti Caesar Cipher, Vigenère Cipher, transposisi, dan analisis pola sandi.</div>
+          <div class="level-tags">
+            <span class="tag">20 Soal</span>
+            <span class="tag">40 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
         </div>
+        <div class="level-arrow">›</div>
+      </div>
+
+      <div class="level-card hard" data-symbol="🔐⚠️" onclick="startQuizWithRipple(event,'hard')">
+        <div class="level-icon">🧠</div>
+        <div class="level-info">
+          <div class="level-name">Hard — Kriptografi Lanjutan & Analisis Keamanan</div>
+          <div class="level-desc">Pembahasan kriptografi tingkat lanjut seperti RSA dasar, hashing, brute force analysis, dan konsep keamanan sistem kriptografi modern.</div>
+          <div class="level-tags">
+            <span class="tag">30 Soal</span>
+            <span class="tag">50 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="level-arrow">›</div>
+      </div>
     </div>
 
-    <div id="resultScreen" class="card hidden">
-        <h2>Hasil Akhir</h2>
-        <div id="scoreDisplay" style="font-size: 64px; font-weight: 800; color: var(--primary);">0</div>
-        <p id="levelResult" style="font-weight: bold;"></p>
-        <button onclick="resetToMenu()" style="background:#4c1d95; color:white; border:none; padding:15px; border-radius:12px; width:100%; cursor:pointer;">Main Lagi</button>
+    <div class="quote-box">
+       "Dalam kriptografi, setiap pesan adalah teka-teki yang hanya bisa dibuka oleh kunci yang tepat. Semakin cerdas seorang kriptografer, semakin sulit jejak yang ia tinggalkan."
+      <cite>— Prof. Adrian Wijaya</cite>
     </div>
+  </div>
+
+  <!-- ══════════════════ QUIZ SCREEN ══════════════════ -->
+  <div id="quizScreen" class="screen">
+    <div class="quiz-topbar">
+      <button class="back-to-level-btn" onclick="backToLevelSelect()" title="Kembali ke pilihan level">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2L4 6L8 10"/>
+        </svg>
+        Level
+      </button>
+      <span id="levelBadge" class="quiz-level-badge badge-easy">Easy</span>
+      <span id="qCounter" class="q-counter">1 / 10</span>
+      <div id="timerPill" class="timer-pill">30:00</div>
+    </div>
+
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
+    </div>
+
+    <div class="dot-row" id="dotRow"></div>
+
+    <div class="q-card">
+      <div class="q-number" id="qNumber">SOAL 1</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options-list" id="optsList"></div>
+
+    <div class="explanation-box" id="expBox">
+      <div class="exp-header">💡 Pembahasan</div>
+      <div class="exp-title" id="expTitle"></div>
+      <div class="exp-body" id="expBody"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn btn-prev" onclick="goToPrev()" title="Soal Sebelumnya">‹</button>
+      <button class="nav-btn btn-skip" id="skipBtn" onclick="skipQuestion()">Lewati ›</button>
+      <button class="nav-btn btn-next" id="nextBtn" onclick="goToNext()">Berikutnya →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ RESULT SCREEN ══════════════════ -->
+  <div id="resultScreen" class="screen">
+    <div class="result-container">
+      <div class="result-eyebrow">✦ Hasil Quiz ✦</div>
+
+      <div class="result-circle" id="resultCircle">
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#e8e5de" stroke-width="8"/>
+          <circle id="arcCircle" cx="80" cy="80" r="70" fill="none" stroke="#c9a227" stroke-width="8"
+                  stroke-dasharray="439.82" stroke-dashoffset="439.82"
+                  stroke-linecap="round" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+        </svg>
+        <div class="result-score-num" id="rScoreNum">0</div>
+        <div class="result-score-den" id="rScoreDen">/ 10</div>
+      </div>
+
+      <div class="result-grade" id="rGrade"></div>
+      <p class="result-message" id="rMessage"></p>
+
+      <div class="result-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="rCorrect" style="color:var(--correct)">0</div>
+          <div class="stat-label">Benar</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rWrong" style="color:var(--wrong)">0</div>
+          <div class="stat-label">Salah</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rSkipped" style="color:var(--gold)">0</div>
+          <div class="stat-label">Dilewati</div>
+        </div>
+      </div>
+
+      <button class="review-toggle" onclick="toggleReview()" id="reviewToggle">
+        <span>▾</span> Lihat Review Soal
+      </button>
+      <div class="review-panel" id="reviewPanel"></div>
+
+      <div class="result-actions">
+        <button class="btn-action btn-retry" id="retryBtn" onclick="retryLevel()">Ulangi Level Ini</button>
+        <button class="btn-action btn-home" onclick="goHome()">← Kembali ke Pilihan Level</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-let current = 0, score = 0, questions = [], selected = null, timer, timeLeft = 6600, currentLvl = "";
+// ═══════════════════════════════════════════════════
+//  TITLE ANIMATION — char by char
+// ═══════════════════════════════════════════════════
+function animateTitle() {
+  const line1 = 'Quiz';
+  const line2 = 'Kriptografi';
 
-function generateQuestions(lvl) {
-    let qArr = [];
-    for (let i = 0; i < 30; i++) {
-        let r = Math.random();
-        if (lvl === 'easy') {
-            if (r < 0.5) {
-                let a = Math.floor(Math.random() * 30) + 5, m = Math.floor(Math.random() * 5) + 2, ans = a % m;
-                qArr.push({ t: "Berapa hasil Modulo?", v: ["A", a, "M", m], o: shuffle([ans, ans+1, ans+2, 0]), a: ans, e: `${a} mod ${m} = ${ans}` });
-            } else {
-                let x = Math.floor(Math.random() * 8), y = Math.floor(Math.random() * 8), ans = x ^ y;
-                qArr.push({ t: "Berapa hasil XOR?", v: ["X", x, "Y", y], o: shuffle([ans, x+y, 1, 0]), a: ans, e: `${x} XOR ${y} = ${ans}` });
-            }
-        } else if (lvl === 'medium') {
-            if (r < 0.5) {
-                let a = Math.floor(Math.random() * 200) + 50, m = Math.floor(Math.random() * 15) + 5, ans = a % m;
-                qArr.push({ t: "Modulo Menengah:", v: ["A", a, "M", m], o: shuffle([ans, ans+1, ans+2, 7]), a: ans, e: `${a} mod ${m} = ${ans}` });
-            } else {
-                let x = Math.floor(Math.random() * 100) + 20, y = Math.floor(Math.random() * 100) + 20, ans = x ^ y;
-                qArr.push({ t: "Bitwise XOR (8-bit):", v: ["X", x, "Y", y], o: shuffle([ans, x+y, ans+5, 0]), a: ans, e: `${x} XOR ${y} = ${ans}` });
-            }
-        } else {
-            if (r < 0.5) {
-                let base = Math.floor(Math.random() * 5) + 2, exp = Math.floor(Math.random() * 3) + 2, m = Math.floor(Math.random() * 10) + 3;
-                let ans = Math.pow(base, exp) % m;
-                qArr.push({ t: "Eksponensial Modulo:", v: ["B^E", `${base}^${exp}`, "MOD", m], o: shuffle([ans, (ans+1)%m, (ans+2)%m, 1]), a: ans, e: `${base}^${exp} = ${Math.pow(base, exp)}, mod ${m} = ${ans}` });
-            } else {
-                let x = Math.floor(Math.random() * 500) + 100, y = Math.floor(Math.random() * 500) + 100, ans = x ^ y;
-                qArr.push({ t: "XOR Lanjutan:", v: ["X", x, "Y", y], o: shuffle([ans, x+y, x-y, 255]), a: ans, e: `Hasil: ${ans}` });
-            }
-        }
+  function buildWord(el, text, baseDelay) {
+    el.innerHTML = '';
+    [...text].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'title-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.animationDelay = (baseDelay + i * 0.05) + 's';
+      el.appendChild(span);
+    });
+  }
+
+  buildWord(document.getElementById('word1'), line1, 0.3);
+  buildWord(document.getElementById('word2'), line2, 0.7);
+}
+
+// ═══════════════════════════════════════════════════
+//  LEVEL CARD ENTRANCE ANIMATION
+// ═══════════════════════════════════════════════════
+function animateLevelCards() {
+  const cards = document.querySelectorAll('.level-card');
+  cards.forEach((card, i) => {
+    card.style.animationDelay = (1.5 + i * 0.18) + 's';
+    card.classList.add('card-in');
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  FLOATING PARTICLES — logic symbols
+// ═══════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  const SYMBOLS = ['🔐', '🗝️', '🔑', '🔓', '🧾', '🧮', '🔁', '📡', '🛡️', '🧩'];
+  let particles = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: H + 30,
+      symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+      size: 12 + Math.random() * 16,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -(0.3 + Math.random() * 0.5),
+      opacity: 0,
+      maxOpacity: 0.06 + Math.random() * 0.08,
+      life: 0,
+      maxLife: 180 + Math.random() * 120,
+      rotation: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.02
+    };
+  }
+
+  for (let i = 0; i < 28; i++) {
+    const p = makeParticle();
+    p.y = Math.random() * H;
+    p.life = Math.random() * p.maxLife;
+    particles.push(p);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (Math.random() < 0.04 && particles.length < 40) {
+      particles.push(makeParticle());
     }
-    return qArr;
+
+    particles = particles.filter(p => p.y > -40);
+
+    particles.forEach(p => {
+      p.life++;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotV;
+
+      const fadeLen = 30;
+      if (p.life < fadeLen) p.opacity = p.maxOpacity * (p.life / fadeLen);
+      else if (p.life > p.maxLife - fadeLen) p.opacity = p.maxOpacity * ((p.maxLife - p.life) / fadeLen);
+      else p.opacity = p.maxOpacity;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.font = `${p.size}px 'DM Mono', monospace`;
+      ctx.fillStyle = `rgba(26,26,46,${p.opacity})`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.symbol, 0, 0);
+      ctx.restore();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  setTimeout(() => {
+    canvas.classList.add('visible');
+    draw();
+  }, 400);
+})();
+
+// ═══════════════════════════════════════════════════
+//  RIPPLE EFFECT on level card click
+// ═══════════════════════════════════════════════════
+function startQuizWithRipple(e, level) {
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const x = e.clientX - rect.left - size / 2;
+  const y = e.clientY - rect.top - size / 2;
+
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+  card.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+
+  setTimeout(() => startQuiz(level), 200);
 }
 
-function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
-
-function startQuiz(lvl) {
-    current = 0; score = 0; timeLeft = 6600;
-    currentLvl = lvl.toUpperCase();
-    questions = generateQuestions(lvl);
-    document.getElementById("startScreen").classList.add("hidden");
-    document.getElementById("resultScreen").classList.add("hidden");
-    document.getElementById("quizScreen").classList.remove("hidden");
-    showQuestion();
-    if (timer) clearInterval(timer);
-    startTimer();
+// ═══════════════════════════════════════════════════
+//  BACK TO LEVEL SELECT from quiz
+// ═══════════════════════════════════════════════════
+function backToLevelSelect() {
+  if (state.timerID) clearInterval(state.timerID);
+  showScreen('startScreen');
 }
 
-function showQuestion() {
-    let q = questions[current];
-    document.getElementById("questionTitle").innerText = `Level: ${currentLvl} | Soal ${current + 1}/30\n${q.t}`;
-    document.getElementById("matrixContent").innerHTML = `
-        <div class="label-small">${q.v[0]}</div><div>${q.v[1]}</div>
-        <div class="label-small">${q.v[2]}</div><div>${q.v[3]}</div>`;
-    let optHTML = "";
-    q.o.forEach(opt => { optHTML += `<div class="option" onclick="check(${opt}, this)">${opt}</div>`; });
-    document.getElementById("options").innerHTML = optHTML;
-    document.getElementById("explanation").classList.add("hidden");
-    selected = null;
+// ═══════════════════════════════════════════════════
+//  INIT ANIMATIONS
+// ═══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  animateTitle();
+  animateLevelCards();
+});
+
+
+// ─────────────────────────────────────────────
+//  DATA SOAL  (30 easy, 30 medium, 30 hard)
+//  Setiap soal: 5 pilihan (a–e)
+// ─────────────────────────────────────────────
+const ALL_QUESTIONS = [
+
+// ═══════════════ EASY (index 0-29) ═══════════════
+{
+  q: "Kriptografi adalah ilmu yang mempelajari tentang...",
+  opts: [
+    "Pengolahan gambar",
+    "Keamanan dan kerahasiaan pesan",
+    "Perhitungan matematika",
+    "Pengolahan data statistik",
+    "Desain jaringan komputer"
+  ],
+  ans: 1,
+  exp: { title: "Kriptografi", body: "Kriptografi fokus pada pengamanan informasi agar tidak dibaca pihak tidak berwenang." }
+},
+{
+  q: "Proses mengubah pesan asli menjadi bentuk rahasia disebut...",
+  opts: ["Dekripsi", "Enkripsi", "Transmisi", "Komunikasi", "Validasi"],
+  ans: 1,
+  exp: { title: "Enkripsi", body: "Enkripsi mengubah plaintext menjadi ciphertext." }
+},
+{
+  q: "Proses mengubah pesan rahasia kembali menjadi pesan asli disebut...",
+  opts: ["Enkripsi", "Dekripsi", "Hashing", "Encoding", "Routing"],
+  ans: 1,
+  exp: { title: "Dekripsi", body: "Dekripsi membuka ciphertext menjadi plaintext." }
+},
+{
+  q: "Pesan asli sebelum dienkripsi disebut...",
+  opts: ["Ciphertext", "Plaintext", "Hash", "Key", "Token"],
+  ans: 1,
+  exp: { title: "Plaintext", body: "Plaintext adalah pesan yang belum diamankan." }
+},
+{
+  q: "Pesan yang sudah dienkripsi disebut...",
+  opts: ["Plaintext", "Ciphertext", "Input", "Output", "Data"],
+  ans: 1,
+  exp: { title: "Ciphertext", body: "Ciphertext adalah hasil enkripsi yang tidak dapat dibaca langsung." }
+},
+{
+  q: "Alat utama untuk melakukan enkripsi dan dekripsi disebut...",
+  opts: ["Firewall", "Kunci (Key)", "Server", "Router", "Database"],
+  ans: 1,
+  exp: { title: "Key", body: "Key digunakan untuk mengunci dan membuka pesan." }
+},
+{
+  q: "Cipher Caesar bekerja dengan cara...",
+  opts: [
+    "Mengacak bit data",
+    "Menggeser huruf dalam alfabet",
+    "Menghapus huruf vokal",
+    "Mengubah angka menjadi simbol",
+    "Mengacak urutan kata"
+  ],
+  ans: 1,
+  exp: { title: "Caesar Cipher", body: "Setiap huruf digeser sejumlah posisi tertentu dalam alfabet." }
+},
+{
+  q: "Jika A → D dalam Caesar Cipher, maka shift-nya adalah...",
+  opts: ["1", "2", "3", "4", "5"],
+  ans: 2,
+  exp: { title: "Shift Caesar", body: "A ke D berarti geser 3 langkah." }
+},
+{
+  q: "Cipher Vigenère menggunakan...",
+  opts: [
+    "Satu kunci angka",
+    "Kunci berupa kata",
+    "Tanpa kunci",
+    "Hashing",
+    "Random generator"
+  ],
+  ans: 1,
+  exp: { title: "Vigenère", body: "Menggunakan kata kunci untuk mengacak pesan." }
+},
+{
+  q: "Tujuan utama kriptografi adalah...",
+  opts: [
+    "Mempercepat komputer",
+    "Mengamankan informasi",
+    "Menghapus data",
+    "Mengatur jaringan",
+    "Mengompresi file"
+  ],
+  ans: 1,
+  exp: { title: "Tujuan Kriptografi", body: "Menjaga kerahasiaan, integritas, dan autentikasi data." }
+},
+{
+  q: "Serangan yang mencoba semua kemungkinan kunci disebut...",
+  opts: [
+    "Phishing",
+    "Brute force",
+    "SQL injection",
+    "Sniffing",
+    "Spoofing"
+  ],
+  ans: 1,
+  exp: { title: "Brute Force", body: "Menebak semua kemungkinan sampai menemukan kunci." }
+},
+{
+  q: "Algoritma yang mengubah pesan menjadi bentuk tetap (hash) disebut...",
+  opts: ["Encryption", "Hashing", "Decryption", "Compression", "Encoding"],
+  ans: 1,
+  exp: { title: "Hashing", body: "Hashing menghasilkan nilai unik dari data." }
+},
+{
+  q: "Contoh algoritma hashing adalah...",
+  opts: ["RSA", "AES", "SHA-256", "Caesar", "DES"],
+  ans: 2,
+  exp: { title: "Hash", body: "SHA-256 adalah fungsi hash populer." }
+},
+{
+  q: "AES termasuk jenis algoritma...",
+  opts: ["Hash", "Asimetris", "Simetris", "Kompressi", "Encoding"],
+  ans: 2,
+  exp: { title: "AES", body: "AES menggunakan kunci yang sama untuk enkripsi dan dekripsi." }
+},
+{
+  q: "RSA termasuk kriptografi...",
+  opts: ["Simetris", "Asimetris", "Hash", "Caesar", "Substitusi"],
+  ans: 1,
+  exp: { title: "RSA", body: "RSA menggunakan public key dan private key." }
+},
+{
+  q: "Public key digunakan untuk...",
+  opts: [
+    "Membuka pesan",
+    "Enkripsi pesan",
+    "Menghapus data",
+    "Menyimpan file",
+    "Mengirim virus"
+  ],
+  ans: 1,
+  exp: { title: "Public Key", body: "Public key digunakan untuk mengenkripsi pesan." }
+},
+{
+  q: "Private key digunakan untuk...",
+  opts: [
+    "Enkripsi",
+    "Dekripsi",
+    "Kompressi",
+    "Upload data",
+    "Backup file"
+  ],
+  ans: 1,
+  exp: { title: "Private Key", body: "Private key digunakan untuk membuka pesan terenkripsi." }
+},
+{
+  q: "Keamanan pesan bertujuan untuk menjaga...",
+  opts: [
+    "Kecepatan internet",
+    "Kerahasiaan data",
+    "Ukuran file",
+    "Tampilan aplikasi",
+    "Baterai perangkat"
+  ],
+  ans: 1,
+  exp: { title: "Security", body: "Keamanan menjaga data tetap rahasia dan tidak diubah." }
+},
+{
+  q: "Jika pesan tidak berubah saat dikirim, maka sifat ini disebut...",
+  opts: [
+    "Confidentiality",
+    "Integrity",
+    "Availability",
+    "Speed",
+    "Compression"
+  ],
+  ans: 1,
+  exp: { title: "Integrity", body: "Integrity memastikan data tidak diubah." }
+},
+{
+  q: "Firewall digunakan untuk...",
+  opts: [
+    "Mempercepat CPU",
+    "Mengamankan jaringan",
+    "Menyimpan data",
+    "Mengedit file",
+    "Menghapus virus secara manual"
+  ],
+  ans: 1,
+  exp: { title: "Firewall", body: "Firewall melindungi jaringan dari akses tidak sah." }
+},
+{
+  q: "Steganografi adalah teknik untuk...",
+  opts: [
+    "Menghapus data",
+    "Menyembunyikan pesan dalam media lain",
+    "Menghitung hash",
+    "Menghapus virus",
+    "Mengubah file sistem"
+  ],
+  ans: 1,
+  exp: { title: "Steganografi", body: "Pesan disembunyikan dalam gambar, audio, atau teks." }
+},
+{
+  q: "Contoh media steganografi adalah...",
+  opts: ["CPU", "Gambar", "RAM", "Router", "Database"],
+  ans: 1,
+  exp: { title: "Steganografi", body: "Gambar sering digunakan untuk menyembunyikan pesan." }
+},
+{
+  q: "Tujuan enkripsi adalah untuk membuat pesan...",
+  opts: [
+    "Lebih panjang",
+    "Tidak dapat dibaca",
+    "Lebih cepat",
+    "Lebih kecil",
+    "Lebih berwarna"
+  ],
+  ans: 1,
+  exp: { title: "Enkripsi", body: "Pesan dibuat tidak dapat dibaca tanpa kunci." }
+},
+{
+  q: "Cipher substitusi bekerja dengan cara...",
+  opts: [
+    "Menghapus huruf",
+    "Mengganti huruf dengan huruf lain",
+    "Menambah angka",
+    "Mengurutkan data",
+    "Menghapus spasi"
+  ],
+  ans: 1,
+  exp: { title: "Substitusi", body: "Setiap huruf diganti dengan huruf lain." }
+},
+{
+  q: "Jika A → B, B → C, maka ini contoh cipher...",
+  opts: ["Transposisi", "Substitusi", "Hash", "RSA", "AES"],
+  ans: 1,
+  exp: { title: "Cipher", body: "Huruf diganti satu per satu dengan pola tertentu." }
+},
+{
+  q: "Keamanan data penting karena...",
+  opts: [
+    "Menghemat baterai",
+    "Melindungi informasi pribadi",
+    "Mempercepat komputer",
+    "Memperbesar file",
+    "Menghapus malware"
+  ],
+  ans: 1,
+  exp: { title: "Security", body: "Data harus dilindungi dari akses ilegal." }
+},
+{
+  q: "Serangan yang menyadap komunikasi disebut...",
+  opts: [
+    "Sniffing",
+    "Brute force",
+    "Phishing",
+    "Spam",
+    "Crash"
+  ],
+  ans: 0,
+  exp: { title: "Sniffing", body: "Menangkap data yang sedang dikirim." }
+},
+{
+  q: "Digital signature digunakan untuk...",
+  opts: [
+    "Mempercepat file",
+    "Memverifikasi keaslian pesan",
+    "Menghapus data",
+    "Mengkompresi file",
+    "Mengedit video"
+  ],
+  ans: 1,
+  exp: { title: "Digital Signature", body: "Menjamin keaslian dan integritas pesan." }
+},
+{
+  q: "Kriptografi modern banyak digunakan pada...",
+  opts: [
+    "Permainan offline",
+    "Internet dan komunikasi online",
+    "Kalkulator sederhana",
+    "Jam digital",
+    "Lampu LED"
+  ],
+  ans: 1,
+  exp: { title: "Aplikasi", body: "Digunakan dalam HTTPS, banking, dan komunikasi digital." }
+},
+
+// ═══════════════ MEDIUM (index 30-59) ═══════════════
+{
+  q: "Caesar Cipher bekerja dengan cara...",
+  opts: [
+    "Menghapus huruf dalam pesan",
+    "Menggeser huruf dalam alfabet",
+    "Mengacak urutan kata",
+    "Mengubah angka menjadi simbol",
+    "Menghapus spasi"
+  ],
+  ans: 1,
+  exp: { title: "Caesar Cipher", body: "Setiap huruf digeser sejumlah posisi dalam alfabet." }
+},
+{
+  q: "Jika A → D pada Caesar Cipher, maka besar pergeserannya adalah...",
+  opts: ["1", "2", "3", "4", "5"],
+  ans: 2,
+  exp: { title: "Shift", body: "A ke D berarti geser 3 langkah." }
+},
+{
+  q: "Cipher Vigenère menggunakan...",
+  opts: [
+    "Satu angka kunci",
+    "Kata kunci",
+    "Tanpa kunci",
+    "Hashing",
+    "Random noise"
+  ],
+  ans: 1,
+  exp: { title: "Vigenère Cipher", body: "Menggunakan kata kunci untuk enkripsi." }
+},
+{
+  q: "Dalam Caesar Cipher, huruf D dengan shift +3 menjadi...",
+  opts: ["A", "B", "C", "E", "F"],
+  ans: 3,
+  exp: { title: "Shift", body: "D → E (1), F (2), G (3)" }
+},
+{
+  q: "Cipher substitusi berarti...",
+  opts: [
+    "Menghapus huruf",
+    "Mengganti huruf dengan huruf lain",
+    "Mengacak urutan kalimat",
+    "Menambah angka",
+    "Menghapus vokal"
+  ],
+  ans: 1,
+  exp: { title: "Substitusi", body: "Huruf diganti dengan huruf lain sesuai pola." }
+},
+{
+  q: "Transposition cipher bekerja dengan cara...",
+  opts: [
+    "Menghapus huruf",
+    "Mengubah urutan huruf",
+    "Mengganti huruf",
+    "Mengubah angka",
+    "Menghapus spasi"
+  ],
+  ans: 1,
+  exp: { title: "Transposisi", body: "Huruf tetap sama, hanya urutannya diubah." }
+},
+{
+  q: "Jika plaintext adalah HELLO dan diacak menjadi OLEHL, ini termasuk...",
+  opts: [
+    "Caesar Cipher",
+    "Substitusi",
+    "Transposisi",
+    "Hashing",
+    "RSA"
+  ],
+  ans: 2,
+  exp: { title: "Transposisi", body: "Huruf diubah urutannya tanpa diganti." }
+},
+{
+  q: "Vigenère Cipher lebih kuat dari Caesar karena...",
+  opts: [
+    "Menggunakan angka",
+    "Menggunakan kata kunci panjang",
+    "Tidak memakai kunci",
+    "Menghapus huruf",
+    "Mengubah format file"
+  ],
+  ans: 1,
+  exp: { title: "Keamanan", body: "Kata kunci membuat pola lebih sulit ditebak." }
+},
+{
+  q: "Jika kunci Vigenère adalah KEY, maka pola kunci akan...",
+  opts: [
+    "K E Y K E Y ...",
+    "K K K K K ...",
+    "E Y K E Y K ...",
+    "Acak penuh",
+    "Tidak digunakan"
+  ],
+  ans: 0,
+  exp: { title: "Vigenère", body: "Kunci diulang sepanjang pesan." }
+},
+{
+  q: "Analisis frekuensi digunakan untuk...",
+  opts: [
+    "Menambah enkripsi",
+    "Menebak huruf paling sering muncul",
+    "Menghapus pesan",
+    "Mengubah format data",
+    "Mengacak jaringan"
+  ],
+  ans: 1,
+  exp: { title: "Analisis", body: "Huruf sering muncul membantu memecahkan cipher." }
+},
+{
+  q: "Huruf yang paling sering muncul dalam bahasa Inggris biasanya adalah...",
+  opts: ["Z", "Q", "E", "X", "J"],
+  ans: 2,
+  exp: { title: "Frekuensi", body: "Huruf E paling sering muncul." }
+},
+{
+  q: "Jika plaintext ABC menjadi DEF, maka cipher yang digunakan adalah...",
+  opts: [
+    "Substitusi shift +3",
+    "Transposisi",
+    "Hashing",
+    "RSA",
+    "Vigenère acak"
+  ],
+  ans: 0,
+  exp: { title: "Caesar", body: "Setiap huruf digeser 3 langkah." }
+},
+{
+  q: "Dalam cipher, kunci digunakan untuk...",
+  opts: [
+    "Mempercepat komputer",
+    "Mengamankan pesan",
+    "Menghapus data",
+    "Mengurangi ukuran file",
+    "Mengubah hardware"
+  ],
+  ans: 1,
+  exp: { title: "Key", body: "Kunci mengontrol proses enkripsi." }
+},
+{
+  q: "Cipher monoalphabetic berarti...",
+  opts: [
+    "Satu huruf berubah jadi banyak huruf",
+    "Setiap huruf diganti satu huruf tetap",
+    "Tidak ada kunci",
+    "Menggunakan angka saja",
+    "Menghapus huruf"
+  ],
+  ans: 1,
+  exp: { title: "Monoalphabetic", body: "Setiap huruf memiliki pengganti tetap." }
+},
+{
+  q: "Cipher polyalphabetic berarti...",
+  opts: [
+    "Satu huruf = satu huruf",
+    "Menggunakan banyak substitusi huruf",
+    "Tanpa kunci",
+    "Menghapus data",
+    "Mengacak file"
+  ],
+  ans: 1,
+  exp: { title: "Polyalphabetic", body: "Satu huruf bisa berubah berbeda tergantung posisi." }
+},
+{
+  q: "Jika pesan diubah menjadi angka sesuai posisi alfabet, ini disebut...",
+  opts: [
+    "Encoding",
+    "Ciphertext",
+    "Hashing sederhana",
+    "Compression",
+    "Firewall"
+  ],
+  ans: 0,
+  exp: { title: "Encoding", body: "Huruf diubah menjadi representasi angka." }
+},
+{
+  q: "Keamanan Caesar Cipher lemah karena...",
+  opts: [
+    "Terlalu panjang",
+    "Jumlah kemungkinan kunci sedikit",
+    "Menggunakan internet",
+    "Tidak punya algoritma",
+    "Tidak bisa dienkripsi"
+  ],
+  ans: 1,
+  exp: { title: "Kelemahan", body: "Hanya ada 25 kemungkinan shift." }
+},
+{
+  q: "Cipher yang tidak mengubah huruf tetapi hanya posisi disebut...",
+  opts: [
+    "Substitusi",
+    "Transposisi",
+    "Hash",
+    "RSA",
+    "AES"
+  ],
+  ans: 1,
+  exp: { title: "Transposisi", body: "Hanya urutan yang berubah." }
+},
+{
+  q: "Jika kata sandi berubah tiap huruf sesuai posisi, ini disebut...",
+  opts: [
+    "Static cipher",
+    "Dynamic cipher",
+    "Linear cipher",
+    "Random cipher",
+    "Null cipher"
+  ],
+  ans: 1,
+  exp: { title: "Dynamic", body: "Perubahan bergantung posisi huruf." }
+},
+{
+  q: "Tujuan utama analisis kriptografi adalah...",
+  opts: [
+    "Mempercepat CPU",
+    "Memecahkan cipher",
+    "Menghapus data",
+    "Mengompresi file",
+    "Mengubah sistem operasi"
+  ],
+  ans: 1,
+  exp: { title: "Cryptanalysis", body: "Menganalisis dan memecahkan sandi." }
+},
+{
+  q: "Jika kata HELLO menjadi KHOOR, cipher yang digunakan adalah...",
+  opts: [
+    "Caesar +3",
+    "Vigenère",
+    "Transposisi",
+    "Hash",
+    "RSA"
+  ],
+  ans: 0,
+  exp: { title: "Caesar", body: "Setiap huruf digeser 3 langkah." }
+},
+{
+  q: "Cipher yang menggunakan grid atau tabel biasanya adalah...",
+  opts: [
+    "Caesar",
+    "Transposisi",
+    "Vigenère",
+    "Hash",
+    "AES"
+  ],
+  ans: 1,
+  exp: { title: "Transposisi", body: "Huruf disusun dalam tabel lalu diacak." }
+},
+{
+  q: "Kelebihan Vigenère dibanding Caesar adalah...",
+  opts: [
+    "Lebih cepat",
+    "Lebih aman karena multi-kunci",
+    "Tidak butuh kunci",
+    "Tidak bisa dienkripsi",
+    "Menghapus data"
+  ],
+  ans: 1,
+  exp: { title: "Keamanan", body: "Menggunakan kata kunci membuat lebih kuat." }
+},
+{
+  q: "Jika pola huruf berulang secara teratur, kemungkinan itu adalah...",
+  opts: [
+    "Hash",
+    "Cipher sederhana",
+    "Random noise",
+    "Firewall",
+    "Database"
+  ],
+  ans: 1,
+  exp: { title: "Pola", body: "Cipher sederhana memiliki pola yang bisa dianalisis." }
+},
+{
+  q: "Dalam kriptografi, plaintext adalah...",
+  opts: [
+    "Pesan terenkripsi",
+    "Pesan asli",
+    "Kunci rahasia",
+    "Algoritma",
+    "Server"
+  ],
+  ans: 1,
+  exp: { title: "Plaintext", body: "Pesan sebelum dienkripsi." }
+},
+{
+  q: "Ciphertext adalah...",
+  opts: [
+    "Pesan asli",
+    "Pesan terenkripsi",
+    "Kunci publik",
+    "Data kosong",
+    "Virus"
+  ],
+  ans: 1,
+  exp: { title: "Ciphertext", body: "Pesan setelah dienkripsi." }
+},
+{
+  q: "Jika kunci berubah setiap huruf, cipher tersebut disebut...",
+  opts: [
+    "Monoalphabetic",
+    "Polyalphabetic",
+    "Static",
+    "Caesar",
+    "Hash"
+  ],
+  ans: 1,
+  exp: { title: "Polyalphabetic", body: "Kunci berubah-ubah sepanjang teks." }
+},
+{
+  q: "Analisis frekuensi tidak efektif terhadap...",
+  opts: [
+    "Caesar Cipher",
+    "Vigenère Cipher panjang",
+    "Substitusi sederhana",
+    "Transposisi",
+    "Monoalphabetic"
+  ],
+  ans: 1,
+  exp: { title: "Keamanan", body: "Vigenère dengan kunci panjang lebih sulit dianalisis." }
+},
+{
+  q: "Transposisi tidak mengubah...",
+  opts: [
+    "Urutan huruf",
+    "Jumlah huruf",
+    "Isi huruf",
+    "Panjang teks",
+    "Struktur grid"
+  ],
+  ans: 2,
+  exp: { title: "Transposisi", body: "Huruf tetap sama, hanya posisi berubah." }
+},
+
+// ═══════════════ HARD (index 60-89) ═══════════════
+{
+  q: "RSA termasuk jenis kriptografi...",
+  opts: [
+    "Simetris",
+    "Asimetris",
+    "Substitusi",
+    "Transposisi",
+    "Caesar"
+  ],
+  ans: 1,
+  exp: { title: "RSA", body: "RSA menggunakan public key dan private key (asymmetric cryptography)." }
+},
+{
+  q: "Dalam RSA, public key digunakan untuk...",
+  opts: [
+    "Dekripsi pesan",
+    "Enkripsi pesan",
+    "Menghapus data",
+    "Mengacak file",
+    "Mengompresi data"
+  ],
+  ans: 1,
+  exp: { title: "RSA Public Key", body: "Public key digunakan untuk mengenkripsi pesan." }
+},
+{
+  q: "Private key dalam RSA berfungsi untuk...",
+  opts: [
+    "Enkripsi",
+    "Dekripsi",
+    "Kompressi",
+    "Transmisi",
+    "Hashing"
+  ],
+  ans: 1,
+  exp: { title: "RSA Private Key", body: "Private key digunakan untuk membuka pesan terenkripsi." }
+},
+{
+  q: "Hashing menghasilkan output yang bersifat...",
+  opts: [
+    "Dapat dibalik",
+    "Tidak dapat dibalik",
+    "Selalu sama panjang input",
+    "Acak tanpa aturan",
+    "Bisa diedit"
+  ],
+  ans: 1,
+  exp: { title: "Hashing", body: "Hash bersifat one-way function (tidak bisa dibalik)." }
+},
+{
+  q: "Contoh algoritma hashing adalah...",
+  opts: ["RSA", "AES", "SHA-256", "Caesar", "Vigenère"],
+  ans: 2,
+  exp: { title: "SHA-256", body: "SHA-256 adalah algoritma hashing modern." }
+},
+{
+  q: "Tujuan utama hashing adalah...",
+  opts: [
+    "Enkripsi data",
+    "Verifikasi integritas data",
+    "Menghapus data",
+    "Mengacak jaringan",
+    "Mengompresi file"
+  ],
+  ans: 1,
+  exp: { title: "Hashing", body: "Hash digunakan untuk memastikan data tidak berubah." }
+},
+{
+  q: "Brute force attack adalah...",
+  opts: [
+    "Menebak password satu kali",
+    "Mencoba semua kemungkinan kunci",
+    "Menghapus data",
+    "Mengubah algoritma",
+    "Mengacak server"
+  ],
+  ans: 1,
+  exp: { title: "Brute Force", body: "Semua kemungkinan kunci dicoba satu per satu." }
+},
+{
+  q: "Kelemahan brute force adalah...",
+  opts: [
+    "Tidak akurat",
+    "Membutuhkan waktu sangat lama",
+    "Tidak bisa digunakan",
+    "Tidak butuh komputer",
+    "Selalu gagal"
+  ],
+  ans: 1,
+  exp: { title: "Brute Force", body: "Semakin panjang kunci, semakin lama waktu yang dibutuhkan." }
+},
+{
+  q: "Semakin panjang password maka...",
+  opts: [
+    "Lebih mudah ditebak",
+    "Lebih aman dari brute force",
+    "Tidak bisa digunakan",
+    "Lebih cepat diretas",
+    "Tidak berpengaruh"
+  ],
+  ans: 1,
+  exp: { title: "Security", body: "Panjang password meningkatkan keamanan." }
+},
+{
+  q: "Fungsi utama digital signature adalah...",
+  opts: [
+    "Menghapus data",
+    "Memverifikasi keaslian pesan",
+    "Mengompresi file",
+    "Mengubah format file",
+    "Menghapus virus"
+  ],
+  ans: 1,
+  exp: { title: "Digital Signature", body: "Menjamin autentikasi dan integritas data." }
+},
+{
+  q: "Dalam kriptografi modern, keamanan bergantung pada...",
+  opts: [
+    "Kecepatan komputer",
+    "Kekuatan algoritma dan panjang kunci",
+    "Ukuran file",
+    "Warna data",
+    "Jenis file"
+  ],
+  ans: 1,
+  exp: { title: "Security", body: "Keamanan tergantung pada algoritma dan panjang kunci." }
+},
+{
+  q: "AES termasuk algoritma...",
+  opts: [
+    "Asimetris",
+    "Simetris",
+    "Hash",
+    "Caesar",
+    "Transposisi"
+  ],
+  ans: 1,
+  exp: { title: "AES", body: "AES menggunakan satu kunci untuk enkripsi dan dekripsi." }
+},
+{
+  q: "RSA didasarkan pada kesulitan...",
+  opts: [
+    "Penjumlahan sederhana",
+    "Faktorisasi bilangan besar",
+    "Pengurangan huruf",
+    "Pengacakan teks",
+    "Sorting data"
+  ],
+  ans: 1,
+  exp: { title: "RSA", body: "RSA sulit dipecahkan karena faktorisasi bilangan besar." }
+},
+{
+  q: "Collision dalam hashing berarti...",
+  opts: [
+    "Dua input sama output",
+    "Dua input berbeda menghasilkan hash sama",
+    "Data rusak",
+    "Server crash",
+    "Password hilang"
+  ],
+  ans: 1,
+  exp: { title: "Collision", body: "Dua data berbeda menghasilkan hash yang sama." }
+},
+{
+  q: "Hash yang baik harus bersifat...",
+  opts: [
+    "Cepat dan bisa dibalik",
+    "One-way dan sulit collision",
+    "Besar dan lambat",
+    "Random tanpa aturan",
+    "Tanpa output"
+  ],
+  ans: 1,
+  exp: { title: "Hash Properties", body: "Hash harus sulit dibalik dan minim collision." }
+},
+{
+  q: "Man-in-the-middle attack adalah...",
+  opts: [
+    "Serangan fisik komputer",
+    "Menyadap komunikasi antara dua pihak",
+    "Menghapus file",
+    "Mengubah hardware",
+    "Mempercepat jaringan"
+  ],
+  ans: 1,
+  exp: { title: "MITM", body: "Penyerang berada di tengah komunikasi dua pihak." }
+},
+{
+  q: "Tujuan enkripsi adalah...",
+  opts: [
+    "Mempercepat data",
+    "Menjaga kerahasiaan informasi",
+    "Menghapus file",
+    "Mengubah sistem operasi",
+    "Mengurangi ukuran file"
+  ],
+  ans: 1,
+  exp: { title: "Enkripsi", body: "Enkripsi melindungi data dari pihak tidak sah." }
+},
+{
+  q: "Kriptografi modern banyak digunakan pada...",
+  opts: [
+    "Lampu LED",
+    "Internet banking dan komunikasi online",
+    "Kalkulator",
+    "Jam tangan",
+    "Printer offline"
+  ],
+  ans: 1,
+  exp: { title: "Aplikasi", body: "Digunakan di HTTPS, banking, dan sistem keamanan digital." }
+},
+{
+  q: "Jika kunci terlalu pendek maka...",
+  opts: [
+    "Lebih aman",
+    "Mudah diretas dengan brute force",
+    "Tidak bisa dipakai",
+    "Lebih cepat",
+    "Tidak berpengaruh"
+  ],
+  ans: 1,
+  exp: { title: "Key Security", body: "Kunci pendek mudah ditebak." }
+},
+{
+  q: "One-way function berarti...",
+  opts: [
+    "Bisa dibalik",
+    "Tidak bisa dikembalikan ke input awal",
+    "Selalu linear",
+    "Selalu cepat",
+    "Tanpa output"
+  ],
+  ans: 1,
+  exp: { title: "One-way", body: "Fungsi tidak dapat dibalik seperti hashing." }
+},
+{
+  q: "Public key cryptography berarti...",
+  opts: [
+    "Menggunakan satu kunci",
+    "Menggunakan dua kunci berbeda",
+    "Tanpa kunci",
+    "Menghapus data",
+    "Mengacak file"
+  ],
+  ans: 1,
+  exp: { title: "Asymmetric", body: "Menggunakan public dan private key." }
+},
+{
+  q: "Keamanan RSA tergantung pada...",
+  opts: [
+    "Kecepatan komputer",
+    "Sulitnya faktorisasi bilangan besar",
+    "Ukuran file",
+    "Jumlah user",
+    "Warna data"
+  ],
+  ans: 1,
+  exp: { title: "RSA Security", body: "Semakin besar bilangan, semakin sulit difaktorkan." }
+},
+{
+  q: "Replay attack adalah...",
+  opts: [
+    "Menghapus data",
+    "Mengirim ulang pesan lama untuk penipuan",
+    "Mengubah password",
+    "Mengacak server",
+    "Mengompresi data"
+  ],
+  ans: 1,
+  exp: { title: "Replay Attack", body: "Penyerang mengirim ulang data lama." }
+},
+{
+  q: "Salt dalam hashing digunakan untuk...",
+  opts: [
+    "Mempercepat proses",
+    "Menambah keamanan password",
+    "Menghapus data",
+    "Mengurangi ukuran",
+    "Mengubah algoritma"
+  ],
+  ans: 1,
+  exp: { title: "Salt", body: "Salt membuat hash lebih aman dari rainbow table attack." }
+},
+{
+  q: "Rainbow table attack menyerang...",
+  opts: [
+    "Hash password",
+    "Firewall",
+    "Router",
+    "CPU",
+    "RAM"
+  ],
+  ans: 0,
+  exp: { title: "Rainbow Table", body: "Digunakan untuk memecahkan hash password." }
+},
+{
+  q: "AES dianggap aman karena...",
+  opts: [
+    "Algoritma sederhana",
+    "Komputasi kompleks dan panjang kunci besar",
+    "Tidak menggunakan kunci",
+    "Tanpa enkripsi",
+    "Menghapus data"
+  ],
+  ans: 1,
+  exp: { title: "AES Security", body: "AES sulit dipecahkan dengan brute force." }
+},
+{
+  q: "Kriptografi modern fokus pada...",
+  opts: [
+    "Kecepatan CPU",
+    "Confidentiality, Integrity, Authentication",
+    "Ukuran file",
+    "Desain UI",
+    "Database saja"
+  ],
+  ans: 1,
+  exp: { title: "CIA Triad", body: "Tiga aspek utama keamanan informasi." }
+},
+{
+  q: "Jika hash berubah sedikit saja maka...",
+  opts: [
+    "Tidak berubah",
+    "Hasil hash berubah total",
+    "Tetap sama",
+    "Dihapus",
+    "Error sistem"
+  ],
+  ans: 1,
+  exp: { title: "Avalanche Effect", body: "Perubahan kecil mengubah hash secara drastis." }
+},
+{
+  q: "Serangan brute force paling efektif terhadap...",
+  opts: [
+    "AES 256",
+    "Password lemah",
+    "RSA",
+    "SHA-256",
+    "Digital signature"
+  ],
+  ans: 1,
+  exp: { title: "Security Weakness", body: "Password lemah mudah ditebak." }
+}
+];
+
+// ─────────────────────────────────────────────
+//  GAME STATE
+// ─────────────────────────────────────────────
+const LEVELS = {
+  easy:   { start: 0,  count: 10, time: 30*60, label: 'Easy',   fillClass: 'fill-easy',   badgeClass: 'badge-easy'   },
+  medium: { start: 30, count: 20, time: 40*60, label: 'Medium', fillClass: 'fill-medium', badgeClass: 'badge-medium' },
+  hard:   { start: 60, count: 30, time: 50*60, label: 'Hard',   fillClass: 'fill-hard',   badgeClass: 'badge-hard'   }
+};
+
+let state = {
+  level: null,
+  questions: [],
+  current: 0,
+  answers: [],
+  score: 0,
+  timeLeft: 0,
+  timerID: null,
+  reviewed: false
+};
+
+const LETTERS = ['a','b','c','d','e'];
+
+// ─────────────────────────────────────────────
+//  SCREEN NAVIGATION
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-function check(val, el) {
-    if (selected !== null) return;
-    selected = val;
-    let q = questions[current];
-    if (val === q.a) { score++; el.classList.add('correct'); }
-    else { el.classList.add('wrong'); Array.from(document.querySelectorAll('.option')).forEach(o => { if(parseInt(o.innerText)===q.a) o.classList.add('correct'); }); }
-    document.getElementById("explanation").innerText = "💡 " + q.e;
-    document.getElementById("explanation").classList.remove("hidden");
+// ─────────────────────────────────────────────
+//  START QUIZ
+// ─────────────────────────────────────────────
+function startQuiz(level) {
+  const cfg = LEVELS[level];
+  state.level = level;
+  state.questions = ALL_QUESTIONS.slice(cfg.start, cfg.start + cfg.count);
+  state.current = 0;
+  state.answers = new Array(state.questions.length).fill(null);
+  state.timeLeft = cfg.time;
+  state.reviewed = false;
+
+  const badge = document.getElementById('levelBadge');
+  badge.textContent = cfg.label;
+  badge.className = 'quiz-level-badge ' + cfg.badgeClass;
+
+  document.getElementById('progressFill').className = 'progress-fill ' + cfg.fillClass;
+
+  buildDots();
+  renderQuestion();
+  startTimer();
+  showScreen('quizScreen');
 }
 
-function nextQuestion() {
-    if (selected === null) return alert("Pilih jawaban!");
-    current++;
-    if (current < 30) showQuestion();
-    else {
-        document.getElementById("quizScreen").classList.add("hidden");
-        document.getElementById("resultScreen").classList.remove("hidden");
-        document.getElementById("scoreDisplay").innerText = score;
-        document.getElementById("levelResult").innerText = "Selesai di Level: " + currentLvl;
-        clearInterval(timer);
+function buildDots() {
+  const row = document.getElementById('dotRow');
+  row.innerHTML = '';
+  state.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.title = 'Soal ' + (i+1);
+    d.onclick = () => jumpTo(i);
+    row.appendChild(d);
+  });
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    d.className = 'dot';
+    const a = state.answers[i];
+    if (i === state.current) { d.classList.add('current'); return; }
+    if (a === null) return;
+    if (a === -2) { d.classList.add('skipped'); return; }
+    d.classList.add(a === state.questions[i].ans ? 'answered-correct' : 'answered-wrong');
+  });
+}
+
+// ─────────────────────────────────────────────
+//  RENDER QUESTION
+// ─────────────────────────────────────────────
+function renderQuestion() {
+  const q = state.questions[state.current];
+  const n = state.current;
+  const total = state.questions.length;
+  const answered = state.answers[n];
+
+  document.getElementById('qNumber').textContent = `SOAL ${n+1} DARI ${total}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qCounter').textContent = `${n+1} / ${total}`;
+  document.getElementById('progressFill').style.width = ((n / total) * 100) + '%';
+
+  const list = document.getElementById('optsList');
+  list.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
+
+    if (answered !== null && answered !== -2) {
+      div.classList.add('locked');
+      if (i === q.ans) div.classList.add('correct');
+      else if (i === answered) div.classList.add('wrong');
+    } else if (answered !== -2) {
+      div.onclick = () => selectAnswer(i);
     }
+    list.appendChild(div);
+  });
+
+  const expBox = document.getElementById('expBox');
+  if (answered !== null && answered !== -2) {
+    document.getElementById('expTitle').textContent = q.exp.title;
+    document.getElementById('expBody').textContent = q.exp.body;
+    expBox.classList.add('show');
+  } else {
+    expBox.classList.remove('show');
+  }
+
+  const isLast = n === total - 1;
+  const skipBtn = document.getElementById('skipBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (answered !== null && answered !== -2) {
+    skipBtn.style.display = 'none';
+    nextBtn.className = isLast ? 'nav-btn btn-finish' : 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  } else {
+    skipBtn.style.display = '';
+    skipBtn.textContent = isLast ? 'Lewati & Selesai' : 'Lewati ›';
+    nextBtn.className = 'nav-btn btn-next';
+    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
+  }
+
+  updateDots();
 }
 
-function resetToMenu() {
-    if (current > 0 && current < 30) {
-        if (!confirm("Ingin membatalkan kuis dan kembali ke menu?")) return;
-    }
-    clearInterval(timer);
-    document.getElementById("quizScreen").classList.add("hidden");
-    document.getElementById("resultScreen").classList.add("hidden");
-    document.getElementById("startScreen").classList.remove("hidden");
+function selectAnswer(i) {
+  state.answers[state.current] = i;
+  renderQuestion();
 }
 
+function goToNext() {
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+function goToPrev() {
+  if (state.current > 0) {
+    state.current--;
+    renderQuestion();
+  }
+}
+
+function jumpTo(i) {
+  state.current = i;
+  renderQuestion();
+}
+
+function skipQuestion() {
+  if (state.answers[state.current] === null) {
+    state.answers[state.current] = -2;
+  }
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+// ─────────────────────────────────────────────
+//  TIMER
+// ─────────────────────────────────────────────
 function startTimer() {
-    timer = setInterval(() => {
-        timeLeft--;
-        let m = Math.floor(timeLeft/60), s = timeLeft % 60;
-        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
-        if (timeLeft <= 0) nextQuestion();
-    }, 1000);
+  if (state.timerID) clearInterval(state.timerID);
+  updateTimerDisplay();
+  state.timerID = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay();
+    if (state.timeLeft <= 0) endQuiz();
+  }, 1000);
 }
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  const pill = document.getElementById('timerPill');
+  pill.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+  pill.className = state.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
+}
+
+// ─────────────────────────────────────────────\
+//  END QUIZ
+// ─────────────────────────────────────────────
+function endQuiz() {
+  clearInterval(state.timerID);
+
+  let correct = 0, wrong = 0, skipped = 0;
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    if (a === null || a === -2) skipped++;
+    else if (a === q.ans) correct++;
+    else wrong++;
+  });
+
+  const total = state.questions.length;
+  const pct = total > 0 ? correct / total : 0;
+
+  let grade, msg, color;
+  if (pct >= 0.9) {
+    grade = '🏆 Sangat Istimewa';
+    msg = 'Luar biasa! Penguasaan logikamu sangat baik. Kamu siap menghadapi tantangan yang lebih tinggi.';
+    color = '#c9a227';
+  } else if (pct >= 0.7) {
+    grade = '⭐ Bagus!';
+    msg = 'Pemahaman yang solid. Terus berlatih untuk mencapai hasil sempurna.';
+    color = '#2e7d58';
+  } else if (pct >= 0.5) {
+    grade = '📚 Cukup Baik';
+    msg = 'Kamu sudah memahami konsep dasar. Review kembali materi yang salah dan coba lagi!';
+    color = '#1a5fa8';
+  } else {
+    grade = '💪 Terus Berlatih!';
+    msg = 'Jangan menyerah! Pelajari kembali pembahasannya dan ulangi latihan ini.';
+    color = '#8b1a1a';
+  }
+
+  document.getElementById('rScoreNum').textContent = correct;
+  document.getElementById('rScoreDen').textContent = '/ ' + total;
+  document.getElementById('rScoreNum').style.color = color;
+  document.getElementById('rGrade').textContent = grade;
+  document.getElementById('rMessage').textContent = msg;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkipped').textContent = skipped;
+
+  const circ = 2 * Math.PI * 70;
+  setTimeout(() => {
+    const arc = document.getElementById('arcCircle');
+    arc.style.stroke = color;
+    arc.style.strokeDashoffset = circ * (1 - pct);
+  }, 100);
+
+  buildReview();
+  document.getElementById('retryBtn').onclick = retryLevel;
+  showScreen('resultScreen');
+}
+
+function buildReview() {
+  const panel = document.getElementById('reviewPanel');
+  panel.innerHTML = '';
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    let cls, status;
+    if (a === null || a === -2) { cls = 'ri-skipped'; status = 'Dilewati'; }
+    else if (a === q.ans) { cls = 'ri-correct'; status = 'Benar: ' + q.opts[q.ans]; }
+    else { cls = 'ri-wrong'; status = 'Salah → ' + q.opts[q.ans]; }
+
+    const item = document.createElement('div');
+    item.className = `review-item ${cls}`;
+    item.innerHTML = `<div class="ri-dot"></div><div class="ri-q">Soal ${i+1}: ${q.q.substring(0,60)}...</div><div class="ri-a">${status}</div>`;
+    panel.appendChild(item);
+  });
+}
+
+function toggleReview() {
+  const panel = document.getElementById('reviewPanel');
+  const btn = document.getElementById('reviewToggle');
+  state.reviewed = !state.reviewed;
+  panel.className = state.reviewed ? 'review-panel open' : 'review-panel';
+  btn.querySelector('span').textContent = state.reviewed ? '▴' : '▾';
+}
+
+function retryLevel() { startQuiz(state.level); }
+function goHome() { showScreen('startScreen'); }
 </script>
 </body>
 </html>
