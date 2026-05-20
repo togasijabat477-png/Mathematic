@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Set Collector Arena — Mathematic</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@800;900&display=swap"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:220 18% 7%;--bg2:220 15% 10%;--bg3:220 14% 13%;
+  --fg:210 25% 92%;--fg2:210 15% 70%;--fg3:210 12% 50%;
+  --card:220 13% 16%;--surface:220 13% 16%;--surface2:220 12% 20%;
+  --teal:174 72% 52%;--teal-dim:174 50% 32%;
+  --amber:38 95% 58%;--violet:265 65% 65%;--violet-dim:265 50% 40%;
+  --border:220 12% 22%;--border-hi:220 12% 30%;
+  --radius:0.75rem;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'DM Sans',system-ui,sans-serif;
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-smooth:cubic-bezier(0.4,0,0.2,1);
+}
+html,body{overflow-x:hidden;min-height:100vh;background:hsl(var(--bg));color:hsl(var(--fg));font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(hsl(220 15% 14%/.45) 1px,transparent 1px),linear-gradient(90deg,hsl(220 15% 14%/.45) 1px,transparent 1px);background-size:48px 48px}
+
+/* ── Screen Management ── */
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:flex;flex-direction:column;animation:screenIn .4s ease both}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── Navbar ── */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid hsl(var(--border));background:hsl(var(--bg)/.9);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100}
+.logo{font-family:var(--font-display);font-size:1.1rem;font-weight:900;background:linear-gradient(135deg,hsl(var(--teal)),hsl(var(--violet)));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-icon{width:36px;height:36px;border-radius:8px;border:1px solid hsl(var(--border));background:hsl(var(--surface));color:hsl(var(--fg2));cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .25s var(--ease-spring)}
+.btn-icon:hover{border-color:hsl(var(--border-hi));background:hsl(var(--surface2));transform:scale(1.1)}
+
+/* ══════════════════════════════
+   HOME SCREEN
+══════════════════════════════ */
+#home{align-items:center;justify-content:center;padding:40px 20px;gap:32px}
+.home-hero{text-align:center;max-width:600px}
+.game-badge{display:inline-flex;align-items:center;gap:8px;border-radius:99px;border:1px solid hsl(174 72% 52%/.25);background:hsl(174 72% 52%/.1);padding:6px 16px;font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--teal));letter-spacing:.05em;margin-bottom:20px}
+.home-title{font-family:var(--font-display);font-size:clamp(2.5rem,7vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;margin-bottom:16px}
+.home-sub{font-size:1.05rem;line-height:1.7;color:hsl(var(--fg2));margin-bottom:32px}
+.home-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:700px;width:100%}
+.mode-card{border-radius:var(--radius);border:1.5px solid hsl(var(--border));background:hsl(var(--surface));padding:20px 16px;text-align:left;cursor:pointer;transition:all .35s var(--ease-spring);position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,hsl(var(--teal)),hsl(var(--violet)));transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease-smooth)}
+.mode-card:hover{transform:translateY(-4px);border-color:hsl(var(--teal)/.4);box-shadow:0 12px 32px hsl(220 18% 3%/.5)}
+.mode-card:hover::before{transform:scaleX(1)}
+.mode-icon{font-size:1.8rem;margin-bottom:10px;display:block}
+.mode-name{font-weight:700;color:hsl(var(--fg));margin-bottom:4px}
+.mode-desc{font-size:.8rem;color:hsl(var(--fg3));line-height:1.5}
+.mode-badge{position:absolute;top:10px;right:10px;border-radius:99px;background:hsl(var(--teal));padding:2px 8px;font-family:var(--font-mono);font-size:.65rem;font-weight:700;color:hsl(var(--bg))}
+
+/* Leaderboard preview */
+.lb-preview{width:100%;max-width:420px;border-radius:var(--radius);border:1px solid hsl(var(--border));background:hsl(var(--surface));padding:16px}
+.lb-title{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3));margin-bottom:12px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid hsl(var(--border))}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--amber));width:20px;text-align:center;font-weight:700}
+.lb-name{flex:1;font-size:.875rem;font-weight:600}
+.lb-score{font-family:var(--font-mono);font-size:.875rem;color:hsl(var(--teal))}
+
+/* ══════════════════════════════
+   TUTORIAL / RULES SCREEN
+══════════════════════════════ */
+#tutorial{padding:24px;align-items:center}
+.tutorial-inner{max-width:560px;width:100%;margin:0 auto}
+.tut-card{border-radius:var(--radius);border:1.5px solid hsl(var(--border));background:hsl(var(--surface));padding:20px;margin-bottom:14px}
+.tut-card h3{font-weight:700;margin-bottom:8px;color:hsl(var(--teal));font-size:.95rem}
+.tut-card p,.tut-card ul{font-size:.875rem;line-height:1.7;color:hsl(var(--fg2))}
+.tut-card ul{padding-left:16px}
+.set-notation{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.set-chip{border-radius:6px;border:1px solid hsl(var(--border));background:hsl(var(--bg3));padding:4px 10px;font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--fg2))}
+.set-chip.teal{border-color:hsl(var(--teal-dim));background:hsl(174 72% 52%/.15);color:hsl(var(--teal))}
+.set-chip.violet{border-color:hsl(var(--violet-dim));background:hsl(265 65% 65%/.15);color:hsl(var(--violet))}
+.set-chip.amber{border-color:hsl(38 95% 58%/.3);background:hsl(38 95% 58%/.12);color:hsl(var(--amber))}
+
+/* ══════════════════════════════
+   GAME SCREEN
+══════════════════════════════ */
+#game{padding:0}
+.game-layout{display:grid;grid-template-rows:auto 1fr auto;min-height:calc(100vh - 65px)}
+.game-hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:12px 20px;border-bottom:1px solid hsl(var(--border));background:hsl(var(--bg2));flex-shrink:0}
+.hud-player{display:flex;flex-direction:column;gap:4px}
+.hud-player.ai{text-align:right}
+.hud-name{font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3))}
+.hud-score{font-family:var(--font-display);font-size:1.5rem;font-weight:900;color:hsl(var(--teal))}
+.hud-score.ai{color:hsl(var(--violet))}
+.hud-center{display:flex;flex-direction:column;align-items:center;gap:6px}
+.timer-ring{position:relative;width:56px;height:56px}
+.timer-ring svg{transform:rotate(-90deg)}
+.timer-ring circle{fill:none;stroke-width:4;transition:stroke-dashoffset .9s linear}
+.timer-circle-bg{stroke:hsl(var(--border))}
+.timer-circle-fill{stroke:hsl(var(--teal));stroke-linecap:round}
+.timer-ring.warning .timer-circle-fill{stroke:hsl(var(--amber))}
+.timer-ring.danger .timer-circle-fill{stroke:#ef4444}
+.timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.9rem;font-weight:700;color:hsl(var(--fg))}
+.round-info{font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3));text-transform:uppercase;letter-spacing:.08em}
+.combo-badge{padding:2px 10px;border-radius:99px;background:hsl(var(--amber)/.15);border:1px solid hsl(var(--amber)/.3);font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--amber));transition:all .3s var(--ease-spring)}
+.combo-badge.active{background:hsl(var(--amber)/.25);transform:scale(1.1);animation:comboPulse .5s ease}
+@keyframes comboPulse{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1.1)}}
+
+/* ── Battlefield ── */
+.battlefield{display:grid;grid-template-rows:auto 1fr auto;gap:0;overflow:hidden;position:relative}
+
+/* Mission panel */
+.mission-panel{padding:14px 20px;background:hsl(var(--bg2));border-bottom:1px solid hsl(var(--border))}
+.mission-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.mission-label{font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3))}
+.mission-op-badge{border-radius:99px;padding:3px 10px;font-family:var(--font-mono);font-size:.7rem;font-weight:700}
+.op-union{background:hsl(174 72% 52%/.2);color:hsl(var(--teal));border:1px solid hsl(174 72% 52%/.4)}
+.op-intersection{background:hsl(265 65% 65%/.2);color:hsl(var(--violet));border:1px solid hsl(265 65% 65%/.4)}
+.op-complement{background:hsl(38 95% 58%/.15);color:hsl(var(--amber));border:1px solid hsl(38 95% 58%/.4)}
+.op-difference{background:hsl(340 75% 55%/.15);color:hsl(340 75% 65%);border:1px solid hsl(340 75% 55%/.4)}
+.mission-sets{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mission-set{display:inline-flex;align-items:center;gap:6px;border-radius:8px;border:1px solid hsl(var(--border));background:hsl(var(--bg3));padding:6px 10px;font-size:.8rem;font-family:var(--font-mono)}
+.mission-result{display:flex;align-items:center;gap:6px;border-radius:8px;border:1px dashed hsl(var(--teal)/.4);background:hsl(174 72% 52%/.06);padding:6px 10px;font-size:.8rem;font-family:var(--font-mono);color:hsl(var(--teal))}
+.mission-eq{color:hsl(var(--fg3));font-size:.9rem}
+.mission-pct{margin-left:auto;font-family:var(--font-mono);font-size:.75rem;color:hsl(var(--fg3))}
+
+/* Universal set display */
+.universe-panel{display:flex;flex-wrap:wrap;gap:6px;padding:8px 20px;background:hsl(var(--bg2));border-bottom:1px solid hsl(var(--border))}
+.universe-label{width:100%;font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:hsl(var(--fg3));margin-bottom:2px}
+.universe-el{width:30px;height:30px;border-radius:6px;border:1px solid hsl(var(--border));background:hsl(var(--bg3));display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.8rem;font-weight:700;color:hsl(var(--fg2));transition:all .3s var(--ease-spring)}
+.universe-el.in-A{border-color:hsl(var(--teal)/.5);background:hsl(174 72% 52%/.15);color:hsl(var(--teal))}
+.universe-el.in-B{border-color:hsl(var(--violet)/.5);background:hsl(265 65% 65%/.15);color:hsl(var(--violet))}
+.universe-el.in-both{border-color:hsl(38 95% 58%/.6);background:hsl(38 95% 58%/.15);color:hsl(var(--amber))}
+.universe-el.selected{box-shadow:0 0 0 2px hsl(var(--teal));transform:scale(1.1)}
+.universe-el.wrong-selected{animation:shakeEl .4s ease;border-color:hsl(0 80% 60%/.8);background:hsl(0 80% 60%/.2)}
+@keyframes shakeEl{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* Card hands */
+.hands-area{display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1;overflow:hidden;position:relative}
+.hands-divider{position:absolute;left:50%;top:0;bottom:0;width:1px;background:hsl(var(--border));z-index:2}
+.hand-section{padding:12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.hand-label{font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3));text-align:center;margin-bottom:4px}
+.hand-label.ai-label{color:hsl(var(--violet)/.7)}
+.cards-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+
+/* ── Element Cards ── */
+.el-card{
+  width:54px;height:72px;border-radius:8px;border:1.5px solid hsl(var(--border));
+  background:hsl(var(--surface));display:flex;flex-direction:column;align-items:center;
+  justify-content:center;cursor:pointer;position:relative;overflow:hidden;
+  transition:all .3s var(--ease-spring);flex-shrink:0;user-select:none;
+}
+.el-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.el-card:hover:not(.disabled):not(.played):not(.ai-card){transform:translateY(-6px) scale(1.1);border-color:hsl(var(--teal)/.6);box-shadow:0 8px 20px hsl(220 18% 3%/.5)}
+.el-card:hover:not(.disabled):not(.played):not(.ai-card)::before{background:hsl(174 72% 52%/.1);opacity:1}
+.el-card.selected{transform:translateY(-8px) scale(1.1);border-color:hsl(var(--teal));box-shadow:0 0 0 2px hsl(var(--teal)),0 10px 24px hsl(174 72% 52%/.3)}
+.el-card.played{opacity:.4;transform:scale(0.9);pointer-events:none}
+.el-card.ai-card{cursor:default}
+.el-card.card-flip-in{animation:cardFlipIn .4s var(--ease-spring) both}
+@keyframes cardFlipIn{from{opacity:0;transform:rotateY(90deg) scale(0.8)}to{opacity:1;transform:rotateY(0) scale(1)}}
+
+.card-suit{font-size:.55rem;font-family:var(--font-mono);color:hsl(var(--fg3));text-transform:uppercase;letter-spacing:.05em;position:absolute;top:4px;left:5px}
+.card-val{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:hsl(var(--fg));line-height:1;transition:color .3s}
+.card-type{font-size:.55rem;font-family:var(--font-mono);color:hsl(var(--fg3));margin-top:2px}
+.el-card[data-set="A"] .card-val{color:hsl(var(--teal))}
+.el-card[data-set="B"] .card-val{color:hsl(var(--violet))}
+.el-card[data-set="AB"] .card-val{color:hsl(var(--amber))}
+
+/* Skill cards */
+.el-card.skill{border-color:hsl(38 95% 58%/.4);background:hsl(38 95% 58%/.08)}
+.el-card.skill .card-val{font-size:.9rem;color:hsl(var(--amber))}
+.skill-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 60%,hsl(38 95% 58%/.2),transparent 70%)}
+
+/* Back of AI card */
+.el-card.face-down .card-val{display:none}
+.el-card.face-down .card-suit{display:none}
+.el-card.face-down::after{content:'?';font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:hsl(var(--violet)/.4)}
+.el-card.face-down{background:repeating-linear-gradient(45deg,hsl(var(--surface)),hsl(var(--surface)) 4px,hsl(var(--surface2)) 4px,hsl(var(--surface2)) 8px)}
+
+/* Action bar */
+.action-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-top:1px solid hsl(var(--border));background:hsl(var(--bg2))}
+.selected-preview{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.selected-label{font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3));white-space:nowrap}
+.selected-chips{display:flex;flex-wrap:wrap;gap:4px}
+.sel-chip{border-radius:4px;background:hsl(174 72% 52%/.2);border:1px solid hsl(174 72% 52%/.4);padding:2px 7px;font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--teal));animation:chipIn .2s var(--ease-spring)}
+@keyframes chipIn{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+.btn-play{border-radius:var(--radius);background:hsl(var(--teal));padding:10px 20px;font-weight:700;font-size:.875rem;color:hsl(var(--bg));border:none;cursor:pointer;transition:all .35s var(--ease-spring);white-space:nowrap}
+.btn-play:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 20px hsl(174 72% 52%/.3)}
+.btn-play:disabled{opacity:.4;cursor:default}
+.btn-skip{border-radius:var(--radius);border:1px solid hsl(var(--border));background:transparent;padding:10px 14px;font-size:.8rem;color:hsl(var(--fg3));cursor:pointer;transition:all .3s}
+.btn-skip:hover{border-color:hsl(var(--border-hi));color:hsl(var(--fg))}
+
+/* ── AI Thinking ── */
+.ai-thinking{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.7rem;color:hsl(var(--violet));padding:4px 10px;border-radius:99px;background:hsl(265 65% 65%/.1);border:1px solid hsl(265 65% 65%/.2)}
+.ai-dots{display:flex;gap:3px}
+.ai-dot{width:5px;height:5px;border-radius:50%;background:hsl(var(--violet));animation:dotBounce .8s ease-in-out infinite}
+.ai-dot:nth-child(2){animation-delay:.15s}
+.ai-dot:nth-child(3){animation-delay:.3s}
+@keyframes dotBounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
+
+/* ── Result Popup ── */
+.result-popup{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:hsl(220 18% 3%/.7);backdrop-filter:blur(10px)}
+.result-popup.show{display:flex}
+.result-box{border-radius:1rem;border:1.5px solid hsl(var(--border));background:hsl(var(--bg2));padding:32px;text-align:center;min-width:300px;max-width:420px;animation:resultIn .5s var(--ease-spring)}
+@keyframes resultIn{from{opacity:0;transform:translateY(20px) scale(0.9)}to{opacity:1;transform:none}}
+.result-emoji{font-size:3.5rem;margin-bottom:12px;display:block}
+.result-title{font-family:var(--font-display);font-size:1.8rem;font-weight:900;margin-bottom:8px}
+.result-sub{color:hsl(var(--fg2));font-size:.95rem;line-height:1.6;margin-bottom:24px}
+.result-scores{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.result-score-card{border-radius:8px;border:1px solid hsl(var(--border));background:hsl(var(--surface));padding:12px;text-align:center}
+.result-score-label{font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--fg3));margin-bottom:4px}
+.result-score-val{font-family:var(--font-display);font-size:1.8rem;font-weight:900;color:hsl(var(--teal))}
+.result-score-val.ai{color:hsl(var(--violet))}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;border-radius:var(--radius);background:hsl(var(--teal));padding:12px 28px;font-weight:700;color:hsl(var(--bg));border:none;cursor:pointer;transition:all .35s var(--ease-spring);font-size:.95rem}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 24px hsl(174 72% 52%/.3)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;border-radius:var(--radius);border:1.5px solid hsl(var(--border-hi));background:transparent;padding:12px 28px;font-weight:600;color:hsl(var(--fg));cursor:pointer;transition:all .35s var(--ease-spring);font-size:.95rem}
+.btn-outline:hover{border-color:hsl(var(--teal));background:hsl(var(--teal)/.1);transform:translateY(-2px)}
+
+/* ── Floating score pop ── */
+.score-pop{position:fixed;pointer-events:none;font-family:var(--font-display);font-size:1.5rem;font-weight:900;color:hsl(var(--teal));z-index:300;animation:scorePop 1.2s ease both}
+.score-pop.neg{color:#f87171}
+@keyframes scorePop{0%{opacity:1;transform:translateY(0) scale(0.8)}30%{opacity:1;transform:translateY(-30px) scale(1.2)}100%{opacity:0;transform:translateY(-80px) scale(0.9)}}
+
+/* ── Venn Diagram (mini) ── */
+.venn-mini{position:relative;width:120px;height:70px;flex-shrink:0}
+.venn-circle{position:absolute;border-radius:50%;opacity:.3;border:2px solid}
+.venn-A{left:0;top:10px;width:60px;height:50px;border-color:hsl(var(--teal));background:hsl(var(--teal))}
+.venn-B{right:0;top:10px;width:60px;height:50px;border-color:hsl(var(--violet));background:hsl(var(--violet))}
+.venn-label{position:absolute;font-family:var(--font-mono);font-size:.55rem;font-weight:700}
+.venn-label-A{left:10px;top:28px;color:hsl(var(--teal))}
+.venn-label-B{right:10px;top:28px;color:hsl(var(--violet))}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:20px;right:20px;z-index:500;border-radius:var(--radius);border:1px solid hsl(var(--border));background:hsl(var(--surface));padding:12px 18px;font-size:.875rem;font-weight:600;box-shadow:0 16px 40px hsl(220 18% 3%/.6);opacity:0;transform:translateY(10px);transition:all .3s var(--ease-spring);pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-left:3px solid hsl(var(--teal));color:hsl(var(--teal))}
+.toast.error{border-left:3px solid #f87171;color:#f87171}
+.toast.info{border-left:3px solid hsl(var(--violet));color:hsl(var(--violet))}
+.toast.warn{border-left:3px solid hsl(var(--amber));color:hsl(var(--amber))}
+
+/* ── Skill Overlay ── */
+.skill-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:400;border-radius:1rem;border:2px solid hsl(var(--amber)/.6);background:hsl(220 18% 7%/.95);padding:20px 28px;text-align:center;min-width:200px;transition:all .4s var(--ease-spring);backdrop-filter:blur(20px)}
+.skill-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.skill-name{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:hsl(var(--amber))}
+.skill-desc{font-size:.8rem;color:hsl(var(--fg2));margin-top:6px}
+
+/* Responsive */
+@media(max-width:640px){
+  .hands-area{grid-template-columns:1fr}
+  .el-card{width:46px;height:62px}
+  .el-card .card-val{font-size:1.1rem}
+  .game-hud{padding:8px 12px}
+  .action-bar{padding:8px 12px;flex-wrap:wrap}
+  .mission-panel{padding:10px 12px}
+}
+
+/* ── Start btn ── */
+.start-btn{border-radius:var(--radius);background:linear-gradient(135deg,hsl(var(--teal)),hsl(265 65% 65%));padding:14px 36px;font-weight:700;font-size:1rem;color:#fff;border:none;cursor:pointer;transition:all .35s var(--ease-spring);box-shadow:0 8px 24px hsl(174 72% 52%/.25);letter-spacing:.01em}
+.start-btn:hover{transform:translateY(-3px);box-shadow:0 12px 32px hsl(174 72% 52%/.35)}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME SCREEN ══ -->
+<div class="screen active" id="home">
+  <nav class="navbar">
+    <span class="logo">Mathematic</span>
+    <div class="nav-right">
+      <button class="btn-icon" onclick="showTutorial()" title="Cara Bermain">❓</button>
+    </div>
+  </nav>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px 20px">
+    <div class="home-hero">
+      <div class="game-badge">⬡ matematika diskrit · himpunan</div>
+      <h1 class="home-title">Set Collector<br><span style="background:linear-gradient(135deg,hsl(174 72% 52%),hsl(265 65% 65%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Arena</span></h1>
+      <p class="home-sub">Battle kartu berbasis operasi himpunan. Kuasai Union, Intersection, Komplemen &amp; Difference untuk mengalahkan AI!</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="start-btn" onclick="startGame('normal')">⚔️ Mulai Battle</button>
+        <button class="btn-outline" onclick="showTutorial()">📖 Cara Main</button>
+      </div>
+    </div>
+    <div class="home-cards">
+      <div class="mode-card" onclick="startGame('normal')">
+        <span class="mode-icon">⚔️</span>
+        <div class="mode-name">Normal Mode</div>
+        <div class="mode-desc">5 ronde, 3 operasi misi. Cocok untuk pemula.</div>
+      </div>
+      <div class="mode-card" onclick="startGame('blitz')">
+        <span class="mode-badge">CEPAT</span>
+        <span class="mode-icon">⚡</span>
+        <div class="mode-name">Blitz Mode</div>
+        <div class="mode-desc">Timer 15 detik per ronde. Penuh tekanan!</div>
+      </div>
+      <div class="mode-card" onclick="startGame('expert')">
+        <span class="mode-badge" style="background:hsl(var(--violet))">SULIT</span>
+        <span class="mode-icon">🧠</span>
+        <div class="mode-name">Expert Mode</div>
+        <div class="mode-desc">AI lebih cerdas, misi lebih kompleks.</div>
+      </div>
+    </div>
+    <div class="lb-preview">
+      <div class="lb-title">🏆 Leaderboard Sesi Ini</div>
+      <div id="lbList"><div style="text-align:center;color:hsl(var(--fg3));font-size:.8rem;padding:12px 0">Belum ada skor. Mainkan dulu!</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TUTORIAL SCREEN ══ -->
+<div class="screen" id="tutorial">
+  <nav class="navbar">
+    <span class="logo">Cara Bermain</span>
+    <div class="nav-right">
+      <button class="btn-icon" onclick="showScreen('home')">✕</button>
+    </div>
+  </nav>
+  <div class="tutorial-inner" style="padding:20px">
+    <div class="tut-card">
+      <h3>🎯 Tujuan Game</h3>
+      <p>Setiap ronde punya <b>Misi Operasi Himpunan</b>. Pilih kartu elemen yang tepat untuk membentuk hasil operasi yang diminta. Semakin akurat, semakin tinggi poin!</p>
+    </div>
+    <div class="tut-card">
+      <h3>🃏 Jenis Kartu</h3>
+      <ul>
+        <li><b style="color:hsl(174 72% 52%)">Kartu Teal (Set A)</b> — elemen yang hanya ada di Himpunan A</li>
+        <li><b style="color:hsl(265 65% 65%)">Kartu Violet (Set B)</b> — elemen yang hanya ada di Himpunan B</li>
+        <li><b style="color:hsl(38 95% 58%)">Kartu Amber (Set AB)</b> — elemen yang ada di keduanya (irisan)</li>
+        <li><b style="color:hsl(38 95% 58%)">Kartu Skill ⭐</b> — kemampuan spesial sekali pakai</li>
+      </ul>
+    </div>
+    <div class="tut-card">
+      <h3>⚙️ Operasi Himpunan</h3>
+      <div class="set-notation">
+        <span class="set-chip teal">A ∪ B = Semua elemen A dan B</span>
+        <span class="set-chip violet">A ∩ B = Elemen yang ada di keduanya</span>
+        <span class="set-chip amber">Aᶜ = Elemen BUKAN di A (tapi di semesta)</span>
+        <span class="set-chip">A − B = Elemen A yang bukan di B</span>
+      </div>
+    </div>
+    <div class="tut-card">
+      <h3>⚡ Skill Kartu</h3>
+      <ul>
+        <li><b>🔍 Scan</b> — Lihat kartu tersembunyi AI</li>
+        <li><b>⏱ Freeze</b> — Tambah waktu +10 detik</li>
+        <li><b>💥 Negate</b> — AI kehilangan 1 kartu acak</li>
+        <li><b>🔄 Swap</b> — Tukar 2 kartu pilihan kamu</li>
+      </ul>
+    </div>
+    <div class="tut-card">
+      <h3>🔥 Sistem Poin</h3>
+      <ul>
+        <li>Jawaban sempurna: +100 poin</li>
+        <li>Partial (50%+ benar): +40 poin</li>
+        <li>Combo x2, x3, x4 untuk jawaban berturut-turut benar</li>
+        <li>Bonus kecepatan: semakin cepat, semakin tinggi!</li>
+        <li>Salah: -20 poin</li>
+      </ul>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <button class="start-btn" onclick="startGame('normal')">Siap Bertarung! ⚔️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GAME SCREEN ══ -->
+<div class="screen" id="game">
+  <nav class="navbar">
+    <span class="logo">Set Collector Arena</span>
+    <div class="nav-right">
+      <div class="ai-thinking" id="aiThinking" style="display:none">
+        <span>AI thinking</span>
+        <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      </div>
+      <button class="btn-icon" onclick="quitGame()" title="Keluar">✕</button>
+    </div>
+  </nav>
+  <div class="game-layout">
+    <!-- HUD -->
+    <div class="game-hud">
+      <div class="hud-player">
+        <div class="hud-name">👤 KAMU</div>
+        <div class="hud-score" id="playerScore">0</div>
+        <div style="font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3))" id="playerStreak">Streak: 0</div>
+      </div>
+      <div class="hud-center">
+        <div class="timer-ring" id="timerRing">
+          <svg width="56" height="56" viewBox="0 0 56 56">
+            <circle class="timer-circle-bg" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"/>
+            <circle class="timer-circle-fill" id="timerCircle" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"/>
+          </svg>
+          <div class="timer-num" id="timerNum">30</div>
+        </div>
+        <div class="round-info" id="roundInfo">RONDE 1/5</div>
+        <div class="combo-badge" id="comboBadge">COMBO x1</div>
+      </div>
+      <div class="hud-player ai">
+        <div class="hud-name">🤖 AI</div>
+        <div class="hud-score ai" id="aiScore">0</div>
+        <div style="font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3))" id="aiStatus">Menunggu...</div>
+      </div>
+    </div>
+
+    <!-- Battlefield -->
+    <div class="battlefield">
+      <!-- Mission -->
+      <div class="mission-panel">
+        <div class="mission-header">
+          <span class="mission-label">🎯 MISI RONDE INI</span>
+          <span class="mission-op-badge" id="missionBadge">A ∪ B</span>
+          <span class="mission-pct" id="missionProgress">0/? terpilih</span>
+        </div>
+        <div class="mission-sets" id="missionSets"></div>
+      </div>
+
+      <!-- Universe -->
+      <div class="universe-panel">
+        <div class="universe-label">Semesta U = {1,2,3,4,5,6,7,8,9,10}</div>
+        <div id="universeEls"></div>
+      </div>
+
+      <!-- Hands -->
+      <div class="hands-area">
+        <div class="hands-divider"></div>
+        <div class="hand-section" id="playerHand">
+          <div class="hand-label">🃏 Kartu Kamu</div>
+          <div class="cards-row" id="playerCards"></div>
+        </div>
+        <div class="hand-section" id="aiHand">
+          <div class="hand-label ai-label">🤖 Tangan AI</div>
+          <div class="cards-row" id="aiCards"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <div class="selected-preview">
+        <span class="selected-label">Terpilih:</span>
+        <div class="selected-chips" id="selectedChips"><span style="font-size:.75rem;color:hsl(var(--fg3));font-family:var(--font-mono)">— pilih kartu —</span></div>
+      </div>
+      <button class="btn-skip" onclick="skipRound()">Skip ⏭</button>
+      <button class="btn-play" id="playBtn" onclick="submitAnswer()" disabled>Mainkan ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULT POPUP ══ -->
+<div class="result-popup" id="resultPopup">
+  <div class="result-box">
+    <span class="result-emoji" id="resultEmoji">🏆</span>
+    <div class="result-title" id="resultTitle">Kamu Menang!</div>
+    <div class="result-sub" id="resultSub"></div>
+    <div class="result-scores">
+      <div class="result-score-card">
+        <div class="result-score-label">Skor Kamu</div>
+        <div class="result-score-val" id="finalPlayerScore">0</div>
+      </div>
+      <div class="result-score-card">
+        <div class="result-score-label">Skor AI</div>
+        <div class="result-score-val ai" id="finalAiScore">0</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-primary" onclick="restartGame()">🔄 Main Lagi</button>
+      <button class="btn-outline" onclick="showScreen('home')">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SKILL OVERLAY ══ -->
+<div class="skill-overlay" id="skillOverlay">
+  <div class="skill-name" id="skillName">🔍 SCAN!</div>
+  <div class="skill-desc" id="skillDesc">Kartu AI terungkap selama 3 detik</div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   SET COLLECTOR ARENA — Game Engine
+═══════════════════════════════════════════ */
+
+/* ── Constants ── */
+var UNIVERSE = [1,2,3,4,5,6,7,8,9,10];
+var TOTAL_ROUNDS = 5;
+var TIMER_NORMAL = 30, TIMER_BLITZ = 15, TIMER_EXPERT = 25;
+var CIRCUMFERENCE = 2 * Math.PI * 24; // 150.8
+
+/* ── Game State ── */
+var state = {
+  mode: 'normal',
+  round: 0,
+  playerScore: 0,
+  aiScore: 0,
+  combo: 1,
+  streak: 0,
+  selected: [],
+  timerVal: 30,
+  timerMax: 30,
+  timerInterval: null,
+  aiInterval: null,
+  mission: null,
+  playerHand: [],
+  aiHand: [],
+  aiSelected: [],
+  setA: [],
+  setB: [],
+  roundDone: false,
+  leaderboard: [],
+  skills: []
+};
+
+/* ── Set Operations ── */
+function union(A, B) { return [...new Set([...A,...B])].sort(function(a,b){return a-b}); }
+function intersection(A, B) { return A.filter(function(x){return B.includes(x)}).sort(function(a,b){return a-b}); }
+function complement(A) { return UNIVERSE.filter(function(x){return !A.includes(x)}).sort(function(a,b){return a-b}); }
+function difference(A, B) { return A.filter(function(x){return !B.includes(x)}).sort(function(a,b){return a-b}); }
+
+/* ── Mission Types ── */
+var MISSIONS = [
+  {id:'union', label:'A ∪ B', badgeClass:'op-union', fn: function(a,b){return union(a,b)}, desc:'Semua elemen yang ada di A atau B'},
+  {id:'intersection', label:'A ∩ B', badgeClass:'op-intersection', fn: function(a,b){return intersection(a,b)}, desc:'Elemen yang ada di A DAN B'},
+  {id:'complement_a', label:'Aᶜ', badgeClass:'op-complement', fn: function(a,b){return complement(a)}, desc:'Semua elemen yang BUKAN di A'},
+  {id:'complement_b', label:'Bᶜ', badgeClass:'op-complement', fn: function(a,b){return complement(b)}, desc:'Semua elemen yang BUKAN di B'},
+  {id:'diff_ab', label:'A − B', badgeClass:'op-difference', fn: function(a,b){return difference(a,b)}, desc:'Elemen A yang tidak ada di B'},
+  {id:'diff_ba', label:'B − A', badgeClass:'op-difference', fn: function(a,b){return difference(b,a)}, desc:'Elemen B yang tidak ada di A'}
+];
+
+/* ── Skills ── */
+var SKILLS = [
+  {id:'scan', icon:'🔍', name:'SCAN', desc:'Lihat semua kartu AI selama 3 detik'},
+  {id:'freeze', icon:'⏱', name:'FREEZE TIME', desc:'+10 detik tambahan!'},
+  {id:'negate', icon:'💥', name:'NEGATE', desc:'AI kehilangan 1 kartu acak'},
+  {id:'swap', icon:'🔄', name:'SWAP', desc:'Tukar 1 kartu terpilih dengan kartu baru'}
+];
+
+/* ── Screen Management ── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  var el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+function showTutorial() { showScreen('tutorial'); }
+
+/* ── Toast ── */
+var toastTimer;
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type||'info');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){t.classList.remove('show')}, 2500);
+}
+
+/* ── Floating score ── */
+function floatScore(txt, isNeg) {
+  var el = document.createElement('div');
+  el.className = 'score-pop' + (isNeg?' neg':'');
+  el.textContent = txt;
+  el.style.left = (isNeg ? 60 : 40) + 'vw';
+  el.style.top = '45vh';
+  document.body.appendChild(el);
+  setTimeout(function(){el.remove()}, 1300);
+}
+
+/* ── Generate Round ── */
+function generateRound() {
+  // Random set A (4-6 elements)
+  var shuffled = UNIVERSE.slice().sort(function(){return Math.random()-.5});
+  state.setA = shuffled.slice(0, 4 + Math.floor(Math.random()*3)).sort(function(a,b){return a-b});
+  var shuffled2 = UNIVERSE.slice().sort(function(){return Math.random()-.5});
+  state.setB = shuffled2.slice(0, 4 + Math.floor(Math.random()*3)).sort(function(a,b){return a-b});
+
+  // Pick mission
+  var availableMissions = MISSIONS;
+  if (state.mode === 'expert') {
+    availableMissions = MISSIONS; // all
+  } else if (state.mode === 'blitz') {
+    availableMissions = MISSIONS.slice(0,4);
+  } else {
+    availableMissions = MISSIONS.slice(0,4);
+  }
+  state.mission = availableMissions[Math.floor(Math.random()*availableMissions.length)];
+
+  // Generate player hand (8 cards)
+  state.playerHand = generateHand(state.setA, state.setB, 8, true);
+  // Generate AI hand
+  var aiCount = state.mode === 'expert' ? 9 : 8;
+  state.aiHand = generateHand(state.setA, state.setB, aiCount, false);
+
+  state.selected = [];
+  state.aiSelected = [];
+  state.roundDone = false;
+
+  // Add skill card with 25% chance (max 1 per hand)
+  if (Math.random() < 0.25) {
+    var skill = SKILLS[Math.floor(Math.random()*SKILLS.length)];
+    state.playerHand.push({type:'skill', skill: skill, label: skill.icon + ' ' + skill.name, val: skill.icon, id:'skill-'+skill.id});
+  }
+}
+
+function generateHand(setA, setB, count, forPlayer) {
+  var hand = [];
+  // Ensure at least some correct cards
+  var correct = state.mission.fn(setA, setB);
+  
+  // Include some correct answer elements
+  var correctInHand = correct.filter(function(x){return UNIVERSE.includes(x)})
+    .sort(function(){return Math.random()-.5})
+    .slice(0, Math.min(correct.length, Math.ceil(count*0.6)));
+  
+  correctInHand.forEach(function(el) {
+    var inA = setA.includes(el), inB = setB.includes(el);
+    hand.push({
+      type:'element', val:el, id:'e'+el,
+      set: (inA && inB) ? 'AB' : inA ? 'A' : 'B'
+    });
+  });
+
+  // Fill remaining with random elements
+  var remaining = UNIVERSE.filter(function(x){return !correctInHand.includes(x)})
+    .sort(function(){return Math.random()-.5});
+  var needed = count - correctInHand.length;
+  remaining.slice(0, needed).forEach(function(el) {
+    var inA = setA.includes(el), inB = setB.includes(el);
+    hand.push({
+      type:'element', val:el, id:'e'+el,
+      set: (inA && inB) ? 'AB' : inA ? 'A' : 'B'
+    });
+  });
+
+  // Shuffle
+  return hand.sort(function(){return Math.random()-.5});
+}
+
+/* ── Render Mission Panel ── */
+function renderMission() {
+  var m = state.mission;
+  var badge = document.getElementById('missionBadge');
+  badge.textContent = m.label;
+  badge.className = 'mission-op-badge ' + m.badgeClass;
+
+  var correct = m.fn(state.setA, state.setB);
+  var sets = document.getElementById('missionSets');
+  sets.innerHTML =
+    '<div class="mission-set"><span style="color:hsl(174 72% 52%)">A</span>={' + state.setA.join(',') + '}</div>' +
+    '<span class="mission-eq">' + m.label + '</span>' +
+    (m.id.includes('complement') ? '' : '<div class="mission-set"><span style="color:hsl(265 65% 65%)">B</span>={' + state.setB.join(',') + '}</div>') +
+    '<span class="mission-eq">=</span>' +
+    '<div class="mission-result">? Pilih elemen yang benar (' + m.desc + ')</div>';
+
+  document.getElementById('missionProgress').textContent = '0/' + correct.length + ' terpilih';
+  updateUniverseEls();
+}
+
+/* ── Render Universe Elements ── */
+function updateUniverseEls() {
+  var container = document.getElementById('universeEls');
+  container.innerHTML = '';
+  UNIVERSE.forEach(function(n) {
+    var el = document.createElement('div');
+    el.className = 'universe-el';
+    el.textContent = n;
+    var inA = state.setA.includes(n), inB = state.setB.includes(n);
+    if (inA && inB) el.classList.add('in-both');
+    else if (inA) el.classList.add('in-A');
+    else if (inB) el.classList.add('in-B');
+    if (state.selected.includes(n)) el.classList.add('selected');
+    container.appendChild(el);
+  });
+}
+
+/* ── Render Cards ── */
+function renderCards() {
+  var pc = document.getElementById('playerCards');
+  pc.innerHTML = '';
+  state.playerHand.forEach(function(card, i) {
+    var div = document.createElement('div');
+    div.className = 'el-card card-flip-in';
+    div.style.animationDelay = (i*0.05) + 's';
+    if (card.type === 'skill') {
+      div.classList.add('skill');
+      div.innerHTML = '<div class="skill-glow"></div><div class="card-suit">SKILL</div><div class="card-val">' + card.skill.icon + '</div><div class="card-type">' + card.skill.name + '</div>';
+    } else {
+      div.setAttribute('data-set', card.set || '');
+      div.innerHTML = '<div class="card-suit">' + (card.set||'?') + '</div><div class="card-val">' + card.val + '</div><div class="card-type">∈ U</div>';
+    }
+    if (state.selected.includes(card.val)) div.classList.add('selected');
+    div.addEventListener('click', function(){handleCardClick(card, div)});
+    pc.appendChild(div);
+  });
+  renderAiCards();
+}
+
+function renderAiCards() {
+  var ac = document.getElementById('aiCards');
+  ac.innerHTML = '';
+  state.aiHand.forEach(function(card, i) {
+    var div = document.createElement('div');
+    div.className = 'el-card ai-card face-down card-flip-in';
+    div.style.animationDelay = (i*0.05+0.2) + 's';
+    if (card.type !== 'skill') {
+      div.setAttribute('data-set', card.set||'');
+      div.innerHTML = '<div class="card-suit">' + card.val + '</div><div class="card-val">' + card.val + '</div>';
+    } else {
+      div.innerHTML = '<div class="card-val">' + card.skill.icon + '</div>';
+    }
+    ac.appendChild(div);
+  });
+}
+
+/* ── Card Click Handler ── */
+function handleCardClick(card, div) {
+  if (state.roundDone) return;
+
+  // Skill card
+  if (card.type === 'skill') {
+    useSkill(card.skill, div);
+    return;
+  }
+
+  var idx = state.selected.indexOf(card.val);
+  if (idx > -1) {
+    state.selected.splice(idx, 1);
+    div.classList.remove('selected');
+  } else {
+    state.selected.push(card.val);
+    div.classList.add('selected');
+  }
+  updateUniverseEls();
+  updateSelectedChips();
+  updateMissionProgress();
+  document.getElementById('playBtn').disabled = state.selected.length === 0;
+}
+
+function updateSelectedChips() {
+  var chips = document.getElementById('selectedChips');
+  if (state.selected.length === 0) {
+    chips.innerHTML = '<span style="font-size:.75rem;color:hsl(var(--fg3));font-family:var(--font-mono)">— pilih kartu —</span>';
+    return;
+  }
+  chips.innerHTML = state.selected.map(function(v){
+    return '<span class="sel-chip">' + v + '</span>';
+  }).join('');
+}
+
+function updateMissionProgress() {
+  var correct = state.mission.fn(state.setA, state.setB);
+  var selected = state.selected;
+  var matching = selected.filter(function(x){return correct.includes(x)}).length;
+  document.getElementById('missionProgress').textContent = matching + '/' + correct.length + ' benar';
+}
+
+/* ── Skill Handler ── */
+function useSkill(skill, div) {
+  div.classList.add('played');
+  state.playerHand = state.playerHand.filter(function(c){return !(c.type==='skill' && c.skill.id===skill.id)});
+
+  var overlay = document.getElementById('skillOverlay');
+  document.getElementById('skillName').textContent = skill.icon + ' ' + skill.name.toUpperCase() + '!';
+  document.getElementById('skillDesc').textContent = skill.desc;
+  overlay.classList.add('show');
+  setTimeout(function(){overlay.classList.remove('show')}, 1800);
+
+  if (skill.id === 'scan') {
+    // Reveal AI cards temporarily
+    document.querySelectorAll('#aiCards .el-card').forEach(function(c){c.classList.remove('face-down')});
+    setTimeout(function(){document.querySelectorAll('#aiCards .el-card').forEach(function(c){c.classList.add('face-down')})}, 3000);
+    showToast('🔍 Kartu AI terungkap!', 'warn');
+  } else if (skill.id === 'freeze') {
+    state.timerVal = Math.min(state.timerMax, state.timerVal + 10);
+    updateTimer();
+    showToast('⏱ +10 detik!', 'success');
+  } else if (skill.id === 'negate') {
+    if (state.aiHand.length > 0) {
+      var ri = Math.floor(Math.random()*state.aiHand.length);
+      state.aiHand.splice(ri, 1);
+      renderAiCards();
+      showToast('💥 AI kehilangan 1 kartu!', 'success');
+    }
+  } else if (skill.id === 'swap') {
+    // Give 2 new random elements
+    var newEls = UNIVERSE.filter(function(x){return !state.playerHand.some(function(c){return c.val===x})})
+      .sort(function(){return Math.random()-.5}).slice(0,2);
+    newEls.forEach(function(el) {
+      var inA = state.setA.includes(el), inB = state.setB.includes(el);
+      state.playerHand.push({type:'element',val:el,id:'e'+el,set:(inA&&inB)?'AB':inA?'A':'B'});
+    });
+    renderCards();
+    showToast('🔄 Dapat 2 kartu baru!', 'info');
+  }
+}
+
+/* ── Timer ── */
+function startTimer() {
+  clearInterval(state.timerInterval);
+  var ring = document.getElementById('timerRing');
+  ring.className = 'timer-ring';
+  updateTimer();
+  state.timerInterval = setInterval(function() {
+    state.timerVal--;
+    updateTimer();
+    if (state.timerVal <= 0) {
+      clearInterval(state.timerInterval);
+      timeOut();
+    }
+  }, 1000);
+}
+
+function updateTimer() {
+  var num = document.getElementById('timerNum');
+  var circle = document.getElementById('timerCircle');
+  var ring = document.getElementById('timerRing');
+  num.textContent = state.timerVal;
+  var pct = state.timerVal / state.timerMax;
+  circle.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct);
+
+  ring.className = 'timer-ring';
+  if (state.timerVal <= 5) ring.classList.add('danger');
+  else if (state.timerVal <= 10) ring.classList.add('warning');
+}
+
+function timeOut() {
+  showToast('⏰ Waktu habis!', 'error');
+  skipRound();
+}
+
+/* ── AI Logic ── */
+function runAI() {
+  var thinkTime = state.mode === 'expert' ? 1500 + Math.random()*1000 : 2000 + Math.random()*2000;
+  document.getElementById('aiThinking').style.display = 'flex';
+  document.getElementById('aiStatus').textContent = 'Berfikir...';
+
+  state.aiInterval = setTimeout(function() {
+    document.getElementById('aiThinking').style.display = 'none';
+    document.getElementById('aiStatus').textContent = 'Mainkan!';
+
+    var correct = state.mission.fn(state.setA, state.setB);
+    var accuracy = state.mode === 'expert' ? 0.9 : state.mode === 'normal' ? 0.7 : 0.75;
+    var aiHandEls = state.aiHand.filter(function(c){return c.type==='element'});
+    var aiCorrectCards = aiHandEls.filter(function(c){return correct.includes(c.val)});
+    var aiWrongCards = aiHandEls.filter(function(c){return !correct.includes(c.val)});
+
+    state.aiSelected = [];
+    // Pick correct cards based on accuracy
+    aiCorrectCards.forEach(function(c) {
+      if (Math.random() < accuracy) state.aiSelected.push(c.val);
+    });
+    // Sometimes AI adds wrong cards (makes mistakes)
+    if (Math.random() > accuracy) {
+      var wrong = aiWrongCards[Math.floor(Math.random()*aiWrongCards.length)];
+      if (wrong) state.aiSelected.push(wrong.val);
+    }
+    scoreAI();
+  }, thinkTime);
+}
+
+function scoreAI() {
+  var correct = state.mission.fn(state.setA, state.setB);
+  var aiAns = state.aiSelected.sort(function(a,b){return a-b});
+  var correctSorted = correct.slice().sort(function(a,b){return a-b});
+  var truePos = aiAns.filter(function(x){return correctSorted.includes(x)}).length;
+  var falsePos = aiAns.filter(function(x){return !correctSorted.includes(x)}).length;
+  var precision = aiAns.length > 0 ? truePos / aiAns.length : 0;
+  var recall = correctSorted.length > 0 ? truePos / correctSorted.length : 1;
+  var f1 = (precision + recall) > 0 ? 2*(precision*recall)/(precision+recall) : 0;
+  var gained = 0;
+  if (f1 >= 0.95) gained = 100;
+  else if (f1 >= 0.5) gained = 40;
+  else if (falsePos > 0) gained = -20;
+  state.aiScore = Math.max(0, state.aiScore + gained);
+  document.getElementById('aiScore').textContent = state.aiScore;
+  document.getElementById('aiStatus').textContent = gained > 0 ? '+'+gained+' pts' : 'Miss!';
+
+  // Reveal AI cards
+  var cards = document.querySelectorAll('#aiCards .el-card');
+  state.aiHand.forEach(function(c,i){
+    if (cards[i]) {
+      cards[i].classList.remove('face-down');
+      if (c.type==='element' && state.aiSelected.includes(c.val)) cards[i].classList.add('selected');
+      else if (c.type==='element') cards[i].classList.add('played');
+    }
+  });
+}
+
+/* ── Submit Answer ── */
+function submitAnswer() {
+  if (state.roundDone || state.selected.length === 0) return;
+  clearInterval(state.timerInterval);
+  state.roundDone = true;
+  document.getElementById('playBtn').disabled = true;
+
+  var correct = state.mission.fn(state.setA, state.setB).sort(function(a,b){return a-b});
+  var answered = state.selected.slice().sort(function(a,b){return a-b});
+  var truePos = answered.filter(function(x){return correct.includes(x)}).length;
+  var falsePos = answered.filter(function(x){return !correct.includes(x)}).length;
+  var precision = answered.length > 0 ? truePos/answered.length : 0;
+  var recall = correct.length > 0 ? truePos/correct.length : 1;
+  var f1 = (precision+recall) > 0 ? 2*(precision*recall)/(precision+recall) : 0;
+
+  var timeBonus = Math.floor(state.timerVal * 2);
+  var gained = 0;
+  var msg = '';
+
+  if (f1 >= 0.95) {
+    gained = (100 + timeBonus) * state.combo;
+    msg = '✅ Sempurna! +' + gained + ' pts';
+    state.streak++;
+    state.combo = Math.min(4, state.streak >= 2 ? Math.floor(state.streak/1)+1 : 1);
+    showToast(state.combo > 1 ? '🔥 COMBO x'+state.combo+'! +'+gained+'pts' : msg, 'success');
+    floatScore('+'+gained, false);
+  } else if (f1 >= 0.5) {
+    gained = 40 * state.combo;
+    state.streak = 0; state.combo = 1;
+    msg = '🟡 Partial +' + gained + ' pts';
+    showToast(msg, 'warn');
+    floatScore('+'+gained, false);
+  } else {
+    gained = -20;
+    state.streak = 0; state.combo = 1;
+    msg = '❌ Salah! -20 pts';
+    showToast(msg, 'error');
+    floatScore('-20', true);
+    // shake wrong cards
+    document.querySelectorAll('#playerCards .el-card.selected').forEach(function(c){c.classList.add('wrong-selected')});
+  }
+
+  state.playerScore = Math.max(0, state.playerScore + gained);
+  document.getElementById('playerScore').textContent = state.playerScore;
+  document.getElementById('playerStreak').textContent = 'Streak: ' + state.streak;
+  updateComboBadge();
+
+  // Mark correct answer in universe
+  setTimeout(function() {
+    runAI();
+    setTimeout(function() {
+      nextRound();
+    }, 2200);
+  }, 600);
+}
+
+function skipRound() {
+  if (state.roundDone) return;
+  clearInterval(state.timerInterval);
+  clearTimeout(state.aiInterval);
+  state.roundDone = true;
+  state.streak = 0;
+  state.combo = 1;
+  updateComboBadge();
+  runAI();
+  setTimeout(nextRound, 2000);
+}
+
+function updateComboBadge() {
+  var badge = document.getElementById('comboBadge');
+  badge.textContent = 'COMBO x' + state.combo;
+  badge.className = 'combo-badge' + (state.combo > 1 ? ' active' : '');
+}
+
+/* ── Round Management ── */
+function nextRound() {
+  state.round++;
+  if (state.round > TOTAL_ROUNDS) {
+    endGame();
+    return;
+  }
+  generateRound();
+  renderRound();
+}
+
+function renderRound() {
+  document.getElementById('roundInfo').textContent = 'RONDE ' + state.round + '/' + TOTAL_ROUNDS;
+  state.timerVal = state.mode === 'blitz' ? TIMER_BLITZ : state.mode === 'expert' ? TIMER_EXPERT : TIMER_NORMAL;
+  state.timerMax = state.timerVal;
+  renderMission();
+  renderCards();
+  updateSelectedChips();
+  updateComboBadge();
+  document.getElementById('playBtn').disabled = true;
+  startTimer();
+}
+
+/* ── Game Flow ── */
+function startGame(mode) {
+  state.mode = mode;
+  state.round = 1;
+  state.playerScore = 0;
+  state.aiScore = 0;
+  state.combo = 1;
+  state.streak = 0;
+  state.selected = [];
+  state.aiSelected = [];
+  state.roundDone = false;
+
+  generateRound();
+  showScreen('game');
+  renderRound();
+}
+
+function endGame() {
+  clearInterval(state.timerInterval);
+  clearTimeout(state.aiInterval);
+
+  // Save to leaderboard
+  var name = 'Pemain';
+  state.leaderboard.push({name: name, score: state.playerScore, mode: state.mode});
+  state.leaderboard.sort(function(a,b){return b.score-a.score});
+  if (state.leaderboard.length > 5) state.leaderboard = state.leaderboard.slice(0,5);
+
+  var won = state.playerScore > state.aiScore;
+  var tied = state.playerScore === state.aiScore;
+
+  document.getElementById('resultEmoji').textContent = won ? '🏆' : tied ? '🤝' : '😤';
+  document.getElementById('resultTitle').textContent = won ? 'Kamu Menang!' : tied ? 'Imbang!' : 'AI Menang...';
+  document.getElementById('resultSub').textContent = won
+    ? 'Luar biasa! Kamu menguasai operasi himpunan dengan sangat baik.'
+    : tied
+    ? 'Pertandingan ketat! Coba lagi untuk melewati AI.'
+    : 'Jangan menyerah! Pelajari lagi konsep himpunannya.';
+  document.getElementById('finalPlayerScore').textContent = state.playerScore;
+  document.getElementById('finalAiScore').textContent = state.aiScore;
+  document.getElementById('resultPopup').classList.add('show');
+
+  renderLeaderboard();
+}
+
+function restartGame() {
+  document.getElementById('resultPopup').classList.remove('show');
+  startGame(state.mode);
+}
+
+function quitGame() {
+  clearInterval(state.timerInterval);
+  clearTimeout(state.aiInterval);
+  document.getElementById('resultPopup').classList.remove('show');
+  showScreen('home');
+}
+
+/* ── Leaderboard ── */
+function renderLeaderboard() {
+  var list = document.getElementById('lbList');
+  if (state.leaderboard.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:hsl(var(--fg3));font-size:.8rem;padding:12px 0">Belum ada skor.</div>';
+    return;
+  }
+  var medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+  list.innerHTML = state.leaderboard.map(function(entry, i) {
+    return '<div class="lb-row"><div class="lb-rank">' + medals[i] + '</div><div class="lb-name">' + entry.name + '<span style="font-family:var(--font-mono);font-size:.65rem;color:hsl(var(--fg3));margin-left:6px">' + entry.mode + '</span></div><div class="lb-score">' + entry.score + '</div></div>';
+  }).join('');
+}
+
+/* ── Init ── */
+document.getElementById('resultPopup').addEventListener('click', function(e){
+  if (e.target === this) this.classList.remove('show');
+});
+</script>
+</body>
+</html>
