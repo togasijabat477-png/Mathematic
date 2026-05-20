@@ -168,7 +168,7 @@ var gameData = [
     {num:"02",title:"Graph Kingdom",description:"Cocokkan elemen himpunan dengan cepat",tag:"Dasar",file:"game/matdis/graph_kingdom.html"},
     {num:"03",title:"Logic Detective",description:"Tantangan kombinatorika dan peluang",tag:"Dasar",file:"game/matdis/logic-detective.html"},
     {num:"04",title:"Recursion Dungeon",description:"Traversal graf dan pencarian jalur",tag:"Dasar",file:"game/matdis/recursion-dungeon.html"},
-    {num:"05",title:"Set Collector Arena",description:"Uji kemampuan logika proposisimu",tag:"Dasar",file:"game/matdis/truth-table.html"}
+    {num:"05",title:"Set Collector Arena",description:"Uji kemampuan logika proposisimu",tag:"Dasar",file:"game/matdis/set-collector-arena.html"}
   ]},
   {icon:"👾",title:"Game Aljabar Linear",items:[
     {num:"01",title:"⚔ Matrix Battle Arena",description:"Kuasai operasi matriks — penjumlahan, pengurangan, skalar, hingga perkalian matriks! 12 soal progresif.",tag:"Operasi Matriks",isNew:true,accentColor:"violet",file:"game/aljali/matrix-battle.html"},
