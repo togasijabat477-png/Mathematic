@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran Himpunan | Matematika Diskrit</title>
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://www.youtube-nocookie.com">
+    <link rel="preconnect" href="https://i.ytimg.com">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #10131f;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #cfd8dc;
+            line-height: 1.5;
+        }
+
+        .main-player {
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
+        }
+
+        .video-wrapper {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: black;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #currentVideoTitle {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+
+        #currentVideoDescription {
+            margin-top: 8px;
+            text-align: center;
+            color: #cfd8dc;
+            line-height: 1.5;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: left;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .video-card:hover,
+        .video-card:focus-visible {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(100, 255, 218, 0.7);
+            outline: none;
+        }
+
+        .video-card.active {
+            border-color: #64ffda;
+            box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.15);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 14px;
+        }
+
+        .video-info h4 {
+            font-size: 16px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #d7dde1;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .fallback-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .fallback-link a {
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .fallback-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Himpunan</h1>
+            <p>Playlist pembelajaran: pengertian himpunan, notasi, jenis-jenis himpunan, relasi, operasi himpunan, diagram Venn, dan latihan soal</p>
+        </div>
+
+        <main class="main-player" aria-live="polite">
+            <div class="video-wrapper">
+                <iframe
+                    id="youtubePlayer"
+                    src="https://www.youtube-nocookie.com/embed/BDntwaTzSlE?rel=0&playsinline=1"
+                    title="Himpunan | Matematika SMP"
+                    loading="eager"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div id="currentVideoTitle">Himpunan | Matematika SMP</div>
+            <div id="currentVideoDescription">Pengantar materi himpunan, anggota himpunan, dan contoh dalam matematika</div>
+        </main>
+
+        <div class="video-grid" id="videoGrid"></div>
+
+        <div class="fallback-link">
+            <a
+                id="fallbackLink"
+                href="https://www.youtube.com/watch?v=BDntwaTzSlE"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Tonton langsung di YouTube
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const videos = [
+            {
+                id: 'BDntwaTzSlE',
+                title: 'Himpunan | Matematika SMP',
+                description: 'Pengantar materi himpunan, anggota himpunan, dan contoh dalam matematika'
+            },
+            {
+                id: 'RGD899qxviI',
+                title: 'Cara Membaca dan Membuat Notasi Himpunan',
+                description: 'Cara menyatakan himpunan menggunakan notasi matematika'
+            },
+            {
+                id: 'hYLkeb_qZ28',
+                title: 'Himpunan Kosong dan Himpunan Semesta',
+                description: 'Penjelasan himpunan kosong, himpunan semesta, dan contoh penggunaannya'
+            },
+            {
+                id: 'dJFd2ZaScE4',
+                title: 'Kardinalitas Himpunan',
+                description: 'Cara menentukan banyaknya anggota atau kardinalitas suatu himpunan'
+            },
+            {
+                id: 'CgO-yy9M8cw',
+                title: 'Himpunan Bagian dan Himpunan Kuasa',
+                description: 'Materi subset dan power set beserta cara menentukannya'
+            },
+            {
+                id: 'RQ7jwuEbKRU',
+                title: 'Himpunan Sama dan Himpunan Ekuivalen',
+                description: 'Perbedaan himpunan sama dan himpunan ekuivalen'
+            },
+            {
+                id: 'p6mTeWr5g-s',
+                title: 'Relasi Antar Himpunan',
+                description: 'Pembahasan hubungan antara dua himpunan atau lebih'
+            },
+            {
+                id: '16B2ArLhsCc',
+                title: 'Operasi Himpunan: Irisan, Gabungan, Selisih, Komplemen',
+                description: 'Operasi dasar pada himpunan: intersection, union, difference, dan complement'
+            },
+            {
+                id: 'LrRRt3H4WdY',
+                title: 'Operasi Himpunan',
+                description: 'Latihan dan penjelasan operasi himpunan dalam pembelajaran matematika'
+            },
+            {
+                id: 'Qm1930y75s8',
+                title: 'Trik Menentukan Selisih Himpunan',
+                description: 'Cara cepat memahami dan menentukan selisih dua himpunan'
+            },
+            {
+                id: 'b1bEQAHTqMg',
+                title: 'Sifat Operasi Himpunan',
+                description: 'Sifat-sifat operasi himpunan seperti komutatif, asosiatif, dan distributif'
+            },
+            {
+                id: '9VQ7FYXiCsM',
+                title: 'Diagram Venn: Pengertian dan Contoh',
+                description: 'Pengertian diagram Venn dan contoh penggunaannya pada himpunan'
+            },
+            {
+                id: 'TbJXKXyhhAQ',
+                title: 'Soal Cerita Himpunan dan Diagram Venn',
+                description: 'Pembahasan soal cerita himpunan menggunakan diagram Venn'
+            },
+            {
+                id: 'a_gYJieL_cI',
+                title: 'Soal Himpunan: Irisan dan Komplemen',
+                description: 'Contoh soal himpunan tentang irisan dan komplemen'
+            }
+        ];
+
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+        const videoGrid = document.getElementById('videoGrid');
+
+        function createCard(video, index) {
+            const card = document.createElement('button');
+            card.className = `video-card${index === 0 ? ' active' : ''}`;
+            card.type = 'button';
+            card.dataset.id = video.id;
+            card.setAttribute('aria-label', `Putar video: ${video.title}`);
+
+            card.innerHTML = `
+                <div class="thumbnail-wrapper">
+                    <img src="https://i.ytimg.com/vi/${video.id}/hqdefault.jpg" alt="${video.title}" loading="lazy">
+                </div>
+                <div class="video-info">
+                    <h4>${video.title}</h4>
+                    <p>${video.description}</p>
+                </div>
+            `;
+
+            card.addEventListener('click', () => selectVideo(video, card));
+            return card;
+        }
+
+        function selectVideo(video, selectedCard) {
+            player.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&playsinline=1`;
+            player.title = video.title;
+            currentTitle.textContent = video.title;
+            currentDescription.textContent = video.description;
+            fallbackLink.href = `https://www.youtube.com/watch?v=${video.id}`;
+
+            document.querySelectorAll('.video-card').forEach((card) => {
+                card.classList.toggle('active', card === selectedCard);
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        videos.forEach((video, index) => {
+            videoGrid.appendChild(createCard(video, index));
+        });
+    </script>
+</body>
+</html>

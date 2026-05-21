@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran Sistem Persamaan Linear | Aljabar Linear</title>
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://www.youtube-nocookie.com">
+    <link rel="preconnect" href="https://i.ytimg.com">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #10131f; color: white; padding: 40px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 34px; margin-bottom: 8px; }
+        .header p { color: #cfd8dc; line-height: 1.5; }
+        .main-player { background: rgba(0,0,0,.55); border-radius: 8px; padding: 20px; margin-bottom: 32px; border: 1px solid rgba(255,255,255,.16); box-shadow: 0 18px 60px rgba(0,0,0,.24); }
+        .video-wrapper, .thumbnail-wrapper { position: relative; aspect-ratio: 16 / 9; background: black; border-radius: 8px; overflow: hidden; }
+        .video-wrapper iframe, .thumbnail-wrapper img { position: absolute; inset: 0; width: 100%; height: 100%; border: none; object-fit: cover; }
+        #currentVideoTitle { margin-top: 15px; text-align: center; font-weight: bold; font-size: 18px; line-height: 1.35; }
+        #currentVideoDescription { margin-top: 8px; text-align: center; color: #cfd8dc; line-height: 1.5; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .video-card { background: rgba(255,255,255,.1); border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,.2); color: white; text-align: left; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
+        .video-card:hover, .video-card:focus-visible { transform: translateY(-4px); background: rgba(255,255,255,.16); border-color: rgba(100,255,218,.7); outline: none; }
+        .video-card.active { border-color: #64ffda; box-shadow: 0 0 0 2px rgba(100,255,218,.15); }
+        .video-info { padding: 14px; }
+        .video-info h4 { font-size: 16px; line-height: 1.35; margin-bottom: 8px; }
+        .video-info p { color: #d7dde1; font-size: 14px; line-height: 1.45; }
+        .fallback-link { text-align: center; margin-top: 24px; }
+        .fallback-link a { color: #64ffda; font-weight: bold; text-decoration: none; }
+        .fallback-link a:hover { text-decoration: underline; }
+        @media (max-width: 600px) { body { padding: 24px 14px; } .header h1 { font-size: 26px; } .main-player { padding: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>Sistem Persamaan Linear</h1><p>Playlist pembelajaran: SPLDV, SPLTV, matriks augmented, eliminasi Gauss, Gauss-Jordan, Cramer, invers matriks, dan jenis solusi SPL.</p></div>
+        <main class="main-player" aria-live="polite"><div class="video-wrapper"><iframe id="youtubePlayer" src="https://www.youtube-nocookie.com/embed/QNigb4Art5Y?rel=0&playsinline=1" title="SPLDV Metode Substitusi, Eliminasi, dan Campuran" loading="eager" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div id="currentVideoTitle">SPLDV Metode Substitusi, Eliminasi, dan Campuran</div><div id="currentVideoDescription">Penyelesaian sistem persamaan linear dua variabel.</div></main>
+        <div class="video-grid" id="videoGrid"></div>
+        <div class="fallback-link"><a id="fallbackLink" href="https://www.youtube.com/watch?v=QNigb4Art5Y" target="_blank" rel="noopener noreferrer">Tonton langsung di YouTube</a></div>
+    </div>
+    <script>
+        const videos = [
+            { id: 'QNigb4Art5Y', title: 'SPLDV Metode Substitusi, Eliminasi, dan Campuran', description: 'Penyelesaian sistem persamaan linear dua variabel.' },
+            { id: 'e_6G6lbEPBE', title: 'Sistem Persamaan Linear Tiga Variabel', description: 'Cara menyelesaikan SPLTV dengan langkah mudah.' },
+            { id: 'tky-dncqPtM', title: 'SPL dengan Matriks Invers', description: 'Penyelesaian sistem persamaan linear menggunakan matriks invers.' },
+            { id: 'P4TlQJr9R_M', title: 'SPLDV Metode Invers Matriks', description: 'Menggunakan invers matriks untuk menyelesaikan SPLDV.' },
+            { id: 'dN4Go1PbnDM', title: 'Matriks yang Diperbesar', description: 'Augmented matrix dalam sistem persamaan linear.' },
+            { id: 'WkO9gos4Zgo', title: 'Eliminasi Gauss-Jordan', description: 'Menyelesaikan sistem persamaan linear dengan eliminasi Gauss-Jordan.' },
+            { id: 'y16DArOYHqc', title: 'Eliminasi Gauss Jordan', description: 'Tutorial eliminasi Gauss-Jordan pada sistem linear.' },
+            { id: 'gtK7Q27q8FM', title: 'Aturan Cramer pada SPLTV', description: 'Cara menggunakan aturan Cramer untuk sistem tiga variabel.' },
+            { id: 'Llm3SDMYv34', title: 'Sistem Persamaan Linear Homogen', description: 'Pembahasan SPL homogen dalam perkuliahan aljabar linear.' },
+            { id: 'pHOtqOHzpzA', title: 'Persamaan Linear Level 1', description: 'Dasar-dasar persamaan linear.' },
+            { id: 'XGpRb2yx2t0', title: 'Rank Matriks dan Solusi SPL', description: 'Identifikasi penyelesaian SPL non-homogen menggunakan rank matriks.' },
+            { id: '_AiBhLs8WQY', title: 'Jenis Solusi Sistem Persamaan Linear', description: 'SPL dengan tepat satu solusi, banyak solusi, atau tidak memiliki solusi.' },
+            { id: 'frqILDunV50', title: 'Gaussian Elimination Method', description: 'Metode eliminasi Gaussian untuk sistem linear.' },
+            { id: 'eYSASx8_nyg', title: 'Gauss Jordan Elimination and RREF', description: 'Eliminasi Gauss-Jordan dan reduced row echelon form.' }
+        ];
+        const player = document.getElementById('youtubePlayer'), currentTitle = document.getElementById('currentVideoTitle'), currentDescription = document.getElementById('currentVideoDescription'), fallbackLink = document.getElementById('fallbackLink'), videoGrid = document.getElementById('videoGrid');
+        function createCard(video, index) { const card = document.createElement('button'); card.className = `video-card${index === 0 ? ' active' : ''}`; card.type = 'button'; card.setAttribute('aria-label', `Putar video: ${video.title}`); card.innerHTML = `<div class="thumbnail-wrapper"><img src="https://i.ytimg.com/vi/${video.id}/hqdefault.jpg" alt="${video.title}" loading="lazy"></div><div class="video-info"><h4>${video.title}</h4><p>${video.description}</p></div>`; card.addEventListener('click', () => selectVideo(video, card)); return card; }
+        function selectVideo(video, selectedCard) { player.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&playsinline=1`; player.title = video.title; currentTitle.textContent = video.title; currentDescription.textContent = video.description; fallbackLink.href = `https://www.youtube.com/watch?v=${video.id}`; document.querySelectorAll('.video-card').forEach((card) => card.classList.toggle('active', card === selectedCard)); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        videos.forEach((video, index) => videoGrid.appendChild(createCard(video, index)));
+    </script>
+</body>
+</html>

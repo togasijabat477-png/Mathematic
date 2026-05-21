@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran Number of Things | Matematika Diskrit</title>
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://www.youtube-nocookie.com">
+    <link rel="preconnect" href="https://i.ytimg.com">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #10131f; color: white; padding: 40px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 34px; margin-bottom: 8px; }
+        .header p { color: #cfd8dc; line-height: 1.5; }
+        .main-player { background: rgba(0, 0, 0, 0.55); border-radius: 8px; padding: 20px; margin-bottom: 32px; border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24); }
+        .video-wrapper, .thumbnail-wrapper { position: relative; aspect-ratio: 16 / 9; background: black; border-radius: 8px; overflow: hidden; }
+        .video-wrapper iframe, .thumbnail-wrapper img { position: absolute; inset: 0; width: 100%; height: 100%; border: none; object-fit: cover; }
+        #currentVideoTitle { margin-top: 15px; text-align: center; font-weight: bold; font-size: 18px; line-height: 1.35; }
+        #currentVideoDescription { margin-top: 8px; text-align: center; color: #cfd8dc; line-height: 1.5; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .video-card { background: rgba(255, 255, 255, 0.1); border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2); color: white; text-align: left; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
+        .video-card:hover, .video-card:focus-visible { transform: translateY(-4px); background: rgba(255, 255, 255, 0.16); border-color: rgba(100, 255, 218, 0.7); outline: none; }
+        .video-card.active { border-color: #64ffda; box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.15); }
+        .video-info { padding: 14px; }
+        .video-info h4 { font-size: 16px; line-height: 1.35; margin-bottom: 8px; }
+        .video-info p { color: #d7dde1; font-size: 14px; line-height: 1.45; }
+        .fallback-link { text-align: center; margin-top: 24px; }
+        .fallback-link a { color: #64ffda; font-weight: bold; text-decoration: none; }
+        .fallback-link a:hover { text-decoration: underline; }
+        @media (max-width: 600px) { body { padding: 24px 14px; } .header h1 { font-size: 26px; } .main-player { padding: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Number of Things</h1>
+            <p>Playlist pembelajaran: kaidah pencacahan, aturan penjumlahan, aturan perkalian, filling slots, permutasi, kombinasi, dan prinsip inklusi-eksklusi.</p>
+        </div>
+        <main class="main-player" aria-live="polite">
+            <div class="video-wrapper">
+                <iframe id="youtubePlayer" src="https://www.youtube-nocookie.com/embed/P6kH3U2fsOQ?rel=0&playsinline=1" title="Kaidah Pencacahan 1" loading="eager" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <div id="currentVideoTitle">Kaidah Pencacahan 1</div>
+            <div id="currentVideoDescription">Aturan penjumlahan dan aturan perkalian dalam kaidah pencacahan.</div>
+        </main>
+        <div class="video-grid" id="videoGrid"></div>
+        <div class="fallback-link"><a id="fallbackLink" href="https://www.youtube.com/watch?v=P6kH3U2fsOQ" target="_blank" rel="noopener noreferrer">Tonton langsung di YouTube</a></div>
+    </div>
+    <script>
+        const videos = [
+            { id: 'P6kH3U2fsOQ', title: 'Kaidah Pencacahan 1', description: 'Aturan penjumlahan dan aturan perkalian dalam kaidah pencacahan.' },
+            { id: '7LQxxuIQLlo', title: 'Kaidah Pencacahan 2 - Filling Slots', description: 'Aturan pengisian tempat untuk menghitung banyak kemungkinan.' },
+            { id: 'FLxSaU8zwV4', title: 'Prinsip Inklusi Eksklusi', description: 'Teknik menghitung banyak objek dengan memperhatikan irisan antar kelompok.' },
+            { id: '66PXEt0udNE', title: 'Permutasi dan Kombinasi', description: 'Materi permutasi dan kombinasi dalam matematika diskrit.' },
+            { id: 'acvOkhUzdCs', title: 'Fungsi Pembangkit untuk Kombinasi', description: 'Penggunaan fungsi pembangkit untuk menyelesaikan masalah kombinasi.' },
+            { id: 'JK5jwjDpe8s', title: 'Permutasi Unsur yang Sama', description: 'Cara menghitung permutasi ketika ada unsur yang sama.' },
+            { id: 'HrAYqtWIBOo', title: 'Permutasi Siklis', description: 'Pembahasan permutasi siklis pada susunan melingkar.' },
+            { id: 'nRUqrvdWryc', title: 'Kombinasi dengan Pengulangan', description: 'Konsep kombinasi dengan pengulangan dalam kombinatorik.' },
+            { id: 'd6vo2n_q9tI', title: 'Permutasi, Kombinasi, dan Koefisien Binomial', description: 'Pembahasan permutasi, kombinasi, dan koefisien binomial.' },
+            { id: 'OfxN8ZgtWDA', title: 'Prinsip Sarang Merpati', description: 'Pigeonhole principle dalam matematika diskrit.' },
+            { id: 'KS5-tDt5i9Y', title: 'Counting and Probability', description: 'Materi counting and probability untuk matematika diskrit.' },
+            { id: 'D6DdJbGKsvc', title: 'Materi Kombinatorika', description: 'Pembahasan kombinatorika dalam matematika diskrit.' },
+            { id: 'gQrxX5u2gPc', title: 'Contoh Soal Kaidah Pencacahan', description: 'Latihan soal untuk memahami kaidah pencacahan.' },
+            { id: 'Ffs69oMvC_M', title: 'Latihan Soal Kombinatorika', description: 'Latihan soal permutasi, kombinasi, dan kombinatorika.' }
+        ];
+        const player = document.getElementById('youtubePlayer');
+        const currentTitle = document.getElementById('currentVideoTitle');
+        const currentDescription = document.getElementById('currentVideoDescription');
+        const fallbackLink = document.getElementById('fallbackLink');
+        const videoGrid = document.getElementById('videoGrid');
+        function createCard(video, index) { const card = document.createElement('button'); card.className = `video-card${index === 0 ? ' active' : ''}`; card.type = 'button'; card.setAttribute('aria-label', `Putar video: ${video.title}`); card.innerHTML = `<div class="thumbnail-wrapper"><img src="https://i.ytimg.com/vi/${video.id}/hqdefault.jpg" alt="${video.title}" loading="lazy"></div><div class="video-info"><h4>${video.title}</h4><p>${video.description}</p></div>`; card.addEventListener('click', () => selectVideo(video, card)); return card; }
+        function selectVideo(video, selectedCard) { player.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&playsinline=1`; player.title = video.title; currentTitle.textContent = video.title; currentDescription.textContent = video.description; fallbackLink.href = `https://www.youtube.com/watch?v=${video.id}`; document.querySelectorAll('.video-card').forEach((card) => card.classList.toggle('active', card === selectedCard)); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        videos.forEach((video, index) => videoGrid.appendChild(createCard(video, index)));
+    </script>
+</body>
+</html>
