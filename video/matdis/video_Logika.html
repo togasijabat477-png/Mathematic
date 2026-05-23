@@ -18,8 +18,31 @@
         .video-wrapper, .thumbnail-wrapper { position: relative; aspect-ratio: 16 / 9; background: black; border-radius: 8px; overflow: hidden; }
         .video-wrapper iframe, .thumbnail-wrapper img { position: absolute; inset: 0; width: 100%; height: 100%; border: none; object-fit: cover; }
         #currentVideoTitle { margin-top: 15px; text-align: center; font-weight: bold; font-size: 18px; line-height: 1.35; }
+        .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(100, 255, 218, 0.12);
+    border: 1.5px solid rgba(100, 255, 218, 0.5);
+    color: #64ffda;
+    padding: 10px 22px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background .2s, border-color .2s, transform .15s;
+    margin-bottom: 24px;
+    display: inline-flex;
+}
+.btn-back:hover {
+    background: rgba(100, 255, 218, 0.25);
+    border-color: #64ffda;
+    transform: translateY(-1px);
+}
         #currentVideoDescription { margin-top: 8px; text-align: center; color: #cfd8dc; line-height: 1.5; }
         .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">← Kembali ke Materi</a>
         .video-card { background: rgba(255, 255, 255, 0.1); border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2); color: white; text-align: left; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
         .video-card:hover, .video-card:focus-visible { transform: translateY(-4px); background: rgba(255, 255, 255, 0.16); border-color: rgba(100, 255, 218, 0.7); outline: none; }
         .video-card.active { border-color: #64ffda; box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.15); }
