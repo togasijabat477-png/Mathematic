@@ -18,6 +18,17 @@
         .video-wrapper, .thumbnail-wrapper { position: relative; aspect-ratio: 16 / 9; background: black; border-radius: 8px; overflow: hidden; }
         .video-wrapper iframe, .thumbnail-wrapper img { position: absolute; inset: 0; width: 100%; height: 100%; border: none; object-fit: cover; }
         #currentVideoTitle { margin-top: 15px; text-align: center; font-weight: bold; font-size: 18px; line-height: 1.35; }
+        #currentVideoDescription { margin-top: 8px; text-align: center; color: #cfd8dc; line-height: 1.5; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .video-card { background: rgba(255, 255, 255, 0.1); border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2); color: white; text-align: left; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
+        .video-card:hover, .video-card:focus-visible { transform: translateY(-4px); background: rgba(255, 255, 255, 0.16); border-color: rgba(100, 255, 218, 0.7); outline: none; }
+        .video-card.active { border-color: #64ffda; box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.15); }
+        .video-info { padding: 14px; }
+        .video-info h4 { font-size: 16px; line-height: 1.35; margin-bottom: 8px; }
+        .video-info p { color: #d7dde1; font-size: 14px; line-height: 1.45; }
+        .fallback-link { text-align: center; margin-top: 24px; }
+        .fallback-link a { color: #64ffda; font-weight: bold; text-decoration: none; }
+        .fallback-link a:hover { text-decoration: underline; }
         .btn-back {
     display: inline-flex;
     align-items: center;
@@ -40,18 +51,6 @@
     border-color: #64ffda;
     transform: translateY(-1px);
 }
-        #currentVideoDescription { margin-top: 8px; text-align: center; color: #cfd8dc; line-height: 1.5; }
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">← Kembali ke Materi</a>
-        .video-card { background: rgba(255, 255, 255, 0.1); border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2); color: white; text-align: left; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
-        .video-card:hover, .video-card:focus-visible { transform: translateY(-4px); background: rgba(255, 255, 255, 0.16); border-color: rgba(100, 255, 218, 0.7); outline: none; }
-        .video-card.active { border-color: #64ffda; box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.15); }
-        .video-info { padding: 14px; }
-        .video-info h4 { font-size: 16px; line-height: 1.35; margin-bottom: 8px; }
-        .video-info p { color: #d7dde1; font-size: 14px; line-height: 1.45; }
-        .fallback-link { text-align: center; margin-top: 24px; }
-        .fallback-link a { color: #64ffda; font-weight: bold; text-decoration: none; }
-        .fallback-link a:hover { text-decoration: underline; }
         @media (max-width: 600px) { body { padding: 24px 14px; } .header h1 { font-size: 26px; } .main-player { padding: 12px; } }
     </style>
 </head>
@@ -60,6 +59,7 @@
         <div class="header">
             <h1>Video Pembelajaran Logika</h1>
             <p>Playlist pembelajaran: proposisi, operasi logika, tabel kebenaran, biimplikasi, ekuivalensi logis, argumen, dan logika predikat.</p>
+            <a href="../../index.html?page=materi&tab=aljabar" class="btn-back">← Kembali ke Materi</a>
         </div>
 
         <main class="main-player" aria-live="polite">
