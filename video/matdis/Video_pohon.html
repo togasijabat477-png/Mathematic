@@ -11,6 +11,43 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #10131f; color: white; padding: 40px 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(100, 255, 218, 0.65);
+            background: rgba(100, 255, 218, 0.12);
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .back-button:hover,
+        .back-button:focus-visible {
+            transform: translateY(-2px);
+            background: rgba(100, 255, 218, 0.2);
+            border-color: #64ffda;
+            box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.12);
+            outline: none;
+        }
+
+        .back-button span:first-child {
+            font-size: 20px;
+            line-height: 1;
+        }
+
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { font-size: 34px; margin-bottom: 8px; }
         .header p { color: #cfd8dc; line-height: 1.5; }
@@ -29,15 +66,29 @@
         .fallback-link { text-align: center; margin-top: 24px; }
         .fallback-link a { color: #64ffda; font-weight: bold; text-decoration: none; }
         .fallback-link a:hover { text-decoration: underline; }
-        @media (max-width: 600px) { body { padding: 24px 14px; } .header h1 { font-size: 26px; } .main-player { padding: 12px; } }
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .top-bar { margin-bottom: 20px; }
+            .back-button { width: 100%; justify-content: center; }
+            .header h1 { font-size: 26px; }
+            .main-player { padding: 12px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="top-bar">
+            <button class="back-button" type="button" id="backButton" aria-label="Kembali ke halaman sebelumnya">
+                <span aria-hidden="true">&larr;</span>
+                <span>Kembali</span>
+            </button>
+        </div>
+
         <div class="header">
             <h1>Video Pembelajaran Pohon</h1>
             <p>Playlist pembelajaran: definisi pohon, tree, graf pohon, spanning tree, minimum spanning tree, dan penerapan konsep pohon.</p>
         </div>
+
         <main class="main-player" aria-live="polite">
             <div class="video-wrapper">
                 <iframe id="youtubePlayer" src="https://www.youtube-nocookie.com/embed/OJ544wy2yVk?rel=0&playsinline=1" title="Matdis 38: Definisi Pohon" loading="eager" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -45,9 +96,11 @@
             <div id="currentVideoTitle">Matdis 38: Definisi Pohon</div>
             <div id="currentVideoDescription">Pengantar definisi pohon dalam matematika diskrit.</div>
         </main>
+
         <div class="video-grid" id="videoGrid"></div>
         <div class="fallback-link"><a id="fallbackLink" href="https://www.youtube.com/watch?v=OJ544wy2yVk" target="_blank" rel="noopener noreferrer">Tonton langsung di YouTube</a></div>
     </div>
+
     <script>
         const videos = [
             { id: 'OJ544wy2yVk', title: 'Matdis 38: Definisi Pohon', description: 'Pengantar definisi pohon dalam matematika diskrit.' },
@@ -65,13 +118,42 @@
             { id: '2HL8uBuQkMs', title: 'Graph Pohon dan Spanning Tree', description: 'Teori graph pohon dan spanning tree.' },
             { id: 'nSdr7LylUvs', title: 'Kode Huffman', description: 'Penggunaan pohon dalam pembentukan kode Huffman.' }
         ];
+
         const player = document.getElementById('youtubePlayer');
         const currentTitle = document.getElementById('currentVideoTitle');
         const currentDescription = document.getElementById('currentVideoDescription');
         const fallbackLink = document.getElementById('fallbackLink');
         const videoGrid = document.getElementById('videoGrid');
-        function createCard(video, index) { const card = document.createElement('button'); card.className = `video-card${index === 0 ? ' active' : ''}`; card.type = 'button'; card.setAttribute('aria-label', `Putar video: ${video.title}`); card.innerHTML = `<div class="thumbnail-wrapper"><img src="https://i.ytimg.com/vi/${video.id}/hqdefault.jpg" alt="${video.title}" loading="lazy"></div><div class="video-info"><h4>${video.title}</h4><p>${video.description}</p></div>`; card.addEventListener('click', () => selectVideo(video, card)); return card; }
-        function selectVideo(video, selectedCard) { player.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&playsinline=1`; player.title = video.title; currentTitle.textContent = video.title; currentDescription.textContent = video.description; fallbackLink.href = `https://www.youtube.com/watch?v=${video.id}`; document.querySelectorAll('.video-card').forEach((card) => card.classList.toggle('active', card === selectedCard)); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        const backButton = document.getElementById('backButton');
+
+        backButton.addEventListener('click', () => {
+            if (window.history.length > 1) {
+                window.history.back();
+                return;
+            }
+            window.location.href = 'index.html';
+        });
+
+        function createCard(video, index) {
+            const card = document.createElement('button');
+            card.className = `video-card${index === 0 ? ' active' : ''}`;
+            card.type = 'button';
+            card.setAttribute('aria-label', `Putar video: ${video.title}`);
+            card.innerHTML = `<div class="thumbnail-wrapper"><img src="https://i.ytimg.com/vi/${video.id}/hqdefault.jpg" alt="${video.title}" loading="lazy"></div><div class="video-info"><h4>${video.title}</h4><p>${video.description}</p></div>`;
+            card.addEventListener('click', () => selectVideo(video, card));
+            return card;
+        }
+
+        function selectVideo(video, selectedCard) {
+            player.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&playsinline=1`;
+            player.title = video.title;
+            currentTitle.textContent = video.title;
+            currentDescription.textContent = video.description;
+            fallbackLink.href = `https://www.youtube.com/watch?v=${video.id}`;
+            document.querySelectorAll('.video-card').forEach((card) => card.classList.toggle('active', card === selectedCard));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         videos.forEach((video, index) => videoGrid.appendChild(createCard(video, index)));
     </script>
 </body>
