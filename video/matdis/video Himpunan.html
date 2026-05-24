@@ -22,6 +22,42 @@
             margin: 0 auto;
         }
 
+        .top-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(100, 255, 218, 0.65);
+            background: rgba(100, 255, 218, 0.12);
+            color: #64ffda;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .back-button:hover,
+        .back-button:focus-visible {
+            transform: translateY(-2px);
+            background: rgba(100, 255, 218, 0.2);
+            border-color: #64ffda;
+            box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.12);
+            outline: none;
+        }
+
+        .back-button span:first-child {
+            font-size: 20px;
+            line-height: 1;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -154,6 +190,8 @@
 
         @media (max-width: 600px) {
             body { padding: 24px 14px; }
+            .top-bar { margin-bottom: 20px; }
+            .back-button { width: 100%; justify-content: center; }
             .header h1 { font-size: 26px; }
             .main-player { padding: 12px; }
         }
@@ -161,6 +199,13 @@
 </head>
 <body>
     <div class="container">
+        <div class="top-bar">
+            <button class="back-button" type="button" id="backButton" aria-label="Kembali ke halaman sebelumnya">
+                <span aria-hidden="true">&larr;</span>
+                <span>Kembali</span>
+            </button>
+        </div>
+
         <div class="header">
             <h1>Video Pembelajaran Himpunan</h1>
             <p>Playlist pembelajaran: pengertian himpunan, notasi, jenis-jenis himpunan, relasi, operasi himpunan, diagram Venn, dan latihan soal</p>
@@ -276,6 +321,15 @@
         const currentDescription = document.getElementById('currentVideoDescription');
         const fallbackLink = document.getElementById('fallbackLink');
         const videoGrid = document.getElementById('videoGrid');
+        const backButton = document.getElementById('backButton');
+
+        backButton.addEventListener('click', () => {
+            if (window.history.length > 1) {
+                window.history.back();
+                return;
+            }
+            window.location.href = 'index.html';
+        });
 
         function createCard(video, index) {
             const card = document.createElement('button');
