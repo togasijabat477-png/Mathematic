@@ -187,9 +187,9 @@ var gameData = [
 ];
 
 var subjects = [
-  {id:"diskrit",icon:"∑",title:"Matematika Diskrit",description:"Logika, himpunan, relasi, graf, dan kombinatorik untuk fondasi ilmu komputer",topics:[{num:"01",name:"Logika Matematika"},{num:"02",name:"Teori Himpunan"},{num:"03",name:"Relasi & Fungsi"},{num:"04",name:"Teori Graf"},{num:"05",name:"Kombinatorika"}],totalTopics:5,availableTopics:5},
-  {id:"aljabar",icon:"λ",title:"Aljabar Linear",description:"Vektor, matriks, transformasi linear, dan ruang vektor",topics:[{num:"01",name:"Vektor"},{num:"02",name:"Matriks"},{num:"03",name:"SPL"},{num:"04",name:"Transformasi Linear"},{num:"05",name:"Eigenvalue & Eigenvector"}],totalTopics:6,availableTopics:6},
-  {id:"kripto",icon:"🔐",title:"Kriptografi",description:"Enkripsi, dekripsi, algoritma kunci publik, dan keamanan data",topics:[{num:"01",name:"Pengantar Kriptografi"},{num:"02",name:"Enkripsi Simetris"},{num:"03",name:"RSA & Kunci Publik"},{num:"04",name:"Fungsi Hash"},{num:"05",name:"Tanda Tangan Digital"}],totalTopics:5,availableTopics:1}
+  {id:"diskrit",icon:"∑",title:"Matematika Diskrit",description:"Logika, himpunan, relasi, graf, dan kombinatorik untuk fondasi ilmu komputer",topics:[{num:"01",name:"Logika Matematika"},{num:"02",name:"Teori Himpunan"},{num:"03",name:"Relasi & Fungsi"},{num:"04",name:"Teori Graf"},{num:"05",name:"Aljabar Bolean"},{num:"06",name:"Pohon"},{num:"07",name:"Number Of Theory"}],totalTopics:7,availableTopics:7},
+  {id:"aljabar",icon:"λ",title:"Aljabar Linear",description:"Vektor, matriks, transformasi linear, dan ruang vektor",topics:[{num:"01",name:"Sistem Persamaan Linear"},{num:"02",name:"Matriks"},{num:"03",name:"Determinan"},{num:"04",name:"Nilai Eigen dan Vektor Eigen"},{num:"05",name:"Diagonalisasi"}],totalTopics:5,availableTopics:5},
+  {id:"kripto",icon:"🔐",title:"Kriptografi",description:"Enkripsi, dekripsi, algoritma kunci publik, dan keamanan data",topics:[{num:"01",name:"Kriptografi"}],totalTopics:1,availableTopics:1}
 ];
 
 var referensiData = [
