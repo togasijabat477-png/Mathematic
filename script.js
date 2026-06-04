@@ -27,10 +27,19 @@ function handlePageParam() {
 
     if (page) {
 
-        if (tab && page === 'materi') {
-            activeMateriTab = tab;
-            renderMateri();
-        }
+        if (tab) {
+
+    if (page === 'materi') {
+        activeMateriTab = tab;
+        renderMateri();
+    }
+
+    if (page === 'game') {
+        activeGameTab = tab;
+        renderGame();
+    }
+
+}
 
         navigateTo(page);
 
