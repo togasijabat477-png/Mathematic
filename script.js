@@ -44,11 +44,13 @@ function handlePageParam() {
         navigateTo(page);
 
         // HAPUS parameter setelah diproses
-        history.replaceState(
-            {},
-            '',
-            window.location.pathname + '#' + page
-        );
+       history.replaceState(
+    {},
+    '',
+    window.location.pathname +
+    '?page=' + page +
+    (tab ? '&tab=' + tab : '')
+);
 
     } else {
         navigateTo(currentPage);
