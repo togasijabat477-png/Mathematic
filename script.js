@@ -316,6 +316,18 @@ var menuOpen = false;
 var isLight = localStorage.getItem('mathematic-theme') === 'light';
 var letters = ['A','B','C','D'];
 
+/* ═══ NAVIGASI — Update penanda halaman aktif di semua menu ═══ */
+function updateActiveNavLinks(page) {
+  // Menu desktop (Beranda / Materi / Game)
+  document.querySelectorAll('.menu-links a').forEach(function(a) {
+    a.classList.toggle('active', a.getAttribute('data-page') === page);
+  });
+  // Dropdown hamburger (semua halaman)
+  document.querySelectorAll('.dropdown a').forEach(function(a) {
+    a.classList.toggle('active', a.getAttribute('data-page') === page);
+  });
+}
+
 /* ═══ NAVIGASI — Berpindah halaman ═══ */
 function navigateTo(page, tab) {
   // Sembunyikan halaman lama
@@ -325,15 +337,8 @@ function navigateTo(page, tab) {
   if (el) el.classList.add('active');
   currentPage = page;
 
-  // Update active link di dropdown
-  document.querySelectorAll('.dropdown a').forEach(function(a) {
-    a.classList.toggle('active', a.getAttribute('data-page') === page);
-  });
-
-  // Update active link di menu desktop
-  document.querySelectorAll('.menu-links a').forEach(function(a) {
-    a.classList.toggle('active', a.getAttribute('data-page') === page);
-  });
+  // Update penanda halaman aktif di semua menu — langsung, tanpa delay
+  updateActiveNavLinks(page);
 
   // Tab materi
   if (page === 'materi') {
@@ -507,13 +512,16 @@ function renderFeatures() {
 function openModuleFile(file) {
   // Simpan state sebelum pergi agar tombol kembali browser kembali ke halaman materi
   history.pushState({ page: 'materi', tab: activeMateriTab }, '', '?page=materi&tab=' + activeMateriTab);
-  // Simpan tab untuk tombol kembali di file modul
+  // Simpan asal halaman & tab untuk tombol kembali di file modul
+  sessionStorage.setItem('backPage', 'materi');
   sessionStorage.setItem('materiTab', activeMateriTab);
   window.location.href = file;
 }
 
 function openGameFile(file) {
+  // Simpan state agar tombol kembali di file game bisa kembali ke halaman game
   history.pushState({ page: 'game' }, '', '?page=game');
+  sessionStorage.setItem('backPage', 'game');
   window.location.href = file;
 }
 
@@ -531,10 +539,10 @@ function renderMateri() {
   var html = '';
   sections.forEach(function(s, sectionIndex) {
     var gridId = 'materi-grid-' + activeMateriTab + '-' + sectionIndex;
-    html += '<div style="margin-bottom:48px"><div class="section-header"><span class="emoji">' + s.icon + '</span><h2 class="font-display">' + s.title + '</h2></div>' +
-      '<div class="slider-note"><span class="hint-chip">Geser / klik tombol panah untuk melihat semua materi</span></div>' +
-      '<div class="carousel-wrap"><button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
-      '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
+    html += '<div style="margin-bottom:60px"><div class="section-header"><span class="emoji">' + s.icon + '</span><h2 class="font-display">' + s.title + '</h2></div>' +
+      '<div class="slider-note"><span class="hint-chip">Klik tombol ◀ ▶ untuk melihat semua materi</span></div>' +
+      '<div class="carousel-wrap">' +
+      '<button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
       '<div id="' + gridId + '" class="materi-grid">';
     s.items.forEach(function(item) {
       html += '<div class="materi-card"' + (item.file ? ' onclick="openModuleFile(\'' + item.file + '\')"' : '') + '>' +
@@ -543,7 +551,10 @@ function renderMateri() {
         '<span class="tag">' + item.tag + '</span>' +
         (item.file ? '<span class="link-arrow">➔</span>' : '') + '</div>';
     });
-    html += '</div></div></div>';
+    html += '</div>' +
+      '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
+      '<div class="carousel-dots"></div>' +
+      '</div></div>';
   });
   document.getElementById('materiContent').innerHTML = html;
   if (typeof window.refreshCarouselGrids === 'function') {
@@ -555,10 +566,10 @@ function renderGame() {
   var html = '';
   gameData.forEach(function(section, sectionIndex) {
     var gridId = 'game-grid-' + sectionIndex;
-    html += '<div style="margin-bottom:48px"><div class="section-header"><span class="emoji">' + section.icon + '</span><h2 class="font-display">' + section.title + '</h2></div>' +
-      '<div class="slider-note"><span class="hint-chip">Geser / klik tombol panah untuk melihat semua game</span></div>' +
-      '<div class="carousel-wrap"><button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
-      '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
+    html += '<div style="margin-bottom:60px"><div class="section-header"><span class="emoji">' + section.icon + '</span><h2 class="font-display">' + section.title + '</h2></div>' +
+      '<div class="slider-note"><span class="hint-chip">Klik tombol ◀ ▶ untuk melihat semua game</span></div>' +
+      '<div class="carousel-wrap">' +
+      '<button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
       '<div id="' + gridId + '" class="materi-grid">';
     section.items.forEach(function(item) {
       var cls = 'materi-card';
@@ -574,7 +585,10 @@ function renderGame() {
         '<span class="' + tagCls + '">' + item.tag + '</span>' +
         (item.file ? '<span class="link-arrow">➔</span>' : '') + '</div>';
     });
-    html += '</div></div></div>';
+    html += '</div>' +
+      '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
+      '<div class="carousel-dots"></div>' +
+      '</div></div>';
   });
   document.getElementById('gameContent').innerHTML = html;
   if (typeof window.refreshCarouselGrids === 'function') {
@@ -835,6 +849,8 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
 /* ═══ INIT — Jalankan semua render saat halaman dimuat ═══ */
 (function init() {
   applyTheme();
+  // Set penanda halaman aktif SEBELUM apapun, tidak perlu tunggu klik
+  updateActiveNavLinks(currentPage);
   startTypewriter();
   renderSubjectCards();
   renderStats();
@@ -887,9 +903,16 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   var GAP            = 24;  // px — gap antar card
 
   function getContainerWidth(grid) {
-    return grid.parentElement
-      ? grid.parentElement.getBoundingClientRect().width
-      : grid.getBoundingClientRect().width;
+    /* Gunakan lebar grid itu sendiri setelah flex layout terbentuk,
+       bukan lebar wrap (yang termasuk tombol kiri/kanan) */
+    var w = grid.getBoundingClientRect().width;
+    if (w > 0) return w;
+    /* Fallback: lebar parent dikurangi estimasi tombol */
+    if (grid.parentElement) {
+      var pw = grid.parentElement.getBoundingClientRect().width;
+      return Math.max(0, pw - 100); /* 2 tombol ~50px each */
+    }
+    return 300;
   }
 
   function calcCardsPerView(containerWidth, vw) {
@@ -918,25 +941,25 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     grid.parentNode.insertBefore(wrap, grid);
     wrap.appendChild(grid);
 
-    /* Tombol navigasi */
+    /* Tombol prev — dimasukkan SEBELUM grid (insertBefore) */
     var prev = document.createElement('button');
     prev.className = 'carousel-btn prev';
     prev.type = 'button';
     prev.setAttribute('aria-label', 'Sebelumnya');
     prev.innerHTML = '&#9664;';
+    wrap.insertBefore(prev, grid); /* prev ada di kiri grid */
 
+    /* Tombol next — dimasukkan SESUDAH grid (appendChild) */
     var next = document.createElement('button');
     next.className = 'carousel-btn next';
     next.type = 'button';
     next.setAttribute('aria-label', 'Berikutnya');
     next.innerHTML = '&#9654;';
+    wrap.appendChild(next); /* next ada di kanan grid */
 
-    /* Dots */
+    /* Dots — di bawah (absolute positioned via CSS) */
     var dotsEl = document.createElement('div');
     dotsEl.className = 'carousel-dots';
-
-    wrap.appendChild(prev);
-    wrap.appendChild(next);
     wrap.appendChild(dotsEl);
 
     /* Scroll event untuk update tombol & dots */

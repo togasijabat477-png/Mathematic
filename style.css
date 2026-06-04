@@ -1221,9 +1221,23 @@ img, video, iframe { max-width: 100%; height: auto; }
 
 /* ── Wrapper carousel ── */
 .carousel-wrap {
-  position: relative;
+  /* Layout flex: [tombol-prev] [grid-area] [tombol-next] */
+  display: flex;
+  align-items: center;
+  gap: 0;
   width: 100%;
   overflow: visible;
+  position: relative;
+  padding-bottom: 36px; /* ruang untuk dots di bawah */
+}
+/* Grid mengisi sisa ruang di tengah */
+.carousel-wrap > .stats-grid,
+.carousel-wrap > .features-grid,
+.carousel-wrap > .materi-grid,
+.carousel-wrap > .fact-grid,
+.carousel-wrap > .vokasi-grid {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
@@ -1240,8 +1254,8 @@ img, video, iframe { max-width: 100%; height: auto; }
     padding-bottom: 16px;
     touch-action: pan-x;
     -webkit-overflow-scrolling: touch;
-    padding-left: 80px;
-    padding-right: 80px;
+    padding-left: 0;
+    padding-right: 0;
   }
   .stats-grid > *,
   .features-grid > *,
@@ -1310,7 +1324,7 @@ img, video, iframe { max-width: 100%; height: auto; }
   overflow-y: visible;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  padding: 12px 80px 32px !important;
+  padding: 12px 6px 32px !important;
   -ms-overflow-style: none;
   scrollbar-width: none;
   touch-action: pan-x;
@@ -1338,40 +1352,39 @@ img, video, iframe { max-width: 100%; height: auto; }
 
 /* ── Tombol navigasi — tampilkan selalu untuk wrapper slider ── */
 .carousel-btn {
+  /* Tombol berada di luar grid (flex sibling), bukan overlay absolute */
   display: flex;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
+  position: static;
+  flex-shrink: 0;
+  align-self: center;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 1px solid hsl(var(--border-hi));
   background: hsl(var(--bg2) / .94);
   color: hsl(var(--teal));
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 20;
+  z-index: 5;
   pointer-events: auto;
   backdrop-filter: blur(14px);
-  box-shadow: 0 8px 22px hsl(220 18% 3% / .25);
-  transition: transform .25s var(--ease-spring), background .2s, opacity .2s;
+  box-shadow: 0 4px 16px hsl(220 18% 3% / .22);
+  transition: transform .22s var(--ease-spring), background .18s, opacity .2s;
+  margin: 0 6px;
 }
-.carousel-btn:hover {
-  transform: translateY(-50%) scale(1.05);
+.carousel-btn:hover:not([disabled]) {
+  transform: scale(1.1);
   background: hsl(var(--teal));
   color: hsl(220 18% 7%);
   border-color: transparent;
+  box-shadow: 0 6px 20px hsl(174 72% 52% / .35);
 }
-.carousel-btn.prev { left: 8px; }
-.carousel-btn.next { right: 8px; }
-.carousel-btn[disabled] { opacity: .35; cursor: default; pointer-events: none; }
+.carousel-btn[disabled] { opacity: .3; cursor: default; pointer-events: none; }
 
 @media (max-width: 640px) {
-  .carousel-btn { width: 38px; height: 38px; font-size: .95rem; }
-  .carousel-btn.prev { left: 2px; }
-  .carousel-btn.next { right: 2px; }
+  .carousel-btn { width: 34px; height: 34px; font-size: .9rem; margin: 0 3px; }
 }
 
 /* ── Dots — hanya muncul saat slider aktif ── */
@@ -1379,9 +1392,13 @@ img, video, iframe { max-width: 100%; height: auto; }
   display: none; /* hidden by default */
   gap: 7px;
   justify-content: center;
-  margin-top: 16px;
   flex-wrap: wrap;
   padding: 0 8px;
+  /* absolute di bawah carousel-wrap agar tidak ikut flex-row tombol */
+  position: absolute;
+  bottom: -28px;
+  left: 0;
+  right: 0;
 }
 .carousel-wrap:has(.is-slider) .carousel-dots {
   display: flex;
