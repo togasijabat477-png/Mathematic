@@ -16,49 +16,14 @@ window.carouselScrollById = function(gridId, dir) {
 };
 
 /* tombol kembali - integrated into init */
+/* tombol kembali - integrated into init */
 function handlePageParam() {
     var params = new URLSearchParams(window.location.search);
     var page = params.get("page");
     var tab  = params.get("tab");
-
-    // Fallback ke hash jika tidak ada query param
-    if (!page && window.location.hash) {
-        var hash = window.location.hash.replace('#', '');
-        var validPages = ['beranda','materi','game','more','kontak','creators','referensi'];
-        if (validPages.indexOf(hash) !== -1) {
-            page = hash;
-        }
-    }
-
     if (page) {
-        // Set tab TERLEBIH DAHULU sebelum navigateTo agar render sudah pakai tab yang benar
-        if (tab) {
-            if (page === 'materi') {
-                activeMateriTab = tab;
-            }
-            if (page === 'game') {
-                activeGameTab = tab;
-            }
-        }
-
-        // navigateTo akan memanggil renderMateri/renderGame dengan tab yang sudah di-set
+        if (tab && page === 'materi') { activeMateriTab = tab; renderMateri(); }
         navigateTo(page);
-
-        // Pertahankan URL agar tetap sinkron
-        history.replaceState(
-            { page: page, tab: tab || null },
-            '',
-            window.location.pathname +
-            '?page=' + page +
-            (tab ? '&tab=' + tab : '')
-        );
-
-    } else {
-        // Default: tampilkan beranda, tapi tetap render materi & game di background
-        renderMateri();
-        renderGame();
-        navigateTo('beranda');
-        history.replaceState({ page: 'beranda', tab: null }, '', window.location.pathname + '?page=beranda');
     }
 }
 
@@ -67,17 +32,12 @@ window.addEventListener('popstate', function(event) {
     if (event.state && event.state.page) {
         var page = event.state.page;
         var tab = event.state.tab;
-        // Set tab sebelum navigasi agar render langsung benar
-        if (tab) {
-            if (page === 'materi') activeMateriTab = tab;
-            if (page === 'game')   activeGameTab   = tab;
-        }
+        if (tab && page === 'materi') { activeMateriTab = tab; renderMateri(); }
         navigateTo(page);
     } else {
         handlePageParam();
     }
 });
-
 
 /* ═══ DATA ═══ */
 
