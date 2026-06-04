@@ -17,27 +17,24 @@ window.carouselScrollById = function(gridId, dir) {
 
 /* tombol kembali - integrated into init */
 function handlePageParam() {
-    var params = new URLSearchParams(window.location.search);
-    var page = params.get("page");
-    var tab  = params.get("tab");
+    var page = null, tab = null;
 
-    // Fallback ke hash jika tidak ada query param
+    // Baca dari query string: ?page=materi&tab=diskrit (dipakai saat kembali dari modul)
+    var qs = new URLSearchParams(window.location.search);
+    page = qs.get('page') || null;
+    tab  = qs.get('tab')  || null;
+
+    // Fallback: hash biasa #materi
     if (!page && window.location.hash) {
-        var hash = window.location.hash.replace('#', '');
-        var validPages = ['beranda','materi','game','more','kontak','creators','referensi'];
-        if (validPages.indexOf(hash) !== -1) page = hash;
+        page = window.location.hash.replace('#', '') || null;
     }
 
     if (page) {
-        // PENTING: set tab SEBELUM navigateTo, bukan sesudah
-        // navigateTo akan memanggil renderMateri() yang membaca activeMateriTab
-        if (tab) {
-            if (page === 'materi') activeMateriTab = tab;
-            if (page === 'game')   activeGameTab   = tab;
-        }
+        // Setel tab dulu SEBELUM navigateTo agar renderMateri pakai tab yang benar
+        if (tab && page === 'materi') activeMateriTab = tab;
         navigateTo(page);
     } else {
-        navigateTo('beranda');
+        navigateTo(currentPage);
     }
 }
 
@@ -45,12 +42,9 @@ function handlePageParam() {
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.page) {
         var page = event.state.page;
-        var tab = event.state.tab;
-        // PENTING: set tab SEBELUM navigateTo
-        if (tab) {
-            if (page === 'materi') activeMateriTab = tab;
-            if (page === 'game')   activeGameTab   = tab;
-        }
+        var tab  = event.state.tab;
+        // Setel tab SEBELUM navigateTo agar renderMateri pakai tab yang benar
+        if (tab && page === 'materi') activeMateriTab = tab;
         navigateTo(page);
     } else {
         handlePageParam();
@@ -339,12 +333,6 @@ function updateActiveNavLinks(page) {
 
 /* ═══ NAVIGASI — Berpindah halaman ═══ */
 function navigateTo(page, tab) {
-  // Jika tab diberikan lewat parameter, set dulu
-  if (tab) {
-    if (page === 'materi') activeMateriTab = tab;
-    if (page === 'game')   activeGameTab   = tab;
-  }
-
   // Sembunyikan halaman lama
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   // Tampilkan halaman baru
@@ -352,13 +340,19 @@ function navigateTo(page, tab) {
   if (el) el.classList.add('active');
   currentPage = page;
 
-  // BUG FIX: Update penanda aktif SEGERA, tidak pakai delay
+  // Update penanda halaman aktif di semua menu — langsung, tanpa delay
   updateActiveNavLinks(page);
 
-  // Render konten halaman yang membutuhkan render dinamis
-  if (page === 'materi') renderMateri();
-  if (page === 'game')   renderGame();
-  if (page === 'creators') renderCreators();
+  // Tab materi
+  if (page === 'materi') {
+    renderMateri();
+  }
+  if (page === 'game') {
+    renderGame();
+  }
+  if (page === 'creators') {
+    renderCreators();
+  }
 
   // Tutup menu
   menuOpen = false;
@@ -367,15 +361,11 @@ function navigateTo(page, tab) {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // BUG FIX: Gunakan pushState bukan window.location.hash
-  // Mengubah hash memicu hashchange event yang bisa menyebabkan navigasi berulang
-  var activeTab = (page === 'materi') ? activeMateriTab : null;
-  var newUrl = '?page=' + page + (activeTab ? '&tab=' + activeTab : '');
-  // Cek apakah URL sudah sama agar tidak dobel push ke history
-  var currentUrl = window.location.pathname + window.location.search;
-  var targetUrl  = window.location.pathname + newUrl;
-  if (currentUrl !== targetUrl) {
-    history.pushState({ page: page, tab: activeTab || null }, '', newUrl);
+  // Gunakan pushState (bukan hash) agar tidak trigger popstate/hashchange
+  // yang bisa mereset activeMateriTab
+  var newUrl = '?page=' + page + (page === 'materi' ? '&tab=' + activeMateriTab : '');
+  if (window.location.search !== '?' + newUrl.slice(1) || window.location.pathname + window.location.search !== window.location.pathname + '?page=' + page) {
+    history.pushState({ page: page, tab: page === 'materi' ? activeMateriTab : null }, '', newUrl);
   }
 }
 
@@ -527,17 +517,25 @@ function renderFeatures() {
 }
 
 function openModuleFile(file) {
-  // replaceState: ganti URL saat ini (jangan pushState karena nanti window.location.href akan push sendiri)
-  history.replaceState({ page: 'materi', tab: activeMateriTab }, '', '?page=materi&tab=' + activeMateriTab);
-  // Simpan juga di sessionStorage sebagai fallback untuk tombol kembali di file modul
+  // replaceState: perbarui entry saat ini dengan info materi+tab
+  // Saat user tekan Back dari modul, browser kembali ke entry INI (materi)
+  // bukan ke entry kosong sebelumnya
+  history.replaceState(
+    { page: 'materi', tab: activeMateriTab },
+    '',
+    '?page=materi&tab=' + activeMateriTab
+  );
   sessionStorage.setItem('backPage', 'materi');
   sessionStorage.setItem('materiTab', activeMateriTab);
   window.location.href = file;
 }
 
 function openGameFile(file) {
-  // replaceState: ganti URL saat ini
-  history.replaceState({ page: 'game', tab: null }, '', '?page=game');
+  history.replaceState(
+    { page: 'game', tab: null },
+    '',
+    '?page=game'
+  );
   sessionStorage.setItem('backPage', 'game');
   window.location.href = file;
 }
@@ -791,8 +789,8 @@ function renderReferensi() {
     });
     html += '</div>';
   });
-  document.getElementById('referensiContent').innerHTML = html;
-}
+var refEl = document.getElementById('referensiContent');
+if (refEl) refEl.innerHTML = html;}
 
 function renderCreators() {
   var html = '';
@@ -866,6 +864,8 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
 /* ═══ INIT — Jalankan semua render saat halaman dimuat ═══ */
 (function init() {
   applyTheme();
+  // Set penanda halaman aktif SEBELUM apapun, tidak perlu tunggu klik
+  updateActiveNavLinks(currentPage);
   startTypewriter();
   renderSubjectCards();
   renderStats();
@@ -878,9 +878,6 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   renderQuiz();
   renderReferensi();
   renderCreators();
-  // handlePageParam HARUS dipanggil PALING AKHIR:
-  // 1. Membaca URL (?page=materi&tab=aljabar) → set tab → panggil navigateTo
-  // 2. navigateTo akan update penanda navbar sekaligus tampilkan halaman yang benar
   handlePageParam();
 })();
 
