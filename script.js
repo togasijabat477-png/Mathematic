@@ -3,14 +3,36 @@
    Hanya untuk: navigasi, toggle, modal, quiz
    ═══════════════════════════════════════════ */
 
+/* CAROUSEL SCROLL FUNCTION - Defined immediately */
+window.carouselScrollById = function(gridId, dir) {
+  var grid = document.getElementById(gridId);
+  if (!grid) return;
+  var first = grid.children[0];
+  if (!first) return;
+  var cardW = first.getBoundingClientRect().width;
+  var gap = 24;
+  var step = (cardW + gap) * 1;
+  grid.scrollBy({ left: dir * step, behavior: 'smooth' });
+};
+
 /* tombol kembali - integrated into init */
 function handlePageParam() {
     var params = new URLSearchParams(window.location.search);
     var page = params.get("page");
     var tab  = params.get("tab");
+
+    if (!page && window.location.hash) {
+        page = window.location.hash.replace('#', '');
+    }
+
     if (page) {
-        if (tab && page === 'materi') { activeMateriTab = tab; renderMateri(); }
+        if (tab && page === 'materi') {
+            activeMateriTab = tab;
+            renderMateri();
+        }
         navigateTo(page);
+    } else {
+        navigateTo(currentPage);
     }
 }
 
@@ -187,9 +209,9 @@ var gameData = [
 ];
 
 var subjects = [
-  {id:"diskrit",icon:"∑",title:"Matematika Diskrit",description:"Logika, himpunan, relasi, graf, dan kombinatorik untuk fondasi ilmu komputer",topics:[{num:"01",name:"Logika Matematika"},{num:"02",name:"Teori Himpunan"},{num:"03",name:"Relasi & Fungsi"},{num:"04",name:"Teori Graf"},{num:"05",name:"Kombinatorika"}],totalTopics:5,availableTopics:5},
-  {id:"aljabar",icon:"λ",title:"Aljabar Linear",description:"Vektor, matriks, transformasi linear, dan ruang vektor",topics:[{num:"01",name:"Vektor"},{num:"02",name:"Matriks"},{num:"03",name:"SPL"},{num:"04",name:"Transformasi Linear"},{num:"05",name:"Eigenvalue & Eigenvector"}],totalTopics:6,availableTopics:6},
-  {id:"kripto",icon:"🔐",title:"Kriptografi",description:"Enkripsi, dekripsi, algoritma kunci publik, dan keamanan data",topics:[{num:"01",name:"Pengantar Kriptografi"},{num:"02",name:"Enkripsi Simetris"},{num:"03",name:"RSA & Kunci Publik"},{num:"04",name:"Fungsi Hash"},{num:"05",name:"Tanda Tangan Digital"}],totalTopics:5,availableTopics:1}
+  {id:"diskrit",icon:"∑",title:"Matematika Diskrit",description:"Logika, himpunan, relasi, graf, dan kombinatorik untuk fondasi ilmu komputer",topics:[{num:"01",name:"Logika Matematika"},{num:"02",name:"Teori Himpunan"},{num:"03",name:"Relasi & Fungsi"},{num:"04",name:"Teori Graf"},{num:"05",name:"Aljabar Bolean"},{num:"06",name:"Pohon"},{num:"07",name:"Number Of Theory"}],totalTopics:7,availableTopics:7},
+  {id:"aljabar",icon:"λ",title:"Aljabar Linear",description:"Vektor, matriks, transformasi linear, dan ruang vektor",topics:[{num:"01",name:"Sistem Persamaan Linear"},{num:"02",name:"Matriks"},{num:"03",name:"Determinan"},{num:"04",name:"Nilai Eigen dan Vektor Eigen"},{num:"05",name:"Diagonalisasi"}],totalTopics:5,availableTopics:5},
+  {id:"kripto",icon:"🔐",title:"Kriptografi",description:"Enkripsi, dekripsi, algoritma kunci publik, dan keamanan data",topics:[{num:"01",name:"Kriptografi"}],totalTopics:1,availableTopics:1}
 ];
 
 var referensiData = [
@@ -240,7 +262,7 @@ var creators = [
     nim: "43325040",
     name: "Toga Sijabat",
     role: "Frontend Developer",
-    avatar: "images/toga.jpg",
+    avatar: "images/Toga.png",
     bio: "Mengerjakan tampilan website dan animasi.",
     instagram: "@toga",
     email: "toga@gmail.com",
@@ -251,8 +273,8 @@ var creators = [
     initial: "J",
     nim: "43325024",
     name: "Joshua Nainggolan",
-    role: "Backend Developer",
-    avatar: "images/joshua.jpeg",
+    role: "Content Developer",
+    avatar: "images/Joshua.png",
     bio: "Mengembangkan database dan API.",
     instagram: "@joshua",
     email: "joshua@gmail.com",
@@ -263,8 +285,8 @@ var creators = [
     initial: "D",
     nim: "43325041",
     name: "Desmonth Heiwa Hutabarat",
-    role: "UI/UX Designer",
-    avatar: "images/desmonth.jpg",
+    role: "",
+    avatar: "images/desmon.png",
     bio: "Mendesain interface dan pengalaman pengguna.",
     instagram: "@desmonth",
     email: "desmonth@gmail.com",
@@ -275,8 +297,8 @@ var creators = [
     initial: "A",
     nim: "43325006",
     name: "Abin Hendamo Boangmanalu",
-    role: "Game Developer",
-    avatar: "images/abin.jpg",
+    role: "",
+    avatar: "images/abin.png",
     bio: "Membuat game matematika interaktif.",
     instagram: "@abin",
     email: "abin@gmail.com",
@@ -314,9 +336,14 @@ function navigateTo(page, tab) {
   });
 
   // Tab materi
-  if (page === 'materi' && tab) {
-    activeMateriTab = tab;
+  if (page === 'materi') {
     renderMateri();
+  }
+  if (page === 'game') {
+    renderGame();
+  }
+  if (page === 'creators') {
+    renderCreators();
   }
 
   // Tutup menu
@@ -325,6 +352,9 @@ function navigateTo(page, tab) {
   document.getElementById('menuBtn').textContent = '☰';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.location.hash !== '#' + page) {
+    window.location.hash = page;
+  }
 }
 
 /* ═══ TOAST — Notifikasi singkat ═══ */
@@ -499,8 +529,13 @@ function renderMateri() {
   // Content
   var sections = materiData[activeMateriTab] || [];
   var html = '';
-  sections.forEach(function(s) {
-    html += '<div style="margin-bottom:48px"><div class="section-header"><span class="emoji">' + s.icon + '</span><h2 class="font-display">' + s.title + '</h2></div><div class="materi-grid">';
+  sections.forEach(function(s, sectionIndex) {
+    var gridId = 'materi-grid-' + activeMateriTab + '-' + sectionIndex;
+    html += '<div style="margin-bottom:48px"><div class="section-header"><span class="emoji">' + s.icon + '</span><h2 class="font-display">' + s.title + '</h2></div>' +
+      '<div class="slider-note"><span class="hint-chip">Geser / klik tombol panah untuk melihat semua materi</span></div>' +
+      '<div class="carousel-wrap"><button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
+      '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
+      '<div id="' + gridId + '" class="materi-grid">';
     s.items.forEach(function(item) {
       html += '<div class="materi-card"' + (item.file ? ' onclick="openModuleFile(\'' + item.file + '\')"' : '') + '>' +
         '<div class="accent-line"></div><div class="num">' + item.num + '</div>' +
@@ -508,15 +543,23 @@ function renderMateri() {
         '<span class="tag">' + item.tag + '</span>' +
         (item.file ? '<span class="link-arrow">➔</span>' : '') + '</div>';
     });
-    html += '</div></div>';
+    html += '</div></div></div>';
   });
   document.getElementById('materiContent').innerHTML = html;
+  if (typeof window.refreshCarouselGrids === 'function') {
+    window.refreshCarouselGrids();
+  }
 }
 
 function renderGame() {
   var html = '';
-  gameData.forEach(function(section) {
-    html += '<div style="margin-bottom:48px"><div class="section-header"><span class="emoji">' + section.icon + '</span><h2 class="font-display">' + section.title + '</h2></div><div class="materi-grid">';
+  gameData.forEach(function(section, sectionIndex) {
+    var gridId = 'game-grid-' + sectionIndex;
+    html += '<div style="margin-bottom:48px"><div class="section-header"><span class="emoji">' + section.icon + '</span><h2 class="font-display">' + section.title + '</h2></div>' +
+      '<div class="slider-note"><span class="hint-chip">Geser / klik tombol panah untuk melihat semua game</span></div>' +
+      '<div class="carousel-wrap"><button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
+      '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
+      '<div id="' + gridId + '" class="materi-grid">';
     section.items.forEach(function(item) {
       var cls = 'materi-card';
       var tagCls = 'tag';
@@ -531,9 +574,12 @@ function renderGame() {
         '<span class="' + tagCls + '">' + item.tag + '</span>' +
         (item.file ? '<span class="link-arrow">➔</span>' : '') + '</div>';
     });
-    html += '</div></div>';
+    html += '</div></div></div>';
   });
   document.getElementById('gameContent').innerHTML = html;
+  if (typeof window.refreshCarouselGrids === 'function') {
+    window.refreshCarouselGrids();
+  }
 }
 
 function renderFunFacts() {
@@ -803,6 +849,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   renderCreators();
   handlePageParam();
 })();
+
 /* ═══════════════════════════════════════════
    ADAPTIVE CAROUSEL SYSTEM
    ─────────────────────────────────────────
@@ -1053,7 +1100,35 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     if (!grid || !grid.children.length) return;
 
     /* Pastikan sudah dibungkus */
-    ensureWrapped(grid);
+    var wrap = ensureWrapped(grid);
+
+    /* Pastikan scroll listener & button listeners aktif untuk wrap yang sudah ada */
+    if (wrap && !grid.dataset.listenersSetup) {
+      grid.dataset.listenersSetup = 'true';
+      
+      /* Setup scroll listener untuk update dots & buttons */
+      var scrollTimer;
+      grid.addEventListener('scroll', function () {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function () {
+          updateDots(grid);
+          updateButtons(grid);
+        }, 50);
+      });
+      
+      /* Setup button listeners jika belum ada */
+      var prevBtn = wrap.querySelector('.carousel-btn.prev');
+      var nextBtn = wrap.querySelector('.carousel-btn.next');
+      
+      if (prevBtn && !prevBtn.dataset.listenerActive) {
+        prevBtn.dataset.listenerActive = 'true';
+        prevBtn.addEventListener('click', function () { scrollByGroup(grid, -1); });
+      }
+      if (nextBtn && !nextBtn.dataset.listenerActive) {
+        nextBtn.dataset.listenerActive = 'true';
+        nextBtn.addEventListener('click', function () { scrollByGroup(grid, 1); });
+      }
+    }
 
     var vw             = window.innerWidth;
     var containerWidth = getContainerWidth(grid);
@@ -1095,6 +1170,10 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
       document.querySelectorAll(sel).forEach(enhance);
     });
   }
+
+  /* expose refresh helper for content re-renders */
+  window.refreshCarouselGrids = scanAll;
+  window.carouselScrollByGrid = scrollByGroup;
 
   /* Debounce resize agar tidak terlalu sering */
   var resizeTimer;

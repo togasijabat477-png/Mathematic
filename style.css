@@ -672,6 +672,26 @@ button { cursor: pointer; border: none; font-family: inherit; }
 
 /* ═══ MATERI CARDS ═══ */
 .materi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+#page-materi .materi-grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  scroll-snap-type: x mandatory !important;
+  gap: 16px !important;
+  padding: 0 16px 20px !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+#page-materi .materi-grid::-webkit-scrollbar {
+  display: none;
+}
+#page-materi .materi-grid > * {
+  flex: 0 0 min(90vw, 380px) !important;
+  min-width: min(90vw, 380px) !important;
+  max-width: min(90vw, 380px) !important;
+  scroll-snap-align: start;
+}
 .materi-card {
   position: relative; overflow: hidden;
   border-radius: var(--radius); border: 1px solid hsl(var(--border));
@@ -1203,23 +1223,25 @@ img, video, iframe { max-width: 100%; height: auto; }
 .carousel-wrap {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 @media (max-width: 768px) {
-  .carousel-wrap { overflow: hidden; }
+  .carousel-wrap { overflow: visible; }
   .stats-grid,
   .features-grid,
   .materi-grid,
   .fact-grid,
   .vokasi-grid {
-    display: flex;
-    overflow-x: auto;
+    display: flex !important;
+    overflow-x: auto !important;
     scroll-snap-type: x mandatory;
     gap: 16px;
     padding-bottom: 16px;
     touch-action: pan-x;
     -webkit-overflow-scrolling: touch;
+    padding-left: 80px;
+    padding-right: 80px;
   }
   .stats-grid > *,
   .features-grid > *,
@@ -1233,37 +1255,39 @@ img, video, iframe { max-width: 100%; height: auto; }
   }
 }
 
-/* ── Default: grid normal (Desktop) ──
-   JS akan tambah class .is-slider hanya jika perlu */
-.stats-grid,
-.features-grid,
-.materi-grid,
-.fact-grid,
-.vokasi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-  gap: 24px;
-  padding: 8px 4px;
-  /* pastikan tidak overflow di mode grid */
-  overflow-x: visible;
-  scroll-snap-type: none;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+@media (min-width: 769px) {
+  /* ── Default: grid normal (Desktop) ──
+     JS akan tambah class .is-slider hanya jika perlu */
+  .stats-grid,
+  .features-grid,
+  .materi-grid,
+  .fact-grid,
+  .vokasi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+    gap: 24px;
+    padding: 8px 4px;
+    /* pastikan tidak overflow di mode grid */
+    overflow-x: visible;
+    scroll-snap-type: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 
-/* ── Card base ── */
-.stats-grid > *,
-.features-grid > *,
-.materi-grid > *,
-.fact-grid > *,
-.vokasi-grid > * {
-  border-radius: 18px;
-  box-shadow: 0 8px 28px hsl(220 18% 3% / .30);
-  transition: transform .35s var(--ease-spring), box-shadow .35s var(--ease-smooth);
-  /* reset flex sizing (mode slider akan override via JS inline) */
-  flex: none;
-  min-width: 0;
-  max-width: none;
+  /* ── Card base ── */
+  .stats-grid > *,
+  .features-grid > *,
+  .materi-grid > *,
+  .fact-grid > *,
+  .vokasi-grid > * {
+    border-radius: 18px;
+    box-shadow: 0 8px 28px hsl(220 18% 3% / .30);
+    transition: transform .35s var(--ease-spring), box-shadow .35s var(--ease-smooth);
+    /* reset flex sizing (mode slider akan override via JS inline) */
+    flex: none;
+    min-width: 0;
+    max-width: none;
+  }
 }
 .stats-grid > *:hover,
 .features-grid > *:hover,
@@ -1286,7 +1310,7 @@ img, video, iframe { max-width: 100%; height: auto; }
   overflow-y: visible;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  padding: 12px 4px 32px !important;
+  padding: 12px 80px 32px !important;
   -ms-overflow-style: none;
   scrollbar-width: none;
   touch-action: pan-x;
@@ -1312,44 +1336,37 @@ img, video, iframe { max-width: 100%; height: auto; }
   width: auto !important;
 }
 
-/* ── Tombol navigasi — hanya muncul saat .is-slider ── */
+/* ── Tombol navigasi — tampilkan selalu untuk wrapper slider ── */
 .carousel-btn {
-  display: none; /* tersembunyi by default */
+  display: flex;
   position: absolute;
-  top: calc(50% - 20px); /* kompensasi dots di bawah */
+  top: 50%;
   transform: translateY(-50%);
   width: 44px;
   height: 44px;
   border-radius: 50%;
   border: 1px solid hsl(var(--border-hi));
-  background: hsl(var(--surface) / .94);
-  color: hsl(var(--fg));
-  font-size: 1.1rem;
+  background: hsl(var(--bg2) / .94);
+  color: hsl(var(--teal));
+  font-size: 1.2rem;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 5;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 18px hsl(220 18% 3% / .4);
+  z-index: 20;
+  pointer-events: auto;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 22px hsl(220 18% 3% / .25);
   transition: transform .25s var(--ease-spring), background .2s, opacity .2s;
 }
-/* Tampilkan hanya jika slider aktif */
-.carousel-wrap:has(.is-slider) .carousel-btn {
-  display: flex;
-}
-/* Fallback untuk browser yang tidak support :has() — JS akan toggle class .slider-active */
-.carousel-wrap.slider-active .carousel-btn {
-  display: flex;
-}
 .carousel-btn:hover {
-  transform: translateY(-50%) scale(1.1);
+  transform: translateY(-50%) scale(1.05);
   background: hsl(var(--teal));
   color: hsl(220 18% 7%);
   border-color: transparent;
 }
-.carousel-btn.prev { left: -6px; }
-.carousel-btn.next { right: -6px; }
-.carousel-btn[disabled] { opacity: .3; cursor: default; pointer-events: none; }
+.carousel-btn.prev { left: 8px; }
+.carousel-btn.next { right: 8px; }
+.carousel-btn[disabled] { opacity: .35; cursor: default; pointer-events: none; }
 
 @media (max-width: 640px) {
   .carousel-btn { width: 38px; height: 38px; font-size: .95rem; }
@@ -1374,8 +1391,8 @@ img, video, iframe { max-width: 100%; height: auto; }
 }
 
 .carousel-dot {
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   border-radius: 999px;
   background: hsl(var(--border-hi));
   border: none;
@@ -1385,13 +1402,37 @@ img, video, iframe { max-width: 100%; height: auto; }
   flex-shrink: 0;
 }
 .carousel-dot.active {
-  width: 24px;
+  width: 26px;
   background: hsl(var(--teal));
 }
 .carousel-dot:hover:not(.active) {
   background: hsl(var(--teal-dim));
-  width: 12px;
+  width: 14px;
 }
+/* Slider hint dan kontrol tambahan */
+.slider-note {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+  color: hsl(var(--fg3));
+  font-size: .9rem;
+}
+.slider-note span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.slider-note .hint-chip {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: hsl(var(--surface));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--fg2));
+}
+
 /* Perbaikan kotak agar tidak berantakan */
 .topics-grid {
   overflow: hidden;
