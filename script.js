@@ -26,11 +26,21 @@ function handlePageParam() {
     }
 
     if (page) {
+
         if (tab && page === 'materi') {
             activeMateriTab = tab;
             renderMateri();
         }
+
         navigateTo(page);
+
+        // HAPUS parameter setelah diproses
+        history.replaceState(
+            {},
+            '',
+            window.location.pathname + '#' + page
+        );
+
     } else {
         navigateTo(currentPage);
     }
