@@ -16,14 +16,34 @@ window.carouselScrollById = function(gridId, dir) {
 };
 
 /* tombol kembali - integrated into init */
-/* tombol kembali - integrated into init */
 function handlePageParam() {
     var params = new URLSearchParams(window.location.search);
     var page = params.get("page");
     var tab  = params.get("tab");
+
+    // Fallback ke hash jika tidak ada query param
+    if (!page && window.location.hash) {
+        var hash = window.location.hash.replace('#', '');
+        var validPages = ['beranda','materi','game','more','kontak','creators','referensi'];
+        if (validPages.indexOf(hash) !== -1) {
+            page = hash;
+        }
+    }
+
     if (page) {
-        if (tab && page === 'materi') { activeMateriTab = tab; renderMateri(); }
-        navigateTo(page);
+        // Set tab TERLEBIH DAHULU sebelum navigateTo agar render sudah pakai tab yang benar
+        if (tab) {
+            if (page === 'materi') activeMateriTab = tab;
+            if (page === 'game')   activeGameTab   = tab;
+        }
+        // replaceHistory=true: tidak tambah entry baru, cukup replace state saat ini
+        navigateTo(page, null, true);
+
+    } else {
+        // Default: beranda — render materi & game di background lalu tampilkan beranda
+        renderMateri();
+        renderGame();
+        navigateTo('beranda', null, true);
     }
 }
 
@@ -32,12 +52,18 @@ window.addEventListener('popstate', function(event) {
     if (event.state && event.state.page) {
         var page = event.state.page;
         var tab = event.state.tab;
-        if (tab && page === 'materi') { activeMateriTab = tab; renderMateri(); }
-        navigateTo(page);
+        // Set tab sebelum navigasi agar render langsung benar
+        if (tab) {
+            if (page === 'materi') activeMateriTab = tab;
+            if (page === 'game')   activeGameTab   = tab;
+        }
+        // replaceHistory=true: popstate sudah restore state, tidak perlu pushState baru
+        navigateTo(page, null, true);
     } else {
         handlePageParam();
     }
 });
+
 
 /* ═══ DATA ═══ */
 
@@ -318,8 +344,11 @@ function updateActiveNavLinks(page) {
   });
 }
 
-/* ═══ NAVIGASI — Berpindah halaman ═══ */
-function navigateTo(page, tab) {
+/* ═══ NAVIGASI — Berpindah halaman ═══
+   replaceHistory=true  → gunakan replaceState (tidak tambah entry baru)
+   replaceHistory=false → gunakan pushState (tambah entry, default untuk klik user)
+*/
+function navigateTo(page, tab, replaceHistory) {
   // Jika tab diberikan, update state dulu
   if (tab) {
     if (page === 'materi') activeMateriTab = tab;
@@ -333,7 +362,7 @@ function navigateTo(page, tab) {
   if (el) el.classList.add('active');
   currentPage = page;
 
-  // Update penanda halaman aktif di semua menu
+  // Update penanda halaman aktif di semua menu — langsung, tanpa delay
   updateActiveNavLinks(page);
 
   // Render konten halaman
@@ -354,11 +383,19 @@ function navigateTo(page, tab) {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Update URL dan history state dengan info tab
+  // Update URL dan history state
   var activeTab = (page === 'materi') ? activeMateriTab : (page === 'game' ? activeGameTab : null);
   var newUrl = window.location.pathname + '?page=' + page + (activeTab ? '&tab=' + activeTab : '');
-  if (window.location.pathname + window.location.search !== newUrl) {
-    history.pushState({ page: page, tab: activeTab || null }, '', newUrl);
+  var state = { page: page, tab: activeTab || null };
+
+  if (replaceHistory) {
+    // Saat load awal / popstate: ganti state saat ini, tidak tambah entry baru
+    history.replaceState(state, '', newUrl);
+  } else {
+    // Saat klik user: tambah entry baru ke history
+    if (window.location.pathname + window.location.search !== newUrl) {
+      history.pushState(state, '', newUrl);
+    }
   }
 }
 
@@ -861,11 +898,9 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   renderQuiz();
   renderReferensi();
   renderCreators();
-  // handlePageParam menentukan halaman mana yang aktif & tab mana yang terbuka
-  // berdasarkan URL query string atau hash. Ini harus dipanggil TERAKHIR.
+  // handlePageParam membaca URL, set tab yang benar, lalu memanggil navigateTo
+  // dengan replaceHistory=true sehingga tidak ada history entry ganda
   handlePageParam();
-  // Update nav links setelah halaman aktif ditetapkan
-  updateActiveNavLinks(currentPage);
 })();
 
 /* ═══════════════════════════════════════════
