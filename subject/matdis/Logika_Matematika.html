@@ -528,8 +528,18 @@
   <span class="hero-icon">🧠</span>
   <h1>Logika</h1>
   <p>Materi lengkap Matematika Diskrit — Logika Proposisi, Operator Logika, Tabel Kebenaran, Implikasi, dan Hukum Logika</p>
-  <a href="../../index.html?page=materi" class="btn-back">←  Kembali ke Materi</a>
-</header>
+<!-- Tombol Kembali ke Materi -->
+<a id="btn-back" href="../../index.html?page=materi" class="btn-back">← Kembali ke Materi</a>
+
+<script>
+  // Baca tab asal dari sessionStorage yang disimpan oleh openModuleFile()
+  (function() {
+    var backPage = sessionStorage.getItem('backPage') || 'materi';
+    var tab      = sessionStorage.getItem('materiTab') || 'diskrit';
+    var backUrl  = '../../index.html?page=' + backPage + (backPage === 'materi' ? '&tab=' + tab : '');
+    document.getElementById('btn-back').href = backUrl;
+  })();
+</script></header>
 
 <nav class="toc-bar">
   <a href="#Pengertian">Pengertian Logika Matematika</a>
