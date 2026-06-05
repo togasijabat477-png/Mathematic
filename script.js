@@ -266,7 +266,7 @@ var creators = [
     name: "Toga Sijabat",
     role: "Frontend Developer",
     avatar: "images/Toga.png",
-    bio: "Mengerjakan tampilan website dan animasi.",
+    bio: "Membuat Layout & tampilan website.",
     instagram: "@toga",
     email: "toga@gmail.com",
     avatarClass: "avatar-1"
@@ -278,7 +278,7 @@ var creators = [
     name: "Joshua Nainggolan",
     role: "Content Developer",
     avatar: "images/Joshua.png",
-    bio: "Mengembangkan database dan API.",
+    bio: "Mengembangkan Isi Materi.",
     instagram: "@joshua",
     email: "joshua@gmail.com",
     avatarClass: "avatar-2"
@@ -288,9 +288,9 @@ var creators = [
     initial: "D",
     nim: "43325041",
     name: "Desmonth Heiwa Hutabarat",
-    role: "",
+    role: "Video Collector",
     avatar: "images/desmon.png",
-    bio: "Mendesain interface dan pengalaman pengguna.",
+    bio: "Mengumpulkan semua video pembelajaran.",
     instagram: "@desmonth",
     email: "desmonth@gmail.com",
     avatarClass: "avatar-3"
@@ -300,9 +300,9 @@ var creators = [
     initial: "A",
     nim: "43325006",
     name: "Abin Hendamo Boangmanalu",
-    role: "",
+    role: "Material Creator",
     avatar: "images/abin.png",
-    bio: "Membuat game matematika interaktif.",
+    bio: "Membuat materi Pembelajaran.",
     instagram: "@abin",
     email: "abin@gmail.com",
     avatarClass: "avatar-4"
