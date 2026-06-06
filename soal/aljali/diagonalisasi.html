@@ -5,30 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quiz Diagonalisasi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #1a1a2e;
-    --ink-soft: #2d2d4e;
-    --paper: #f8f6f1;
-    --cream: #fdf9f3;
-    --accent-easy: #2e7d58;
-    --accent-easy-light: #d4edde;
-    --accent-medium: #1a5fa8;
-    --accent-medium-light: #d0e4f7;
-    --accent-hard: #8b1a1a;
-    --accent-hard-light: #fde8e8;
-    --gold: #c9a227;
-    --gold-light: #fdf3d7;
-    --correct: #2e7d58;
-    --wrong: #c0392b;
-    --mono: 'DM Mono', monospace;
-    --serif: 'Source Serif 4', Georgia, serif;
-  }
+:root {
+  --ink: #0f0f1a;
+  --ink-2: #1e1e32;
+  --ink-soft: #3a3a58;
+  --paper: #f5f3ee;
+  --cream: #faf8f3;
+  --warm-white: #fffef9;
+  --accent-easy: #1a7a4a;
+  --accent-easy-bg: #e8f5ee;
+  --accent-med: #1550a0;
+  --accent-med-bg: #e0eaf8;
+  --accent-hard: #8c1818;
+  --accent-hard-bg: #fce8e8;
+  --gold: #c8961e;
+  --gold-2: #e8b832;
+  --gold-bg: #fef6e0;
+  --correct: #1a7a4a;
+  --wrong: #b8281e;
+  --surrender: #7a6015;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 18px;
+  --shadow: 0 4px 32px rgba(0,0,0,0.07);
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  body {
+body {
     font-family: var(--serif);
     background: var(--paper);
     color: var(--ink);
@@ -40,7 +47,7 @@
     overflow-x: hidden;
   }
 
-  body::before {
+body::before {
     content: '';
     position: fixed;
     inset: 0;
@@ -51,711 +58,701 @@
     z-index: 0;
   }
 
-  .wrap { position: relative; z-index: 1; width: 100%; max-width: 680px; }
+#particle-canvas {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+#particle-canvas.visible { opacity: 1; }
 
-  /* ── FLOATING LOGIC PARTICLES ── */
-  #particle-canvas {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 1s ease;
-  }
-  #particle-canvas.visible { opacity: 1; }
+.wrap { position: relative; z-index: 1; width: 100%; max-width: 700px; }
 
-  /* ── TOP NAV ── */
-  .top-nav {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  .back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--serif);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    background: var(--cream);
-    border: 1.5px solid rgba(0,0,0,0.12);
-    padding: 8px 16px;
-    border-radius: 100px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all .2s;
-  }
-  .back-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.screen { display: none; animation: fadeUp .45s ease both; }
+.screen.active { display: block; }
 
-  /* ── SCREEN SHARED ── */
-  .screen { display: none; animation: fadeUp .45s ease both; }
-  .screen.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* ─── TOP NAV ─── */
+.top-nav {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-soft); background: var(--warm-white);
+  border: 1.5px solid rgba(0,0,0,0.12);
+  padding: 8px 18px; border-radius: 100px; cursor: pointer;
+  text-decoration: none; transition: all .22s;
+}
+.back-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-  /* ── START SCREEN ── */
-  .start-header {
-    text-align: center;
-    padding: 36px 0 28px;
-  }
+/* ─── START SCREEN ─── */
+.hero {
+  text-align: center;
+  padding: 40px 0 32px;
+}
 
-  /* Eyebrow animation */
-  .start-eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 12px;
-    opacity: 0;
-    animation: eyebrowIn .6s ease .2s both;
-  }
-  @keyframes eyebrowIn {
-    from { opacity: 0; letter-spacing: .4em; }
-    to   { opacity: 1; letter-spacing: .18em; }
-  }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gold);
+  background: var(--gold-bg); border: 1px solid rgba(200,150,30,.25);
+  padding: 7px 18px; border-radius: 100px; margin-bottom: 24px;
+  animation: badgeIn .7s ease .2s both;
+}
+@keyframes badgeIn {
+  from { opacity: 0; transform: scale(.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
 
-  /* Title char-by-char animation */
-  .start-title {
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 700;
-    line-height: 1.15;
-    color: var(--ink);
-    margin-bottom: 14px;
-  }
-  .start-title em { font-style: italic; color: var(--gold); }
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 7vw, 3.4rem);
+  font-weight: 900; line-height: 1.1;
+  color: var(--ink); margin-bottom: 8px;
+  letter-spacing: -.01em;
+}
+.hero-title .line2 {
+  font-style: italic; color: var(--gold);
+  display: block;
+}
 
-  .title-word {
-    display: inline-block;
-  }
-  .title-char {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(20px) rotate(8deg);
-    animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) both;
-  }
-  @keyframes charIn {
-    to { opacity: 1; transform: translateY(0) rotate(0deg); }
-  }
+.title-char {
+  display: inline-block; opacity: 0;
+  transform: translateY(24px) rotate(6deg);
+  animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+}
+@keyframes charIn { to { opacity:1; transform:translateY(0) rotate(0); } }
 
-  /* Subtitle fade */
-  .start-subtitle {
-    font-size: 15px;
-    color: #5a5a7a;
-    line-height: 1.7;
-    max-width: 480px;
-    margin: 0 auto;
-    opacity: 0;
-    animation: fadeUp .7s ease 1.2s both;
-  }
+.hero-rule {
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 14px auto 20px;
+  animation: ruleGrow .9s ease 1.2s both;
+}
+@keyframes ruleGrow { to { width: 240px; } }
 
-  /* Animated underline on title */
-  .title-underline {
-    display: block;
-    width: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--gold), rgba(201,162,39,0.2));
-    border-radius: 3px;
-    margin: 6px auto 0;
-    animation: underlineGrow .8s ease 1.4s both;
-  }
-  @keyframes underlineGrow {
-    to { width: 200px; }
-  }
+.hero-sub {
+  font-size: 15px; color: var(--ink-soft); line-height: 1.75;
+  max-width: 500px; margin: 0 auto;
+  animation: fadeUp .7s ease 1.4s both;
+}
 
-  .divider {
-    width: 60px; height: 2px;
-    background: linear-gradient(90deg, var(--gold), transparent);
-    margin: 20px auto;
-    border-radius: 2px;
-    opacity: 0;
-    animation: fadeUp .5s ease 1s both;
-  }
+.level-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 32px 0; }
 
-  /* Level cards */
-  .level-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin: 28px 0;
-  }
+.level-card {
+  position: relative; overflow: hidden;
+  border-radius: 22px; border: 2px solid transparent;
+  padding: 26px 26px 26px 30px;
+  cursor: pointer; transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+  display: flex; align-items: center; gap: 22px;
+  text-align: left;
+  opacity: 0;
+}
+.level-card.in { animation: cardIn .55s cubic-bezier(.175,.885,.32,1.275) both; }
+@keyframes cardIn {
+  from { opacity:0; transform:translateX(-28px) scale(.97); }
+  to   { opacity:1; transform:translateX(0) scale(1); }
+}
 
-  .level-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 20px;
-    border: 1.5px solid transparent;
-    padding: 28px 28px 28px 32px;
-    cursor: pointer;
-    transition: all .3s cubic-bezier(.175,.885,.32,1.275);
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    text-align: left;
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  .level-card.card-in {
-    animation: cardSlideIn .5s cubic-bezier(.175,.885,.32,1.275) both;
-  }
-  @keyframes cardSlideIn {
-    from { opacity: 0; transform: translateX(-30px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
+.level-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:5px; border-radius:22px 0 0 22px;
+  transition: width .3s ease;
+}
+.level-card:hover::before { width: 7px; }
 
-  /* Logic symbol watermark on card */
-  .level-card::after {
-    content: attr(data-symbol);
-    position: absolute;
-    right: 20px;
-    bottom: -10px;
-    font-size: 80px;
-    font-family: var(--mono);
-    font-weight: 700;
-    opacity: 0.07;
-    line-height: 1;
-    transition: all .4s ease;
-    pointer-events: none;
-    transform: rotate(-10deg);
-  }
-  .level-card:hover::after {
-    opacity: 0.15;
-    transform: rotate(-5deg) scale(1.1);
-    bottom: -5px;
-  }
+.level-card.easy   { background:var(--accent-easy-bg); border-color:rgba(26,122,74,.2); }
+.level-card.easy::before { background:var(--accent-easy); }
+.level-card.medium { background:var(--accent-med-bg);  border-color:rgba(21,80,160,.2); }
+.level-card.medium::before { background:var(--accent-med); }
+.level-card.hard   { background:var(--accent-hard-bg); border-color:rgba(140,24,24,.2); }
+.level-card.hard::before { background:var(--accent-hard); }
 
-  .level-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
-    border-radius: 20px 0 0 20px;
-  }
-  .level-card:hover { transform: translateX(6px) scale(1.01); }
+.level-card:hover { transform: translateX(7px) scale(1.01); box-shadow: var(--shadow); }
 
-  /* Ripple on click */
-  .level-card .ripple {
-    position: absolute;
-    border-radius: 50%;
-    transform: scale(0);
-    animation: rippleAnim .6s linear;
-    background: rgba(255,255,255,0.35);
-    pointer-events: none;
-  }
-  @keyframes rippleAnim {
-    to { transform: scale(4); opacity: 0; }
-  }
+.level-card .bg-symbol {
+  position:absolute; right:16px; bottom:-14px;
+  font-family:var(--mono); font-size:90px; font-weight:700;
+  opacity:.05; pointer-events:none; line-height:1;
+  transform:rotate(-8deg); transition:all .4s ease;
+}
+.level-card:hover .bg-symbol { opacity:.12; transform:rotate(-4deg) scale(1.08); }
 
-  .level-card.easy   { background: var(--accent-easy-light); border-color: rgba(46,125,88,.25); }
-  .level-card.easy::before { background: var(--accent-easy); }
-  .level-card.medium { background: var(--accent-medium-light); border-color: rgba(26,95,168,.25); }
-  .level-card.medium::before { background: var(--accent-medium); }
-  .level-card.hard   { background: var(--accent-hard-light); border-color: rgba(139,26,26,.25); }
-  .level-card.hard::before { background: var(--accent-hard); }
+.ripple {
+  position:absolute; border-radius:50%; transform:scale(0);
+  animation:rippleAnim .6s linear; background:rgba(255,255,255,.35);
+  pointer-events:none;
+}
+@keyframes rippleAnim { to { transform:scale(5); opacity:0; } }
 
-  .level-icon {
-    font-size: 36px;
-    flex-shrink: 0;
-    line-height: 1;
-    transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
-  }
-  .level-card:hover .level-icon { transform: scale(1.2) rotate(-5deg); }
+.lv-icon { font-size:38px; flex-shrink:0; transition:transform .3s ease; }
+.level-card:hover .lv-icon { transform: scale(1.15) rotate(-6deg); }
 
-  .level-info { flex: 1; }
-  .level-name {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: .01em;
-    margin-bottom: 4px;
-  }
-  .level-card.easy   .level-name { color: var(--accent-easy); }
-  .level-card.medium .level-name { color: var(--accent-medium); }
-  .level-card.hard   .level-name { color: var(--accent-hard); }
+.lv-info { flex:1; }
+.lv-name {
+  font-family: var(--serif); font-size:17px; font-weight:700;
+  margin-bottom:5px;
+}
+.easy   .lv-name { color:var(--accent-easy); }
+.medium .lv-name { color:var(--accent-med); }
+.hard   .lv-name { color:var(--accent-hard); }
 
-  .level-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 8px; }
-  .level-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-  .tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 100px;
-    font-weight: 500;
-  }
-  .easy   .tag { background: rgba(46,125,88,.15); color: var(--accent-easy); }
-  .medium .tag { background: rgba(26,95,168,.15); color: var(--accent-medium); }
-  .hard   .tag { background: rgba(139,26,26,.15); color: var(--accent-hard); }
+.lv-desc { font-size:13px; color:#666; line-height:1.55; margin-bottom:10px; }
 
-  .level-arrow {
-    font-size: 20px; opacity: .4; flex-shrink: 0;
-    transition: all .3s ease;
-  }
-  .level-card:hover .level-arrow { opacity: 1; transform: translateX(6px); }
+.lv-tags { display:flex; gap:7px; flex-wrap:wrap; }
+.tag {
+  font-family:var(--mono); font-size:10px; letter-spacing:.07em;
+  text-transform:uppercase; padding:3px 10px; border-radius:100px; font-weight:500;
+}
+.easy   .tag { background:rgba(26,122,74,.12);  color:var(--accent-easy); }
+.medium .tag { background:rgba(21,80,160,.12);  color:var(--accent-med); }
+.hard   .tag { background:rgba(140,24,24,.12);  color:var(--accent-hard); }
 
-  /* Quote box */
-  .quote-box {
-    margin-top: 8px;
-    background: var(--gold-light);
-    border: 1px solid rgba(201,162,39,.3);
-    border-radius: 14px;
-    padding: 18px 22px;
-    font-style: italic;
-    font-size: 14px;
-    color: #6b4d0a;
-    line-height: 1.65;
-    text-align: center;
-    opacity: 0;
-    animation: fadeUp .6s ease 1.8s both;
-  }
-  .quote-box cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; opacity: .7; font-family: var(--mono); }
+.lv-arrow { font-size:22px; opacity:.35; flex-shrink:0; transition:all .3s; }
+.level-card:hover .lv-arrow { opacity:1; transform:translateX(5px); }
 
-  /* ── QUIZ SCREEN ── */
-  .quiz-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    gap: 12px;
-  }
-  .quiz-level-badge {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    font-weight: 500;
-    padding: 5px 14px;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: all .2s;
-    text-decoration: none;
-  }
-  .quiz-level-badge:hover {
-    opacity: 0.75;
-    transform: scale(0.97);
-  }
-  .badge-easy   { background: var(--accent-easy-light);   color: var(--accent-easy); }
-  .badge-medium { background: var(--accent-medium-light); color: var(--accent-medium); }
-  .badge-hard   { background: var(--accent-hard-light);   color: var(--accent-hard); }
+.quote-box {
+  margin-top: 12px;
+  background:var(--gold-bg); border:1px solid rgba(200,150,30,.3);
+  border-radius:16px; padding:20px 24px;
+  font-style:italic; font-size:14px; color:#6b4d0a;
+  line-height:1.7; text-align:center;
+  animation: fadeUp .6s ease 2s both;
+}
+.quote-box cite {
+  display:block; margin-top:10px; font-style:normal;
+  font-size:11px; opacity:.65; font-family:var(--mono); letter-spacing:.06em;
+}
 
-  /* Back to level button in quiz */
-  .back-to-level-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 100px;
-    border: 1.5px solid rgba(0,0,0,0.12);
-    background: transparent;
-    color: var(--ink-soft);
-    cursor: pointer;
-    transition: all .2s;
-  }
-  .back-to-level-btn:hover {
-    background: var(--ink);
-    color: #fff;
-    border-color: var(--ink);
-  }
-  .back-to-level-btn svg {
-    width: 12px; height: 12px;
-    flex-shrink: 0;
-  }
+/* ─── QUIZ SCREEN ─── */
+.quiz-topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px; gap:10px; flex-wrap:wrap;
+}
 
-  .timer-pill {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 500;
-    background: var(--ink);
-    color: #fff;
-    padding: 6px 16px;
-    border-radius: 100px;
-    letter-spacing: .04em;
-    transition: background .3s;
-  }
-  .timer-pill.urgent { background: var(--wrong); animation: pulse .6s ease infinite alternate; }
-  @keyframes pulse { from { opacity:1 } to { opacity:.7 } }
+.back-to-level-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; font-weight:500;
+  padding:6px 14px; border-radius:100px;
+  border:1.5px solid rgba(0,0,0,.12);
+  background:transparent; color:var(--ink-soft);
+  cursor:pointer; transition:all .2s;
+}
+.back-to-level-btn:hover { background:var(--ink); color:#fff; border-color:var(--ink); }
 
-  .q-counter {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: #888;
-    letter-spacing: .06em;
-  }
+.quiz-level-badge {
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  text-transform:uppercase; font-weight:600;
+  padding:6px 16px; border-radius:100px;
+}
+.badge-easy   { background:var(--accent-easy-bg); color:var(--accent-easy); }
+.badge-medium { background:var(--accent-med-bg);  color:var(--accent-med); }
+.badge-hard   { background:var(--accent-hard-bg); color:var(--accent-hard); }
 
-  /* Progress track */
-  .progress-track {
-    height: 6px;
-    background: rgba(0,0,0,0.08);
-    border-radius: 6px;
-    margin-bottom: 22px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 6px;
-    transition: width .5s cubic-bezier(.4,0,.2,1);
-  }
-  .fill-easy   { background: linear-gradient(90deg, var(--accent-easy), #52b788); }
-  .fill-medium { background: linear-gradient(90deg, var(--accent-medium), #4895ef); }
-  .fill-hard   { background: linear-gradient(90deg, var(--accent-hard), #e76f51); }
+.timer-pill {
+  font-family:var(--mono); font-size:15px; font-weight:500;
+  background:var(--ink); color:#fff;
+  padding:7px 18px; border-radius:100px;
+  letter-spacing:.04em; transition:all .3s;
+  display:flex; align-items:center; gap:6px;
+}
+.timer-pill::before { content:'⏱'; font-size:12px; }
+.timer-pill.urgent {
+  background:var(--wrong);
+  animation:timerPulse .7s ease infinite alternate;
+}
+@keyframes timerPulse { from { opacity:1; transform:scale(1); } to { opacity:.75; transform:scale(1.04); } }
 
-  /* Dot row */
-  .dot-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 20px;
-  }
-  .dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #e0ddd6;
-    transition: all .3s;
-    cursor: pointer;
-  }
-  .dot.answered-correct { background: var(--correct); }
-  .dot.answered-wrong   { background: var(--wrong); }
-  .dot.skipped          { background: var(--gold); }
-  .dot.current          { background: var(--ink); transform: scale(1.3); }
+.q-counter {
+  font-family:var(--mono); font-size:12px; color:#999; letter-spacing:.06em;
+}
 
-  /* Question card */
-  .q-card {
-    background: var(--cream);
-    border: 1.5px solid rgba(0,0,0,0.08);
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-  }
-  .q-number {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 10px;
-  }
-  .q-text {
-    font-size: clamp(15px, 3.5vw, 17px);
-    font-weight: 600;
-    line-height: 1.55;
-    color: var(--ink);
-  }
+.progress-track {
+  height:5px; background:rgba(0,0,0,.07);
+  border-radius:5px; margin-bottom:16px; overflow:hidden;
+}
+.progress-fill {
+  height:100%; border-radius:5px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+.fill-easy   { background:linear-gradient(90deg, var(--accent-easy), #52b788); }
+.fill-medium { background:linear-gradient(90deg, var(--accent-med), #4895ef); }
+.fill-hard   { background:linear-gradient(90deg, var(--accent-hard), #e76f51); }
 
-  /* Options */
-  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+/* Dot navigation */
+.dot-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+.dot {
+  width:11px; height:11px; border-radius:50%;
+  background:#ddd; transition:all .3s; cursor:pointer;
+  border:2px solid transparent;
+}
+.dot:hover { transform:scale(1.3); background:#bbb; }
+.dot.current { background:var(--ink); border-color:var(--ink); transform:scale(1.35); box-shadow:0 0 0 3px rgba(15,15,26,.15); }
+.dot.answered { background:var(--ink-soft); }
+.dot.surrendered { background:var(--surrender); }
 
-  .opt {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 14px 18px;
-    border-radius: 14px;
-    background: #fff;
-    border: 1.5px solid rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: all .22s;
-    font-size: 14.5px;
-    line-height: 1.45;
-    color: var(--ink);
-    text-align: left;
-  }
-  .opt:hover:not(.locked) {
-    border-color: var(--ink);
-    background: #fafafa;
-    transform: translateX(4px);
-  }
-  .opt-letter {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    width: 26px; height: 26px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    background: rgba(0,0,0,0.06);
-    color: var(--ink-soft);
-    letter-spacing: .05em;
-    transition: all .2s;
-    margin-top: 1px;
-  }
-  .opt.selected { border-color: var(--ink); background: var(--ink); color: #fff; }
-  .opt.selected .opt-letter { background: rgba(255,255,255,.2); color: #fff; }
+/* Question card */
+.q-card {
+  background:var(--warm-white);
+  border:1.5px solid rgba(0,0,0,.07);
+  border-radius:22px;
+  padding:30px;
+  margin-bottom:16px;
+  box-shadow:0 2px 20px rgba(0,0,0,.04);
+  transition:box-shadow .2s;
+}
+.q-card:hover { box-shadow:0 6px 32px rgba(0,0,0,.07); }
 
-  .opt.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
-  .opt.correct .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
-  .opt.wrong   { background: var(--wrong);   border-color: var(--wrong);   color: #fff; }
-  .opt.wrong   .opt-letter { background: rgba(255,255,255,.25); color: #fff; }
+.q-num {
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--gold);
+  margin-bottom:12px; display:flex; align-items:center; gap:8px;
+}
+.q-num::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg, rgba(200,150,30,.3), transparent);
+}
 
-  /* Explanation */
-  .explanation-box {
-    display: none;
-    background: var(--gold-light);
-    border: 1.5px solid rgba(201,162,39,.35);
-    border-radius: 16px;
-    padding: 20px 22px;
-    margin-bottom: 16px;
-    animation: slideIn .3s ease;
-  }
-  .explanation-box.show { display: block; }
-  @keyframes slideIn { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
+.q-text { font-size:clamp(15px,3.5vw,17px); font-weight:600; line-height:1.6; color:var(--ink); }
 
-  .exp-header {
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--mono); font-size: 10px; letter-spacing: .15em;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 600;
-  }
-  .exp-title { font-size: 13px; font-weight: 700; color: #6b4d0a; margin-bottom: 6px; }
-  .exp-body { font-size: 14px; color: #7a5515; line-height: 1.65; }
+/* Options */
+.opts-list { display:flex; flex-direction:column; gap:9px; margin-bottom:20px; }
 
-  /* Nav buttons */
-  .nav-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  .nav-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    font-family: var(--serif);
-    font-size: 14px;
-    font-weight: 600;
-    padding: 13px 20px;
-    border-radius: 12px;
-    border: 1.5px solid transparent;
-    cursor: pointer;
-    transition: all .22s;
-    letter-spacing: .01em;
-    white-space: nowrap;
-  }
-  .btn-prev {
-    background: #fff;
-    border-color: rgba(0,0,0,0.15);
-    color: var(--ink);
-    flex: 0 0 auto;
-  }
-  .btn-prev:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.opt {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:14px 18px; border-radius:14px;
+  background:#fff; border:1.5px solid rgba(0,0,0,.09);
+  cursor:pointer; transition:all .22s;
+  font-size:14px; line-height:1.5; color:var(--ink);
+  text-align:left; position:relative; overflow:hidden;
+}
+.opt::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.5), transparent);
+  opacity:0; transition:opacity .2s;
+}
+.opt:hover:not(.locked)::before { opacity:1; }
+.opt:hover:not(.locked) {
+  border-color:var(--ink); background:#fafafa;
+  transform:translateX(5px);
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+}
 
-  .btn-skip {
-    background: var(--gold-light);
-    border-color: rgba(201,162,39,.4);
-    color: #8b5e00;
-    flex: 1;
-  }
-  .btn-skip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+.opt-letter {
+  font-family:var(--mono); font-size:12px; font-weight:500;
+  width:28px; height:28px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; background:rgba(0,0,0,.06);
+  color:var(--ink-soft); letter-spacing:.05em;
+  transition:all .2s; margin-top:0;
+}
 
-  .btn-next {
-    background: var(--ink);
-    color: #fff;
-    border-color: var(--ink);
-    flex: 2;
-  }
-  .btn-next:hover { background: var(--ink-soft); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+/* After submit states */
+.opt.correct {
+  background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
+  color:var(--correct); animation:correctPop .4s cubic-bezier(.175,.885,.32,1.275);
+}
+.opt.correct .opt-letter { background:var(--correct); color:#fff; }
+.opt.wrong {
+  background:rgba(184,40,30,.1); border-color:rgba(184,40,30,.35);
+  color:var(--wrong); animation:wrongShake .4s ease;
+}
+.opt.wrong .opt-letter { background:var(--wrong); color:#fff; }
+.opt.my-answer-wrong {
+  background:rgba(184,40,30,.08); border-color:rgba(184,40,30,.25);
+  color:var(--wrong); opacity:.75;
+}
 
-  .btn-finish {
-    background: var(--gold);
-    color: #fff;
-    border-color: var(--gold);
-    flex: 2;
-  }
-  .btn-finish:hover { background: #a8821e; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,162,39,.4); }
+@keyframes correctPop {
+  0%{transform:translateX(0) scale(1)}
+  40%{transform:translateX(4px) scale(1.02)}
+  100%{transform:translateX(0) scale(1)}
+}
+@keyframes wrongShake {
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-7px)}
+  75%{transform:translateX(7px)}
+}
 
-  /* ── RESULT SCREEN ── */
-  .result-container {
-    text-align: center;
-    padding: 16px 0;
-  }
-  .result-eyebrow {
-    font-family: var(--mono);
-    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 16px;
-  }
-  .result-circle {  
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    margin: 0 auto 24px;
-    position: relative;
-  }
-  .result-circle svg {
-    position: absolute; inset: 0; transform: rotate(-90deg);
-  }
-  .result-score-num {
-    font-size: 54px; font-weight: 700; line-height: 1;
-    position: relative; z-index: 1;
-  }
-  .result-score-den {
-    font-family: var(--mono); font-size: 14px; color: #888;
-    position: relative; z-index: 1;
-  }
+/* Navigation buttons */
+.nav-row { display:flex; gap:10px; align-items:center; margin-bottom:16px; }
+.nav-btn {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--sans); font-size:14px; font-weight:600;
+  padding:13px 20px; border-radius:13px;
+  border:1.5px solid transparent; cursor:pointer;
+  transition:all .22s; letter-spacing:.01em;
+  white-space:nowrap;
+}
+.btn-prev {
+  background:#fff; border-color:rgba(0,0,0,.14);
+  color:var(--ink); flex:0 0 46px; padding:13px;
+}
+.btn-prev:hover { background:var(--ink); color:#fff; border-color:var(--ink); }
 
-  .result-grade {
-    font-size: clamp(1.6rem, 5vw, 2.2rem);
-    font-weight: 700; margin-bottom: 8px;
-  }
-  .result-message { font-size: 15px; color: #666; line-height: 1.65; margin-bottom: 28px; max-width: 400px; margin-left: auto; margin-right: auto; }
+.btn-surrender {
+  background:rgba(122,96,21,.08);
+  border-color:rgba(122,96,21,.25);
+  color:var(--surrender); flex:1;
+  font-weight:600;
+}
+.btn-surrender:hover {
+  background:rgba(122,96,21,.15);
+  border-color:rgba(122,96,21,.45);
+  box-shadow:0 3px 12px rgba(122,96,21,.15);
+}
+.btn-surrender:disabled {
+  opacity:.4; cursor:not-allowed;
+  pointer-events:none;
+}
 
-  .result-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-  .stat-box {
-    background: var(--cream);
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 14px;
-    padding: 16px 10px;
-  }
-  .stat-num { font-size: 26px; font-weight: 700; }
-  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #888; margin-top: 4px; }
+.btn-next {
+  background:var(--ink); color:#fff;
+  border-color:var(--ink); flex:2;
+}
+.btn-next:hover {
+  background:var(--ink-2);
+  transform:translateY(-2px);
+  box-shadow:0 6px 22px rgba(0,0,0,.2);
+}
 
-  .result-actions { display: flex; flex-direction: column; gap: 10px; }
-  .btn-action {
-    font-family: var(--serif);
-    font-size: 15px; font-weight: 600;
-    padding: 15px;
-    border-radius: 14px;
-    border: 1.5px solid transparent;
-    cursor: pointer;
-    transition: all .22s;
-    letter-spacing: .01em;
-  }
-  .btn-retry { background: var(--ink); color: #fff; }
-  .btn-retry:hover { background: var(--ink-soft); transform: translateY(-2px); }
-  .btn-home  { background: #fff; border-color: rgba(0,0,0,.15); color: var(--ink); }
-  .btn-home:hover { background: var(--ink); color: #fff; }
+/* Submit button — only at question screen BOTTOM after nav */
+.submit-row { margin-top: 6px; }
+.btn-submit {
+  width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+  font-family:var(--serif); font-size:16px; font-weight:700;
+  padding:17px; border-radius:16px; border:none; cursor:pointer;
+  transition:all .25s; letter-spacing:.02em;
+  background:linear-gradient(135deg, #c8961e, #a87318);
+  color:#fff; box-shadow:0 4px 22px rgba(200,150,30,.35);
+  position:relative; overflow:hidden;
+}
+.btn-submit::after {
+  content:''; position:absolute;
+  top:-50%; left:-60%;
+  width:50%; height:200%;
+  background:rgba(255,255,255,.15);
+  transform:skewX(-15deg);
+  transition:left .4s ease;
+}
+.btn-submit:hover::after { left:130%; }
+.btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(200,150,30,.45); }
 
-  /* Review panel */
-  .review-toggle {
-    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
-    text-transform: uppercase; color: #888;
-    background: none; border: none; cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
-    margin: 0 auto 16px;
-    transition: color .2s;
-  }
-  .review-toggle:hover { color: var(--ink); }
+.submit-status {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--mono); font-size:11px; color:#aaa;
+  letter-spacing:.06em; margin-top:10px; text-align:center;
+}
 
-  .review-panel { display: none; margin-bottom: 16px; }
-  .review-panel.open { display: block; }
+/* Surrendered banner */
+.surrendered-banner {
+  background:rgba(122,96,21,.08); border:1.5px solid rgba(122,96,21,.25);
+  border-radius:12px; padding:12px 18px;
+  display:flex; align-items:center; gap:10px;
+  font-size:13px; color:var(--surrender);
+  font-weight:500; margin-bottom:12px;
+  animation:fadeUp .3s ease;
+}
 
-  .review-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    margin-bottom: 6px;
-    font-size: 13px;
-    background: var(--cream);
-    border: 1px solid rgba(0,0,0,.07);
-  }
-  .ri-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .ri-correct .ri-dot { background: var(--correct); }
-  .ri-wrong   .ri-dot { background: var(--wrong); }
-  .ri-skipped .ri-dot { background: var(--gold); }
-  .ri-q { flex: 1; color: #444; line-height: 1.4; }
-  .ri-a { font-family: var(--mono); font-size: 11px; color: #888; }
+/* ─── RESULT SCREEN ─── */
+.result-wrap { padding:8px 0; }
+.result-eyebrow {
+  font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--gold);
+  text-align:center; margin-bottom:20px;
+}
 
-  @media (max-width: 420px) {
-    .level-card { padding: 20px 18px; gap: 16px; }
-    .q-card { padding: 20px; }
-    .nav-row { flex-wrap: wrap; }
-    .btn-prev { flex: 0 0 46px; padding: 13px; }
-    .result-stats { grid-template-columns: 1fr 1fr; }
-  }
+.score-ring-wrap {
+  display:flex; justify-content:center; margin-bottom:28px;
+}
+.score-ring {
+  width:170px; height:170px; border-radius:50%;
+  position:relative; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+}
+.score-ring svg { position:absolute; inset:0; transform:rotate(-90deg); }
+.score-num {
+  font-family:var(--serif); font-size:58px; font-weight:900;
+  line-height:1; position:relative; z-index:1;
+}
+.score-den {
+  font-family:var(--mono); font-size:14px; color:#aaa;
+  position:relative; z-index:1; margin-top:2px;
+}
+
+.result-grade {
+  font-family:var(--serif); font-size:clamp(1.5rem,5vw,2rem);
+  font-weight:700; text-align:center; margin-bottom:10px;
+}
+.result-msg {
+  font-size:15px; color:#777; text-align:center; line-height:1.7;
+  margin-bottom:28px; max-width:440px; margin-left:auto; margin-right:auto;
+}
+
+.result-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px;
+}
+.stat-box {
+  background:var(--warm-white); border:1.5px solid rgba(0,0,0,.07);
+  border-radius:16px; padding:18px 12px; text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+}
+.stat-num { font-family:var(--serif); font-size:28px; font-weight:900; }
+.stat-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:#aaa; margin-top:6px;
+}
+
+/* Result actions */
+.result-actions { display:flex; flex-direction:column; gap:10px; margin-bottom:36px; }
+.btn-action {
+  font-family:var(--sans); font-size:15px; font-weight:600;
+  padding:16px; border-radius:14px; border:1.5px solid transparent;
+  cursor:pointer; transition:all .22s; letter-spacing:.01em;
+}
+.btn-retry { background:var(--ink); color:#fff; border-color:var(--ink); }
+.btn-retry:hover { background:var(--ink-2); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.2); }
+.btn-home  { background:#fff; border-color:rgba(0,0,0,.14); color:var(--ink); }
+.btn-home:hover { background:var(--ink); color:#fff; }
+
+/* ─── REVIEW SECTION ─── */
+.review-section { text-align:left; }
+.review-header-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px; padding-bottom:16px;
+  border-bottom:2px solid rgba(0,0,0,.07);
+}
+.review-title { font-family:var(--serif); font-size:20px; font-weight:700; }
+.review-subtitle { font-family:var(--mono); font-size:11px; color:#aaa; letter-spacing:.07em; margin-top:4px; }
+
+.review-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.filter-btn {
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase; padding:6px 16px;
+  border-radius:100px; border:1.5px solid rgba(0,0,0,.12);
+  background:#fff; color:#999; cursor:pointer; transition:all .2s;
+}
+.filter-btn.active { background:var(--ink); color:#fff; border-color:var(--ink); }
+.filter-btn:hover:not(.active) { border-color:var(--ink); color:var(--ink); }
+
+.review-card {
+  background:var(--warm-white); border:1.5px solid rgba(0,0,0,.07);
+  border-radius:20px; padding:22px 24px;
+  margin-bottom:14px; transition:box-shadow .2s;
+}
+.review-card:hover { box-shadow:0 4px 22px rgba(0,0,0,.07); }
+
+.rc-top { display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; }
+.rc-icon {
+  width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0; font-weight:700;
+}
+.rc-icon.correct   { background:rgba(26,122,74,.12); color:var(--correct); }
+.rc-icon.wrong     { background:rgba(184,40,30,.1);  color:var(--wrong); }
+.rc-icon.surrendered { background:rgba(122,96,21,.1); color:var(--surrender); }
+
+.rc-qnum { font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+.rc-qtext { font-size:14px; font-weight:600; line-height:1.55; color:var(--ink); }
+
+.rc-answers { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.rc-row {
+  display:flex; align-items:center; gap:10px;
+  font-size:13px; padding:9px 14px; border-radius:10px;
+}
+.rc-row.row-correct { background:rgba(26,122,74,.08); border:1px solid rgba(26,122,74,.2); color:#1a5e38; }
+.rc-row.row-wrong   { background:rgba(184,40,30,.08); border:1px solid rgba(184,40,30,.2); color:#9e1c14; text-decoration:line-through; opacity:.75; }
+.rc-row.row-surr    { background:rgba(122,96,21,.07); border:1px solid rgba(122,96,21,.2); color:var(--surrender); }
+
+.rc-label {
+  font-family:var(--mono); font-size:9px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase;
+  padding:2px 8px; border-radius:6px; flex-shrink:0;
+}
+.lbl-correct { background:var(--correct); color:#fff; }
+.lbl-wrong   { background:var(--wrong); color:#fff; }
+.lbl-surr    { background:var(--surrender); color:#fff; }
+
+.rc-exp {
+  background:var(--gold-bg); border:1.5px solid rgba(200,150,30,.25);
+  border-radius:14px; padding:16px 18px;
+}
+.rc-exp-head {
+  font-family:var(--mono); font-size:10px; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--gold); font-weight:600;
+  margin-bottom:7px; display:flex; align-items:center; gap:6px;
+}
+.rc-exp-title { font-size:13px; font-weight:700; color:#6b4d0a; margin-bottom:5px; }
+.rc-exp-body  { font-size:13px; color:#7a5515; line-height:1.65; }
+
+/* ─── MODALS ─── */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.55); z-index:2000;
+  align-items:center; justify-content:center;
+  padding:20px; backdrop-filter:blur(6px);
+}
+.modal-overlay.open { display:flex; }
+
+.modal-box {
+  background:var(--warm-white); border-radius:26px;
+  padding:36px 30px; max-width:400px; width:100%;
+  text-align:center; animation:modalIn .35s cubic-bezier(.175,.885,.32,1.275);
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+}
+@keyframes modalIn {
+  from { opacity:0; transform:scale(.9) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+.modal-emoji { font-size:52px; margin-bottom:16px; }
+.modal-title { font-family:var(--serif); font-size:22px; font-weight:700; margin-bottom:10px; }
+.modal-desc  { font-size:14px; color:#666; line-height:1.7; margin-bottom:8px; }
+.modal-warn  { font-family:var(--mono); font-size:11px; color:#bbb; letter-spacing:.06em; margin-bottom:26px; }
+.modal-btns  { display:flex; flex-direction:column; gap:10px; }
+.modal-btn-confirm {
+  font-family:var(--sans); font-size:15px; font-weight:700;
+  padding:15px; border-radius:13px; border:none; cursor:pointer; transition:all .22s;
+}
+.modal-btn-cancel {
+  font-family:var(--sans); font-size:14px; font-weight:600;
+  padding:13px; border-radius:13px;
+  border:1.5px solid rgba(0,0,0,.14);
+  background:#fff; color:var(--ink); cursor:pointer; transition:all .22s;
+}
+.modal-btn-cancel:hover { background:var(--ink); color:#fff; }
+
+/* Surrender modal specifics */
+.surrender-confirm {
+  background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
+}
+.surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
+
+/* Submit modal specifics */
+.submit-confirm {
+  background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
+}
+.submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
+
+/* ─── STREAK BADGE (new feature) ─── */
+.streak-bar {
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  margin-bottom:14px;
+}
+.streak-dot {
+  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
+  transition:all .4s ease;
+}
+.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
+
+/* ─── TOAST ─── */
+.toast {
+  position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:var(--ink); color:#fff;
+  font-family:var(--sans); font-size:13px; font-weight:500;
+  padding:12px 24px; border-radius:100px;
+  box-shadow:0 8px 28px rgba(0,0,0,.25);
+  z-index:3000; transition:transform .35s cubic-bezier(.175,.885,.32,1.275);
+  white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+@media (max-width: 430px) {
+  .level-card { padding:20px 18px; gap:16px; }
+  .q-card { padding:20px; }
+  .nav-row { flex-wrap:wrap; }
+  .btn-prev { flex:0 0 44px; padding:13px 10px; }
+  .result-stats { grid-template-columns:1fr 1fr; }
+  .review-card { padding:16px 18px; }
+  .modal-box { padding:28px 20px; }
+}
 </style>
 </head>
 <body>
 
-<!-- FLOATING LOGIC PARTICLES CANVAS -->
 <canvas id="particle-canvas"></canvas>
 
 <div class="wrap">
-  <!-- TOP NAV -->
   <div class="top-nav">
     <a href="../../index.html?page=materi&tab=aljabar" class="back-btn">← Kembali ke Materi</a>
   </div>
 
-  <!-- ══════════════════ START SCREEN ══════════════════ -->
+  <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
-    <div class="start-header">
-      <div class="start-eyebrow">✦ Matematika · Diagonalisasi ✦</div>
-      <h1 class="start-title" id="mainTitle">
-        <span class="title-word" id="word1"></span><br>
-        <em><span class="title-word" id="word2"></span></em>
-        <span class="title-underline"></span>
+    <div class="hero">
+      <div class="hero-badge">✦ Matematika &middot; Diagonalisasi ✦</div>
+      <h1 class="hero-title">
+        <span id="w1"></span>
+        <span class="line2"><span id="w2"></span></span>
+        <div class="hero-rule"></div>
       </h1>
-      <div class="divider"></div>
-      <p class="start-subtitle">Asah pemahamanmu tentang <strong>Diagonalisasi Matriks (Diag)</strong> melalui kumpulan soal yang tersusun secara bertahap. Pilih tingkat kesulitan sesuai kemampuanmu.</p>
+      <p class="hero-sub">Asah pemahamanmu tentang <strong>Diagonalisasi Matriks</strong> melalui kumpulan soal yang tersusun bertahap. Pilih tingkat kesulitan dan buktikan kemampuanmu.</p>
     </div>
 
     <div class="level-grid">
-      <div class="level-card easy" data-symbol="Δ" onclick="startQuizWithRipple(event,'easy')">
-        <div class="level-icon">🛡️</div>
-        <div class="level-info">
-          <div class="level-name">Easy — Pengenalan Diagonalisasi</div>
-          <div class="level-desc">Kerjakan soal dasar tentang matriks diagonal, nilai eigen, dan langkah awal proses diagonalisasi.</div>
-          <div class="level-tags">
+      <div class="level-card easy" onclick="startQuizRipple(event,'easy')">
+        <div class="bg-symbol">Δ</div>
+        <div class="lv-icon">🛡️</div>
+        <div class="lv-info">
+          <div class="lv-name">Easy — Pengenalan Dasar</div>
+          <div class="lv-desc">Soal dasar tentang matriks diagonal, nilai eigen, dan langkah awal diagonalisasi.</div>
+          <div class="lv-tags">
             <span class="tag">10 Soal</span>
             <span class="tag">30 Menit</span>
             <span class="tag">5 Pilihan</span>
           </div>
         </div>
-        <div class="level-arrow">›</div>
+        <div class="lv-arrow">›</div>
       </div>
 
-      <div class="level-card medium" data-symbol="⌬" onclick="startQuizWithRipple(event,'medium')">
-        <div class="level-icon">🌟</div>
-        <div class="level-info">
-          <div class="level-name">Medium — Diagonalisasi Matriks</div>
-          <div class="level-desc">Latihan menentukan nilai eigen, vektor eigen, serta proses diagonalisasi matriks berordo 2×2 dan 3×3.</div>
-          <div class="level-tags">
+      <div class="level-card medium" onclick="startQuizRipple(event,'medium')">
+        <div class="bg-symbol">⌬</div>
+        <div class="lv-icon">🌟</div>
+        <div class="lv-info">
+          <div class="lv-name">Medium — Diagonalisasi Matriks</div>
+          <div class="lv-desc">Latihan nilai eigen, vektor eigen, serta proses diagonalisasi matriks 2×2 dan 3×3.</div>
+          <div class="lv-tags">
             <span class="tag">20 Soal</span>
             <span class="tag">40 Menit</span>
             <span class="tag">5 Pilihan</span>
           </div>
         </div>
-        <div class="level-arrow">›</div>
+        <div class="lv-arrow">›</div>
       </div>
 
-      <div class="level-card hard" data-symbol="Ω" onclick="startQuizWithRipple(event,'hard')">
-        <div class="level-icon">💡</div>
-        <div class="level-info">
-          <div class="level-name">Hard — Mahir Diagonalisasi</div>
-          <div class="level-desc">Tantangan lanjutan menentukan matriks diagonal, matriks invers eigen, serta analisis diagonalisasi tingkat kompleks.</div>
-          <div class="level-tags">
+      <div class="level-card hard" onclick="startQuizRipple(event,'hard')">
+        <div class="bg-symbol">Ω</div>
+        <div class="lv-icon">💡</div>
+        <div class="lv-info">
+          <div class="lv-name">Hard — Mahir Diagonalisasi</div>
+          <div class="lv-desc">Tantangan lanjutan: matriks diagonal, invers eigen, analisis diagonalisasi kompleks.</div>
+          <div class="lv-tags">
             <span class="tag">30 Soal</span>
             <span class="tag">50 Menit</span>
             <span class="tag">5 Pilihan</span>
           </div>
         </div>
-        <div class="level-arrow">›</div>
+        <div class="lv-arrow">›</div>
       </div>
     </div>
 
     <div class="quote-box">
       "Diagonalisasi bukan sekadar mengubah bentuk matriks, tetapi memahami struktur tersembunyi di balik transformasi linear."
-      <cite>— Gilbert Strang</cite>
+      <cite>— Gilbert Strang, Introduction to Linear Algebra</cite>
     </div>
   </div>
 
-  <!-- ══════════════════ QUIZ SCREEN ══════════════════ -->
+  <!-- ══════ QUIZ SCREEN ══════ -->
   <div id="quizScreen" class="screen">
     <div class="quiz-topbar">
-      <button class="back-to-level-btn" onclick="backToLevelSelect()" title="Kembali ke pilihan level">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <button class="back-to-level-btn" onclick="backToLevelSelect()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M8 2L4 6L8 10"/>
         </svg>
         Level
@@ -769,46 +766,56 @@
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
 
+    <!-- Streak bar -->
+    <div class="streak-bar" id="streakBar"></div>
+
     <div class="dot-row" id="dotRow"></div>
 
     <div class="q-card">
-      <div class="q-number" id="qNumber">SOAL 1</div>
+      <div class="q-num" id="qNum">SOAL 1 DARI 10</div>
       <div class="q-text" id="qText"></div>
     </div>
 
-    <div class="options-list" id="optsList"></div>
-
-    <div class="explanation-box" id="expBox">
-      <div class="exp-header">💡 Pembahasan</div>
-      <div class="exp-title" id="expTitle"></div>
-      <div class="exp-body" id="expBody"></div>
+    <!-- Surrendered banner -->
+    <div class="surrendered-banner" id="surrenderBanner" style="display:none;">
+      🏳️ Kamu menyerah pada soal ini — jawaban yang benar akan terungkap setelah submit.
     </div>
 
+    <div class="opts-list" id="optsList"></div>
+
     <div class="nav-row">
-      <button class="nav-btn btn-prev" onclick="goToPrev()" title="Soal Sebelumnya">‹</button>
-      <button class="nav-btn btn-skip" id="skipBtn" onclick="skipQuestion()">Lewati ›</button>
-      <button class="nav-btn btn-next" id="nextBtn" onclick="goToNext()">Berikutnya →</button>
+      <button class="nav-btn btn-prev" onclick="goPrev()" title="Soal sebelumnya">‹</button>
+      <button class="nav-btn btn-surrender" id="surrenderBtn" onclick="confirmSurrender()">🏳️ Menyerah</button>
+      <button class="nav-btn btn-next" id="nextBtn" onclick="goNext()">Berikutnya →</button>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn-submit" onclick="confirmSubmit()">✦ Submit &amp; Lihat Hasil</button>
+      <div class="submit-status" id="submitStatus">0 dari 10 dijawab</div>
     </div>
   </div>
 
-  <!-- ══════════════════ RESULT SCREEN ══════════════════ -->
+  <!-- ══════ RESULT SCREEN ══════ -->
   <div id="resultScreen" class="screen">
-    <div class="result-container">
+    <div class="result-wrap">
       <div class="result-eyebrow">✦ Hasil Quiz ✦</div>
 
-      <div class="result-circle" id="resultCircle">
-        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="80" cy="80" r="70" fill="none" stroke="#e8e5de" stroke-width="8"/>
-          <circle id="arcCircle" cx="80" cy="80" r="70" fill="none" stroke="#c9a227" stroke-width="8"
-                  stroke-dasharray="439.82" stroke-dashoffset="439.82"
-                  stroke-linecap="round" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
-        </svg>
-        <div class="result-score-num" id="rScoreNum">0</div>
-        <div class="result-score-den" id="rScoreDen">/ 10</div>
+      <div class="score-ring-wrap">
+        <div class="score-ring" id="scoreRing">
+          <svg viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="85" cy="85" r="74" fill="none" stroke="#e8e5de" stroke-width="9"/>
+            <circle id="arcCircle" cx="85" cy="85" r="74" fill="none" stroke="#c8961e" stroke-width="9"
+                    stroke-dasharray="465" stroke-dashoffset="465"
+                    stroke-linecap="round"
+                    style="transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)"/>
+          </svg>
+          <div class="score-num" id="rNum">0</div>
+          <div class="score-den" id="rDen">/ 10</div>
+        </div>
       </div>
 
       <div class="result-grade" id="rGrade"></div>
-      <p class="result-message" id="rMessage"></p>
+      <p class="result-msg" id="rMsg"></p>
 
       <div class="result-stats">
         <div class="stat-box">
@@ -820,1349 +827,273 @@
           <div class="stat-label">Salah</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num" id="rSkipped" style="color:var(--gold)">0</div>
-          <div class="stat-label">Dilewati</div>
+          <div class="stat-num" id="rSurr" style="color:var(--surrender)">0</div>
+          <div class="stat-label">Menyerah</div>
         </div>
       </div>
 
-      <button class="review-toggle" onclick="toggleReview()" id="reviewToggle">
-        <span>▾</span> Lihat Review Soal
-      </button>
-      <div class="review-panel" id="reviewPanel"></div>
-
       <div class="result-actions">
-        <button class="btn-action btn-retry" id="retryBtn" onclick="retryLevel()">Ulangi Level Ini</button>
+        <button class="btn-action btn-retry" onclick="retryLevel()">🔄 Ulangi Level Ini</button>
         <button class="btn-action btn-home" onclick="goHome()">← Kembali ke Pilihan Level</button>
+      </div>
+
+      <!-- Full review -->
+      <div class="review-section" id="reviewSection">
+        <div class="review-header-row">
+          <div>
+            <div class="review-title">📋 Pembahasan Lengkap</div>
+            <div class="review-subtitle">Pelajari setiap soal beserta pembahasannya</div>
+          </div>
+        </div>
+        <div class="review-filters">
+          <button class="filter-btn active" onclick="filterReview('all',this)">Semua</button>
+          <button class="filter-btn" onclick="filterReview('correct',this)">✓ Benar</button>
+          <button class="filter-btn" onclick="filterReview('wrong',this)">✗ Salah</button>
+          <button class="filter-btn" onclick="filterReview('surrendered',this)">🏳 Menyerah</button>
+        </div>
+        <div id="reviewList"></div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- SURRENDER MODAL -->
+<div class="modal-overlay" id="surrenderModal">
+  <div class="modal-box">
+    <div class="modal-emoji">🏳️</div>
+    <div class="modal-title">Yakin Menyerah?</div>
+    <div class="modal-desc">Kamu akan menyerah pada soal ini. Soal tidak dapat dijawab lagi, dan status menyerah akan dicatat.</div>
+    <div class="modal-warn">Pembahasan soal ini akan muncul setelah kamu submit quiz.</div>
+    <div class="modal-btns">
+      <button class="modal-btn-confirm surrender-confirm" onclick="doSurrender()">Ya, Saya Menyerah</button>
+      <button class="modal-btn-cancel" onclick="closeModal('surrenderModal')">Tetap Coba Jawab</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="submitModal">
+  <div class="modal-box">
+    <div class="modal-emoji">📝</div>
+    <div class="modal-title">Submit Quiz?</div>
+    <div class="modal-desc" id="submitModalDesc"></div>
+    <div class="modal-warn">Setelah submit, kamu tidak dapat mengubah jawaban. Pembahasan lengkap akan ditampilkan.</div>
+    <div class="modal-btns">
+      <button class="modal-btn-confirm submit-confirm" onclick="doSubmit()">✦ Ya, Submit Sekarang</button>
+      <button class="modal-btn-cancel" onclick="closeModal('submitModal')">Lanjut Mengerjakan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
-// ═══════════════════════════════════════════════════
-//  TITLE ANIMATION — char by char
-// ═══════════════════════════════════════════════════
-function animateTitle() {
-  const line1 = 'Quiz';
-  const line2 = 'Diagonalisasi';
-
-  function buildWord(el, text, baseDelay) {
-    el.innerHTML = '';
-    [...text].forEach((ch, i) => {
-      const span = document.createElement('span');
-      span.className = 'title-char';
-      span.textContent = ch === ' ' ? '\u00A0' : ch;
-      span.style.animationDelay = (baseDelay + i * 0.05) + 's';
-      el.appendChild(span);
-    });
-  }
-
-  buildWord(document.getElementById('word1'), line1, 0.3);
-  buildWord(document.getElementById('word2'), line2, 0.7);
-}
-
-// ═══════════════════════════════════════════════════
-//  LEVEL CARD ENTRANCE ANIMATION
-// ═══════════════════════════════════════════════════
-function animateLevelCards() {
-  const cards = document.querySelectorAll('.level-card');
-  cards.forEach((card, i) => {
-    card.style.animationDelay = (1.5 + i * 0.18) + 's';
-    card.classList.add('card-in');
-  });
-}
-
-// ═══════════════════════════════════════════════════
-//  FLOATING PARTICLES — logic symbols
-// ═══════════════════════════════════════════════════
-(function() {
-  const canvas = document.getElementById('particle-canvas');
-  const ctx = canvas.getContext('2d');
-  const SYMBOLS = ['λ', 'Λ', 'Δ', '◇', '◈', '⊗', 'Φ', 'Ψ', 'Ω', '⌬'];
-  let particles = [];
-  let W, H;
-
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  function makeParticle() {
-    return {
-      x: Math.random() * W,
-      y: H + 30,
-      symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-      size: 12 + Math.random() * 16,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: -(0.3 + Math.random() * 0.5),
-      opacity: 0,
-      maxOpacity: 0.06 + Math.random() * 0.08,
-      life: 0,
-      maxLife: 180 + Math.random() * 120,
-      rotation: Math.random() * Math.PI * 2,
-      rotV: (Math.random() - 0.5) * 0.02
-    };
-  }
-
-  for (let i = 0; i < 28; i++) {
-    const p = makeParticle();
-    p.y = Math.random() * H;
-    p.life = Math.random() * p.maxLife;
-    particles.push(p);
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    if (Math.random() < 0.04 && particles.length < 40) {
-      particles.push(makeParticle());
-    }
-
-    particles = particles.filter(p => p.y > -40);
-
-    particles.forEach(p => {
-      p.life++;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rotation += p.rotV;
-
-      const fadeLen = 30;
-      if (p.life < fadeLen) p.opacity = p.maxOpacity * (p.life / fadeLen);
-      else if (p.life > p.maxLife - fadeLen) p.opacity = p.maxOpacity * ((p.maxLife - p.life) / fadeLen);
-      else p.opacity = p.maxOpacity;
-
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation);
-      ctx.font = `${p.size}px 'DM Mono', monospace`;
-      ctx.fillStyle = `rgba(26,26,46,${p.opacity})`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(p.symbol, 0, 0);
-      ctx.restore();
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  setTimeout(() => {
-    canvas.classList.add('visible');
-    draw();
-  }, 400);
-})();
-
-// ═══════════════════════════════════════════════════
-//  RIPPLE EFFECT on level card click
-// ═══════════════════════════════════════════════════
-function startQuizWithRipple(e, level) {
-  const card = e.currentTarget;
-  const rect = card.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height);
-  const x = e.clientX - rect.left - size / 2;
-  const y = e.clientY - rect.top - size / 2;
-
-  const ripple = document.createElement('div');
-  ripple.className = 'ripple';
-  ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
-  card.appendChild(ripple);
-  ripple.addEventListener('animationend', () => ripple.remove());
-
-  setTimeout(() => startQuiz(level), 200);
-}
-
-// ═══════════════════════════════════════════════════
-//  BACK TO LEVEL SELECT from quiz
-// ═══════════════════════════════════════════════════
-function backToLevelSelect() {
-  if (state.timerID) clearInterval(state.timerID);
-  showScreen('startScreen');
-}
-
-// ═══════════════════════════════════════════════════
-//  INIT ANIMATIONS
-// ═══════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  animateTitle();
-  animateLevelCards();
-});
-
-
-// ─────────────────────────────────────────────
-//  DATA SOAL  (30 easy, 30 medium, 30 hard)
-//  Setiap soal: 5 pilihan (a–e)
-// ─────────────────────────────────────────────
-const ALL_QUESTIONS = [
-
-// ═══════════════ EASY (index 0-29) ═══════════════
-{
-  q: "Matriks diagonal adalah matriks yang...",
-  opts: [
-    "Semua elemennya sama",
-    "Elemen di luar diagonal utama bernilai 0",
-    "Semua elemen bernilai 1",
-    "Tidak memiliki diagonal",
-    "Jumlah baris dan kolom berbeda"
-  ],
-  ans: 1,
-  exp: {
-    title: "Matriks Diagonal",
-    body: "Pada matriks diagonal, semua elemen di luar diagonal utama bernilai 0."
-  }
-},
-{
-  q: "Diagonal utama matriks berada dari...",
-  opts: [
-    "Kanan atas ke kiri bawah",
-    "Kiri bawah ke kanan atas",
-    "Kiri atas ke kanan bawah",
-    "Tengah ke samping",
-    "Semua arah"
-  ],
-  ans: 2,
-  exp: {
-    title: "Diagonal Utama",
-    body: "Diagonal utama dimulai dari kiri atas menuju kanan bawah."
-  }
-},
-{
-  q: "Simbol yang umum digunakan untuk nilai eigen adalah...",
-  opts: ["Δ", "π", "λ", "Ω", "μ"],
-  ans: 2,
-  exp: {
-    title: "Nilai Eigen",
-    body: "Nilai eigen biasanya dilambangkan dengan λ (lambda)."
-  }
-},
-{
-  q: "Vektor eigen adalah vektor yang...",
-  opts: [
-    "Menjadi nol",
-    "Tidak berubah arah setelah transformasi",
-    "Selalu tegak lurus",
-    "Berubah menjadi skalar",
-    "Tidak memiliki nilai"
-  ],
-  ans: 1,
-  exp: {
-    title: "Vektor Eigen",
-    body: "Vektor eigen hanya berubah skala tetapi arah dasarnya tetap."
-  }
-},
-{
-  q: "Tujuan diagonalisasi matriks adalah...",
-  opts: [
-    "Menghapus elemen matriks",
-    "Mengubah matriks menjadi diagonal",
-    "Menentukan transpose",
-    "Mencari determinan saja",
-    "Mengurangi ukuran matriks"
-  ],
-  ans: 1,
-  exp: {
-    title: "Diagonalisasi",
-    body: "Diagonalisasi bertujuan mengubah matriks menjadi bentuk diagonal."
-  }
-},
-{
-  q: "Matriks [[4,0],[0,7]] termasuk matriks...",
-  opts: [
-    "Segitiga",
-    "Nol",
-    "Diagonal",
-    "Transpose",
-    "Singular"
-  ],
-  ans: 2,
-  exp: {
-    title: "Identifikasi",
-    body: "Semua elemen di luar diagonal utama bernilai 0 sehingga termasuk matriks diagonal."
-  }
-},
-{
-  q: "Matriks identitas 2×2 adalah...",
-  opts: [
-    "[[1,0],[0,1]]",
-    "[[0,0],[0,0]]",
-    "[[1,1],[1,1]]",
-    "[[2,0],[0,2]]",
-    "[[0,1],[1,0]]"
-  ],
-  ans: 0,
-  exp: {
-    title: "Identitas",
-    body: "Matriks identitas memiliki diagonal utama bernilai 1."
-  }
-},
-{
-  q: "Huruf I pada persamaan |A - λI| berarti...",
-  opts: [
-    "Invers",
-    "Integral",
-    "Identitas",
-    "Indeks",
-    "Interpolasi"
-  ],
-  ans: 2,
-  exp: {
-    title: "Notasi",
-    body: "I menyatakan matriks identitas."
-  }
-},
-{
-  q: "Nilai eigen diperoleh dari persamaan...",
-  opts: [
-    "|A - λI| = 0",
-    "A + I = 0",
-    "A² = 0",
-    "A = I",
-    "det(A)=1"
-  ],
-  ans: 0,
-  exp: {
-    title: "Persamaan Karakteristik",
-    body: "Nilai eigen dicari menggunakan persamaan |A - λI| = 0."
-  }
-},
-{
-  q: "Jika λ = 5 maka λ + 3 = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: {
-    title: "Operasi",
-    body: "5 + 3 = 8."
-  }
-},
-{
-  q: "Jika λ = 4 maka 2λ = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: {
-    title: "Perhitungan",
-    body: "2 × 4 = 8."
-  }
-},
-{
-  q: "Jika λ = 3 maka λ² = ...",
-  opts: ["3", "6", "9", "12", "15"],
-  ans: 2,
-  exp: {
-    title: "Pangkat",
-    body: "3² = 9."
-  }
-},
-{
-  q: "Bentuk umum diagonalisasi matriks adalah...",
-  opts: [
-    "A = PDP⁻¹",
-    "A = P + D",
-    "A = D - P",
-    "A = PP",
-    "A = DD"
-  ],
-  ans: 0,
-  exp: {
-    title: "Rumus",
-    body: "Rumus umum diagonalisasi adalah A = PDP⁻¹."
-  }
-},
-{
-  q: "Huruf D pada A = PDP⁻¹ menyatakan...",
-  opts: [
-    "Determinan",
-    "Diagonal",
-    "Dimensi",
-    "Deret",
-    "Domain"
-  ],
-  ans: 1,
-  exp: {
-    title: "Matriks D",
-    body: "D adalah matriks diagonal."
-  }
-},
-{
-  q: "Huruf P pada A = PDP⁻¹ berisi...",
-  opts: [
-    "Nilai eigen",
-    "Matriks nol",
-    "Vektor eigen",
-    "Transpose",
-    "Skalar"
-  ],
-  ans: 2,
-  exp: {
-    title: "Matriks P",
-    body: "Matriks P berisi vektor-vektor eigen."
-  }
-},
-{
-  q: "Matriks diagonal memiliki elemen luar diagonal bernilai...",
-  opts: ["1", "2", "-1", "0", "Tak tentu"],
-  ans: 3,
-  exp: {
-    title: "Sifat",
-    body: "Semua elemen di luar diagonal utama bernilai 0."
-  }
-},
-{
-  q: "Matriks [[1,0],[0,1]] disebut matriks...",
-  opts: [
-    "Diagonal",
-    "Identitas",
-    "Segitiga",
-    "Nol",
-    "Singular"
-  ],
-  ans: 1,
-  exp: {
-    title: "Identitas",
-    body: "Matriks tersebut adalah matriks identitas."
-  }
-},
-{
-  q: "Jika λ = 6 maka λ - 2 = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: {
-    title: "Pengurangan",
-    body: "6 - 2 = 4."
-  }
-},
-{
-  q: "Matriks diagonal termasuk matriks...",
-  opts: [
-    "Persegi",
-    "Segitiga",
-    "Baris",
-    "Kolom",
-    "Tak beraturan"
-  ],
-  ans: 0,
-  exp: {
-    title: "Jenis Matriks",
-    body: "Matriks diagonal selalu merupakan matriks persegi."
-  }
-},
-{
-  q: "Jika λ = 2 maka 3λ = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: {
-    title: "Perkalian",
-    body: "3 × 2 = 6."
-  }
-},
-{
-  q: "Matriks 3×3 memiliki jumlah elemen sebanyak...",
-  opts: ["3", "6", "9", "12", "15"],
-  ans: 2,
-  exp: {
-    title: "Ordo Matriks",
-    body: "Matriks 3×3 memiliki 9 elemen."
-  }
-},
-{
-  q: "Elemen diagonal utama matriks [[2,0],[0,9]] adalah...",
-  opts: [
-    "0 dan 0",
-    "2 dan 9",
-    "2 dan 0",
-    "9 dan 0",
-    "1 dan 1"
-  ],
-  ans: 1,
-  exp: {
-    title: "Diagonal",
-    body: "Elemen diagonal utamanya adalah 2 dan 9."
-  }
-},
-{
-  q: "Jika λ = 7 maka λ + 1 = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: {
-    title: "Penjumlahan",
-    body: "7 + 1 = 8."
-  }
-},
-{
-  q: "Vektor eigen selalu berhubungan dengan...",
-  opts: [
-    "Nilai eigen",
-    "Integral",
-    "Turunan",
-    "Logaritma",
-    "Limit"
-  ],
-  ans: 0,
-  exp: {
-    title: "Hubungan",
-    body: "Vektor eigen selalu memiliki pasangan nilai eigen."
-  }
-},
-{
-  q: "Jika λ = 8 maka λ ÷ 2 = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: {
-    title: "Pembagian",
-    body: "8 ÷ 2 = 4."
-  }
-},
-{
-  q: "Matriks diagonal mempermudah operasi...",
-  opts: [
-    "Perpangkatan matriks",
-    "Penghapusan matriks",
-    "Pembagian matriks",
-    "Rotasi gambar",
-    "Pencerminan"
-  ],
-  ans: 0,
-  exp: {
-    title: "Kegunaan",
-    body: "Matriks diagonal mempermudah perpangkatan matriks."
-  }
-},
-{
-  q: "Jika λ = 10 maka λ - 5 = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: {
-    title: "Operasi Dasar",
-    body: "10 - 5 = 5."
-  }
-},
-{
-  q: "Matriks yang dapat diubah menjadi matriks diagonal disebut...",
-  opts: [
-    "Singular",
-    "Diagonalizable",
-    "Nol",
-    "Transpose",
-    "Baris"
-  ],
-  ans: 1,
-  exp: {
-    title: "Istilah",
-    body: "Matriks yang bisa didiagonalisasi disebut diagonalizable."
-  }
-},
-{
-  q: "Jika λ = 9 maka λ² = ...",
-  opts: ["18", "27", "81", "72", "90"],
-  ans: 2,
-  exp: {
-    title: "Kuadrat",
-    body: "9² = 81."
-  }
-},
-{
-  q: "Matriks [[5,0],[0,5]] termasuk matriks...",
-  opts: [
-    "Diagonal",
-    "Baris",
-    "Kolom",
-    "Acak",
-    "Tak persegi"
-  ],
-  ans: 0,
-  exp: {
-    title: "Klasifikasi",
-    body: "Semua elemen di luar diagonal utama bernilai 0 sehingga termasuk matriks diagonal."
-  }
-},
-
-// ═══════════════ MEDIUM (index 30-59) ═══════════════
-{
-  q: "Nilai eigen dari matriks [[2,0],[0,5]] adalah...",
-  opts: [
-    "2 dan 5",
-    "1 dan 5",
-    "0 dan 5",
-    "2 dan 0",
-    "3 dan 4"
-  ],
-  ans: 0,
-  exp: {
-    title: "Nilai Eigen",
-    body: "Pada matriks diagonal, nilai eigennya adalah elemen diagonal utamanya."
-  }
-},
-{
-  q: "Vektor eigen berkaitan langsung dengan...",
-  opts: [
-    "Determinan",
-    "Nilai eigen",
-    "Transpose",
-    "Integral",
-    "Limit"
-  ],
-  ans: 1,
-  exp: {
-    title: "Konsep",
-    body: "Setiap vektor eigen memiliki pasangan nilai eigen."
-  }
-},
-{
-  q: "Bentuk umum diagonalisasi matriks adalah...",
-  opts: [
-    "A = PDP⁻¹",
-    "A = P + D",
-    "A = DD",
-    "A = PP",
-    "A = D - P"
-  ],
-  ans: 0,
-  exp: {
-    title: "Rumus",
-    body: "Rumus umum diagonalisasi matriks adalah A = PDP⁻¹."
-  }
-},
-{
-  q: "Huruf D pada A = PDP⁻¹ menyatakan...",
-  opts: [
-    "Determinan",
-    "Diagonal",
-    "Dimensi",
-    "Domain",
-    "Deret"
-  ],
-  ans: 1,
-  exp: {
-    title: "Matriks D",
-    body: "D adalah matriks diagonal hasil diagonalisasi."
-  }
-},
-{
-  q: "Huruf P pada A = PDP⁻¹ berisi...",
-  opts: [
-    "Nilai eigen",
-    "Vektor eigen",
-    "Matriks nol",
-    "Transpose",
-    "Determinan"
-  ],
-  ans: 1,
-  exp: {
-    title: "Matriks P",
-    body: "P berisi vektor-vektor eigen."
-  }
-},
-{
-  q: "Nilai eigen diperoleh dari persamaan...",
-  opts: [
-    "|A - λI| = 0",
-    "A + I = 0",
-    "A² = 0",
-    "A = I",
-    "det(A)=1"
-  ],
-  ans: 0,
-  exp: {
-    title: "Karakteristik",
-    body: "Persamaan karakteristik digunakan untuk mencari nilai eigen."
-  }
-},
-{
-  q: "Matriks identitas 3×3 memiliki diagonal utama...",
-  opts: [
-    "Semua 0",
-    "Semua 1",
-    "Semua 2",
-    "Acak",
-    "Tidak tetap"
-  ],
-  ans: 1,
-  exp: {
-    title: "Identitas",
-    body: "Diagonal utama matriks identitas selalu bernilai 1."
-  }
-},
-{
-  q: "Jika λ = 4 maka 3λ = ...",
-  opts: ["8", "10", "12", "14", "16"],
-  ans: 2,
-  exp: {
-    title: "Operasi",
-    body: "3 × 4 = 12."
-  }
-},
-{
-  q: "Jika λ = 6 maka λ² = ...",
-  opts: ["12", "18", "24", "36", "42"],
-  ans: 3,
-  exp: {
-    title: "Kuadrat",
-    body: "6² = 36."
-  }
-},
-{
-  q: "Matriks diagonal memiliki elemen di luar diagonal utama bernilai...",
-  opts: ["1", "2", "-1", "0", "5"],
-  ans: 3,
-  exp: {
-    title: "Sifat",
-    body: "Semua elemen di luar diagonal utama harus bernilai 0."
-  }
-},
-{
-  q: "Nilai eigen dari matriks [[7,0],[0,3]] adalah...",
-  opts: [
-    "7 dan 3",
-    "0 dan 3",
-    "1 dan 7",
-    "7 dan 0",
-    "5 dan 2"
-  ],
-  ans: 0,
-  exp: {
-    title: "Diagonal",
-    body: "Nilai eigen matriks diagonal diambil dari diagonal utamanya."
-  }
-},
-{
-  q: "Jika λ = 9 maka λ - 4 = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: {
-    title: "Pengurangan",
-    body: "9 - 4 = 5."
-  }
-},
-{
-  q: "Matriks yang dapat didiagonalisasi disebut...",
-  opts: [
-    "Singular",
-    "Diagonalizable",
-    "Baris",
-    "Nol",
-    "Transpose"
-  ],
-  ans: 1,
-  exp: {
-    title: "Istilah",
-    body: "Matriks yang bisa diubah menjadi bentuk diagonal disebut diagonalizable."
-  }
-},
-{
-  q: "Jika λ = 8 maka λ ÷ 2 = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: {
-    title: "Pembagian",
-    body: "8 ÷ 2 = 4."
-  }
-},
-{
-  q: "Matriks [[1,0],[0,1]] disebut matriks...",
-  opts: [
-    "Diagonal",
-    "Identitas",
-    "Nol",
-    "Kolom",
-    "Baris"
-  ],
-  ans: 1,
-  exp: {
-    title: "Identitas",
-    body: "Matriks tersebut merupakan matriks identitas."
-  }
-},
-{
-  q: "Jika λ = 5 maka 2λ + 1 = ...",
-  opts: ["9", "10", "11", "12", "13"],
-  ans: 2,
-  exp: {
-    title: "Perhitungan",
-    body: "2(5) + 1 = 11."
-  }
-},
-{
-  q: "Vektor eigen hanya berubah pada bagian...",
-  opts: [
-    "Arah",
-    "Ukuran/skala",
-    "Dimensi",
-    "Jumlah elemen",
-    "Diagonal"
-  ],
-  ans: 1,
-  exp: {
-    title: "Transformasi",
-    body: "Vektor eigen mempertahankan arah tetapi skalanya berubah."
-  }
-},
-{
-  q: "Jika λ = 7 maka λ + 5 = ...",
-  opts: ["10", "11", "12", "13", "14"],
-  ans: 2,
-  exp: {
-    title: "Penjumlahan",
-    body: "7 + 5 = 12."
-  }
-},
-{
-  q: "Elemen diagonal utama matriks [[4,0],[0,9]] adalah...",
-  opts: [
-    "0 dan 0",
-    "4 dan 9",
-    "4 dan 0",
-    "9 dan 0",
-    "1 dan 1"
-  ],
-  ans: 1,
-  exp: {
-    title: "Diagonal Utama",
-    body: "Diagonal utama matriks tersebut adalah 4 dan 9."
-  }
-},
-{
-  q: "Jika λ = 3 maka 4λ = ...",
-  opts: ["6", "9", "12", "15", "18"],
-  ans: 2,
-  exp: {
-    title: "Perkalian",
-    body: "4 × 3 = 12."
-  }
-},
-{
-  q: "Matriks 2×2 memiliki jumlah elemen sebanyak...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: {
-    title: "Ordo",
-    body: "Matriks 2×2 memiliki 4 elemen."
-  }
-},
-{
-  q: "Matriks 3×3 memiliki jumlah elemen sebanyak...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 3,
-  exp: {
-    title: "Ordo",
-    body: "Matriks 3×3 memiliki 9 elemen."
-  }
-},
-{
-  q: "Jika λ = 10 maka λ² = ...",
-  opts: ["20", "50", "100", "120", "150"],
-  ans: 2,
-  exp: {
-    title: "Pangkat",
-    body: "10² = 100."
-  }
-},
-{
-  q: "Diagonal utama matriks berada dari...",
-  opts: [
-    "Kanan atas ke kiri bawah",
-    "Kiri bawah ke kanan atas",
-    "Kiri atas ke kanan bawah",
-    "Tengah ke samping",
-    "Semua arah"
-  ],
-  ans: 2,
-  exp: {
-    title: "Diagonal",
-    body: "Diagonal utama dimulai dari kiri atas menuju kanan bawah."
-  }
-},
-{
-  q: "Jika λ = 12 maka λ - 7 = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: {
-    title: "Pengurangan",
-    body: "12 - 7 = 5."
-  }
-},
-{
-  q: "Matriks diagonal selalu merupakan matriks...",
-  opts: [
-    "Persegi",
-    "Segitiga",
-    "Baris",
-    "Kolom",
-    "Acak"
-  ],
-  ans: 0,
-  exp: {
-    title: "Jenis Matriks",
-    body: "Matriks diagonal harus memiliki jumlah baris dan kolom sama."
-  }
-},
-{
-  q: "Jika λ = 2 maka λ³ = ...",
-  opts: ["2", "4", "6", "8", "10"],
-  ans: 3,
-  exp: {
-    title: "Kubik",
-    body: "2³ = 8."
-  }
-},
-{
-  q: "Simbol λ dibaca...",
-  opts: [
-    "Omega",
-    "Sigma",
-    "Lambda",
-    "Delta",
-    "Theta"
-  ],
-  ans: 2,
-  exp: {
-    title: "Simbol",
-    body: "λ dibaca lambda."
-  }
-},
-{
-  q: "Jika λ = 15 maka λ ÷ 3 = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: {
-    title: "Pembagian",
-    body: "15 ÷ 3 = 5."
-  }
-},
-{
-  q: "Matriks [[6,0],[0,2]] memiliki nilai eigen...",
-  opts: [
-    "6 dan 2",
-    "0 dan 2",
-    "1 dan 6",
-    "6 dan 0",
-    "3 dan 4"
-  ],
-  ans: 0,
-  exp: {
-    title: "Nilai Eigen",
-    body: "Nilai eigen matriks diagonal adalah elemen diagonal utamanya."
-  }
-},
-
-// ═══════════════ HARD (index 60-89) ═══════════════
-{
-  q: "Jika A = PDP⁻¹, maka P⁻¹ menyatakan...",
-  opts: [
-    "Transpose dari P",
-    "Determinan P",
-    "Invers dari P",
-    "Matriks diagonal",
-    "Nilai eigen"
-  ],
-  ans: 2,
-  exp: {
-    title: "Invers Matriks",
-    body: "P⁻¹ adalah invers dari matriks P pada proses diagonalisasi."
-  }
-},
-{
-  q: "Syarat utama matriks dapat didiagonalisasi adalah...",
-  opts: [
-    "Memiliki determinan nol",
-    "Jumlah baris lebih besar",
-    "Memiliki cukup vektor eigen bebas linear",
-    "Semua elemen sama",
-    "Matriks harus diagonal"
-  ],
-  ans: 2,
-  exp: {
-    title: "Syarat Diagonalisasi",
-    body: "Matriks harus memiliki cukup vektor eigen bebas linear."
-  }
-},
-{
-  q: "Nilai eigen matriks [[4,0],[0,9]] adalah...",
-  opts: [
-    "4 dan 9",
-    "0 dan 9",
-    "1 dan 4",
-    "4 dan 0",
-    "5 dan 8"
-  ],
-  ans: 0,
-  exp: {
-    title: "Nilai Eigen",
-    body: "Nilai eigen matriks diagonal adalah elemen diagonal utamanya."
-  }
-},
-{
-  q: "Jika λ = 5 maka λ³ = ...",
-  opts: ["25", "75", "100", "125", "150"],
-  ans: 3,
-  exp: {
-    title: "Pangkat",
-    body: "5³ = 125."
-  }
-},
-{
-  q: "Matriks diagonal selalu memiliki elemen luar diagonal utama bernilai...",
-  opts: ["1", "-1", "2", "0", "5"],
-  ans: 3,
-  exp: {
-    title: "Sifat Matriks",
-    body: "Semua elemen di luar diagonal utama bernilai 0."
-  }
-},
-{
-  q: "Jika A = PDP⁻¹ maka D merupakan...",
-  opts: [
-    "Matriks identitas",
-    "Matriks diagonal",
-    "Matriks singular",
-    "Matriks nol",
-    "Transpose matriks"
-  ],
-  ans: 1,
-  exp: {
-    title: "Matriks D",
-    body: "D adalah matriks diagonal hasil diagonalisasi."
-  }
-},
-{
-  q: "Vektor eigen berubah pada bagian...",
-  opts: [
-    "Arah",
-    "Skala",
-    "Jumlah elemen",
-    "Dimensi",
-    "Diagonal"
-  ],
-  ans: 1,
-  exp: {
-    title: "Transformasi",
-    body: "Vektor eigen hanya berubah skala, bukan arah."
-  }
-},
-{
-  q: "Jika λ = 2 maka 5λ² = ...",
-  opts: ["10", "15", "20", "25", "30"],
-  ans: 2,
-  exp: {
-    title: "Perhitungan",
-    body: "5 × 2² = 5 × 4 = 20."
-  }
-},
-{
-  q: "Persamaan karakteristik ditentukan dari...",
-  opts: [
-    "|A - λI| = 0",
-    "|A + I| = 0",
-    "A² = 0",
-    "A = I",
-    "det(A)=1"
-  ],
-  ans: 0,
-  exp: {
-    title: "Karakteristik",
-    body: "Nilai eigen diperoleh dari persamaan |A - λI| = 0."
-  }
-},
-{
-  q: "Jika λ = -3 maka λ² = ...",
-  opts: ["-9", "6", "9", "12", "18"],
-  ans: 2,
-  exp: {
-    title: "Kuadrat",
-    body: "(-3)² = 9."
-  }
-},
-{
-  q: "Matriks identitas 2×2 adalah...",
-  opts: [
-    "[[1,0],[0,1]]",
-    "[[0,0],[0,0]]",
-    "[[1,1],[1,1]]",
-    "[[2,0],[0,2]]",
-    "[[0,1],[1,0]]"
-  ],
-  ans: 0,
-  exp: {
-    title: "Identitas",
-    body: "Diagonal utama matriks identitas bernilai 1."
-  }
-},
-{
-  q: "Jika λ = 7 maka 2λ² = ...",
-  opts: ["49", "72", "84", "98", "112"],
-  ans: 3,
-  exp: {
-    title: "Operasi Eigen",
-    body: "2 × 7² = 2 × 49 = 98."
-  }
-},
-{
-  q: "Matriks yang tidak memiliki cukup vektor eigen bebas linear akan...",
-  opts: [
-    "Selalu diagonal",
-    "Tidak dapat didiagonalisasi",
-    "Menjadi identitas",
-    "Memiliki determinan 1",
-    "Berubah ordo"
-  ],
-  ans: 1,
-  exp: {
-    title: "Diagonalizable",
-    body: "Tanpa cukup vektor eigen bebas linear, matriks tidak bisa didiagonalisasi."
-  }
-},
-{
-  q: "Jika λ = 4 maka λ³ + 1 = ...",
-  opts: ["32", "48", "64", "65", "81"],
-  ans: 3,
-  exp: {
-    title: "Pangkat Tinggi",
-    body: "4³ + 1 = 64 + 1 = 65."
-  }
-},
-{
-  q: "Huruf P pada A = PDP⁻¹ dibentuk dari...",
-  opts: [
-    "Nilai eigen",
-    "Determinan",
-    "Vektor eigen",
-    "Diagonal utama",
-    "Transpose"
-  ],
-  ans: 2,
-  exp: {
-    title: "Matriks P",
-    body: "P disusun dari vektor-vektor eigen."
-  }
-},
-{
-  q: "Jika λ = 9 maka √λ = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 1,
-  exp: {
-    title: "Akar",
-    body: "√9 = 3."
-  }
-},
-{
-  q: "Matriks diagonal termasuk matriks...",
-  opts: [
-    "Persegi",
-    "Baris",
-    "Kolom",
-    "Acak",
-    "Tak beraturan"
-  ],
-  ans: 0,
-  exp: {
-    title: "Jenis Matriks",
-    body: "Matriks diagonal selalu berbentuk persegi."
-  }
-},
-{
-  q: "Jika λ = 6 maka λ² - 10 = ...",
-  opts: ["16", "20", "24", "26", "30"],
-  ans: 3,
-  exp: {
-    title: "Perhitungan",
-    body: "6² - 10 = 36 - 10 = 26."
-  }
-},
-{
-  q: "Nilai eigen matriks identitas selalu...",
-  opts: ["0", "1", "2", "-1", "Tak tentu"],
-  ans: 1,
-  exp: {
-    title: "Eigen Identitas",
-    body: "Semua nilai eigen matriks identitas adalah 1."
-  }
-},
-{
-  q: "Jika λ = 8 maka λ² ÷ 4 = ...",
-  opts: ["8", "12", "16", "20", "24"],
-  ans: 2,
-  exp: {
-    title: "Operasi Campuran",
-    body: "8² ÷ 4 = 64 ÷ 4 = 16."
-  }
-},
-{
-  q: "Diagonal utama matriks berada dari...",
-  opts: [
-    "Kanan atas ke kiri bawah",
-    "Kiri bawah ke kanan atas",
-    "Kiri atas ke kanan bawah",
-    "Tengah ke kanan",
-    "Semua arah"
-  ],
-  ans: 2,
-  exp: {
-    title: "Diagonal",
-    body: "Diagonal utama dimulai dari kiri atas menuju kanan bawah."
-  }
-},
-{
-  q: "Jika λ = -2 maka λ³ = ...",
-  opts: ["-8", "-4", "4", "8", "16"],
-  ans: 0,
-  exp: {
-    title: "Kubik Negatif",
-    body: "(-2)³ = -8."
-  }
-},
-{
-  q: "Matriks [[5,0],[0,5]] memiliki nilai eigen...",
-  opts: [
-    "5 dan 5",
-    "0 dan 5",
-    "1 dan 5",
-    "5 dan 0",
-    "2 dan 3"
-  ],
-  ans: 0,
-  exp: {
-    title: "Eigen Ganda",
-    body: "Nilai eigen diambil dari diagonal utama."
-  }
-},
-{
-  q: "Jika λ = 3 maka 2λ³ = ...",
-  opts: ["18", "24", "36", "48", "54"],
-  ans: 4,
-  exp: {
-    title: "Pangkat Kubik",
-    body: "2 × 3³ = 2 × 27 = 54."
-  }
-},
-{
-  q: "Matriks diagonal mempermudah proses...",
-  opts: [
-    "Perpangkatan matriks",
-    "Penghapusan matriks",
-    "Penjumlahan skalar",
-    "Pengurangan ordo",
-    "Rotasi bidang"
-  ],
-  ans: 0,
-  exp: {
-    title: "Kegunaan",
-    body: "Diagonal mempermudah perpangkatan matriks."
-  }
-},
-{
-  q: "Jika λ = 11 maka λ² - 21 = ...",
-  opts: ["80", "90", "100", "110", "121"],
-  ans: 2,
-  exp: {
-    title: "Perhitungan Kompleks",
-    body: "11² - 21 = 121 - 21 = 100."
-  }
-},
-{
-  q: "Simbol λ dibaca...",
-  opts: [
-    "Delta",
-    "Sigma",
-    "Lambda",
-    "Omega",
-    "Theta"
-  ],
-  ans: 2,
-  exp: {
-    title: "Notasi",
-    body: "λ dibaca lambda."
-  }
-},
-{
-  q: "Jika λ = 12 maka λ² ÷ 3 = ...",
-  opts: ["24", "36", "48", "60", "72"],
-  ans: 2,
-  exp: {
-    title: "Operasi Eigen",
-    body: "12² ÷ 3 = 144 ÷ 3 = 48."
-  }
-},
-{
-  q: "Jika suatu matriks memiliki n nilai eigen berbeda maka matriks biasanya...",
-  opts: [
-    "Tidak memiliki invers",
-    "Dapat didiagonalisasi",
-    "Menjadi singular",
-    "Berubah menjadi nol",
-    "Tidak memiliki diagonal"
-  ],
-  ans: 1,
-  exp: {
-    title: "Teorema Dasar",
-    body: "Matriks dengan n nilai eigen berbeda biasanya dapat didiagonalisasi."
-  }
-},
-{
-  q: "Jika λ = 5 maka λ² + λ³ = ...",
-  opts: ["100", "125", "150", "175", "200"],
-  ans: 2,
-  exp: {
-    title: "Operasi Gabungan",
-    body: "5² + 5³ = 25 + 125 = 150."
-  }
-}
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const ALL_Q = [
+// EASY 0-9
+{q:"Matriks diagonal adalah matriks yang...",opts:["Semua elemennya sama","Elemen di luar diagonal utama bernilai 0","Semua elemen bernilai 1","Tidak memiliki diagonal","Jumlah baris dan kolom berbeda"],ans:1,exp:{title:"Matriks Diagonal",body:"Pada matriks diagonal, semua elemen di luar diagonal utama bernilai 0. Elemen diagonal utama dapat bernilai apa pun."}},
+{q:"Diagonal utama matriks berada dari...",opts:["Kanan atas ke kiri bawah","Kiri bawah ke kanan atas","Kiri atas ke kanan bawah","Tengah ke samping","Semua arah"],ans:2,exp:{title:"Diagonal Utama",body:"Diagonal utama dimulai dari pojok kiri atas menuju pojok kanan bawah."}},
+{q:"Simbol yang umum digunakan untuk nilai eigen adalah...",opts:["Δ","π","λ","Ω","μ"],ans:2,exp:{title:"Notasi Nilai Eigen",body:"Nilai eigen biasanya dilambangkan dengan λ (lambda), huruf Yunani."}},
+{q:"Vektor eigen adalah vektor yang...",opts:["Menjadi nol","Tidak berubah arah setelah transformasi","Selalu tegak lurus","Berubah menjadi skalar","Tidak memiliki nilai"],ans:1,exp:{title:"Vektor Eigen",body:"Vektor eigen hanya berubah skala (panjang) tetapi arah dasarnya tidak berubah setelah transformasi."}},
+{q:"Tujuan diagonalisasi matriks adalah...",opts:["Menghapus elemen matriks","Mengubah matriks menjadi diagonal","Menentukan transpose","Mencari determinan saja","Mengurangi ukuran matriks"],ans:1,exp:{title:"Tujuan Diagonalisasi",body:"Diagonalisasi bertujuan mengubah matriks menjadi bentuk diagonal sehingga operasi seperti perpangkatan lebih mudah."}},
+{q:"Matriks [[4,0],[0,7]] termasuk jenis matriks...",opts:["Segitiga","Nol","Diagonal","Transpose","Singular"],ans:2,exp:{title:"Identifikasi Matriks",body:"Semua elemen di luar diagonal utama bernilai 0, sehingga ini adalah matriks diagonal."}},
+{q:"Nilai eigen diperoleh dari persamaan...",opts:["|A - λI| = 0","A + I = 0","A² = 0","A = I","det(A)=1"],ans:0,exp:{title:"Persamaan Karakteristik",body:"Nilai eigen dicari menggunakan persamaan karakteristik det(A - λI) = 0."}},
+{q:"Bentuk umum diagonalisasi matriks adalah...",opts:["A = PDP⁻¹","A = P + D","A = D - P","A = PP","A = DD"],ans:0,exp:{title:"Rumus Diagonalisasi",body:"Rumus umum diagonalisasi adalah A = PDP⁻¹, di mana P berisi vektor eigen dan D adalah matriks diagonal."}},
+{q:"Huruf D pada A = PDP⁻¹ menyatakan...",opts:["Determinan","Matriks diagonal","Dimensi","Deret","Domain"],ans:1,exp:{title:"Matriks D",body:"D adalah matriks diagonal yang elemen-elemen diagonalnya adalah nilai-nilai eigen dari A."}},
+{q:"Huruf P pada A = PDP⁻¹ berisi...",opts:["Nilai eigen","Matriks nol","Vektor eigen","Transpose","Skalar"],ans:2,exp:{title:"Matriks P",body:"Matriks P disusun dari vektor-vektor eigen yang bersesuaian dengan nilai eigen masing-masing."}},
+// MEDIUM 10-29
+{q:"Nilai eigen dari matriks [[2,0],[0,5]] adalah...",opts:["2 dan 5","1 dan 5","0 dan 5","2 dan 0","3 dan 4"],ans:0,exp:{title:"Nilai Eigen Matriks Diagonal",body:"Pada matriks diagonal, nilai eigennya langsung diambil dari elemen diagonal utama."}},
+{q:"Matriks identitas 3×3 memiliki diagonal utama...",opts:["Semua 0","Semua 1","Semua 2","Acak","Tidak tetap"],ans:1,exp:{title:"Matriks Identitas",body:"Diagonal utama matriks identitas selalu bernilai 1, dan semua elemen lainnya bernilai 0."}},
+{q:"Jika λ = 6 maka λ² = ...",opts:["12","18","24","36","42"],ans:3,exp:{title:"Kuadrat Nilai Eigen",body:"6² = 36. Nilai eigen dapat dipangkatkan untuk menghitung perpangkatan matriks diagonal."}},
+{q:"Nilai eigen dari matriks [[7,0],[0,3]] adalah...",opts:["7 dan 3","0 dan 3","1 dan 7","7 dan 0","5 dan 2"],ans:0,exp:{title:"Nilai Eigen Diagonal",body:"Nilai eigen matriks diagonal diambil langsung dari diagonal utamanya."}},
+{q:"Matriks yang dapat didiagonalisasi disebut...",opts:["Singular","Diagonalizable","Baris","Nol","Transpose"],ans:1,exp:{title:"Terminologi",body:"Matriks yang bisa diubah menjadi bentuk diagonal disebut diagonalizable (dapat didiagonalisasi)."}},
+{q:"Vektor eigen hanya berubah pada bagian...",opts:["Arah","Ukuran/skala","Dimensi","Jumlah elemen","Diagonal"],ans:1,exp:{title:"Sifat Vektor Eigen",body:"Vektor eigen mempertahankan arah tetapi skalanya berubah sebanding dengan nilai eigen λ."}},
+{q:"Elemen diagonal utama matriks [[4,0],[0,9]] adalah...",opts:["0 dan 0","4 dan 9","4 dan 0","9 dan 0","1 dan 1"],ans:1,exp:{title:"Elemen Diagonal",body:"Elemen diagonal utama adalah elemen (1,1) dan (2,2), yaitu 4 dan 9."}},
+{q:"Matriks 2×2 memiliki jumlah elemen sebanyak...",opts:["2","3","4","5","6"],ans:2,exp:{title:"Ordo Matriks",body:"Matriks 2×2 memiliki 2×2 = 4 elemen."}},
+{q:"Diagonal utama matriks berada dari...",opts:["Kanan atas ke kiri bawah","Kiri bawah ke kanan atas","Kiri atas ke kanan bawah","Tengah ke samping","Semua arah"],ans:2,exp:{title:"Posisi Diagonal Utama",body:"Diagonal utama dimulai dari kiri atas menuju kanan bawah."}},
+{q:"Simbol λ dibaca...",opts:["Omega","Sigma","Lambda","Delta","Theta"],ans:2,exp:{title:"Bacaan Simbol",body:"λ dibaca 'lambda', huruf ke-11 dalam alfabet Yunani."}},
+{q:"Jika λ = 2 maka λ³ = ...",opts:["2","4","6","8","10"],ans:3,exp:{title:"Pangkat Tiga",body:"2³ = 8. Ini berguna untuk menghitung A³ = PD³P⁻¹."}},
+{q:"Matriks [[1,0],[0,1]] disebut matriks...",opts:["Diagonal","Identitas","Nol","Kolom","Baris"],ans:1,exp:{title:"Matriks Identitas",body:"Matriks dengan diagonal 1 dan semua elemen lain 0 disebut matriks identitas."}},
+{q:"Jika λ = 5 maka 2λ + 1 = ...",opts:["9","10","11","12","13"],ans:2,exp:{title:"Operasi Nilai Eigen",body:"2(5) + 1 = 11."}},
+{q:"Matriks diagonal selalu merupakan matriks...",opts:["Persegi","Segitiga","Baris","Kolom","Acak"],ans:0,exp:{title:"Jenis Matriks Diagonal",body:"Matriks diagonal harus berbentuk persegi (jumlah baris = jumlah kolom)."}},
+{q:"Jika λ = 12 maka λ - 7 = ...",opts:["3","4","5","6","7"],ans:2,exp:{title:"Operasi Dasar",body:"12 - 7 = 5."}},
+{q:"Matriks [[6,0],[0,2]] memiliki nilai eigen...",opts:["6 dan 2","0 dan 2","1 dan 6","6 dan 0","3 dan 4"],ans:0,exp:{title:"Nilai Eigen",body:"Nilai eigen matriks diagonal adalah elemen diagonal utamanya: 6 dan 2."}},
+{q:"Jika λ = 15 maka λ ÷ 3 = ...",opts:["3","4","5","6","7"],ans:2,exp:{title:"Pembagian",body:"15 ÷ 3 = 5."}},
+{q:"Matriks 3×3 memiliki jumlah elemen sebanyak...",opts:["6","7","8","9","10"],ans:3,exp:{title:"Ordo Matriks",body:"Matriks 3×3 memiliki 3×3 = 9 elemen."}},
+{q:"Jika λ = 3 maka 4λ = ...",opts:["6","9","12","15","18"],ans:2,exp:{title:"Perkalian Skalar",body:"4 × 3 = 12."}},
+{q:"Matriks diagonal mempermudah operasi...",opts:["Perpangkatan matriks","Penghapusan matriks","Pembagian matriks","Rotasi gambar","Pencerminan"],ans:0,exp:{title:"Kegunaan Diagonalisasi",body:"Matriks diagonal sangat mempermudah perpangkatan: Dⁿ cukup memangkatkan tiap elemen diagonal."}},
+// HARD 60-89 — used as index 30-59
+{q:"Jika A = PDP⁻¹, maka P⁻¹ menyatakan...",opts:["Transpose dari P","Determinan P","Invers dari P","Matriks diagonal","Nilai eigen"],ans:2,exp:{title:"Invers dalam Diagonalisasi",body:"P⁻¹ adalah invers dari matriks P. Perkalian PP⁻¹ = I (identitas)."}},
+{q:"Syarat utama matriks dapat didiagonalisasi adalah...",opts:["Memiliki determinan nol","Jumlah baris lebih besar","Memiliki cukup vektor eigen bebas linear","Semua elemen sama","Matriks harus diagonal"],ans:2,exp:{title:"Syarat Diagonalisasi",body:"Matriks n×n dapat didiagonalisasi jika dan hanya jika memiliki n vektor eigen yang bebas linear."}},
+{q:"Nilai eigen matriks [[4,0],[0,9]] adalah...",opts:["4 dan 9","0 dan 9","1 dan 4","4 dan 0","5 dan 8"],ans:0,exp:{title:"Nilai Eigen Matriks Diagonal",body:"Nilai eigen matriks diagonal langsung diambil dari elemen diagonal utamanya: 4 dan 9."}},
+{q:"Jika λ = 5 maka λ³ = ...",opts:["25","75","100","125","150"],ans:3,exp:{title:"Pangkat Nilai Eigen",body:"5³ = 125. Untuk Aⁿ = PDⁿP⁻¹, nilai eigen juga dipangkatkan."}},
+{q:"Jika A = PDP⁻¹ maka D merupakan...",opts:["Matriks identitas","Matriks diagonal","Matriks singular","Matriks nol","Transpose matriks"],ans:1,exp:{title:"Matriks D",body:"D adalah matriks diagonal yang elemen-elemen diagonalnya adalah nilai-nilai eigen dari A."}},
+{q:"Jika λ = 2 maka 5λ² = ...",opts:["10","15","20","25","30"],ans:2,exp:{title:"Operasi Eigen",body:"5 × 2² = 5 × 4 = 20."}},
+{q:"Persamaan karakteristik ditentukan dari...",opts:["|A - λI| = 0","|A + I| = 0","A² = 0","A = I","det(A)=1"],ans:0,exp:{title:"Persamaan Karakteristik",body:"Persamaan karakteristik det(A − λI) = 0 digunakan untuk mencari semua nilai eigen."}},
+{q:"Jika λ = -3 maka λ² = ...",opts:["-9","6","9","12","18"],ans:2,exp:{title:"Kuadrat Eigen Negatif",body:"(-3)² = 9. Perpangkatan genap selalu menghasilkan nilai positif."}},
+{q:"Jika λ = 7 maka 2λ² = ...",opts:["49","72","84","98","112"],ans:3,exp:{title:"Operasi Lanjut",body:"2 × 7² = 2 × 49 = 98."}},
+{q:"Matriks yang tidak memiliki cukup vektor eigen bebas linear akan...",opts:["Selalu diagonal","Tidak dapat didiagonalisasi","Menjadi identitas","Memiliki determinan 1","Berubah ordo"],ans:1,exp:{title:"Diagonalizable Test",body:"Tanpa n vektor eigen bebas linear, matriks n×n tidak bisa didiagonalisasi secara penuh."}},
+{q:"Jika λ = 4 maka λ³ + 1 = ...",opts:["32","48","64","65","81"],ans:3,exp:{title:"Ekspresi Eigen",body:"4³ + 1 = 64 + 1 = 65."}},
+{q:"Huruf P pada A = PDP⁻¹ dibentuk dari...",opts:["Nilai eigen","Determinan","Vektor eigen","Diagonal utama","Transpose"],ans:2,exp:{title:"Konstruksi P",body:"Kolom-kolom matriks P adalah vektor-vektor eigen dari A yang bersesuaian."}},
+{q:"Jika λ = 9 maka √λ = ...",opts:["2","3","4","5","6"],ans:1,exp:{title:"Akar Nilai Eigen",body:"√9 = 3."}},
+{q:"Nilai eigen matriks identitas selalu...",opts:["0","1","2","-1","Tak tentu"],ans:1,exp:{title:"Eigen Matriks Identitas",body:"Semua nilai eigen matriks identitas adalah 1, karena Ix = 1·x untuk semua x."}},
+{q:"Jika λ = 8 maka λ² ÷ 4 = ...",opts:["8","12","16","20","24"],ans:2,exp:{title:"Operasi Campuran",body:"8² ÷ 4 = 64 ÷ 4 = 16."}},
+{q:"Jika λ = -2 maka λ³ = ...",opts:["-8","-4","4","8","16"],ans:0,exp:{title:"Kubik Negatif",body:"(-2)³ = -8. Pangkat ganjil mempertahankan tanda negatif."}},
+{q:"Matriks [[5,0],[0,5]] memiliki nilai eigen...",opts:["5 dan 5","0 dan 5","1 dan 5","5 dan 0","2 dan 3"],ans:0,exp:{title:"Nilai Eigen Ganda",body:"Kedua elemen diagonal adalah 5, sehingga nilai eigen adalah 5 (ganda)."}},
+{q:"Jika λ = 3 maka 2λ³ = ...",opts:["18","24","36","48","54"],ans:4,exp:{title:"Pangkat Kubik",body:"2 × 3³ = 2 × 27 = 54."}},
+{q:"Jika λ = 11 maka λ² - 21 = ...",opts:["80","90","100","110","121"],ans:2,exp:{title:"Persamaan Eigen",body:"11² - 21 = 121 - 21 = 100."}},
+{q:"Jika suatu matriks memiliki n nilai eigen berbeda maka matriks tersebut...",opts:["Tidak memiliki invers","Dapat didiagonalisasi","Menjadi singular","Berubah menjadi nol","Tidak memiliki diagonal"],ans:1,exp:{title:"Teorema Diagonalisasi",body:"Matriks n×n dengan n nilai eigen berbeda (distinct eigenvalues) selalu dapat didiagonalisasi."}},
+{q:"Jika λ = 5 maka λ² + λ³ = ...",opts:["100","125","150","175","200"],ans:2,exp:{title:"Ekspresi Polinomial Eigen",body:"5² + 5³ = 25 + 125 = 150."}},
+{q:"Jika λ = 12 maka λ² ÷ 3 = ...",opts:["24","36","48","60","72"],ans:2,exp:{title:"Pembagian Eigen",body:"12² ÷ 3 = 144 ÷ 3 = 48."}},
+{q:"Jika λ = 6 maka λ² - 10 = ...",opts:["16","20","24","26","30"],ans:3,exp:{title:"Ekspresi Kuadrat",body:"6² - 10 = 36 - 10 = 26."}}
 ];
 
-// ─────────────────────────────────────────────
-//  GAME STATE
-// ─────────────────────────────────────────────
 const LEVELS = {
-  easy:   { start: 0,  count: 10, time: 30*60, label: 'Easy',   fillClass: 'fill-easy',   badgeClass: 'badge-easy'   },
-  medium: { start: 30, count: 20, time: 40*60, label: 'Medium', fillClass: 'fill-medium', badgeClass: 'badge-medium' },
-  hard:   { start: 60, count: 30, time: 50*60, label: 'Hard',   fillClass: 'fill-hard',   badgeClass: 'badge-hard'   }
-};
-
-let state = {
-  level: null,
-  questions: [],
-  current: 0,
-  answers: [],
-  score: 0,
-  timeLeft: 0,
-  timerID: null,
-  reviewed: false
+  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
-// ─────────────────────────────────────────────
-//  SCREEN NAVIGATION
-// ─────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+let S = {
+  level: null, questions: [], current: 0,
+  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
+  answers: [],
+  timeLeft: 0, timerID: null
+};
+
+// ══════════════════════════════════════════
+// TITLE ANIMATION
+// ══════════════════════════════════════════
+function buildWord(elId, text, baseDelay) {
+  const el = document.getElementById(elId);
+  el.innerHTML = '';
+  [...text].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'title-char';
+    s.textContent = ch === ' ' ? '\u00A0' : ch;
+    s.style.animationDelay = (baseDelay + i * 0.055) + 's';
+    el.appendChild(s);
+  });
 }
 
-// ─────────────────────────────────────────────
-//  START QUIZ
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════
+(function() {
+  const cvs = document.getElementById('particle-canvas');
+  const ctx = cvs.getContext('2d');
+  const SYM = ['λ','Λ','Δ','◇','Φ','Ψ','Ω','⌬','◈'];
+  let pts=[], W, H;
+  function resize() { W=cvs.width=window.innerWidth; H=cvs.height=window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  function mk() {
+    return { x:Math.random()*W, y:H+30, sym:SYM[0|Math.random()*SYM.length],
+      sz:12+Math.random()*18, vx:(Math.random()-.5)*.55, vy:-(0.28+Math.random()*.55),
+      op:0, mop:0.05+Math.random()*.09, lf:0, mlf:200+Math.random()*140,
+      rot:Math.random()*Math.PI*2, rv:(Math.random()-.5)*.022 };
+  }
+  for (let i=0;i<30;i++) { const p=mk(); p.y=Math.random()*H; p.lf=Math.random()*p.mlf; pts.push(p); }
+  function frame() {
+    ctx.clearRect(0,0,W,H);
+    if (Math.random()<.04 && pts.length<42) pts.push(mk());
+    pts = pts.filter(p=>p.y>-50);
+    pts.forEach(p => {
+      p.lf++; p.x+=p.vx; p.y+=p.vy; p.rot+=p.rv;
+      const fl=35;
+      p.op = p.lf<fl ? p.mop*(p.lf/fl) : p.lf>p.mlf-fl ? p.mop*((p.mlf-p.lf)/fl) : p.mop;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.font=`${p.sz}px 'DM Mono',monospace`;
+      ctx.fillStyle=`rgba(15,15,26,${p.op})`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(p.sym,0,0); ctx.restore();
+    });
+    requestAnimationFrame(frame);
+  }
+  setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
+})();
+
+// ══════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation = 'none';
+  requestAnimationFrame(() => { el.style.animation = ''; });
+}
+
+// ══════════════════════════════════════════
+// RIPPLE + START
+// ══════════════════════════════════════════
+function startQuizRipple(e, level) {
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const rip = document.createElement('div');
+  rip.className = 'ripple';
+  rip.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  card.appendChild(rip);
+  rip.addEventListener('animationend', () => rip.remove());
+  setTimeout(() => startQuiz(level), 220);
+}
+
 function startQuiz(level) {
   const cfg = LEVELS[level];
-  state.level = level;
-  state.questions = ALL_QUESTIONS.slice(cfg.start, cfg.start + cfg.count);
-  state.current = 0;
-  state.answers = new Array(state.questions.length).fill(null);
-  state.timeLeft = cfg.time;
-  state.reviewed = false;
+  S.level = level;
+  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.current = 0;
+  S.answers = new Array(S.questions.length).fill(null);
+  S.timeLeft = cfg.time;
 
-  const badge = document.getElementById('levelBadge');
-  badge.textContent = cfg.label;
-  badge.className = 'quiz-level-badge ' + cfg.badgeClass;
+  document.getElementById('levelBadge').textContent = cfg.label;
+  document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
+  document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  document.getElementById('progressFill').className = 'progress-fill ' + cfg.fillClass;
-
+  buildStreakBar();
   buildDots();
-  renderQuestion();
+  renderQ();
   startTimer();
   showScreen('quizScreen');
 }
 
+function backToLevelSelect() {
+  if (S.timerID) clearInterval(S.timerID);
+  showScreen('startScreen');
+}
+
+// ══════════════════════════════════════════
+// STREAK BAR
+// ══════════════════════════════════════════
+function buildStreakBar() {
+  const bar = document.getElementById('streakBar');
+  bar.innerHTML = '';
+  S.questions.forEach(() => {
+    const d = document.createElement('div');
+    d.className = 'streak-dot';
+    bar.appendChild(d);
+  });
+}
+
+function updateStreakBar() {
+  document.querySelectorAll('.streak-dot').forEach((d, i) => {
+    const a = S.answers[i];
+    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
+  });
+}
+
+// ══════════════════════════════════════════
+// DOT ROW
+// ══════════════════════════════════════════
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
-  state.questions.forEach((_, i) => {
+  S.questions.forEach((_, i) => {
     const d = document.createElement('div');
     d.className = 'dot';
     d.title = 'Soal ' + (i+1);
@@ -2172,218 +1103,307 @@ function buildDots() {
 }
 
 function updateDots() {
-  const dots = document.querySelectorAll('.dot');
-  dots.forEach((d, i) => {
+  document.querySelectorAll('.dot').forEach((d, i) => {
     d.className = 'dot';
-    const a = state.answers[i];
-    if (i === state.current) { d.classList.add('current'); return; }
+    const a = S.answers[i];
+    if (i === S.current) { d.classList.add('current'); return; }
     if (a === null) return;
-    if (a === -2) { d.classList.add('skipped'); return; }
-    d.classList.add(a === state.questions[i].ans ? 'answered-correct' : 'answered-wrong');
+    if (a === -1)  { d.classList.add('surrendered'); return; }
+    d.classList.add('answered');
   });
 }
 
-// ─────────────────────────────────────────────
-//  RENDER QUESTION
-// ─────────────────────────────────────────────
-function renderQuestion() {
-  const q = state.questions[state.current];
-  const n = state.current;
-  const total = state.questions.length;
-  const answered = state.answers[n];
+// ══════════════════════════════════════════
+// RENDER QUESTION
+// ══════════════════════════════════════════
+function renderQ() {
+  const q = S.questions[S.current];
+  const n = S.current;
+  const total = S.questions.length;
+  const a = S.answers[n];
 
-  document.getElementById('qNumber').textContent = `SOAL ${n+1} DARI ${total}`;
+  document.getElementById('qNum').textContent = `SOAL ${n+1} DARI ${total}`;
   document.getElementById('qText').textContent = q.q;
   document.getElementById('qCounter').textContent = `${n+1} / ${total}`;
-  document.getElementById('progressFill').style.width = ((n / total) * 100) + '%';
+  document.getElementById('progressFill').style.width = ((n/total)*100) + '%';
 
+  // Surrendered banner
+  const banner = document.getElementById('surrenderBanner');
+  banner.style.display = a === -1 ? 'flex' : 'none';
+
+  // Surrender button
+  const sBtn = document.getElementById('surrenderBtn');
+  sBtn.disabled = a !== null;
+
+  // Options — NO correct/wrong shown here (only after submit)
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
-    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
 
-    if (answered !== null && answered !== -2) {
+    // After selecting (not surrendered, not null)
+    if (a !== null && a !== -1) {
       div.classList.add('locked');
-      if (i === q.ans) div.classList.add('correct');
-      else if (i === answered) div.classList.add('wrong');
-    } else if (answered !== -2) {
+      if (i === a) {
+        // Highlight chosen answer NEUTRALLY (ink color)
+        div.style.background = 'var(--ink)';
+        div.style.color = '#fff';
+        div.style.borderColor = 'var(--ink)';
+      }
+    } else if (a === -1) {
+      div.classList.add('locked');
+    } else {
       div.onclick = () => selectAnswer(i);
     }
+
+    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
-  const expBox = document.getElementById('expBox');
-  if (answered !== null && answered !== -2) {
-    document.getElementById('expTitle').textContent = q.exp.title;
-    document.getElementById('expBody').textContent = q.exp.body;
-    expBox.classList.add('show');
-  } else {
-    expBox.classList.remove('show');
-  }
-
+  // Next btn
   const isLast = n === total - 1;
-  const skipBtn = document.getElementById('skipBtn');
   const nextBtn = document.getElementById('nextBtn');
-
-  if (answered !== null && answered !== -2) {
-    skipBtn.style.display = 'none';
-    nextBtn.className = isLast ? 'nav-btn btn-finish' : 'nav-btn btn-next';
-    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
-  } else {
-    skipBtn.style.display = '';
-    skipBtn.textContent = isLast ? 'Lewati & Selesai' : 'Lewati ›';
-    nextBtn.className = 'nav-btn btn-next';
-    nextBtn.textContent = isLast ? 'Selesaikan Quiz →' : 'Berikutnya →';
-  }
+  nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
+  updateStreakBar();
+  updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  state.answers[state.current] = i;
-  renderQuestion();
+  if (S.answers[S.current] !== null) return;
+  S.answers[S.current] = i;
+  renderQ();
 }
 
-function goToNext() {
-  if (state.current < state.questions.length - 1) {
-    state.current++;
-    renderQuestion();
-  } else {
-    endQuiz();
-  }
+function goNext() {
+  if (S.current < S.questions.length - 1) { S.current++; renderQ(); }
+  else confirmSubmit();
 }
 
-function goToPrev() {
-  if (state.current > 0) {
-    state.current--;
-    renderQuestion();
-  }
+function goPrev() {
+  if (S.current > 0) { S.current--; renderQ(); }
 }
 
-function jumpTo(i) {
-  state.current = i;
-  renderQuestion();
+function jumpTo(i) { S.current = i; renderQ(); }
+
+function updateSubmitStatus() {
+  const answered = S.answers.filter(a => a !== null && a !== -1).length;
+  const surrendered = S.answers.filter(a => a === -1).length;
+  const unanswered = S.answers.filter(a => a === null).length;
+  document.getElementById('submitStatus').textContent =
+    `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-function skipQuestion() {
-  if (state.answers[state.current] === null) {
-    state.answers[state.current] = -2;
-  }
-  if (state.current < state.questions.length - 1) {
-    state.current++;
-    renderQuestion();
-  } else {
-    endQuiz();
-  }
+// ══════════════════════════════════════════
+// SURRENDER
+// ══════════════════════════════════════════
+function confirmSurrender() {
+  document.getElementById('surrenderModal').classList.add('open');
 }
 
-// ─────────────────────────────────────────────
-//  TIMER
-// ─────────────────────────────────────────────
+function doSurrender() {
+  closeModal('surrenderModal');
+  S.answers[S.current] = -1;
+  renderQ();
+  showToast('🏳️ Soal ini ditandai menyerah');
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+function confirmSubmit() {
+  const answered   = S.answers.filter(a => a !== null && a !== -1).length;
+  const surrendered = S.answers.filter(a => a === -1).length;
+  const unanswered  = S.answers.filter(a => a === null).length;
+
+  document.getElementById('submitModalDesc').innerHTML =
+    `Kamu telah menjawab <strong>${answered} soal</strong>, menyerah <strong>${surrendered} soal</strong>, dan <strong>${unanswered} soal</strong> belum dijawab.<br><br>Setelah submit, jawaban benar dan pembahasan lengkap akan ditampilkan.`;
+  document.getElementById('submitModal').classList.add('open');
+}
+
+function doSubmit() {
+  closeModal('submitModal');
+  endQuiz();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════
 function startTimer() {
-  if (state.timerID) clearInterval(state.timerID);
-  updateTimerDisplay();
-  state.timerID = setInterval(() => {
-    state.timeLeft--;
-    updateTimerDisplay();
-    if (state.timeLeft <= 0) endQuiz();
+  if (S.timerID) clearInterval(S.timerID);
+  renderTimer();
+  S.timerID = setInterval(() => {
+    S.timeLeft--;
+    renderTimer();
+    if (S.timeLeft <= 0) { clearInterval(S.timerID); endQuiz(); }
   }, 1000);
 }
 
-function updateTimerDisplay() {
-  const m = Math.floor(state.timeLeft / 60);
-  const s = state.timeLeft % 60;
+function renderTimer() {
+  const m = 0|S.timeLeft/60, sec = S.timeLeft%60;
   const pill = document.getElementById('timerPill');
-  pill.textContent = `${m}:${s < 10 ? '0'+s : s}`;
-  pill.className = state.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
+  pill.textContent = `${m}:${sec<10?'0'+sec:sec}`;
+  pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ─────────────────────────────────────────────\
-//  END QUIZ
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════
+// END QUIZ
+// ══════════════════════════════════════════
 function endQuiz() {
-  clearInterval(state.timerID);
+  if (S.timerID) clearInterval(S.timerID);
 
-  let correct = 0, wrong = 0, skipped = 0;
-  state.questions.forEach((q, i) => {
-    const a = state.answers[i];
-    if (a === null || a === -2) skipped++;
+  let correct=0, wrong=0, surr=0;
+  S.questions.forEach((q, i) => {
+    const a = S.answers[i];
+    if (a === null || a === -1) surr++;
     else if (a === q.ans) correct++;
     else wrong++;
   });
 
-  const total = state.questions.length;
-  const pct = total > 0 ? correct / total : 0;
+  const total = S.questions.length;
+  const pct = total > 0 ? correct/total : 0;
 
   let grade, msg, color;
-  if (pct >= 0.9) {
-    grade = '🏆 Sangat Istimewa';
-    msg = 'Luar biasa! Penguasaan logikamu sangat baik. Kamu siap menghadapi tantangan yang lebih tinggi.';
-    color = '#c9a227';
-  } else if (pct >= 0.7) {
-    grade = '⭐ Bagus!';
-    msg = 'Pemahaman yang solid. Terus berlatih untuk mencapai hasil sempurna.';
-    color = '#2e7d58';
-  } else if (pct >= 0.5) {
-    grade = '📚 Cukup Baik';
-    msg = 'Kamu sudah memahami konsep dasar. Review kembali materi yang salah dan coba lagi!';
-    color = '#1a5fa8';
-  } else {
-    grade = '💪 Terus Berlatih!';
-    msg = 'Jangan menyerah! Pelajari kembali pembahasannya dan ulangi latihan ini.';
-    color = '#8b1a1a';
-  }
+  if (pct >= .9)      { grade='🏆 Sempurna!'; msg='Luar biasa! Penguasaanmu sangat kuat. Kamu benar-benar menguasai materi ini.'; color='#c8961e'; }
+  else if (pct >= .7) { grade='⭐ Bagus Sekali!'; msg='Hasil yang solid. Beberapa konsep perlu sedikit penguatan. Terus berlatih!'; color='var(--correct)'; }
+  else if (pct >= .5) { grade='📚 Cukup Baik'; msg='Kamu sudah di jalur yang benar. Review pembahasan di bawah dan coba lagi!'; color='var(--accent-med)'; }
+  else                { grade='💪 Terus Semangat!'; msg='Jangan menyerah! Pelajari pembahasannya dengan seksama dan latih lagi.'; color='var(--wrong)'; }
 
-  document.getElementById('rScoreNum').textContent = correct;
-  document.getElementById('rScoreDen').textContent = '/ ' + total;
-  document.getElementById('rScoreNum').style.color = color;
+  document.getElementById('rNum').textContent = correct;
+  document.getElementById('rNum').style.color = color;
+  document.getElementById('rDen').textContent = '/ ' + total;
   document.getElementById('rGrade').textContent = grade;
-  document.getElementById('rMessage').textContent = msg;
+  document.getElementById('rMsg').textContent = msg;
   document.getElementById('rCorrect').textContent = correct;
   document.getElementById('rWrong').textContent = wrong;
-  document.getElementById('rSkipped').textContent = skipped;
+  document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 70;
+  const circ = 2 * Math.PI * 74; // 465
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
     arc.style.strokeDashoffset = circ * (1 - pct);
-  }, 100);
+  }, 200);
 
-  buildReview();
-  document.getElementById('retryBtn').onclick = retryLevel;
+  buildReview('all');
   showScreen('resultScreen');
 }
 
-function buildReview() {
-  const panel = document.getElementById('reviewPanel');
-  panel.innerHTML = '';
-  state.questions.forEach((q, i) => {
-    const a = state.answers[i];
-    let cls, status;
-    if (a === null || a === -2) { cls = 'ri-skipped'; status = 'Dilewati'; }
-    else if (a === q.ans) { cls = 'ri-correct'; status = 'Benar: ' + q.opts[q.ans]; }
-    else { cls = 'ri-wrong'; status = 'Salah → ' + q.opts[q.ans]; }
+// ══════════════════════════════════════════
+// REVIEW
+// ══════════════════════════════════════════
+function buildReview(filter) {
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
 
-    const item = document.createElement('div');
-    item.className = `review-item ${cls}`;
-    item.innerHTML = `<div class="ri-dot"></div><div class="ri-q">Soal ${i+1}: ${q.q.substring(0,60)}...</div><div class="ri-a">${status}</div>`;
-    panel.appendChild(item);
+  S.questions.forEach((q, i) => {
+    const a = S.answers[i];
+    let status;
+    if (a === null || a === -1) status = 'surrendered';
+    else if (a === q.ans) status = 'correct';
+    else status = 'wrong';
+
+    if (filter !== 'all' && filter !== status) return;
+
+    const card = document.createElement('div');
+    card.className = 'review-card';
+
+    const icon = status==='correct' ? '✓' : status==='wrong' ? '✗' : '🏳';
+    const iconClass = status==='correct' ? 'correct' : status==='wrong' ? 'wrong' : 'surrendered';
+
+    let ansHTML = '';
+    if (status === 'surrendered') {
+      ansHTML = `
+        <div class="rc-row row-surr">
+          <span class="rc-label lbl-surr">Menyerah</span>
+          <span>Soal ini tidak dijawab</span>
+        </div>
+        <div class="rc-row row-correct">
+          <span class="rc-label lbl-correct">Kunci</span>
+          <span>${q.opts[q.ans]}</span>
+        </div>`;
+    } else if (status === 'correct') {
+      ansHTML = `
+        <div class="rc-row row-correct">
+          <span class="rc-label lbl-correct">Benar ✓</span>
+          <span>${q.opts[a]}</span>
+        </div>`;
+    } else {
+      ansHTML = `
+        <div class="rc-row row-wrong">
+          <span class="rc-label lbl-wrong">Jawabanmu</span>
+          <span>${q.opts[a]}</span>
+        </div>
+        <div class="rc-row row-correct">
+          <span class="rc-label lbl-correct">Kunci</span>
+          <span>${q.opts[q.ans]}</span>
+        </div>`;
+    }
+
+    card.innerHTML = `
+      <div class="rc-top">
+        <div class="rc-icon ${iconClass}">${icon}</div>
+        <div style="flex:1">
+          <div class="rc-qnum">SOAL ${i+1}</div>
+          <div class="rc-qtext">${q.q}</div>
+        </div>
+      </div>
+      <div class="rc-answers">${ansHTML}</div>
+      <div class="rc-exp">
+        <div class="rc-exp-head">💡 Pembahasan</div>
+        <div class="rc-exp-title">${q.exp.title}</div>
+        <div class="rc-exp-body">${q.exp.body}</div>
+      </div>`;
+
+    list.appendChild(card);
   });
+
+  if (!list.innerHTML) {
+    list.innerHTML = `<div style="text-align:center;padding:36px;color:#bbb;font-family:var(--mono);font-size:13px;">Tidak ada soal dalam kategori ini</div>`;
+  }
 }
 
-function toggleReview() {
-  const panel = document.getElementById('reviewPanel');
-  const btn = document.getElementById('reviewToggle');
-  state.reviewed = !state.reviewed;
-  panel.className = state.reviewed ? 'review-panel open' : 'review-panel';
-  btn.querySelector('span').textContent = state.reviewed ? '▴' : '▾';
+function filterReview(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildReview(type);
 }
 
-function retryLevel() { startQuiz(state.level); }
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════
+// RETRY / HOME
+// ══════════════════════════════════════════
+function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  buildWord('w1', 'Quiz', 0.3);
+  buildWord('w2', 'Diagonalisasi', 0.75);
+  document.querySelectorAll('.level-card').forEach((card, i) => {
+    card.style.animationDelay = (1.5 + i * 0.2) + 's';
+    card.classList.add('in');
+  });
+});
 </script>
 </body>
 </html>
