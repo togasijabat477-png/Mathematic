@@ -1,357 +1,2438 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Latihan Soal & Jawaban Teori Graf</title>
-    <style>
-        :root {
-            --primary: #8b5cf6;
-            --primary-hover: #7c3aed;
-            --secondary: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg-gradient: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quiz Graf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f1a;
+  --ink-2: #1e1e32;
+  --ink-soft: #3a3a58;
+  --paper: #f5f3ee;
+  --cream: #faf8f3;
+  --warm-white: #fffef9;
+  --accent-easy: #1a7a4a;
+  --accent-easy-bg: #e8f5ee;
+  --accent-med: #1550a0;
+  --accent-med-bg: #e0eaf8;
+  --accent-hard: #8c1818;
+  --accent-hard-bg: #fce8e8;
+  --gold: #c8961e;
+  --gold-2: #e8b832;
+  --gold-bg: #fef6e0;
+  --correct: #1a7a4a;
+  --wrong: #b8281e;
+  --surrender: #7a6015;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 18px;
+  --shadow: 0 4px 32px rgba(0,0,0,0.07);
+}
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Times New Roman", Times, serif;
-            background: var(--bg-gradient);
-            color: #1e293b;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-        }
+body {
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 16px 40px;
+    overflow-x: hidden;
+  }
 
-        .container {
-            width: 100%;
-            max-width: 600px;
-            padding: 15px;
-            margin: auto;
-        }
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,160,42,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(46,125,88,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: clamp(15px, 5vw, 30px);
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            width: 100%;
-        }
+#particle-canvas {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+#particle-canvas.visible { opacity: 1; }
 
-        h2 {
-            margin-top: 0;
-            color: #4c1d95;
-            font-size: clamp(1.2rem, 5vw, 1.8rem);
-        }
+.wrap { position: relative; z-index: 1; width: 100%; max-width: 700px; }
 
-        p {
-            color: #475569;
-            line-height: 1.6;
-            font-size: clamp(14px, 4vw, 16px);
-        }
+.screen { display: none; animation: fadeUp .45s ease both; }
+.screen.active { display: block; }
 
-         button {
-            display: block;
-            width: 100%; 
-            padding: 14px 20px;
-            margin: 10px 0; 
-            font-family: inherit;
-            font-size: clamp(16px, 4vw, 18px); 
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            border: none;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            word-wrap: break-word;
-        }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -5px rgba(139, 92, 246, 0.4);
-        }
+/* ─── TOP NAV ─── */
+.top-nav {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px;
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-soft); background: var(--warm-white);
+  border: 1.5px solid rgba(0,0,0,0.12);
+  padding: 8px 18px; border-radius: 100px; cursor: pointer;
+  text-decoration: none; transition: all .22s;
+}
+.back-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-        #timer {
-            font-weight: bold;
-            font-family: monospace;
-            background: #1e293b;
-            color: #fff;
-            padding: 6px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
+/* ─── START SCREEN ─── */
+.hero {
+  text-align: center;
+  padding: 40px 0 32px;
+}
 
-        .progress {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gold);
+  background: var(--gold-bg); border: 1px solid rgba(200,150,30,.25);
+  padding: 7px 18px; border-radius: 100px; margin-bottom: 24px;
+  animation: badgeIn .7s ease .2s both;
+}
+@keyframes badgeIn {
+  from { opacity: 0; transform: scale(.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
 
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.4s ease;
-            border-radius: 10px;
-        }
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 7vw, 3.4rem);
+  font-weight: 900; line-height: 1.1;
+  color: var(--ink); margin-bottom: 8px;
+  letter-spacing: -.01em;
+}
+.hero-title .line2 {
+  font-style: italic; color: var(--gold);
+  display: block;
+}
 
-        #question {
-            font-size: clamp(1rem, 4.5vw, 1.15rem);
-            margin-bottom: 20px;
-            font-weight: 700;
-            text-align: left;
-        }
+.title-char {
+  display: inline-block; opacity: 0;
+  transform: translateY(24px) rotate(6deg);
+  animation: charIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+}
+@keyframes charIn { to { opacity:1; transform:translateY(0) rotate(0); } }
 
-        .option {
-            text-align: left;
-            margin: 8px 0;
-            padding: 12px 15px;
-            border-radius: 12px;
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
+.hero-rule {
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 14px auto 20px;
+  animation: ruleGrow .9s ease 1.2s both;
+}
+@keyframes ruleGrow { to { width: 240px; } }
 
-        .option:hover {
-            border-color: var(--primary);
-            background: #f5f3ff;
-        }
+.hero-sub {
+  font-size: 15px; color: var(--ink-soft); line-height: 1.75;
+  max-width: 500px; margin: 0 auto;
+  animation: fadeUp .7s ease 1.4s both;
+}
 
-        .option-prefix {
-            font-weight: bold;
-            margin-right: 10px;
-            color: var(--primary);
-        }
+.level-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 32px 0; }
 
-        .correct { background: var(--success) !important; color: white; border-color: var(--success) !important; }
-        .wrong { background: var(--danger) !important; color: white; border-color: var(--danger) !important; }
-        .correct .option-prefix, .wrong .option-prefix { color: white; }
+.level-card {
+  position: relative; overflow: hidden;
+  border-radius: 22px; border: 2px solid transparent;
+  padding: 26px 26px 26px 30px;
+  cursor: pointer; transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+  display: flex; align-items: center; gap: 22px;
+  text-align: left;
+  opacity: 0;
+}
+.level-card.in { animation: cardIn .55s cubic-bezier(.175,.885,.32,1.275) both; }
+@keyframes cardIn {
+  from { opacity:0; transform:translateX(-28px) scale(.97); }
+  to   { opacity:1; transform:translateX(0) scale(1); }
+}
 
-        .explanation {
-            margin-top: 15px;
-            text-align: left;
-            font-size: 14px;
-            background: #f0fdf4;
-            padding: 15px;
-            border-left: 4px solid var(--success);
-            border-radius: 8px;
-            color: #166534;
-        }
+.level-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:5px; border-radius:22px 0 0 22px;
+  transition: width .3s ease;
+}
+.level-card:hover::before { width: 7px; }
 
-        .hidden { display: none; }
-    </style>
+.level-card.easy   { background:var(--accent-easy-bg); border-color:rgba(26,122,74,.2); }
+.level-card.easy::before { background:var(--accent-easy); }
+.level-card.medium { background:var(--accent-med-bg);  border-color:rgba(21,80,160,.2); }
+.level-card.medium::before { background:var(--accent-med); }
+.level-card.hard   { background:var(--accent-hard-bg); border-color:rgba(140,24,24,.2); }
+.level-card.hard::before { background:var(--accent-hard); }
+
+.level-card:hover { transform: translateX(7px) scale(1.01); box-shadow: var(--shadow); }
+
+.level-card .bg-symbol {
+  position:absolute; right:16px; bottom:-14px;
+  font-family:var(--mono); font-size:90px; font-weight:700;
+  opacity:.05; pointer-events:none; line-height:1;
+  transform:rotate(-8deg); transition:all .4s ease;
+}
+.level-card:hover .bg-symbol { opacity:.12; transform:rotate(-4deg) scale(1.08); }
+
+.ripple {
+  position:absolute; border-radius:50%; transform:scale(0);
+  animation:rippleAnim .6s linear; background:rgba(255,255,255,.35);
+  pointer-events:none;
+}
+@keyframes rippleAnim { to { transform:scale(5); opacity:0; } }
+
+.lv-icon { font-size:38px; flex-shrink:0; transition:transform .3s ease; }
+.level-card:hover .lv-icon { transform: scale(1.15) rotate(-6deg); }
+
+.lv-info { flex:1; }
+.lv-name {
+  font-family: var(--serif); font-size:17px; font-weight:700;
+  margin-bottom:5px;
+}
+.easy   .lv-name { color:var(--accent-easy); }
+.medium .lv-name { color:var(--accent-med); }
+.hard   .lv-name { color:var(--accent-hard); }
+
+.lv-desc { font-size:13px; color:#666; line-height:1.55; margin-bottom:10px; }
+
+.lv-tags { display:flex; gap:7px; flex-wrap:wrap; }
+.tag {
+  font-family:var(--mono); font-size:10px; letter-spacing:.07em;
+  text-transform:uppercase; padding:3px 10px; border-radius:100px; font-weight:500;
+}
+.easy   .tag { background:rgba(26,122,74,.12);  color:var(--accent-easy); }
+.medium .tag { background:rgba(21,80,160,.12);  color:var(--accent-med); }
+.hard   .tag { background:rgba(140,24,24,.12);  color:var(--accent-hard); }
+
+.lv-arrow { font-size:22px; opacity:.35; flex-shrink:0; transition:all .3s; }
+.level-card:hover .lv-arrow { opacity:1; transform:translateX(5px); }
+
+.quote-box {
+  margin-top: 12px;
+  background:var(--gold-bg); border:1px solid rgba(200,150,30,.3);
+  border-radius:16px; padding:20px 24px;
+  font-style:italic; font-size:14px; color:#6b4d0a;
+  line-height:1.7; text-align:center;
+  animation: fadeUp .6s ease 2s both;
+}
+.quote-box cite {
+  display:block; margin-top:10px; font-style:normal;
+  font-size:11px; opacity:.65; font-family:var(--mono); letter-spacing:.06em;
+}
+
+/* ─── QUIZ SCREEN ─── */
+.quiz-topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px; gap:10px; flex-wrap:wrap;
+}
+
+.back-to-level-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; font-weight:500;
+  padding:6px 14px; border-radius:100px;
+  border:1.5px solid rgba(0,0,0,.12);
+  background:transparent; color:var(--ink-soft);
+  cursor:pointer; transition:all .2s;
+}
+.back-to-level-btn:hover { background:var(--ink); color:#fff; border-color:var(--ink); }
+
+.quiz-level-badge {
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  text-transform:uppercase; font-weight:600;
+  padding:6px 16px; border-radius:100px;
+}
+.badge-easy   { background:var(--accent-easy-bg); color:var(--accent-easy); }
+.badge-medium { background:var(--accent-med-bg);  color:var(--accent-med); }
+.badge-hard   { background:var(--accent-hard-bg); color:var(--accent-hard); }
+
+.timer-pill {
+  font-family:var(--mono); font-size:15px; font-weight:500;
+  background:var(--ink); color:#fff;
+  padding:7px 18px; border-radius:100px;
+  letter-spacing:.04em; transition:all .3s;
+  display:flex; align-items:center; gap:6px;
+}
+.timer-pill::before { content:'⏱'; font-size:12px; }
+.timer-pill.urgent {
+  background:var(--wrong);
+  animation:timerPulse .7s ease infinite alternate;
+}
+@keyframes timerPulse { from { opacity:1; transform:scale(1); } to { opacity:.75; transform:scale(1.04); } }
+
+.q-counter {
+  font-family:var(--mono); font-size:12px; color:#999; letter-spacing:.06em;
+}
+
+.progress-track {
+  height:5px; background:rgba(0,0,0,.07);
+  border-radius:5px; margin-bottom:16px; overflow:hidden;
+}
+.progress-fill {
+  height:100%; border-radius:5px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+.fill-easy   { background:linear-gradient(90deg, var(--accent-easy), #52b788); }
+.fill-medium { background:linear-gradient(90deg, var(--accent-med), #4895ef); }
+.fill-hard   { background:linear-gradient(90deg, var(--accent-hard), #e76f51); }
+
+/* Dot navigation */
+.dot-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+.dot {
+  width:11px; height:11px; border-radius:50%;
+  background:#ddd; transition:all .3s; cursor:pointer;
+  border:2px solid transparent;
+}
+.dot:hover { transform:scale(1.3); background:#bbb; }
+.dot.current { background:var(--ink); border-color:var(--ink); transform:scale(1.35); box-shadow:0 0 0 3px rgba(15,15,26,.15); }
+.dot.answered { background:var(--ink-soft); }
+.dot.surrendered { background:var(--surrender); }
+
+/* Question card */
+.q-card {
+  background:var(--warm-white);
+  border:1.5px solid rgba(0,0,0,.07);
+  border-radius:22px;
+  padding:30px;
+  margin-bottom:16px;
+  box-shadow:0 2px 20px rgba(0,0,0,.04);
+  transition:box-shadow .2s;
+}
+.q-card:hover { box-shadow:0 6px 32px rgba(0,0,0,.07); }
+
+.q-num {
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--gold);
+  margin-bottom:12px; display:flex; align-items:center; gap:8px;
+}
+.q-num::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg, rgba(200,150,30,.3), transparent);
+}
+
+.q-text { font-size:clamp(15px,3.5vw,17px); font-weight:600; line-height:1.6; color:var(--ink); }
+
+/* Options */
+.opts-list { display:flex; flex-direction:column; gap:9px; margin-bottom:20px; }
+
+.opt {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:14px 18px; border-radius:14px;
+  background:#fff; border:1.5px solid rgba(0,0,0,.09);
+  cursor:pointer; transition:all .22s;
+  font-size:14px; line-height:1.5; color:var(--ink);
+  text-align:left; position:relative; overflow:hidden;
+}
+.opt::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.5), transparent);
+  opacity:0; transition:opacity .2s;
+}
+.opt:hover:not(.locked)::before { opacity:1; }
+.opt:hover:not(.locked) {
+  border-color:var(--ink); background:#fafafa;
+  transform:translateX(5px);
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+}
+
+.opt-letter {
+  font-family:var(--mono); font-size:12px; font-weight:500;
+  width:28px; height:28px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; background:rgba(0,0,0,.06);
+  color:var(--ink-soft); letter-spacing:.05em;
+  transition:all .2s; margin-top:0;
+}
+
+/* After submit states */
+.opt.correct {
+  background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
+  color:var(--correct); animation:correctPop .4s cubic-bezier(.175,.885,.32,1.275);
+}
+.opt.correct .opt-letter { background:var(--correct); color:#fff; }
+.opt.wrong {
+  background:rgba(184,40,30,.1); border-color:rgba(184,40,30,.35);
+  color:var(--wrong); animation:wrongShake .4s ease;
+}
+.opt.wrong .opt-letter { background:var(--wrong); color:#fff; }
+.opt.my-answer-wrong {
+  background:rgba(184,40,30,.08); border-color:rgba(184,40,30,.25);
+  color:var(--wrong); opacity:.75;
+}
+
+@keyframes correctPop {
+  0%{transform:translateX(0) scale(1)}
+  40%{transform:translateX(4px) scale(1.02)}
+  100%{transform:translateX(0) scale(1)}
+}
+@keyframes wrongShake {
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-7px)}
+  75%{transform:translateX(7px)}
+}
+
+/* Navigation buttons */
+.nav-row { display:flex; gap:10px; align-items:center; margin-bottom:16px; }
+.nav-btn {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--sans); font-size:14px; font-weight:600;
+  padding:13px 20px; border-radius:13px;
+  border:1.5px solid transparent; cursor:pointer;
+  transition:all .22s; letter-spacing:.01em;
+  white-space:nowrap;
+}
+.btn-prev {
+  background:#fff; border-color:rgba(0,0,0,.14);
+  color:var(--ink); flex:0 0 46px; padding:13px;
+}
+.btn-prev:hover { background:var(--ink); color:#fff; border-color:var(--ink); }
+
+.btn-surrender {
+  background:rgba(122,96,21,.08);
+  border-color:rgba(122,96,21,.25);
+  color:var(--surrender); flex:1;
+  font-weight:600;
+}
+.btn-surrender:hover {
+  background:rgba(122,96,21,.15);
+  border-color:rgba(122,96,21,.45);
+  box-shadow:0 3px 12px rgba(122,96,21,.15);
+}
+.btn-surrender:disabled {
+  opacity:.4; cursor:not-allowed;
+  pointer-events:none;
+}
+
+.btn-next {
+  background:var(--ink); color:#fff;
+  border-color:var(--ink); flex:2;
+}
+.btn-next:hover {
+  background:var(--ink-2);
+  transform:translateY(-2px);
+  box-shadow:0 6px 22px rgba(0,0,0,.2);
+}
+
+/* Submit button — only at question screen BOTTOM after nav */
+.submit-row { margin-top: 6px; }
+.btn-submit {
+  width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+  font-family:var(--serif); font-size:16px; font-weight:700;
+  padding:17px; border-radius:16px; border:none; cursor:pointer;
+  transition:all .25s; letter-spacing:.02em;
+  background:linear-gradient(135deg, #c8961e, #a87318);
+  color:#fff; box-shadow:0 4px 22px rgba(200,150,30,.35);
+  position:relative; overflow:hidden;
+}
+.btn-submit::after {
+  content:''; position:absolute;
+  top:-50%; left:-60%;
+  width:50%; height:200%;
+  background:rgba(255,255,255,.15);
+  transform:skewX(-15deg);
+  transition:left .4s ease;
+}
+.btn-submit:hover::after { left:130%; }
+.btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(200,150,30,.45); }
+
+.submit-status {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--mono); font-size:11px; color:#aaa;
+  letter-spacing:.06em; margin-top:10px; text-align:center;
+}
+
+/* Surrendered banner */
+.surrendered-banner {
+  background:rgba(122,96,21,.08); border:1.5px solid rgba(122,96,21,.25);
+  border-radius:12px; padding:12px 18px;
+  display:flex; align-items:center; gap:10px;
+  font-size:13px; color:var(--surrender);
+  font-weight:500; margin-bottom:12px;
+  animation:fadeUp .3s ease;
+}
+
+/* ─── RESULT SCREEN ─── */
+.result-wrap { padding:8px 0; }
+.result-eyebrow {
+  font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--gold);
+  text-align:center; margin-bottom:20px;
+}
+
+.score-ring-wrap {
+  display:flex; justify-content:center; margin-bottom:28px;
+}
+.score-ring {
+  width:170px; height:170px; border-radius:50%;
+  position:relative; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+}
+.score-ring svg { position:absolute; inset:0; transform:rotate(-90deg); }
+.score-num {
+  font-family:var(--serif); font-size:58px; font-weight:900;
+  line-height:1; position:relative; z-index:1;
+}
+.score-den {
+  font-family:var(--mono); font-size:14px; color:#aaa;
+  position:relative; z-index:1; margin-top:2px;
+}
+
+.result-grade {
+  font-family:var(--serif); font-size:clamp(1.5rem,5vw,2rem);
+  font-weight:700; text-align:center; margin-bottom:10px;
+}
+.result-msg {
+  font-size:15px; color:#777; text-align:center; line-height:1.7;
+  margin-bottom:28px; max-width:440px; margin-left:auto; margin-right:auto;
+}
+
+.result-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px;
+}
+.stat-box {
+  background:var(--warm-white); border:1.5px solid rgba(0,0,0,.07);
+  border-radius:16px; padding:18px 12px; text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+}
+.stat-num { font-family:var(--serif); font-size:28px; font-weight:900; }
+.stat-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:#aaa; margin-top:6px;
+}
+
+/* Result actions */
+.result-actions { display:flex; flex-direction:column; gap:10px; margin-bottom:36px; }
+.btn-action {
+  font-family:var(--sans); font-size:15px; font-weight:600;
+  padding:16px; border-radius:14px; border:1.5px solid transparent;
+  cursor:pointer; transition:all .22s; letter-spacing:.01em;
+}
+.btn-retry { background:var(--ink); color:#fff; border-color:var(--ink); }
+.btn-retry:hover { background:var(--ink-2); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.2); }
+.btn-home  { background:#fff; border-color:rgba(0,0,0,.14); color:var(--ink); }
+.btn-home:hover { background:var(--ink); color:#fff; }
+
+/* ─── REVIEW SECTION ─── */
+.review-section { text-align:left; }
+.review-header-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px; padding-bottom:16px;
+  border-bottom:2px solid rgba(0,0,0,.07);
+}
+.review-title { font-family:var(--serif); font-size:20px; font-weight:700; }
+.review-subtitle { font-family:var(--mono); font-size:11px; color:#aaa; letter-spacing:.07em; margin-top:4px; }
+
+.review-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.filter-btn {
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase; padding:6px 16px;
+  border-radius:100px; border:1.5px solid rgba(0,0,0,.12);
+  background:#fff; color:#999; cursor:pointer; transition:all .2s;
+}
+.filter-btn.active { background:var(--ink); color:#fff; border-color:var(--ink); }
+.filter-btn:hover:not(.active) { border-color:var(--ink); color:var(--ink); }
+
+.review-card {
+  background:var(--warm-white); border:1.5px solid rgba(0,0,0,.07);
+  border-radius:20px; padding:22px 24px;
+  margin-bottom:14px; transition:box-shadow .2s;
+}
+.review-card:hover { box-shadow:0 4px 22px rgba(0,0,0,.07); }
+
+.rc-top { display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; }
+.rc-icon {
+  width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0; font-weight:700;
+}
+.rc-icon.correct   { background:rgba(26,122,74,.12); color:var(--correct); }
+.rc-icon.wrong     { background:rgba(184,40,30,.1);  color:var(--wrong); }
+.rc-icon.surrendered { background:rgba(122,96,21,.1); color:var(--surrender); }
+
+.rc-qnum { font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+.rc-qtext { font-size:14px; font-weight:600; line-height:1.55; color:var(--ink); }
+
+.rc-answers { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.rc-row {
+  display:flex; align-items:center; gap:10px;
+  font-size:13px; padding:9px 14px; border-radius:10px;
+}
+.rc-row.row-correct { background:rgba(26,122,74,.08); border:1px solid rgba(26,122,74,.2); color:#1a5e38; }
+.rc-row.row-wrong   { background:rgba(184,40,30,.08); border:1px solid rgba(184,40,30,.2); color:#9e1c14; text-decoration:line-through; opacity:.75; }
+.rc-row.row-surr    { background:rgba(122,96,21,.07); border:1px solid rgba(122,96,21,.2); color:var(--surrender); }
+
+.rc-label {
+  font-family:var(--mono); font-size:9px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase;
+  padding:2px 8px; border-radius:6px; flex-shrink:0;
+}
+.lbl-correct { background:var(--correct); color:#fff; }
+.lbl-wrong   { background:var(--wrong); color:#fff; }
+.lbl-surr    { background:var(--surrender); color:#fff; }
+
+.rc-exp {
+  background:var(--gold-bg); border:1.5px solid rgba(200,150,30,.25);
+  border-radius:14px; padding:16px 18px;
+}
+.rc-exp-head {
+  font-family:var(--mono); font-size:10px; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--gold); font-weight:600;
+  margin-bottom:7px; display:flex; align-items:center; gap:6px;
+}
+.rc-exp-title { font-size:13px; font-weight:700; color:#6b4d0a; margin-bottom:5px; }
+.rc-exp-body  { font-size:13px; color:#7a5515; line-height:1.65; }
+
+/* ─── MODALS ─── */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.55); z-index:2000;
+  align-items:center; justify-content:center;
+  padding:20px; backdrop-filter:blur(6px);
+}
+.modal-overlay.open { display:flex; }
+
+.modal-box {
+  background:var(--warm-white); border-radius:26px;
+  padding:36px 30px; max-width:400px; width:100%;
+  text-align:center; animation:modalIn .35s cubic-bezier(.175,.885,.32,1.275);
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+}
+@keyframes modalIn {
+  from { opacity:0; transform:scale(.9) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+.modal-emoji { font-size:52px; margin-bottom:16px; }
+.modal-title { font-family:var(--serif); font-size:22px; font-weight:700; margin-bottom:10px; }
+.modal-desc  { font-size:14px; color:#666; line-height:1.7; margin-bottom:8px; }
+.modal-warn  { font-family:var(--mono); font-size:11px; color:#bbb; letter-spacing:.06em; margin-bottom:26px; }
+.modal-btns  { display:flex; flex-direction:column; gap:10px; }
+.modal-btn-confirm {
+  font-family:var(--sans); font-size:15px; font-weight:700;
+  padding:15px; border-radius:13px; border:none; cursor:pointer; transition:all .22s;
+}
+.modal-btn-cancel {
+  font-family:var(--sans); font-size:14px; font-weight:600;
+  padding:13px; border-radius:13px;
+  border:1.5px solid rgba(0,0,0,.14);
+  background:#fff; color:var(--ink); cursor:pointer; transition:all .22s;
+}
+.modal-btn-cancel:hover { background:var(--ink); color:#fff; }
+
+/* Surrender modal specifics */
+.surrender-confirm {
+  background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
+}
+.surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
+
+/* Submit modal specifics */
+.submit-confirm {
+  background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
+}
+.submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
+
+/* ─── STREAK BADGE (new feature) ─── */
+.streak-bar {
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  margin-bottom:14px;
+}
+.streak-dot {
+  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
+  transition:all .4s ease;
+}
+.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
+
+/* ─── TOAST ─── */
+.toast {
+  position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:var(--ink); color:#fff;
+  font-family:var(--sans); font-size:13px; font-weight:500;
+  padding:12px 24px; border-radius:100px;
+  box-shadow:0 8px 28px rgba(0,0,0,.25);
+  z-index:3000; transition:transform .35s cubic-bezier(.175,.885,.32,1.275);
+  white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+@media (max-width: 430px) {
+  .level-card { padding:20px 18px; gap:16px; }
+  .q-card { padding:20px; }
+  .nav-row { flex-wrap:wrap; }
+  .btn-prev { flex:0 0 44px; padding:13px 10px; }
+  .result-stats { grid-template-columns:1fr 1fr; }
+  .review-card { padding:16px 18px; }
+  .modal-box { padding:28px 20px; }
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <button onclick="window.location.href='../../index.html?page=materi'" style="display: inline-block; text-decoration: none; background: #3498db; color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
-            Kembali ke Materi
-    </button>
+<canvas id="particle-canvas"></canvas>
 
-    <div id="startScreen" class="card">
-        <h2>Soal & Jawaban Teori Graf</h2>
-        <p>Selamat datang di simulasi Teori Graf! Di sini kita nggak cuma ngomongin titik dan garis biasa. 
-            Kamu bakal diuji seberapa dalam pemahamanmu tentang Vertex, Edge, Path, sampai Cycle. Ingat, Graf itu seni menghubungkan yang terputus, tapi kalau salah algoritma, ya wassalam.
-            Pilih tingkat kesulitan yang sesuai dengan kapasitas otakmu hari ini. Mau pemanasan di Easy, simulasi tugas di Medium, atau mau ngerasain tekanan mental sekelas UTS di Hard? Pilihan ada di tanganmu!</p>
-        
-        <div style="margin: 20px 0;">
-            <button onclick="startQuiz('easy')">Easy</button>
-            <button onclick="startQuiz('medium')" style="background:#6366f1">Medium</button>
-            <button onclick="startQuiz('hard')" style="background:#4338ca">Hard</button>
-        </div>
+<div class="wrap">
+  <div class="top-nav">
+    <a href="../../index.html?page=materi&tab=aljabar" class="back-btn">← Kembali ke Materi</a>
+  </div>
 
-        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; text-align: left; font-size: 13px;">
-            <strong>Struktur Latihan:</strong>
-            <ul style="margin: 5px 0 0 0; padding-left: 20px;">
-                <li>30 Soal Teori Graf</li>
-                <li>Waktu: 1 Jam 50 Menit</li>
-                <li>Pembahasan Lelngkap setiap nomor</li>
-            </ul>
-        </div>
+  <!-- ══════ START SCREEN ══════ -->
+  <div id="startScreen" class="screen active">
+    <div class="hero">
+      <div class="hero-badge">✦ Matematika &middot; Teori Graf ✦</div>
+      <h1 class="hero-title">
+        <span id="w1"></span>
+        <span class="line2"><span id="w2"></span></span>
+        <div class="hero-rule"></div>
+      </h1>
+      <p class="hero-sub">Pelajari konsep dasar hingga lanjutan teori graf melalui soal-soal terstruktur. Uji pemahamanmu tentang simpul, sisi, lintasan, pohon, graf berbobot, hingga algoritma graf sesuai level kemampuanmu.</p>
     </div>
 
-    <div id="quizScreen" class="card hidden">
-        <div id="timer">Waktu: 110:00</div>
-        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-        
-        <div id="question"></div>
-        <div id="options"></div>
-        
-        <div class="explanation hidden" id="explanation"></div>
-        
-        <div class="nav-buttons" style="display: flex; gap: 10px; margin-top: 20px;">
-            <button onclick="nextQuestion()" style="flex: 2;">Berikutnya</button>
-            <button onclick="goHome()" style="flex: 1; background: #94a3b8;">Kembali</button>
+    <div class="level-grid">
+      <div class="level-card easy" onclick="startQuizRipple(event,'easy')">
+        <div class="bg-symbol">◯</div>
+        <div class="lv-icon">🛣️</div>
+        <div class="lv-info">
+          <div class="lv-name">Easy — Dasar Teori Graf</div>
+          <div class="lv-desc">Pelajari konsep dasar graf mulai dari simpul, sisi, derajat simpul, jenis-jenis graf, hingga lintasan sederhana.</div>
+          <div class="lv-tags">
+            <span class="tag">10 Soal</span>
+            <span class="tag">30 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
         </div>
+        <div class="lv-arrow">›</div>
+      </div>
+
+      <div class="level-card medium" onclick="startQuizRipple(event,'medium')">
+        <div class="bg-symbol">⬡</div>
+        <div class="lv-icon">🔗</div>
+        <div class="lv-info">
+          <div class="lv-name">Medium — Struktur & Relasi Graf</div>
+          <div class="lv-desc">Pelajari lintasan, sirkuit, graf berarah, graf berbobot, matriks ketetanggaan, dan hubungan antar simpul.</div>
+          <div class="lv-tags">
+            <span class="tag">20 Soal</span>
+            <span class="tag">40 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="lv-arrow">›</div>
+      </div>
+
+      <div class="level-card hard" onclick="startQuizRipple(event,'hard')">
+        <div class="bg-symbol">⬢</div>
+        <div class="lv-icon">🕸️</div>
+        <div class="lv-info">
+          <div class="lv-name">Hard — Algoritma & Optimasi Graf</div>
+          <div class="lv-desc">Kuasai pohon merentang, lintasan terpendek, graf Hamilton, Euler, traversal DFS/BFS, hingga algoritma optimasi pada graf kompleks.</div>
+          <div class="lv-tags">
+            <span class="tag">30 Soal</span>
+            <span class="tag">50 Menit</span>
+            <span class="tag">5 Pilihan</span>
+          </div>
+        </div>
+        <div class="lv-arrow">›</div>
+      </div>
     </div>
 
-    <div id="resultScreen" class="card hidden">
-        <h2>Skor Akhir</h2>
-        <div id="score-display" style="font-size: 70px; font-weight: 800; color: var(--primary);">0</div>
-        <p id="result-message"></p>
-        <button onclick="goHome()">Kembali ke Menu</button>
+    <div class="quote-box">
+      "Melalui teori graf, masalah yang tampak rumit dapat disederhanakan menjadi titik dan garis."
+      <cite>— Paul Erdős</cite>
     </div>
+  </div>
+
+  <!-- ══════ QUIZ SCREEN ══════ -->
+  <div id="quizScreen" class="screen">
+    <div class="quiz-topbar">
+      <button class="back-to-level-btn" onclick="backToLevelSelect()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M8 2L4 6L8 10"/>
+        </svg>
+        Level
+      </button>
+      <span id="levelBadge" class="quiz-level-badge badge-easy">Easy</span>
+      <span id="qCounter" class="q-counter">1 / 10</span>
+      <div id="timerPill" class="timer-pill">30:00</div>
+    </div>
+
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
+    </div>
+
+    <!-- Streak bar -->
+    <div class="streak-bar" id="streakBar"></div>
+
+    <div class="dot-row" id="dotRow"></div>
+
+    <div class="q-card">
+      <div class="q-num" id="qNum">SOAL 1 DARI 10</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <!-- Surrendered banner -->
+    <div class="surrendered-banner" id="surrenderBanner" style="display:none;">
+      🏳️ Kamu menyerah pada soal ini — jawaban yang benar akan terungkap setelah submit.
+    </div>
+
+    <div class="opts-list" id="optsList"></div>
+
+    <div class="nav-row">
+      <button class="nav-btn btn-prev" onclick="goPrev()" title="Soal sebelumnya">‹</button>
+      <button class="nav-btn btn-surrender" id="surrenderBtn" onclick="confirmSurrender()">🏳️ Menyerah</button>
+      <button class="nav-btn btn-next" id="nextBtn" onclick="goNext()">Berikutnya →</button>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn-submit" onclick="confirmSubmit()">✦ Submit &amp; Lihat Hasil</button>
+      <div class="submit-status" id="submitStatus">0 dari 10 dijawab</div>
+    </div>
+  </div>
+
+  <!-- ══════ RESULT SCREEN ══════ -->
+  <div id="resultScreen" class="screen">
+    <div class="result-wrap">
+      <div class="result-eyebrow">✦ Hasil Quiz ✦</div>
+
+      <div class="score-ring-wrap">
+        <div class="score-ring" id="scoreRing">
+          <svg viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="85" cy="85" r="74" fill="none" stroke="#e8e5de" stroke-width="9"/>
+            <circle id="arcCircle" cx="85" cy="85" r="74" fill="none" stroke="#c8961e" stroke-width="9"
+                    stroke-dasharray="465" stroke-dashoffset="465"
+                    stroke-linecap="round"
+                    style="transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)"/>
+          </svg>
+          <div class="score-num" id="rNum">0</div>
+          <div class="score-den" id="rDen">/ 10</div>
+        </div>
+      </div>
+
+      <div class="result-grade" id="rGrade"></div>
+      <p class="result-msg" id="rMsg"></p>
+
+      <div class="result-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="rCorrect" style="color:var(--correct)">0</div>
+          <div class="stat-label">Benar</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rWrong" style="color:var(--wrong)">0</div>
+          <div class="stat-label">Salah</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="rSurr" style="color:var(--surrender)">0</div>
+          <div class="stat-label">Menyerah</div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-action btn-retry" onclick="retryLevel()">🔄 Ulangi Level Ini</button>
+        <button class="btn-action btn-home" onclick="goHome()">← Kembali ke Pilihan Level</button>
+      </div>
+
+      <!-- Full review -->
+      <div class="review-section" id="reviewSection">
+        <div class="review-header-row">
+          <div>
+            <div class="review-title">📋 Pembahasan Lengkap</div>
+            <div class="review-subtitle">Pelajari setiap soal beserta pembahasannya</div>
+          </div>
+        </div>
+        <div class="review-filters">
+          <button class="filter-btn active" onclick="filterReview('all',this)">Semua</button>
+          <button class="filter-btn" onclick="filterReview('correct',this)">✓ Benar</button>
+          <button class="filter-btn" onclick="filterReview('wrong',this)">✗ Salah</button>
+          <button class="filter-btn" onclick="filterReview('surrendered',this)">🏳 Menyerah</button>
+        </div>
+        <div id="reviewList"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script>
-let currentQuestions = [];
-let currentIndex = 0;
-let score = 0;
-let selected = null;
-let timer;
-let timeLeft = 6600;
+<!-- SURRENDER MODAL -->
+<div class="modal-overlay" id="surrenderModal">
+  <div class="modal-box">
+    <div class="modal-emoji">🏳️</div>
+    <div class="modal-title">Yakin Menyerah?</div>
+    <div class="modal-desc">Kamu akan menyerah pada soal ini. Soal tidak dapat dijawab lagi, dan status menyerah akan dicatat.</div>
+    <div class="modal-warn">Pembahasan soal ini akan muncul setelah kamu submit quiz.</div>
+    <div class="modal-btns">
+      <button class="modal-btn-confirm surrender-confirm" onclick="doSurrender()">Ya, Saya Menyerah</button>
+      <button class="modal-btn-cancel" onclick="closeModal('surrenderModal')">Tetap Coba Jawab</button>
+    </div>
+  </div>
+</div>
 
-const questionsData = {
-    easy: [
-        { q: "Apa nama komponen 'titik' dalam sebuah Graf?", opts: ["Edge", "Vertex (Simpul)", "Path", "Cycle", "Degree"], ans: "Vertex (Simpul)", exp: "Dalam teori graf, objek dasar terdiri dari Vertex (titik) dan Edge (garis penghubung)." },
-        { q: "Garis yang menghubungkan dua simpul disebut...", opts: ["Node", "Loop", "Edge (Sisi)", "Bridge", "Weight"], ans: "Edge (Sisi)", exp: "Edge atau sisi adalah garis yang menghubungkan simpul satu dengan lainnya." },
-        { q: "Sisi yang menghubungkan simpul dengan dirinya sendiri disebut...", opts: ["Isolasi", "Loop", "Parallel", "Bridge", "Path"], ans: "Loop", exp: "Loop (gelang) adalah sisi yang berawal dan berakhir pada simpul yang sama." },
-        { q: "Jumlah sisi yang bertumpu pada sebuah simpul disebut...", opts: ["Panjang", "Derajat (Degree)", "Order", "Size", "Diameter"], ans: "Derajat (Degree)", exp: "Degree adalah jumlah sisi yang terhubung ke suatu simpul." },
-        { q: "Graf yang tidak memiliki arah pada sisinya disebut...", opts: ["Directed Graph", "Undirected Graph", "Simple Graph", "Multigraph", "Weighted Graph"], ans: "Undirected Graph", exp: "Undirected graph (graf tak berarah) tidak memiliki urutan pasangan simpul pada sisinya." },
-        { q: "Berapa derajat simpul terpencil (isolated vertex)?", opts: ["0", "1", "2", "3", "Tak terhingga"], ans: "0", exp: "Simpul terpencil adalah simpul yang tidak memiliki sisi yang terhubung dengannya (derajat = 0)." },
-        { q: "Graf sederhana yang setiap pasang simpulnya dihubungkan oleh sebuah sisi disebut...", opts: ["Graf Kosong", "Graf Lengkap", "Graf Bipartit", "Graf Siklus", "Graf Pohon"], ans: "Graf Lengkap", exp: "Graf lengkap (Complete Graph) Kn adalah graf di mana setiap simpul bertetangga dengan semua simpul lainnya." },
-        { q: "Berapa jumlah sisi pada Graf Lengkap dengan 4 simpul (K4)?", opts: ["3", "4", "5", "6", "8"], ans: "6", exp: "Rumus jumlah sisi Kn: n(n-1)/2. Untuk n=4: 4(3)/2 = 6." },
-        { q: "Lintasan yang berawal dan berakhir pada simpul yang sama disebut...", opts: ["Path", "Bridge", "Siklus (Cycle)", "Walk", "Trail"], ans: "Siklus (Cycle)", exp: "Siklus adalah lintasan tertutup yang tidak mengulang simpul kecuali simpul awal dan akhir." },
-        { q: "Graf yang tidak memiliki loop maupun sisi ganda disebut...", opts: ["Graf Sederhana", "Multigraf", "Pseudograf", "Graf Berarah", "Graf Berbobot"], ans: "Graf Sederhana", exp: "Simple Graph adalah graf tanpa loop dan tanpa sisi paralel." }
-    ],
-    medium: [
-        { q: "Berapa total derajat pada graf dengan 10 sisi?", opts: ["10", "15", "20", "25", "30"], ans: "20", exp: "Menurut Lemma Jabat Tangan: Total derajat = 2 x jumlah sisi. Jadi, 2 x 10 = 20." },
-        { q: "Graf G disebut Bipartit jika simpul-simpulnya dapat dibagi menjadi dua himpunan V1 dan V2 sedemikian sehingga...", opts: ["Setiap sisi menghubungkan V1 ke V2", "V1 dan V2 memiliki jumlah simpul sama", "Setiap simpul di V1 punya loop", "V1 tidak memiliki sisi", "Semua simpul di V2 terhubung ke dirinya sendiri"], ans: "Setiap sisi menghubungkan V1 ke V2", exp: "Graf Bipartit tidak memiliki sisi yang menghubungkan antar simpul dalam himpunan yang sama." },
-        { q: "Matriks yang merepresentasikan hubungan simpul dengan simpul disebut...", opts: ["Matriks Insidensi", "Matriks Adjasensi", "Matriks Identitas", "Matriks Eselon", "Matriks Transpose"], ans: "Matriks Adjasensi", exp: "Matriks Adjasensi (Ketetanggaan) menunjukkan apakah simpul i dan j terhubung." },
-        { q: "Manakah yang merupakan syarat graf bersifat 'Euler' (memiliki sirkuit Euler)?", opts: ["Semua simpul derajat ganjil", "Semua simpul derajat genap", "Minimal ada 2 simpul derajat ganjil", "Graf harus tidak terhubung", "Memiliki loop"], ans: "Semua simpul derajat genap", exp: "Graf terhubung memiliki sirkuit Euler jika dan hanya jika setiap simpul berderajat genap." },
-        { q: "Berapa jumlah simpul pada graf lengkap K5?", opts: ["5", "10", "15", "20", "25"], ans: "5", exp: "Indeks n pada Kn menunjukkan jumlah simpulnya." },
-        { q: "Dalam graf berarah, derajat keluar disebut...", opts: ["In-degree", "Out-degree", "Total degree", "Source", "Sink"], ans: "Out-degree", exp: "Out-degree adalah jumlah panah yang keluar dari suatu simpul." },
-        { q: "Jika sebuah graf memiliki 6 simpul dan setiap simpul berderajat 3, berapa jumlah sisinya?", opts: ["6", "9", "12", "18", "3"], ans: "9", exp: "Total derajat = 6 x 3 = 18. Jumlah sisi = Total derajat / 2 = 18 / 2 = 9." },
-        { q: "Lintasan yang melalui setiap *sisi* tepat satu kali disebut...", opts: ["Lintasan Hamilton", "Lintasan Euler", "Siklus Hamilton", "Sirkuit Euler", "Shortest Path"], ans: "Lintasan Euler", exp: "Euler fokus pada sisi (edge), sedangkan Hamilton fokus pada simpul (vertex)." },
-        { q: "Graf yang dapat digambarkan pada bidang datar tanpa ada sisi yang berpotongan disebut...", opts: ["Graf Lengkap", "Graf Planar", "Graf Bipartit", "Graf Pohon", "Graf Isomorfik"], ans: "Graf Planar", exp: "Graf planar adalah graf yang dapat direpresentasikan tanpa perpotongan sisi." },
-        { q: "Rumus Euler untuk graf planar (n = simpul, e = sisi, f = muka) adalah...", opts: ["n - e + f = 2", "n + e - f = 2", "e - n + f = 2", "n + e + f = 2", "n - e - f = 0"], ans: "n - e + f = 2", exp: "Ini adalah rumus karakteristik Euler untuk polyhedra atau graf planar terhubung." }
-    ],
-    hard: [
-        { q: "Dua graf disebut Isomorfik jika...", opts: ["Memiliki jumlah simpul yang berbeda", "Memiliki struktur hubungan simpul yang sama", "Salah satunya adalah graf lengkap", "Tidak memiliki sisi ganda", "Keduanya graf planar"], ans: "Memiliki struktur hubungan simpul yang sama", exp: "Isomorfisme berarti ada pemetaan satu-satu antar simpul yang menjaga ketetanggaan." },
-        { q: "Algoritma Dijkstra digunakan untuk mencari...", opts: ["Minimum Spanning Tree", "Lintasan terpendek (Shortest Path)", "Max Flow", "Coloring", "Sirkuit Euler"], ans: "Lintasan terpendek (Shortest Path)", exp: "Dijkstra bekerja pada weighted graph untuk mencari rute termurah dari satu titik ke titik lain." },
-        { q: "Teorema Kuratowski menyatakan graf tidak planar jika mengandung 'minor' yang isomorfik dengan...", opts: ["K3 atau K4", "K5 atau K3,3", "K6 atau K4,4", "Semua graf lengkap", "Graf siklus"], ans: "K5 atau K3,3", exp: "Graf K5 (lengkap 5 simpul) dan K3,3 (bipartit lengkap) adalah graf non-planar dasar." },
-        { q: "Berapa jumlah wilayah (muka) jika graf planar memiliki 8 simpul dan 12 sisi?", opts: ["4", "5", "6", "7", "8"], ans: "6", exp: "n-e+f=2 → 8-12+f=2 → -4+f=2 → f=6." },
-        { q: "Algoritma Kruskal dan Prim digunakan untuk mencari...", opts: ["Shortest Path", "Minimum Spanning Tree (MST)", "Maximal Clique", "Topological Sort", "Hamiltonian Path"], ans: "Minimum Spanning Tree (MST)", exp: "MST adalah pohon merentang dengan total bobot sisi terkecil." },
-        { q: "Sebuah graf terhubung dengan n simpul disebut Pohon (Tree) jika jumlah sisinya adalah...", opts: ["n", "n + 1", "n - 1", "2n", "n/2"], ans: "n - 1", exp: "Pohon adalah graf terhubung minimalis; kurang satu sisi menjadi tidak terhubung, tambah satu sisi menjadi siklus." },
-        { q: "Traveling Salesman Problem (TSP) berkaitan erat dengan pencarian...", opts: ["Sirkuit Euler", "Siklus Hamilton Minimum", "MST", "Bipartite Matching", "Planarity"], ans: "Siklus Hamilton Minimum", exp: "TSP mencari rute yang mengunjungi setiap simpul tepat satu kali dan kembali ke awal dengan biaya minimal." },
-        { q: "Bilangan kromatik (χ) dari graf lengkap K4 adalah...", opts: ["2", "3", "4", "5", "1"], ans: "4", exp: "Pada Kn, setiap simpul harus memiliki warna berbeda. Jadi butuh n warna." },
-        { q: "Berapa banyak korespondensi satu-satu yang mungkin diuji untuk membuktikan isomorfisme graf dengan 5 simpul?", opts: ["5", "25", "120", "625", "10"], ans: "120", exp: "Permutasi dari 5 simpul adalah 5! = 5x4x3x2x1 = 120." },
-        { q: "Dalam graf berbobot, jika semua bobot sisi sama, algoritma Dijkstra akan berperilaku seperti...", opts: ["Prim", "Kruskal", "BFS (Breadth-First Search)", "DFS", "Bellman-Ford"], ans: "BFS (Breadth-First Search)", exp: "Tanpa bobot (bobot seragam), pencarian jalur terpendek adalah eksplorasi level-by-level seperti BFS." }
-    ]
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="submitModal">
+  <div class="modal-box">
+    <div class="modal-emoji">📝</div>
+    <div class="modal-title">Submit Quiz?</div>
+    <div class="modal-desc" id="submitModalDesc"></div>
+    <div class="modal-warn">Setelah submit, kamu tidak dapat mengubah jawaban. Pembahasan lengkap akan ditampilkan.</div>
+    <div class="modal-btns">
+      <button class="modal-btn-confirm submit-confirm" onclick="doSubmit()">✦ Ya, Submit Sekarang</button>
+      <button class="modal-btn-cancel" onclick="closeModal('submitModal')">Lanjut Mengerjakan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const ALL_Q = [
+// EASY 0-9
+{
+  q: "Dalam teori graf, titik yang merepresentasikan objek disebut...",
+  opts: ["Sisi", "Lintasan", "Simpul", "Graf", "Loop"],
+  ans: 2,
+  exp: {
+    title: "Konsep Simpul",
+    body: "Simpul (vertex/node) adalah titik pada graf yang merepresentasikan objek atau data."
+  }
+},
+{
+  q: "Garis yang menghubungkan dua simpul pada graf disebut...",
+  opts: ["Node", "Derajat", "Sirkuit", "Sisi", "Jalur"],
+  ans: 3,
+  exp: {
+    title: "Konsep Sisi",
+    body: "Sisi (edge) adalah garis yang menghubungkan dua simpul dalam graf."
+  }
+},
+{
+  q: "Jumlah sisi yang terhubung ke suatu simpul disebut...",
+  opts: ["Lintasan", "Derajat simpul", "Graf lengkap", "Loop", "Node"],
+  ans: 1,
+  exp: {
+    title: "Derajat Simpul",
+    body: "Derajat simpul adalah banyaknya sisi yang terhubung pada suatu simpul."
+  }
+},
+{
+  q: "Graf yang tidak memiliki arah pada sisinya disebut...",
+  opts: ["Graf berbobot", "Graf berarah", "Graf tak berarah", "Graf lengkap", "Pohon"],
+  ans: 2,
+  exp: {
+    title: "Graf Tak Berarah",
+    body: "Graf tak berarah (undirected graph) memiliki sisi tanpa arah tertentu."
+  }
+},
+{
+  q: "Graf yang setiap sisinya memiliki arah disebut...",
+  opts: ["Graf kosong", "Graf lengkap", "Graf berarah", "Graf sederhana", "Pohon"],
+  ans: 2,
+  exp: {
+    title: "Graf Berarah",
+    body: "Graf berarah (directed graph/digraph) memiliki arah pada setiap sisi."
+  }
+},
+{
+  q: "Graf yang setiap pasangan simpulnya saling terhubung disebut...",
+  opts: ["Graf kosong", "Graf lengkap", "Graf lintasan", "Graf bipartit", "Graf pohon"],
+  ans: 1,
+  exp: {
+    title: "Graf Lengkap",
+    body: "Graf lengkap adalah graf yang setiap pasangan simpulnya memiliki sisi penghubung."
+  }
+},
+{
+  q: "Sisi yang menghubungkan simpul ke dirinya sendiri disebut...",
+  opts: ["Loop", "Bridge", "Path", "Cycle", "Degree"],
+  ans: 0,
+  exp: {
+    title: "Loop",
+    body: "Loop adalah sisi yang berawal dan berakhir pada simpul yang sama."
+  }
+},
+{
+  q: "Graf tanpa sisi disebut...",
+  opts: ["Graf kosong", "Graf lengkap", "Graf lintasan", "Graf pohon", "Graf siklus"],
+  ans: 0,
+  exp: {
+    title: "Graf Kosong",
+    body: "Graf kosong adalah graf yang tidak memiliki sisi sama sekali."
+  }
+},
+{
+  q: "Lintasan yang tidak mengulangi simpul disebut...",
+  opts: ["Loop", "Lintasan sederhana", "Graf lengkap", "Derajat", "Cycle"],
+  ans: 1,
+  exp: {
+    title: "Lintasan Sederhana",
+    body: "Lintasan sederhana adalah lintasan yang tidak melewati simpul yang sama lebih dari sekali."
+  }
+},
+{
+  q: "Jika sebuah simpul memiliki 3 sisi yang terhubung, maka derajat simpul tersebut adalah...",
+  opts: ["1", "2", "3", "4", "5"],
+  ans: 2,
+  exp: {
+    title: "Menghitung Derajat",
+    body: "Derajat simpul dihitung dari jumlah sisi yang terhubung padanya. Jadi derajatnya = 3."
+  }
+},
+{
+  q: "Graf yang tidak memiliki loop dan sisi ganda disebut...",
+  opts: ["Graf sederhana", "Graf lengkap", "Graf berarah", "Graf kosong", "Graf pohon"],
+  ans: 0,
+  exp: {
+    title: "Graf Sederhana",
+    body: "Graf sederhana tidak memiliki loop maupun sisi ganda."
+  }
+},
+{
+  q: "Urutan simpul yang saling terhubung disebut...",
+  opts: ["Derajat", "Simpul", "Lintasan", "Loop", "Graf kosong"],
+  ans: 2,
+  exp: {
+    title: "Lintasan",
+    body: "Lintasan adalah urutan simpul yang dihubungkan oleh sisi."
+  }
+},
+{
+  q: "Simpul yang tidak terhubung ke sisi mana pun memiliki derajat...",
+  opts: ["0", "1", "2", "3", "Tak hingga"],
+  ans: 0,
+  exp: {
+    title: "Simpul Terisolasi",
+    body: "Simpul tanpa sisi disebut simpul terisolasi dan memiliki derajat 0."
+  }
+},
+{
+  q: "Graf yang memiliki arah dan bobot disebut...",
+  opts: ["Graf kosong", "Graf berbobot berarah", "Graf sederhana", "Graf lengkap", "Graf siklus"],
+  ans: 1,
+  exp: {
+    title: "Graf Berbobot",
+    body: "Graf berbobot berarah memiliki arah pada sisi dan nilai bobot tertentu."
+  }
+},
+{
+  q: "Banyak simpul pada graf disebut...",
+  opts: ["Order graf", "Loop", "Degree", "Path", "Cycle"],
+  ans: 0,
+  exp: {
+    title: "Order Graf",
+    body: "Order graf adalah jumlah simpul dalam suatu graf."
+  }
+},
+{
+  q: "Graf yang semua simpulnya terhubung disebut graf...",
+  opts: ["Kosong", "Terhubung", "Sederhana", "Berarah", "Pohon"],
+  ans: 1,
+  exp: {
+    title: "Graf Terhubung",
+    body: "Graf terhubung adalah graf yang setiap simpul dapat dicapai dari simpul lainnya."
+  }
+},
+{
+  q: "Lintasan yang kembali ke simpul awal disebut...",
+  opts: ["Tree", "Path", "Siklus", "Derajat", "Node"],
+  ans: 2,
+  exp: {
+    title: "Siklus",
+    body: "Siklus (cycle) adalah lintasan yang berawal dan berakhir di simpul yang sama."
+  }
+},
+{
+  q: "Graf yang tidak memiliki siklus disebut...",
+  opts: ["Graf lengkap", "Pohon", "Graf kosong", "Graf bipartit", "Graf lintasan"],
+  ans: 1,
+  exp: {
+    title: "Pohon",
+    body: "Pohon (tree) adalah graf terhubung yang tidak memiliki siklus."
+  }
+},
+{
+  q: "Jika suatu graf memiliki 5 simpul, maka order graf tersebut adalah...",
+  opts: ["3", "4", "5", "6", "7"],
+  ans: 2,
+  exp: {
+    title: "Order Graf",
+    body: "Order graf = jumlah simpul = 5."
+  }
+},
+{
+  q: "Sisi pada graf berarah biasanya digambarkan menggunakan...",
+  opts: ["Lingkaran", "Panah", "Kotak", "Warna", "Titik"],
+  ans: 1,
+  exp: {
+    title: "Arah pada Graf",
+    body: "Graf berarah menggunakan panah untuk menunjukkan arah sisi."
+  }
+},
+{
+  q: "Graf dengan satu simpul dan tanpa sisi termasuk...",
+  opts: ["Graf kosong", "Graf lengkap", "Graf siklus", "Graf lintasan", "Graf berarah"],
+  ans: 0,
+  exp: {
+    title: "Graf Kosong",
+    body: "Graf tanpa sisi disebut graf kosong meskipun memiliki simpul."
+  }
+},
+{
+  q: "Simpul yang dihubungkan langsung oleh sebuah sisi disebut...",
+  opts: ["Bertetangga", "Terisolasi", "Loop", "Terarah", "Siklus"],
+  ans: 0,
+  exp: {
+    title: "Simpul Bertetangga",
+    body: "Dua simpul yang dihubungkan langsung oleh sisi disebut bertetangga (adjacent)."
+  }
+},
+{
+  q: "Jika sebuah sisi menghubungkan simpul A dan B, maka A dan B disebut...",
+  opts: ["Loop", "Siklus", "Bertetangga", "Terpisah", "Derajat"],
+  ans: 2,
+  exp: {
+    title: "Adjacency",
+    body: "Simpul yang terhubung langsung disebut simpul bertetangga."
+  }
+},
+{
+  q: "Graf yang memiliki sisi ganda disebut...",
+  opts: ["Graf sederhana", "Multigraf", "Graf kosong", "Graf lengkap", "Tree"],
+  ans: 1,
+  exp: {
+    title: "Multigraf",
+    body: "Multigraf adalah graf yang memperbolehkan sisi ganda."
+  }
+},
+{
+  q: "Banyak sisi dalam graf disebut...",
+  opts: ["Order", "Size", "Degree", "Loop", "Path"],
+  ans: 1,
+  exp: {
+    title: "Size Graf",
+    body: "Size graf adalah jumlah sisi dalam suatu graf."
+  }
+},
+{
+  q: "Graf yang memiliki lintasan antara setiap dua simpul disebut...",
+  opts: ["Graf kosong", "Graf terhubung", "Graf sederhana", "Graf lengkap", "Graf siklus"],
+  ans: 1,
+  exp: {
+    title: "Graf Terhubung",
+    body: "Graf terhubung memungkinkan perpindahan dari satu simpul ke simpul lain melalui lintasan."
+  }
+},
+{
+  q: "Derajat maksimum pada suatu graf dilambangkan dengan...",
+  opts: ["δ(G)", "Δ(G)", "deg", "Σ", "λ"],
+  ans: 1,
+  exp: {
+    title: "Derajat Maksimum",
+    body: "Δ(G) digunakan untuk menyatakan derajat maksimum suatu graf."
+  }
+},
+{
+  q: "Jika suatu simpul memiliki loop satu buah, maka loop tersebut dihitung sebanyak...",
+  opts: ["1", "2", "3", "4", "0"],
+  ans: 1,
+  exp: {
+    title: "Loop dan Derajat",
+    body: "Loop dihitung dua kali terhadap derajat simpul karena masuk dan keluar pada simpul yang sama."
+  }
+},
+{
+  q: "Graf lintasan adalah graf yang bentuknya menyerupai...",
+  opts: ["Lingkaran", "Rantai", "Bintang", "Segitiga", "Kotak"],
+  ans: 1,
+  exp: {
+    title: "Graf Lintasan",
+    body: "Graf lintasan berbentuk seperti rantai simpul yang tersusun berurutan."
+  }
+},
+{
+  q: "Cabang ilmu matematika yang mempelajari titik dan garis penghubung disebut...",
+  opts: ["Kalkulus", "Statistika", "Teori Graf", "Aljabar", "Geometri Analitik"],
+  ans: 2,
+  exp: {
+    title: "Teori Graf",
+    body: "Teori graf mempelajari hubungan antar objek menggunakan simpul dan sisi."
+  }
+},
+
+// MEDIUM 10-29
+{
+  q: "Pada graf sederhana, lintasan (path) adalah...",
+  opts: [
+    "Urutan simpul yang boleh mengulang sisi",
+    "Urutan simpul yang setiap pasangan berurutan terhubung sisi",
+    "Graf yang memiliki bobot",
+    "Graf tanpa simpul",
+    "Himpunan sisi terisolasi"
+  ],
+  ans: 1,
+  exp: {
+    title: "Konsep Lintasan",
+    body: "Lintasan adalah urutan simpul dimana setiap dua simpul berurutan dihubungkan oleh sisi.\n\nContoh:\nA — B — C adalah lintasan karena A terhubung ke B dan B terhubung ke C."
+  }
+},
+{
+  q: "Lintasan sederhana adalah lintasan yang...",
+  opts: [
+    "Mengulang semua sisi",
+    "Mengulang simpul awal saja",
+    "Tidak mengulangi simpul",
+    "Selalu membentuk lingkaran",
+    "Memiliki arah"
+  ],
+  ans: 2,
+  exp: {
+    title: "Lintasan Sederhana",
+    body: "Lintasan sederhana adalah lintasan yang tidak melewati simpul yang sama lebih dari satu kali."
+  }
+},
+{
+  q: "Sirkuit pada graf adalah...",
+  opts: [
+    "Lintasan tanpa sisi",
+    "Lintasan yang berakhir di simpul berbeda",
+    "Lintasan tertutup yang kembali ke simpul awal",
+    "Graf lengkap",
+    "Graf berbobot"
+  ],
+  ans: 2,
+  exp: {
+    title: "Konsep Sirkuit",
+    body: "Sirkuit adalah lintasan tertutup, yaitu lintasan yang kembali ke simpul awal."
+  }
+},
+{
+  q: "Graf berarah disebut juga...",
+  opts: [
+    "Tree",
+    "Digraph",
+    "Graf lengkap",
+    "Graf kosong",
+    "Graf planar"
+  ],
+  ans: 1,
+  exp: {
+    title: "Graf Berarah",
+    body: "Graf berarah (directed graph) disebut juga digraph karena setiap sisi memiliki arah tertentu."
+  }
+},
+{
+  q: "Pada graf berarah, sisi A → B berarti...",
+  opts: [
+    "B menuju A",
+    "A dan B tidak terhubung",
+    "Ada arah dari A ke B",
+    "Sisi tidak memiliki arah",
+    "Graf berbobot"
+  ],
+  ans: 2,
+  exp: {
+    title: "Arah pada Digraph",
+    body: "Simbol A → B menunjukkan hubungan berarah dari simpul A menuju simpul B."
+  }
+},
+{
+  q: "Graf berbobot adalah graf yang...",
+  opts: [
+    "Tidak memiliki sisi",
+    "Setiap simpul memiliki warna",
+    "Setiap sisi memiliki nilai atau bobot",
+    "Tidak memiliki arah",
+    "Semua simpul terhubung"
+  ],
+  ans: 2,
+  exp: {
+    title: "Graf Berbobot",
+    body: "Graf berbobot memiliki nilai tertentu pada sisi, misalnya jarak, biaya, atau waktu."
+  }
+},
+{
+  q: "Jika sisi A—B memiliki bobot 7, maka angka 7 menyatakan...",
+  opts: [
+    "Jumlah simpul",
+    "Derajat simpul",
+    "Nilai atau biaya hubungan",
+    "Jumlah graf",
+    "Arah graf"
+  ],
+  ans: 2,
+  exp: {
+    title: "Makna Bobot",
+    body: "Bobot menyatakan nilai tertentu pada sisi, seperti jarak atau biaya."
+  }
+},
+{
+  q: "Matriks ketetanggaan digunakan untuk...",
+  opts: [
+    "Menggambar graf",
+    "Menghapus simpul",
+    "Menyatakan hubungan antar simpul dalam bentuk matriks",
+    "Menghitung warna",
+    "Menghapus sisi"
+  ],
+  ans: 2,
+  exp: {
+    title: "Adjacency Matrix",
+    body: "Matriks ketetanggaan (adjacency matrix) menyatakan hubungan antar simpul menggunakan tabel matriks."
+  }
+},
+{
+  q: "Jika dua simpul terhubung langsung, maka pada matriks ketetanggaan nilainya biasanya...",
+  opts: [
+    "0",
+    "−1",
+    "1",
+    "∞",
+    "2"
+  ],
+  ans: 2,
+  exp: {
+    title: "Nilai pada Matriks",
+    body: "Jika dua simpul bertetangga atau terhubung langsung, maka nilainya biasanya 1."
+  }
+},
+{
+  q: "Jika simpul tidak saling terhubung pada matriks ketetanggaan, nilainya...",
+  opts: [
+    "1",
+    "2",
+    "∞",
+    "0",
+    "−1"
+  ],
+  ans: 3,
+  exp: {
+    title: "Tidak Bertetangga",
+    body: "Nilai 0 pada matriks ketetanggaan menunjukkan tidak ada hubungan langsung antar simpul."
+  }
+},
+{
+  q: "Derajat masuk (in-degree) pada graf berarah adalah...",
+  opts: [
+    "Jumlah sisi keluar",
+    "Jumlah seluruh sisi",
+    "Jumlah sisi yang masuk ke simpul",
+    "Jumlah simpul tetangga",
+    "Jumlah lintasan"
+  ],
+  ans: 2,
+  exp: {
+    title: "In-Degree",
+    body: "In-degree adalah jumlah sisi yang menuju masuk ke suatu simpul."
+  }
+},
+{
+  q: "Derajat keluar (out-degree) adalah...",
+  opts: [
+    "Jumlah sisi masuk",
+    "Jumlah sisi keluar dari simpul",
+    "Jumlah graf",
+    "Jumlah lintasan tertutup",
+    "Jumlah simpul"
+  ],
+  ans: 1,
+  exp: {
+    title: "Out-Degree",
+    body: "Out-degree adalah jumlah sisi yang keluar dari suatu simpul."
+  }
+},
+{
+  q: "Jika simpul A memiliki 3 sisi masuk dan 2 sisi keluar, maka in-degree A adalah...",
+  opts: ["1","2","3","4","5"],
+  ans: 2,
+  exp: {
+    title: "Menghitung In-Degree",
+    body: "In-degree hanya menghitung sisi yang masuk.\n\nJadi nilainya = 3."
+  }
+},
+{
+  q: "Jika simpul B memiliki 4 sisi keluar, maka out-degree B adalah...",
+  opts: ["2","3","4","5","6"],
+  ans: 2,
+  exp: {
+    title: "Menghitung Out-Degree",
+    body: "Out-degree adalah jumlah sisi yang keluar dari simpul.\n\nJadi nilainya = 4."
+  }
+},
+{
+  q: "Lintasan yang melalui setiap sisi tepat satu kali disebut...",
+  opts: [
+    "Hamilton",
+    "Euler",
+    "Planar",
+    "Lengkap",
+    "Pohon"
+  ],
+  ans: 1,
+  exp: {
+    title: "Lintasan Euler",
+    body: "Lintasan Euler melewati setiap sisi tepat satu kali."
+  }
+},
+{
+  q: "Sirkuit yang melewati setiap sisi tepat satu kali disebut...",
+  opts: [
+    "Sirkuit Euler",
+    "Lintasan Hamilton",
+    "Graf planar",
+    "Graf lengkap",
+    "Graf kosong"
+  ],
+  ans: 0,
+  exp: {
+    title: "Sirkuit Euler",
+    body: "Sirkuit Euler adalah lintasan tertutup yang melewati semua sisi tepat satu kali."
+  }
+},
+{
+  q: "Lintasan Hamilton adalah lintasan yang...",
+  opts: [
+    "Melewati semua sisi",
+    "Melewati setiap simpul tepat satu kali",
+    "Tidak memiliki arah",
+    "Selalu berbobot",
+    "Selalu tertutup"
+  ],
+  ans: 1,
+  exp: {
+    title: "Hamilton Path",
+    body: "Lintasan Hamilton melewati setiap simpul tepat satu kali."
+  }
+},
+{
+  q: "Jika lintasan kembali ke simpul awal dan melewati setiap simpul tepat satu kali, disebut...",
+  opts: [
+    "Lintasan Euler",
+    "Sirkuit Hamilton",
+    "Graf lengkap",
+    "Tree",
+    "Subgraf"
+  ],
+  ans: 1,
+  exp: {
+    title: "Sirkuit Hamilton",
+    body: "Sirkuit Hamilton adalah lintasan tertutup yang mengunjungi setiap simpul tepat satu kali."
+  }
+},
+{
+  q: "Hubungan langsung antar dua simpul disebut...",
+  opts: [
+    "Ketetanggaan",
+    "Isolasi",
+    "Komplemen",
+    "Partisi",
+    "Bobot"
+  ],
+  ans: 0,
+  exp: {
+    title: "Ketetanggaan",
+    body: "Dua simpul disebut bertetangga jika dihubungkan langsung oleh sisi."
+  }
+},
+{
+  q: "Simpul yang tidak memiliki sisi disebut...",
+  opts: [
+    "Simpul pusat",
+    "Simpul daun",
+    "Simpul terisolasi",
+    "Simpul lengkap",
+    "Simpul berarah"
+  ],
+  ans: 2,
+  exp: {
+    title: "Simpul Terisolasi",
+    body: "Simpul terisolasi adalah simpul yang tidak memiliki hubungan dengan simpul lain."
+  }
+},
+{
+  q: "Graf yang semua pasang simpulnya saling terhubung disebut...",
+  opts: [
+    "Graf kosong",
+    "Graf lengkap",
+    "Graf planar",
+    "Tree",
+    "Digraph"
+  ],
+  ans: 1,
+  exp: {
+    title: "Graf Lengkap",
+    body: "Graf lengkap adalah graf dimana semua simpul saling terhubung langsung."
+  }
+},
+{
+  q: "Jika matriks ketetanggaan simetris, kemungkinan besar graf tersebut adalah...",
+  opts: [
+    "Graf berarah",
+    "Graf berbobot",
+    "Graf tak berarah",
+    "Tree",
+    "Graf kosong"
+  ],
+  ans: 2,
+  exp: {
+    title: "Matriks Simetris",
+    body: "Pada graf tak berarah, hubungan A-B sama dengan B-A sehingga matriksnya simetris."
+  }
+},
+{
+  q: "Pada graf berarah, matriks ketetanggaan umumnya...",
+  opts: [
+    "Selalu nol",
+    "Selalu simetris",
+    "Belum tentu simetris",
+    "Tidak berbentuk matriks",
+    "Hanya berisi angka 1"
+  ],
+  ans: 2,
+  exp: {
+    title: "Digraph dan Matriks",
+    body: "Karena arah sisi bisa berbeda, matriks graf berarah belum tentu simetris."
+  }
+},
+{
+  q: "Panjang lintasan ditentukan oleh...",
+  opts: [
+    "Jumlah simpul",
+    "Jumlah sisi yang dilalui",
+    "Jumlah graf",
+    "Jumlah warna",
+    "Jumlah matriks"
+  ],
+  ans: 1,
+  exp: {
+    title: "Panjang Lintasan",
+    body: "Panjang lintasan dihitung dari banyaknya sisi yang dilalui."
+  }
+},
+{
+  q: "Lintasan A-B-C-D memiliki panjang...",
+  opts: ["1","2","3","4","5"],
+  ans: 2,
+  exp: {
+    title: "Menghitung Panjang",
+    body: "Lintasan A-B-C-D memiliki 3 sisi:\nA-B, B-C, dan C-D.\n\nJadi panjangnya = 3."
+  }
+},
+{
+  q: "Jika sebuah simpul memiliki loop, maka loop tersebut dihitung sebanyak...",
+  opts: ["1","2","3","4","0"],
+  ans: 1,
+  exp: {
+    title: "Loop pada Derajat",
+    body: "Loop dihitung dua kali dalam derajat simpul karena masuk dan keluar dari simpul yang sama."
+  }
+},
+{
+  q: "Graf tanpa sirkuit disebut...",
+  opts: [
+    "Graf lengkap",
+    "Graf siklik",
+    "Graf asiklik",
+    "Graf planar",
+    "Graf berbobot"
+  ],
+  ans: 2,
+  exp: {
+    title: "Graf Asiklik",
+    body: "Graf asiklik adalah graf yang tidak memiliki sirkuit atau siklus."
+  }
+},
+{
+  q: "Tree merupakan contoh graf...",
+  opts: [
+    "Siklik",
+    "Lengkap",
+    "Asiklik terhubung",
+    "Berbobot penuh",
+    "Berarah lengkap"
+  ],
+  ans: 2,
+  exp: {
+    title: "Tree",
+    body: "Tree adalah graf terhubung yang tidak memiliki siklus."
+  }
+},
+{
+  q: "Jika terdapat sisi A→B dan B→C, maka terdapat lintasan dari...",
+  opts: [
+    "C ke A",
+    "A ke C",
+    "B ke A",
+    "C ke B",
+    "Tidak ada"
+  ],
+  ans: 1,
+  exp: {
+    title: "Lintasan pada Digraph",
+    body: "Karena ada arah A→B dan B→C, maka dapat dibentuk lintasan A→C melalui B."
+  }
+},
+{
+  q: "Pada graf berbobot, algoritma pencarian lintasan terpendek biasanya mempertimbangkan...",
+  opts: [
+    "Jumlah warna",
+    "Jumlah simpul saja",
+    "Total bobot lintasan",
+    "Jumlah matriks",
+    "Posisi graf"
+  ],
+  ans: 2,
+  exp: {
+    title: "Lintasan Terpendek",
+    body: "Pada graf berbobot, lintasan terbaik biasanya ditentukan berdasarkan total bobot terkecil."
+  }
+},
+
+// HARD 60-89 — used as index 30-59
+{
+  q: "Sebuah graf terhubung memiliki 12 simpul dan 15 sisi. Banyak sisi yang harus dihapus minimum agar menjadi pohon merentang adalah...",
+  opts: ["1", "2", "3", "4", "5"],
+  ans: 3,
+  exp: {
+    title: "Pohon Merentang",
+    body: "Pohon merentang dengan n simpul selalu memiliki n-1 sisi.\n\nn = 12\nSisi pohon = 11\nGraf memiliki 15 sisi.\n\nSisi yang harus dihapus:\n15 - 11 = 4"
+  }
+},
+{
+  q: "Graf lengkap K₈ memiliki banyak sisi sebanyak...",
+  opts: ["24", "26", "28", "30", "32"],
+  ans: 2,
+  exp: {
+    title: "Graf Lengkap",
+    body: "Rumus jumlah sisi graf lengkap:\n\n|E| = n(n-1)/2\n\n= 8(7)/2\n= 28"
+  }
+},
+{
+  q: "Suatu graf memiliki lintasan Euler jika dan hanya jika...",
+  opts: [
+    "Semua simpul berderajat genap",
+    "Tepat dua simpul berderajat ganjil",
+    "Tidak memiliki siklus",
+    "Graf lengkap",
+    "Semua sisi berbobot sama"
+  ],
+  ans: 1,
+  exp: {
+    title: "Lintasan Euler",
+    body: "Lintasan Euler ada jika graf terhubung memiliki tepat 0 atau 2 simpul ganjil.\n\nJika tepat 2 simpul ganjil → lintasan Euler.\nJika semua genap → sirkuit Euler."
+  }
+},
+{
+  q: "Sirkuit Hamilton adalah...",
+  opts: [
+    "Lintasan yang melewati semua sisi tepat satu kali",
+    "Lintasan yang melewati semua simpul tepat satu kali dan kembali ke awal",
+    "Lintasan terpendek",
+    "Traversal BFS",
+    "Traversal DFS"
+  ],
+  ans: 1,
+  exp: {
+    title: "Hamilton",
+    body: "Sirkuit Hamilton mengunjungi setiap simpul tepat satu kali dan kembali ke simpul awal."
+  }
+},
+{
+  q: "Algoritma yang digunakan untuk mencari lintasan terpendek pada graf berbobot positif adalah...",
+  opts: ["Prim", "Kruskal", "Dijkstra", "DFS", "Floyd"],
+  ans: 2,
+  exp: {
+    title: "Dijkstra",
+    body: "Dijkstra digunakan mencari lintasan terpendek pada graf dengan bobot non-negatif."
+  }
+},
+{
+  q: "Traversal BFS menggunakan struktur data...",
+  opts: ["Stack", "Queue", "Tree", "Heap", "Array biasa"],
+  ans: 1,
+  exp: {
+    title: "BFS",
+    body: "Breadth First Search memakai Queue karena traversal dilakukan per-level."
+  }
+},
+{
+  q: "Traversal DFS menggunakan struktur data...",
+  opts: ["Queue", "Heap", "Stack", "Priority Queue", "Graph Matrix"],
+  ans: 2,
+  exp: {
+    title: "DFS",
+    body: "Depth First Search menggunakan Stack (atau rekursi)."
+  }
+},
+{
+  q: "Jika semua simpul pada graf berderajat genap, maka graf pasti memiliki...",
+  opts: [
+    "Lintasan Hamilton",
+    "Sirkuit Euler",
+    "Pohon merentang unik",
+    "Graf bipartit",
+    "DFS lengkap"
+  ],
+  ans: 1,
+  exp: {
+    title: "Sirkuit Euler",
+    body: "Graf terhubung dengan semua derajat simpul genap memiliki sirkuit Euler."
+  }
+},
+{
+  q: "Jumlah sisi minimum pada pohon dengan 20 simpul adalah...",
+  opts: ["18", "19", "20", "21", "22"],
+  ans: 1,
+  exp: {
+    title: "Sifat Pohon",
+    body: "Pohon selalu memiliki n-1 sisi.\n\n20 - 1 = 19"
+  }
+},
+{
+  q: "Algoritma Prim digunakan untuk...",
+  opts: [
+    "Traversal graf",
+    "Mencari lintasan Euler",
+    "Mencari spanning tree minimum",
+    "Mencari Hamilton cycle",
+    "Mencari derajat simpul"
+  ],
+  ans: 2,
+  exp: {
+    title: "Prim",
+    body: "Prim digunakan untuk Minimum Spanning Tree (MST)."
+  }
+},
+{
+  q: "Graf bipartit tidak mungkin memiliki...",
+  opts: [
+    "Lintasan",
+    "Simpul ganjil",
+    "Siklus ganjil",
+    "Sisi",
+    "Pohon"
+  ],
+  ans: 2,
+  exp: {
+    title: "Graf Bipartit",
+    body: "Graf bipartit tidak memiliki siklus ganjil."
+  }
+},
+{
+  q: "Jika jumlah derajat seluruh simpul suatu graf adalah 40, maka banyak sisi graf adalah...",
+  opts: ["10", "15", "20", "25", "30"],
+  ans: 2,
+  exp: {
+    title: "Teorema Jabat Tangan",
+    body: "Jumlah derajat = 2|E|\n\n40 = 2|E|\n|E| = 20"
+  }
+},
+{
+  q: "Pada DFS, simpul dikunjungi dengan prinsip...",
+  opts: [
+    "Lebar terlebih dahulu",
+    "Bobot terkecil",
+    "Kedalaman terlebih dahulu",
+    "Sisi terbanyak",
+    "Acak"
+  ],
+  ans: 2,
+  exp: {
+    title: "DFS",
+    body: "DFS menjelajah sedalam mungkin sebelum mundur."
+  }
+},
+{
+  q: "Jika graf memiliki 6 simpul semuanya berderajat 5, maka graf tersebut adalah...",
+  opts: [
+    "Graf kosong",
+    "Graf sederhana",
+    "Graf lengkap",
+    "Graf planar",
+    "Graf bipartit"
+  ],
+  ans: 2,
+  exp: {
+    title: "Graf Lengkap",
+    body: "Pada graf lengkap Kₙ, setiap simpul berderajat n-1.\n\nDerajat = 5 → n=6 → K₆"
+  }
+},
+{
+  q: "Algoritma Kruskal memilih sisi berdasarkan...",
+  opts: [
+    "Simpul terbesar",
+    "Bobot terkecil",
+    "Traversal BFS",
+    "Traversal DFS",
+    "Jumlah simpul"
+  ],
+  ans: 1,
+  exp: {
+    title: "Kruskal",
+    body: "Kruskal membangun MST dengan memilih sisi berbobot minimum tanpa membentuk siklus."
+  }
+},
+{
+  q: "Sebuah pohon biner penuh dengan 15 simpul memiliki tinggi minimum...",
+  opts: ["2", "3", "4", "5", "6"],
+  ans: 3,
+  exp: {
+    title: "Pohon Biner",
+    body: "Jumlah maksimum simpul:\n2^(h+1)-1\n\n15 = 2^(h+1)-1\n16 = 2^(h+1)\nh=3"
+  }
+},
+{
+  q: "Algoritma Floyd-Warshall digunakan untuk...",
+  opts: [
+    "Mencari MST",
+    "Traversal",
+    "Semua pasangan lintasan terpendek",
+    "Mencari Euler",
+    "Mencari Hamilton"
+  ],
+  ans: 2,
+  exp: {
+    title: "Floyd-Warshall",
+    body: "Floyd-Warshall mencari shortest path untuk SEMUA pasangan simpul."
+  }
+},
+{
+  q: "Graf planar memenuhi rumus Euler...",
+  opts: [
+    "V + E + F = 2",
+    "V - E + F = 2",
+    "V + E - F = 2",
+    "V - E - F = 2",
+    "E - V + F = 0"
+  ],
+  ans: 1,
+  exp: {
+    title: "Rumus Euler",
+    body: "Untuk graf planar:\n\nV - E + F = 2"
+  }
+},
+{
+  q: "Jika sebuah graf memiliki 10 simpul dan merupakan pohon, maka banyak lintasan unik antara dua simpul adalah...",
+  opts: [
+    "Tidak ada",
+    "Tepat satu",
+    "Dua",
+    "Banyak",
+    "Tak hingga"
+  ],
+  ans: 1,
+  exp: {
+    title: "Sifat Pohon",
+    body: "Pada pohon, selalu terdapat tepat satu lintasan unik antara dua simpul."
+  }
+},
+{
+  q: "Graf lengkap bipartit K₃,₄ memiliki jumlah sisi...",
+  opts: ["7", "10", "12", "14", "16"],
+  ans: 2,
+  exp: {
+    title: "Graf Bipartit Lengkap",
+    body: "Jumlah sisi K(m,n) = m×n\n\n3×4 = 12"
+  }
+},
+{
+  q: "Pada algoritma Dijkstra, simpul berikutnya dipilih berdasarkan...",
+  opts: [
+    "Derajat terbesar",
+    "Bobot terbesar",
+    "Jarak sementara minimum",
+    "Traversal BFS",
+    "Traversal DFS"
+  ],
+  ans: 2,
+  exp: {
+    title: "Dijkstra",
+    body: "Dijkstra selalu memilih simpul dengan jarak minimum sementara."
+  }
+},
+{
+  q: "Graf yang memiliki sirkuit Euler pasti...",
+  opts: [
+    "Hamilton",
+    "Semua derajat genap",
+    "Planar",
+    "Bipartit",
+    "Lengkap"
+  ],
+  ans: 1,
+  exp: {
+    title: "Euler Circuit",
+    body: "Syarat sirkuit Euler:\nSemua simpul berderajat genap."
+  }
+},
+{
+  q: "Jika sebuah graf sederhana memiliki 9 simpul, maka derajat maksimum sebuah simpul adalah...",
+  opts: ["7", "8", "9", "10", "11"],
+  ans: 1,
+  exp: {
+    title: "Derajat Maksimum",
+    body: "Pada graf sederhana:\nDerajat maksimum = n-1\n\n= 9-1 = 8"
+  }
+},
+{
+  q: "Traversal BFS paling cocok digunakan untuk...",
+  opts: [
+    "Mencari lintasan terdalam",
+    "Mencari shortest path pada graf tak berbobot",
+    "Mencari MST",
+    "Mencari Hamilton",
+    "Mencari Euler"
+  ],
+  ans: 1,
+  exp: {
+    title: "BFS Shortest Path",
+    body: "BFS efektif mencari lintasan terpendek pada graf tak berbobot."
+  }
+},
+{
+  q: "Sebuah graf dengan 7 simpul semuanya berderajat 2 akan membentuk...",
+  opts: [
+    "Pohon",
+    "Lintasan",
+    "Siklus",
+    "Graf kosong",
+    "Graf bipartit"
+  ],
+  ans: 2,
+  exp: {
+    title: "Graf Siklus",
+    body: "Jika semua simpul berderajat 2 dan graf terhubung, bentuknya adalah siklus."
+  }
+},
+{
+  q: "Kompleksitas BFS dan DFS secara umum adalah...",
+  opts: [
+    "O(n²)",
+    "O(V+E)",
+    "O(log n)",
+    "O(E²)",
+    "O(V²)"
+  ],
+  ans: 1,
+  exp: {
+    title: "Kompleksitas Traversal",
+    body: "BFS dan DFS memiliki kompleksitas O(V+E)."
+  }
+},
+{
+  q: "Graf yang dapat digambar tanpa sisi berpotongan disebut...",
+  opts: [
+    "Graf lengkap",
+    "Graf planar",
+    "Graf bipartit",
+    "Graf siklus",
+    "Graf Euler"
+  ],
+  ans: 1,
+  exp: {
+    title: "Graf Planar",
+    body: "Graf planar dapat digambar tanpa edge crossing."
+  }
+},
+{
+  q: "Jika suatu graf memiliki 5 simpul ganjil, maka graf tersebut...",
+  opts: [
+    "Pasti Euler",
+    "Tidak mungkin ada",
+    "Hamilton",
+    "Planar",
+    "Bipartit"
+  ],
+  ans: 1,
+  exp: {
+    title: "Teorema Derajat Ganjil",
+    body: "Jumlah simpul berderajat ganjil SELALU genap.\n\nMaka 5 simpul ganjil tidak mungkin terjadi."
+  }
+},
+{
+  q: "Pada MST, jumlah sisi yang dipilih untuk graf dengan n simpul adalah...",
+  opts: ["n", "n+1", "n-1", "2n", "n²"],
+  ans: 2,
+  exp: {
+    title: "Minimum Spanning Tree",
+    body: "MST selalu memiliki n-1 sisi."
+  }
+},
+{
+  q: "Graf Hamilton lebih sulit ditentukan dibanding Euler karena...",
+  opts: [
+    "Tidak ada algoritma pasti polynomial umum",
+    "Semua graf Hamilton planar",
+    "Hamilton memakai BFS",
+    "Euler lebih panjang",
+    "Hamilton selalu berbobot"
+  ],
+  ans: 0,
+  exp: {
+    title: "Hamilton Problem",
+    body: "Masalah Hamilton termasuk NP-Complete sehingga jauh lebih sulit dibanding Euler."
+  }
+}
+];
+
+const LEVELS = {
+  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
-function startQuiz(level) {
-    currentIndex = 0;
-    score = 0;
-    selected = null;
-    timeLeft = 6600; 
-    currentQuestions = [...questionsData[level]];
+const LETTERS = ['a','b','c','d','e'];
 
-    document.getElementById('startScreen').classList.add('hidden');
-    document.getElementById('quizScreen').classList.remove('hidden');
-    document.getElementById('resultScreen').classList.add('hidden');
-    
-    showQuestion();
-    startTimer();
+let S = {
+  level: null, questions: [], current: 0,
+  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
+  answers: [],
+  timeLeft: 0, timerID: null
+};
+
+// ══════════════════════════════════════════
+// TITLE ANIMATION
+// ══════════════════════════════════════════
+function buildWord(elId, text, baseDelay) {
+  const el = document.getElementById(elId);
+  el.innerHTML = '';
+  [...text].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'title-char';
+    s.textContent = ch === ' ' ? '\u00A0' : ch;
+    s.style.animationDelay = (baseDelay + i * 0.055) + 's';
+    el.appendChild(s);
+  });
 }
 
-function showQuestion() {
-    let q = currentQuestions[currentIndex];
-    document.getElementById('question').innerHTML = `Pertanyaan ${currentIndex+1}:<br>${q.q}`;
-    
-    let html = '';
-    const prefixes = ['A', 'B', 'C', 'D', 'E'];
-    q.opts.forEach((opt, index) => {
-        html += `<div class='option' onclick='selectAnswer(this, "${opt}")'>
-                    <span class='option-prefix'>${prefixes[index]}.</span> ${opt}
-                 </div>`;
+// ══════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════
+(function() {
+  const cvs = document.getElementById('particle-canvas');
+  const ctx = cvs.getContext('2d');
+  const SYM = ['●','○','◉','⬢','⬡','⟷','⟶','⟺','◎','◆','◇','◈','⬤','⭘','⭙','⭚'];
+  let pts=[], W, H;
+  function resize() { W=cvs.width=window.innerWidth; H=cvs.height=window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  function mk() {
+    return { x:Math.random()*W, y:H+30, sym:SYM[0|Math.random()*SYM.length],
+      sz:12+Math.random()*18, vx:(Math.random()-.5)*.55, vy:-(0.28+Math.random()*.55),
+      op:0, mop:0.05+Math.random()*.09, lf:0, mlf:200+Math.random()*140,
+      rot:Math.random()*Math.PI*2, rv:(Math.random()-.5)*.022 };
+  }
+  for (let i=0;i<30;i++) { const p=mk(); p.y=Math.random()*H; p.lf=Math.random()*p.mlf; pts.push(p); }
+  function frame() {
+    ctx.clearRect(0,0,W,H);
+    if (Math.random()<.04 && pts.length<42) pts.push(mk());
+    pts = pts.filter(p=>p.y>-50);
+    pts.forEach(p => {
+      p.lf++; p.x+=p.vx; p.y+=p.vy; p.rot+=p.rv;
+      const fl=35;
+      p.op = p.lf<fl ? p.mop*(p.lf/fl) : p.lf>p.mlf-fl ? p.mop*((p.mlf-p.lf)/fl) : p.mop;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.font=`${p.sz}px 'DM Mono',monospace`;
+      ctx.fillStyle=`rgba(15,15,26,${p.op})`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(p.sym,0,0); ctx.restore();
     });
-    
-    document.getElementById('options').innerHTML = html;
-    document.getElementById('explanation').classList.add('hidden');
-    updateProgress();
+    requestAnimationFrame(frame);
+  }
+  setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
+})();
+
+// ══════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation = 'none';
+  requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-function selectAnswer(el, val) {
-    if(selected !== null) return;
-    selected = val;
-    let q = currentQuestions[currentIndex];
+// ══════════════════════════════════════════
+// RIPPLE + START
+// ══════════════════════════════════════════
+function startQuizRipple(e, level) {
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const rip = document.createElement('div');
+  rip.className = 'ripple';
+  rip.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  card.appendChild(rip);
+  rip.addEventListener('animationend', () => rip.remove());
+  setTimeout(() => startQuiz(level), 220);
+}
 
-    if(val === q.ans) {
-        el.classList.add('correct');
-        score++;
+function startQuiz(level) {
+  const cfg = LEVELS[level];
+  S.level = level;
+  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.current = 0;
+  S.answers = new Array(S.questions.length).fill(null);
+  S.timeLeft = cfg.time;
+
+  document.getElementById('levelBadge').textContent = cfg.label;
+  document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
+  document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
+
+  buildStreakBar();
+  buildDots();
+  renderQ();
+  startTimer();
+  showScreen('quizScreen');
+}
+
+function backToLevelSelect() {
+  if (S.timerID) clearInterval(S.timerID);
+  showScreen('startScreen');
+}
+
+// ══════════════════════════════════════════
+// STREAK BAR
+// ══════════════════════════════════════════
+function buildStreakBar() {
+  const bar = document.getElementById('streakBar');
+  bar.innerHTML = '';
+  S.questions.forEach(() => {
+    const d = document.createElement('div');
+    d.className = 'streak-dot';
+    bar.appendChild(d);
+  });
+}
+
+function updateStreakBar() {
+  document.querySelectorAll('.streak-dot').forEach((d, i) => {
+    const a = S.answers[i];
+    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
+  });
+}
+
+// ══════════════════════════════════════════
+// DOT ROW
+// ══════════════════════════════════════════
+function buildDots() {
+  const row = document.getElementById('dotRow');
+  row.innerHTML = '';
+  S.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.title = 'Soal ' + (i+1);
+    d.onclick = () => jumpTo(i);
+    row.appendChild(d);
+  });
+}
+
+function updateDots() {
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot';
+    const a = S.answers[i];
+    if (i === S.current) { d.classList.add('current'); return; }
+    if (a === null) return;
+    if (a === -1)  { d.classList.add('surrendered'); return; }
+    d.classList.add('answered');
+  });
+}
+
+// ══════════════════════════════════════════
+// RENDER QUESTION
+// ══════════════════════════════════════════
+function renderQ() {
+  const q = S.questions[S.current];
+  const n = S.current;
+  const total = S.questions.length;
+  const a = S.answers[n];
+
+  document.getElementById('qNum').textContent = `SOAL ${n+1} DARI ${total}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qCounter').textContent = `${n+1} / ${total}`;
+  document.getElementById('progressFill').style.width = ((n/total)*100) + '%';
+
+  // Surrendered banner
+  const banner = document.getElementById('surrenderBanner');
+  banner.style.display = a === -1 ? 'flex' : 'none';
+
+  // Surrender button
+  const sBtn = document.getElementById('surrenderBtn');
+  sBtn.disabled = a !== null;
+
+  // Options — NO correct/wrong shown here (only after submit)
+  const list = document.getElementById('optsList');
+  list.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt';
+
+    // After selecting (not surrendered, not null)
+    if (a !== null && a !== -1) {
+      div.classList.add('locked');
+      if (i === a) {
+        // Highlight chosen answer NEUTRALLY (ink color)
+        div.style.background = 'var(--ink)';
+        div.style.color = '#fff';
+        div.style.borderColor = 'var(--ink)';
+      }
+    } else if (a === -1) {
+      div.classList.add('locked');
     } else {
-        el.classList.add('wrong');
-        document.querySelectorAll('.option').forEach(o => {
-            // Mencari teks jawaban di dalam elemen option
-            if(o.innerText.includes(q.ans)) o.classList.add('correct');
-        });
+      div.onclick = () => selectAnswer(i);
     }
-    
-    let expDiv = document.getElementById('explanation');
-    expDiv.innerText = "Penjelasan: " + q.exp;
-    expDiv.classList.remove('hidden');
+
+    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    list.appendChild(div);
+  });
+
+  // Next btn
+  const isLast = n === total - 1;
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
+
+  updateDots();
+  updateStreakBar();
+  updateSubmitStatus();
 }
 
-function nextQuestion() {
-    if (selected === null) { alert("Pilih jawaban dulu!"); return; }
-    
-    currentIndex++;
-    selected = null;
-    if(currentIndex < currentQuestions.length) {
-        showQuestion();
-    } else {
-        endQuiz();
-    }
+function selectAnswer(i) {
+  if (S.answers[S.current] !== null) return;
+  S.answers[S.current] = i;
+  renderQ();
 }
 
+function goNext() {
+  if (S.current < S.questions.length - 1) { S.current++; renderQ(); }
+  else confirmSubmit();
+}
+
+function goPrev() {
+  if (S.current > 0) { S.current--; renderQ(); }
+}
+
+function jumpTo(i) { S.current = i; renderQ(); }
+
+function updateSubmitStatus() {
+  const answered = S.answers.filter(a => a !== null && a !== -1).length;
+  const surrendered = S.answers.filter(a => a === -1).length;
+  const unanswered = S.answers.filter(a => a === null).length;
+  document.getElementById('submitStatus').textContent =
+    `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
+}
+
+// ══════════════════════════════════════════
+// SURRENDER
+// ══════════════════════════════════════════
+function confirmSurrender() {
+  document.getElementById('surrenderModal').classList.add('open');
+}
+
+function doSurrender() {
+  closeModal('surrenderModal');
+  S.answers[S.current] = -1;
+  renderQ();
+  showToast('🏳️ Soal ini ditandai menyerah');
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+function confirmSubmit() {
+  const answered   = S.answers.filter(a => a !== null && a !== -1).length;
+  const surrendered = S.answers.filter(a => a === -1).length;
+  const unanswered  = S.answers.filter(a => a === null).length;
+
+  document.getElementById('submitModalDesc').innerHTML =
+    `Kamu telah menjawab <strong>${answered} soal</strong>, menyerah <strong>${surrendered} soal</strong>, dan <strong>${unanswered} soal</strong> belum dijawab.<br><br>Setelah submit, jawaban benar dan pembahasan lengkap akan ditampilkan.`;
+  document.getElementById('submitModal').classList.add('open');
+}
+
+function doSubmit() {
+  closeModal('submitModal');
+  endQuiz();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════
 function startTimer() {
-    if(timer) clearInterval(timer);
-    timer = setInterval(() => {
-        timeLeft--;
-        let m = Math.floor(timeLeft/60);
-        let s = timeLeft%60;
-        document.getElementById('timer').innerText = `Waktu: ${m}:${s < 10 ? '0'+s : s}`;
-        if(timeLeft <= 0) endQuiz();
-    }, 1000);
+  if (S.timerID) clearInterval(S.timerID);
+  renderTimer();
+  S.timerID = setInterval(() => {
+    S.timeLeft--;
+    renderTimer();
+    if (S.timeLeft <= 0) { clearInterval(S.timerID); endQuiz(); }
+  }, 1000);
 }
 
-function updateProgress() {
-    let p = (currentIndex / currentQuestions.length) * 100;
-    document.getElementById('progressBar').style.width = p + '%';
+function renderTimer() {
+  const m = 0|S.timeLeft/60, sec = S.timeLeft%60;
+  const pill = document.getElementById('timerPill');
+  pill.textContent = `${m}:${sec<10?'0'+sec:sec}`;
+  pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
+// ══════════════════════════════════════════
+// END QUIZ
+// ══════════════════════════════════════════
 function endQuiz() {
-    clearInterval(timer);
-    document.getElementById('quizScreen').classList.add('hidden');
-    document.getElementById('resultScreen').classList.remove('hidden');
-    document.getElementById('score-display').innerText = score;
-    
-    let msg = score >= (currentQuestions.length * 0.7) ? "Luar biasa! Kamu menguasai materi Graf." : "Terus belajar! Teori Graf butuh ketelitian.";
-    document.getElementById('result-message').innerText = msg;
+  if (S.timerID) clearInterval(S.timerID);
+
+  let correct=0, wrong=0, surr=0;
+  S.questions.forEach((q, i) => {
+    const a = S.answers[i];
+    if (a === null || a === -1) surr++;
+    else if (a === q.ans) correct++;
+    else wrong++;
+  });
+
+  const total = S.questions.length;
+  const pct = total > 0 ? correct/total : 0;
+
+  let grade, msg, color;
+  if (pct >= .9)      { grade='🏆 Sempurna!'; msg='Luar biasa! Penguasaanmu sangat kuat. Kamu benar-benar menguasai materi ini.'; color='#c8961e'; }
+  else if (pct >= .7) { grade='⭐ Bagus Sekali!'; msg='Hasil yang solid. Beberapa konsep perlu sedikit penguatan. Terus berlatih!'; color='var(--correct)'; }
+  else if (pct >= .5) { grade='📚 Cukup Baik'; msg='Kamu sudah di jalur yang benar. Review pembahasan di bawah dan coba lagi!'; color='var(--accent-med)'; }
+  else                { grade='💪 Terus Semangat!'; msg='Jangan menyerah! Pelajari pembahasannya dengan seksama dan latih lagi.'; color='var(--wrong)'; }
+
+  document.getElementById('rNum').textContent = correct;
+  document.getElementById('rNum').style.color = color;
+  document.getElementById('rDen').textContent = '/ ' + total;
+  document.getElementById('rGrade').textContent = grade;
+  document.getElementById('rMsg').textContent = msg;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSurr').textContent = surr;
+
+  const circ = 2 * Math.PI * 74; // 465
+  setTimeout(() => {
+    const arc = document.getElementById('arcCircle');
+    arc.style.stroke = color;
+    arc.style.strokeDashoffset = circ * (1 - pct);
+  }, 200);
+
+  buildReview('all');
+  showScreen('resultScreen');
 }
 
-function goHome() { window.location.href='../../index.html?page=materi'; }
+// ══════════════════════════════════════════
+// REVIEW
+// ══════════════════════════════════════════
+function buildReview(filter) {
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+
+  S.questions.forEach((q, i) => {
+    const a = S.answers[i];
+    let status;
+    if (a === null || a === -1) status = 'surrendered';
+    else if (a === q.ans) status = 'correct';
+    else status = 'wrong';
+
+    if (filter !== 'all' && filter !== status) return;
+
+    const card = document.createElement('div');
+    card.className = 'review-card';
+
+    const icon = status==='correct' ? '✓' : status==='wrong' ? '✗' : '🏳';
+    const iconClass = status==='correct' ? 'correct' : status==='wrong' ? 'wrong' : 'surrendered';
+
+    let ansHTML = '';
+    if (status === 'surrendered') {
+      ansHTML = `
+        <div class="rc-row row-surr">
+          <span class="rc-label lbl-surr">Menyerah</span>
+          <span>Soal ini tidak dijawab</span>
+        </div>
+        <div class="rc-row row-correct">
+          <span class="rc-label lbl-correct">Kunci</span>
+          <span>${q.opts[q.ans]}</span>
+        </div>`;
+    } else if (status === 'correct') {
+      ansHTML = `
+        <div class="rc-row row-correct">
+          <span class="rc-label lbl-correct">Benar ✓</span>
+          <span>${q.opts[a]}</span>
+        </div>`;
+    } else {
+      ansHTML = `
+        <div class="rc-row row-wrong">
+          <span class="rc-label lbl-wrong">Jawabanmu</span>
+          <span>${q.opts[a]}</span>
+        </div>
+        <div class="rc-row row-correct">
+          <span class="rc-label lbl-correct">Kunci</span>
+          <span>${q.opts[q.ans]}</span>
+        </div>`;
+    }
+
+    card.innerHTML = `
+      <div class="rc-top">
+        <div class="rc-icon ${iconClass}">${icon}</div>
+        <div style="flex:1">
+          <div class="rc-qnum">SOAL ${i+1}</div>
+          <div class="rc-qtext">${q.q}</div>
+        </div>
+      </div>
+      <div class="rc-answers">${ansHTML}</div>
+      <div class="rc-exp">
+        <div class="rc-exp-head">💡 Pembahasan</div>
+        <div class="rc-exp-title">${q.exp.title}</div>
+        <div class="rc-exp-body">${q.exp.body}</div>
+      </div>`;
+
+    list.appendChild(card);
+  });
+
+  if (!list.innerHTML) {
+    list.innerHTML = `<div style="text-align:center;padding:36px;color:#bbb;font-family:var(--mono);font-size:13px;">Tidak ada soal dalam kategori ini</div>`;
+  }
+}
+
+function filterReview(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildReview(type);
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════
+// RETRY / HOME
+// ══════════════════════════════════════════
+function retryLevel() { startQuiz(S.level); }
+function goHome() { showScreen('startScreen'); }
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  buildWord('w1', 'Quiz', 0.3);
+  buildWord('w2', 'Teori Graf', 0.75);
+  document.querySelectorAll('.level-card').forEach((card, i) => {
+    card.style.animationDelay = (1.5 + i * 0.2) + 's';
+    card.classList.add('in');
+  });
+});
 </script>
 </body>
 </html>
