@@ -353,6 +353,9 @@ function navigateTo(page, tab) {
   if (page === 'creators') {
     renderCreators();
   }
+  if (page === 'referensi') {
+    renderReferensi();
+  }
 
   // Tutup menu
   menuOpen = false;
@@ -1247,6 +1250,92 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   }
 
 })();
+/* ═══ DATA REFERENSI ═══ */
+var referensiData = [
+  {
+    kategori: "📘 Matematika Diskrit",
+    warna: "violet",
+    items: [
+      { judul: "Discrete Mathematics and Its Applications", penulis: "Kenneth H. Rosen", tahun: "2019", penerbit: "McGraw-Hill", deskripsi: "Buku referensi utama Matematika Diskrit yang mencakup logika, himpunan, relasi, fungsi, graf, dan kombinatorika.", link: "https://www.mheducation.com/" },
+      { judul: "Discrete Mathematics with Applications", penulis: "Susanna S. Epp", tahun: "2020", penerbit: "Cengage Learning", deskripsi: "Penjelasan Matematika Diskrit yang mudah dipahami dengan banyak contoh soal dan latihan.", link: "https://www.cengage.com/" },
+      { judul: "Introduction to Graph Theory", penulis: "Douglas B. West", tahun: "2001", penerbit: "Prentice Hall", deskripsi: "Referensi lengkap untuk topik teori graf, mulai dari konsep dasar hingga algoritma graf lanjutan.", link: "https://www.pearson.com/" },
+      { judul: "MIT OpenCourseWare — Mathematics for CS", penulis: "MIT", tahun: "2023", penerbit: "MIT OCW", deskripsi: "Materi perkuliahan Matematika Diskrit dari MIT yang tersedia gratis secara online.", link: "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/" }
+    ]
+  },
+  {
+    kategori: "📗 Aljabar Linear",
+    warna: "teal",
+    items: [
+      { judul: "Introduction to Linear Algebra", penulis: "Gilbert Strang", tahun: "2023", penerbit: "Wellesley-Cambridge Press", deskripsi: "Buku teks Aljabar Linear paling populer di dunia, ditulis oleh profesor MIT Gilbert Strang.", link: "https://math.mit.edu/~gs/linearalgebra/" },
+      { judul: "Linear Algebra and Its Applications", penulis: "David C. Lay", tahun: "2021", penerbit: "Pearson", deskripsi: "Buku Aljabar Linear yang terkenal dengan penjelasan konsep yang jelas dan aplikasi nyata di berbagai bidang.", link: "https://www.pearson.com/" },
+      { judul: "3Blue1Brown — Essence of Linear Algebra", penulis: "Grant Sanderson", tahun: "2023", penerbit: "YouTube / 3Blue1Brown", deskripsi: "Seri video pembelajaran Aljabar Linear yang sangat visual dan mudah dipahami, cocok untuk pemula.", link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab" },
+      { judul: "Khan Academy — Linear Algebra", penulis: "Sal Khan", tahun: "2023", penerbit: "Khan Academy", deskripsi: "Materi Aljabar Linear gratis dengan video, latihan soal, dan penjelasan langkah demi langkah.", link: "https://www.khanacademy.org/math/linear-algebra" }
+    ]
+  },
+  {
+    kategori: "📙 Kriptografi",
+    warna: "amber",
+    items: [
+      { judul: "Introduction to Modern Cryptography", penulis: "Jonathan Katz & Yehuda Lindell", tahun: "2020", penerbit: "CRC Press", deskripsi: "Pengantar kriptografi modern yang mencakup enkripsi simetris, asimetris, fungsi hash, dan protokol kriptografi.", link: "https://www.routledge.com/" },
+      { judul: "Cryptography and Network Security", penulis: "William Stallings", tahun: "2022", penerbit: "Pearson", deskripsi: "Buku referensi lengkap untuk kriptografi dan keamanan jaringan, mencakup algoritma DES, AES, RSA, dan ECC.", link: "https://www.pearson.com/" },
+      { judul: "Understanding Cryptography", penulis: "Christof Paar & Jan Pelzl", tahun: "2010", penerbit: "Springer", deskripsi: "Penjelasan kriptografi yang komprehensif dengan banyak contoh praktis dan latihan soal.", link: "https://www.crypto-textbook.com/" },
+      { judul: "Crypto 101", penulis: "Laurens Van Houtven", tahun: "2023", penerbit: "crypto101.io", deskripsi: "Pengantar kriptografi gratis yang mudah dipahami, cocok untuk pemula yang ingin belajar dasar-dasar kriptografi.", link: "https://www.crypto101.io/" }
+    ]
+  },
+  {
+    kategori: "🌐 Platform Pembelajaran Online",
+    warna: "teal",
+    items: [
+      { judul: "Khan Academy", penulis: "Sal Khan", tahun: "2023", penerbit: "Khan Academy", deskripsi: "Platform pembelajaran online gratis yang menyajikan materi matematika dari dasar hingga tingkat lanjut.", link: "https://www.khanacademy.org/" },
+      { judul: "Brilliant.org", penulis: "Brilliant", tahun: "2023", penerbit: "Brilliant", deskripsi: "Platform pembelajaran STEM interaktif yang berfokus pada pemecahan masalah dan berpikir kritis.", link: "https://brilliant.org/" },
+      { judul: "Coursera — Mathematics for Machine Learning", penulis: "Imperial College London", tahun: "2023", penerbit: "Coursera", deskripsi: "Kursus matematika untuk machine learning yang mencakup aljabar linear, kalkulus, dan statistika.", link: "https://www.coursera.org/specializations/mathematics-machine-learning" },
+      { judul: "MIT OpenCourseWare", penulis: "MIT", tahun: "2023", penerbit: "MIT", deskripsi: "Kumpulan materi perkuliahan dari MIT yang tersedia gratis, mencakup berbagai topik matematika.", link: "https://ocw.mit.edu/" }
+    ]
+  },
+  {
+    kategori: "🔧 Tools & Referensi Teknis",
+    warna: "violet",
+    items: [
+      { judul: "Wolfram MathWorld", penulis: "Eric W. Weisstein", tahun: "2023", penerbit: "Wolfram Research", deskripsi: "Ensiklopedia matematika online terlengkap dengan penjelasan detail untuk ribuan topik matematika.", link: "https://mathworld.wolfram.com/" },
+      { judul: "GeoGebra", penulis: "Markus Hohenwarter", tahun: "2023", penerbit: "GeoGebra", deskripsi: "Aplikasi matematika interaktif gratis untuk visualisasi geometri, aljabar, kalkulus, dan statistika.", link: "https://www.geogebra.org/" },
+      { judul: "Desmos Graphing Calculator", penulis: "Desmos", tahun: "2023", penerbit: "Desmos", deskripsi: "Kalkulator grafis online gratis yang mudah digunakan untuk memvisualisasikan fungsi dan persamaan matematika.", link: "https://www.desmos.com/" },
+      { judul: "Paul's Online Math Notes", penulis: "Paul Dawkins", tahun: "2023", penerbit: "Lamar University", deskripsi: "Catatan kuliah matematika lengkap yang tersedia gratis, mencakup aljabar, kalkulus, dan persamaan diferensial.", link: "https://tutorial.math.lamar.edu/" }
+    ]
+  }
+];
+
+/* ═══ RENDER REFERENSI ═══ */
+function renderReferensi() {
+  var colorMap = { teal:'hsl(var(--teal))', amber:'hsl(var(--amber))', violet:'hsl(var(--violet))' };
+  var bgMap    = { teal:'hsl(174 72% 52%/.1)', amber:'hsl(38 95% 58%/.1)', violet:'hsl(265 65% 65%/.1)' };
+  var html = '';
+
+  referensiData.forEach(function(kategori) {
+    var c = kategori.warna;
+    html += '<div style="margin-bottom:48px">';
+    html += '<h2 class="font-display" style="font-size:1.5rem;font-weight:800;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid ' + colorMap[c] + '">' + kategori.kategori + '</h2>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px">';
+
+    kategori.items.forEach(function(item) {
+      html += '<div class="card" style="padding:24px;display:flex;flex-direction:column;gap:12px;border-top:3px solid ' + colorMap[c] + '">' +
+        '<div style="display:flex;align-items:flex-start;gap:12px">' +
+        '<div style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:' + bgMap[c] + ';display:flex;align-items:center;justify-content:center;font-size:1.25rem">📄</div>' +
+        '<div style="min-width:0">' +
+        '<h3 style="font-size:.95rem;font-weight:700;line-height:1.4">' + item.judul + '</h3>' +
+        '<p style="font-size:.8rem;color:hsl(var(--fg3));margin-top:2px">' + item.penulis + ' · ' + item.tahun + '</p>' +
+        '</div></div>' +
+        '<p style="font-size:.875rem;color:hsl(var(--fg2));line-height:1.6">' + item.deskripsi + '</p>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto">' +
+        '<span style="font-size:.75rem;font-family:var(--font-mono);padding:4px 10px;border-radius:99px;background:' + bgMap[c] + ';color:' + colorMap[c] + '">' + item.penerbit + '</span>' +
+        '<a href="' + item.link + '" target="_blank" rel="noopener" style="font-size:.8rem;font-weight:600;color:' + colorMap[c] + ';text-decoration:none;display:flex;align-items:center;gap:4px">Kunjungi ↗</a>' +
+        '</div></div>';
+    });
+
+    html += '</div></div>';
+  });
+
+  document.getElementById('referensiContent').innerHTML = html;
+}
 /* === MENU RESIZE FIX === */
 window.addEventListener('resize', function() {
   if (window.innerWidth > 768 && menuOpen) {
