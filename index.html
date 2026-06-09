@@ -21,6 +21,10 @@
   db.auth.getSession().then(({ data }) => {
     console.log('Supabase terhubung!', data);
   });
+  // Cek apakah user sudah login
+db.auth.getSession().then(({ data: { session } }) => {
+  if (!session) window.location.href = 'auth.html';
+});
 </script>
 </head>
 <body>
