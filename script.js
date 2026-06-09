@@ -543,37 +543,106 @@ function openGameFile(file) {
   window.location.href = file;
 }
 
-function renderMateri() {
+async function renderMateri() {
   // Tabs
-  var tabs = [{key:'diskrit',label:'∑ Matematika Diskrit'},{key:'aljabar',label:'λ Aljabar Linear'},{key:'kriptografi',label:'🔐 Kriptografi'}];
+  var tabs = [
+    {key:'diskrit', label:'∑ Matematika Diskrit'},
+    {key:'aljabar', label:'λ Aljabar Linear'},
+    {key:'kriptografi', label:'🔐 Kriptografi'}
+  ];
   var tabHtml = '';
   tabs.forEach(function(t) {
-    tabHtml += '<button class="tab-btn' + (activeMateriTab===t.key?' active':'') + '" onclick="activeMateriTab=\'' + t.key + '\';renderMateri()">' + t.label + '</button>';
+    tabHtml += '<button class="tab-btn' + (activeMateriTab===t.key?' active':'') + 
+      '" onclick="activeMateriTab=\'' + t.key + '\';renderMateri()">' + t.label + '</button>';
   });
   document.getElementById('materiTabs').innerHTML = tabHtml;
 
-  // Content
+  // Loading state
+  document.getElementById('materiContent').innerHTML = 
+    '<div style="text-align:center;padding:60px;color:hsl(var(--fg3))">⏳ Memuat materi...</div>';
+
+  try {
+    // Fetch dari Supabase
+    const { data, error } = await db
+      .from('materi')
+      .select('*')
+      .eq('modul', activeMateriTab)
+      .order('urutan', { ascending: true });
+
+    if (error) throw error;
+
+    // Kalau tidak ada data di DB, fallback ke data lokal
+    if (!data || data.length === 0) {
+      renderMateriLokal();
+      return;
+    }
+
+    // Render dari DB — grouping berdasarkan tag (Learn/Watch/Practice)
+    // Karena DB hanya simpan materi (Learn), gabungkan dengan video & soal dari lokal
+    var lokalSections = materiData[activeMateriTab] || [];
+    var dbSection = {
+      icon: lokalSections[0]?.icon || '📚',
+      title: lokalSections[0]?.title || 'Materi',
+      items: data.map(function(row, i) {
+        return {
+          num: String(i + 1).padStart(2, '0'),
+          title: row.judul,
+          description: row.konten || '',
+          tag: 'Learn',
+          file: row.url
+        };
+      })
+    };
+
+    // Gabung: section materi dari DB + section video & soal dari lokal
+    var sections = [dbSection];
+    if (lokalSections[1]) sections.push(lokalSections[1]); // Video
+    if (lokalSections[2]) sections.push(lokalSections[2]); // Soal
+
+    renderMateriSections(sections);
+
+  } catch(err) {
+    console.error('Gagal fetch materi:', err);
+    // Fallback ke data lokal jika DB error
+    renderMateriLokal();
+  }
+}
+
+function renderMateriLokal() {
   var sections = materiData[activeMateriTab] || [];
+  renderMateriSections(sections);
+}
+
+function renderMateriSections(sections) {
   var html = '';
   sections.forEach(function(s, sectionIndex) {
     var gridId = 'materi-grid-' + activeMateriTab + '-' + sectionIndex;
-    html += '<div style="margin-bottom:60px"><div class="section-header"><span class="emoji">' + s.icon + '</span><h2 class="font-display">' + s.title + '</h2></div>' +
+    html += '<div style="margin-bottom:60px">' +
+      '<div class="section-header"><span class="emoji">' + s.icon + '</span>' +
+      '<h2 class="font-display">' + s.title + '</h2></div>' +
       '<div class="slider-note"><span class="hint-chip">Klik tombol ◀ ▶ untuk melihat semua materi</span></div>' +
       '<div class="carousel-wrap">' +
       '<button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
       '<div id="' + gridId + '" class="materi-grid">';
+
     s.items.forEach(function(item) {
-      html += '<div class="materi-card"' + (item.file ? ' onclick="openModuleFile(\'' + item.file + '\')"' : '') + '>' +
-        '<div class="accent-line"></div><div class="num">' + item.num + '</div>' +
-        '<h3>' + item.title + '</h3><p class="mdesc">' + item.description + '</p>' +
+      html += '<div class="materi-card"' + 
+        (item.file ? ' onclick="openModuleFile(\'' + item.file + '\')"' : '') + '>' +
+        '<div class="accent-line"></div>' +
+        '<div class="num">' + item.num + '</div>' +
+        '<h3>' + item.title + '</h3>' +
+        '<p class="mdesc">' + item.description + '</p>' +
         '<span class="tag">' + item.tag + '</span>' +
-        (item.file ? '<span class="link-arrow">➔</span>' : '') + '</div>';
+        (item.file ? '<span class="link-arrow">➔</span>' : '') + 
+        '</div>';
     });
+
     html += '</div>' +
       '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
       '<div class="carousel-dots"></div>' +
       '</div></div>';
   });
+
   document.getElementById('materiContent').innerHTML = html;
   if (typeof window.refreshCarouselGrids === 'function') {
     window.refreshCarouselGrids();
