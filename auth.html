@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Math Unity</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div id="auth-container">
+    <h2 id="auth-title">Login</h2>
+
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+
+    <button id="btn-login">Login</button>
+    <button id="btn-register">Register</button>
+
+    <p id="auth-message"></p>
+  </div>
+
+  <script>
+    const { createClient } = supabase;
+    const db = createClient(
+      'PROJECT_URL_KAMU',
+      'ANON_KEY_KAMU'
+    );
+
+    const msg = document.getElementById('auth-message');
+
+    // LOGIN
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { error } = await db.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        msg.textContent = '❌ ' + error.message;
+      } else {
+        msg.textContent = '✅ Login berhasil! Mengalihkan...';
+        setTimeout(() => window.location.href = 'index.html', 1000);
+      }
+    });
+
+    // REGISTER
+    document.getElementById('btn-register').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { error } = await db.auth.signUp({ email, password });
+
+      if (error) {
+        msg.textContent = '❌ ' + error.message;
+      } else {
+        msg.textContent = '✅ Register berhasil! Silakan login.';
+      }
+    });
+
+    // Cek jika sudah login, langsung redirect
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (session) window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
