@@ -434,14 +434,15 @@
     let html = '<div class="materi-list">';
     data.forEach(item => {
       html += `
-        <div class="materi-item" id="item-${item.id}">
-          <span class="modul-badge ${badgeClass[item.modul] || ''}">${item.modul}</span>
-          <div class="info">
-            <h3>${item.judul}</h3>
-            <p>${item.url || '-'}</p>
-          </div>
-          <button class="btn-hapus" onclick="hapusMateri('${item.id}', '${item.url}')">🗑 Hapus</button>
-        </div>`;
+  <div class="materi-item" id="item-${item.id}">
+    <span class="modul-badge ${badgeClass[item.modul] || ''}">${item.modul}</span>
+    <div class="info">
+      <h3 id="judul-${item.id}">${item.judul}</h3>
+      <p>${item.url || '-'}</p>
+    </div>
+    <button class="btn-edit" onclick="editJudul('${item.id}', '${item.judul}')">✏️ Edit</button>
+    <button class="btn-hapus" onclick="hapusMateri('${item.id}', '${item.url}')">🗑 Hapus</button>
+  </div>`;
     });
     html += '</div>';
     list.innerHTML = html;
