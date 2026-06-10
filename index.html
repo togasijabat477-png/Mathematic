@@ -39,10 +39,11 @@ db.auth.getSession().then(({ data: { session } }) => {
       </a>
       <div class="right" id="menuWrapper">
         <div class="menu-links">
-          <a href="#beranda" data-page="beranda" onclick="navigateTo('beranda');return false;">Beranda</a>
-          <a href="#materi" data-page="materi" onclick="navigateTo('materi');return false;">Materi</a>
-          <a href="#game" data-page="game" onclick="navigateTo('game');return false;">Game</a>
-        </div>
+  <a href="#beranda" data-page="beranda" onclick="navigateTo('beranda');return false;">Beranda</a>
+  <a href="#materi" data-page="materi" onclick="navigateTo('materi');return false;">Materi</a>
+  <a href="#game" data-page="game" onclick="navigateTo('game');return false;">Game</a>
+  <div id="authNav"></div>
+</div>
         <button class="btn-icon" id="themeBtn" title="Toggle theme">🌙</button>
         <button class="btn-icon" id="menuBtn">☰</button>
         <div class="dropdown" id="dropdownMenu">
