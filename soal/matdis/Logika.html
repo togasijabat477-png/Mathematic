@@ -1150,19 +1150,19 @@ function renderQ() {
     div.className = 'opt';
 
     // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
-      div.classList.add('locked');
-    } else {
-      div.onclick = () => selectAnswer(i);
-    }
+    if (a === -1) {
+  // Sudah menyerah — kunci semua opsi
+  div.classList.add('locked');
+} else {
+  // Belum menyerah — selalu bisa klik
+  div.onclick = () => selectAnswer(i);
+  if (i === a) {
+    // Highlight jawaban yang dipilih
+    div.style.background = 'var(--ink)';
+    div.style.color = '#fff';
+    div.style.borderColor = 'var(--ink)';
+  }
+}
 
     div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
@@ -1179,7 +1179,8 @@ function renderQ() {
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  // Hanya blokir jika sudah menyerah
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
