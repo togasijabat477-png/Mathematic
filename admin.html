@@ -238,10 +238,12 @@
   
   <!-- Filter -->
   <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
-    <select id="filterModulSoal" onchange="loadSoalList()">
+    <select id="filterModulSoal" onchange="updateJudulOptions();loadSoalList()">
       <option value="Matematika Diskrit">∑ Matematika Diskrit</option>
       <option value="Aljabar Linear">λ Aljabar Linear</option>
       <option value="Kriptografi">🔐 Kriptografi</option>
+    </select>
+    <select id="filterJudulSoal" onchange="loadSoalList()">
     </select>
     <select id="filterLevelSoal" onchange="loadSoalList()">
       <option value="easy">Easy</option>
@@ -322,6 +324,28 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY'
   );
 
+// ── MAPPING JUDUL PER MODUL ──
+const JUDUL_MAP = {
+  'Matematika Diskrit': [
+    'Logika', 'Himpunan', 'Aljabar Bolean',
+    'Matriks', 'Graf', 'Pohon', 'Teori Graf'
+  ],
+  'Aljabar Linear': [
+    'Sistem Persamaan Linear', 'Matriks', 'Determinan',
+    'Nilai Eigen dan Vektor Eigen', 'Diagonalisasi'
+  ],
+  'Kriptografi': ['Kriptografi']
+};
+
+function updateJudulOptions() {
+  const modul = document.getElementById('filterModulSoal').value;
+  const judulSelect = document.getElementById('filterJudulSoal');
+  const judul = JUDUL_MAP[modul] || [];
+  judulSelect.innerHTML = judul.map(j => 
+    `<option value="${j}">${j}</option>`
+  ).join('');
+}
+  
 // ── KELOLA SOAL ──
 
 function showFormTambahSoal() {
@@ -372,13 +396,15 @@ async function simpanSoal() {
   const penjelasanJudul = document.getElementById('soalPenjelasanJudul').value.trim();
   const penjelasanIsi = document.getElementById('soalPenjelasanIsi').value.trim();
   const modul = document.getElementById('filterModulSoal').value;
-  const level = document.getElementById('filterLevelSoal').value;
+const level = document.getElementById('filterLevelSoal').value;
+const judul = document.getElementById('filterJudulSoal').value;
+
 
   if (!pertanyaan) { showFormMsg('❌ Pertanyaan wajib diisi', 'error'); return; }
   if (opsi.filter(o => o).length < 2) { showFormMsg('❌ Minimal 2 opsi jawaban', 'error'); return; }
 
   const payload = {
-    modul, level, pertanyaan,
+  modul, level, judul, pertanyaan,
     opsi: opsi.filter(o => o),
     jawaban_benar: jawaban,
     penjelasan_judul: penjelasanJudul,
@@ -409,14 +435,16 @@ async function loadSoalList() {
   list.innerHTML = '<div class="loading">⏳ Memuat soal...</div>';
 
   const modul = document.getElementById('filterModulSoal').value;
-  const level = document.getElementById('filterLevelSoal').value;
+const level = document.getElementById('filterLevelSoal').value;
+const judul = document.getElementById('filterJudulSoal').value;
 
-  const { data, error } = await db
-    .from('soal')
-    .select('*')
-    .eq('modul', modul)
-    .eq('level', level)
-    .order('urutan');
+const { data, error } = await db
+  .from('soal')
+  .select('*')
+  .eq('modul', modul)
+  .eq('level', level)
+  .eq('judul', judul)
+  .order('urutan');
 
   if (error) { list.innerHTML = '<div class="empty-state">❌ ' + error.message + '</div>'; return; }
   if (!data || data.length === 0) {
@@ -591,8 +619,9 @@ async function editJudul(id, judulLama) {
   document.getElementById('adminPanel').classList.add('show');
   document.getElementById('adminEmail2').textContent = user.email;
   loadMateriList();
-    loadUserList();
-    loadSoalList();
+loadUserList();
+updateJudulOptions();
+loadSoalList();
 }
 
   // ── FILE UPLOAD ──
