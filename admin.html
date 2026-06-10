@@ -8,7 +8,12 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
-
+.btn-edit {
+  background: transparent; border: 1px solid #3b82f6; color: #3b82f6;
+  padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: .8rem;
+  transition: all .2s; flex-shrink: 0;
+}
+.btn-edit:hover { background: #3b82f6; color: #fff; }
     .topbar {
       background: #1a1d27; border-bottom: 1px solid #2d3148;
       padding: 16px 32px; display: flex; align-items: center;
@@ -231,7 +236,20 @@
     'https://ytwfwxjutdlukjvnlnzv.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY'
   );
+async function editJudul(id, judulLama) {
+  const judulBaru = prompt('Edit judul materi:', judulLama);
+  if (!judulBaru || judulBaru.trim() === judulLama) return;
 
+  const { error } = await db.from('materi')
+    .update({ judul: judulBaru.trim() })
+    .eq('id', id);
+
+  if (error) {
+    alert('❌ Gagal update: ' + error.message);
+  } else {
+    document.getElementById('judul-' + id).textContent = judulBaru.trim();
+  }
+}
   // ── AUTH ──
   let currentUser = null;
   let currentFilter = 'semua';
