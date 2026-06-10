@@ -988,18 +988,66 @@ function startQuizRipple(e, level) {
 
 async function startQuiz(level) {
   const cfg = LEVELS[level];
-  S.level = level;
-  S.questions = shuffled.slice(0, cfg.count);
 
-// Kalau tidak ada soal sama sekali
-if (S.questions.length === 0) {
-  alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+  // Loading state
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  // Reset pointer events
   document.querySelectorAll('.level-card').forEach(c => {
     c.style.opacity = '';
     c.style.pointerEvents = '';
   });
-  return;
-}
+
+  // Pakai soal dari DB, kalau kosong pakai ALL_Q lokal
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  // Cek apakah ada soal
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  // Acak urutan soal
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
+  S.level = level;
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
