@@ -232,6 +232,86 @@
   <div id="userList"><div class="loading">⏳ Memuat user...</div></div>
 </div>
 
+    <!-- KELOLA SOAL -->
+<div class="card">
+  <h2>📝 Kelola Soal Kuis</h2>
+  
+  <!-- Filter -->
+  <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+    <select id="filterModulSoal" onchange="loadSoalList()">
+      <option value="Matematika Diskrit">∑ Matematika Diskrit</option>
+      <option value="Aljabar Linear">λ Aljabar Linear</option>
+      <option value="Kriptografi">🔐 Kriptografi</option>
+    </select>
+    <select id="filterLevelSoal" onchange="loadSoalList()">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <button class="btn-primary" style="width:auto;margin:0;padding:10px 20px" 
+      onclick="showFormTambahSoal()">+ Tambah Soal</button>
+  </div>
+
+  <!-- Form Tambah/Edit Soal -->
+  <div id="formSoal" style="display:none;background:#0f1117;border:1px solid #2d3148;border-radius:12px;padding:24px;margin-bottom:24px">
+    <h3 style="color:#a78bfa;margin-bottom:16px" id="formSoalTitle">Tambah Soal Baru</h3>
+    <input type="hidden" id="soalId" />
+    
+    <label>Pertanyaan</label>
+    <textarea id="soalPertanyaan" rows="3" placeholder="Tulis pertanyaan di sini..."></textarea>
+    
+    <label style="margin-top:16px">Opsi Jawaban</label>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;color:#a78bfa;width:20px">A</span>
+        <input type="text" id="opsi0" placeholder="Opsi A" style="flex:1" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;color:#a78bfa;width:20px">B</span>
+        <input type="text" id="opsi1" placeholder="Opsi B" style="flex:1" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;color:#a78bfa;width:20px">C</span>
+        <input type="text" id="opsi2" placeholder="Opsi C" style="flex:1" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;color:#a78bfa;width:20px">D</span>
+        <input type="text" id="opsi3" placeholder="Opsi D" style="flex:1" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;color:#a78bfa;width:20px">E</span>
+        <input type="text" id="opsi4" placeholder="Opsi E" style="flex:1" />
+      </div>
+    </div>
+
+    <label style="margin-top:16px">Jawaban Benar</label>
+    <select id="soalJawaban">
+      <option value="0">A</option>
+      <option value="1">B</option>
+      <option value="2">C</option>
+      <option value="3">D</option>
+      <option value="4">E</option>
+    </select>
+
+    <label style="margin-top:16px">Judul Penjelasan</label>
+    <input type="text" id="soalPenjelasanJudul" placeholder="contoh: Konjungsi (p ∧ q)" />
+
+    <label style="margin-top:16px">Isi Penjelasan</label>
+    <textarea id="soalPenjelasanIsi" rows="3" placeholder="Penjelasan jawaban..."></textarea>
+
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <button class="btn-primary" style="width:auto;margin:0;padding:10px 24px" 
+        onclick="simpanSoal()">💾 Simpan</button>
+      <button style="padding:10px 24px;border-radius:8px;border:1px solid #2d3148;background:transparent;color:#94a3b8;cursor:pointer"
+        onclick="document.getElementById('formSoal').style.display='none'">Batal</button>
+    </div>
+    <div id="formSoalMsg"></div>
+  </div>
+
+  <!-- Daftar Soal -->
+  <div id="soalList"><div class="loading">⏳ Memuat soal...</div></div>
+</div>
+
   </div>
 </div>
 
@@ -242,6 +322,145 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY'
   );
 
+// ── KELOLA SOAL ──
+
+function showFormTambahSoal() {
+  document.getElementById('soalId').value = '';
+  document.getElementById('soalPertanyaan').value = '';
+  document.getElementById('opsi0').value = '';
+  document.getElementById('opsi1').value = '';
+  document.getElementById('opsi2').value = '';
+  document.getElementById('opsi3').value = '';
+  document.getElementById('opsi4').value = '';
+  document.getElementById('soalJawaban').value = '0';
+  document.getElementById('soalPenjelasanJudul').value = '';
+  document.getElementById('soalPenjelasanIsi').value = '';
+  document.getElementById('formSoalTitle').textContent = 'Tambah Soal Baru';
+  document.getElementById('formSoal').style.display = 'block';
+  document.getElementById('formSoalMsg').textContent = '';
+}
+
+function showFormEditSoal(soal) {
+  const opsi = soal.opsi || [];
+  document.getElementById('soalId').value = soal.id;
+  document.getElementById('soalPertanyaan').value = soal.pertanyaan;
+  document.getElementById('opsi0').value = opsi[0] || '';
+  document.getElementById('opsi1').value = opsi[1] || '';
+  document.getElementById('opsi2').value = opsi[2] || '';
+  document.getElementById('opsi3').value = opsi[3] || '';
+  document.getElementById('opsi4').value = opsi[4] || '';
+  document.getElementById('soalJawaban').value = soal.jawaban_benar;
+  document.getElementById('soalPenjelasanJudul').value = soal.penjelasan_judul || '';
+  document.getElementById('soalPenjelasanIsi').value = soal.penjelasan_isi || '';
+  document.getElementById('formSoalTitle').textContent = 'Edit Soal';
+  document.getElementById('formSoal').style.display = 'block';
+  document.getElementById('formSoalMsg').textContent = '';
+  document.getElementById('formSoal').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function simpanSoal() {
+  const id = document.getElementById('soalId').value;
+  const pertanyaan = document.getElementById('soalPertanyaan').value.trim();
+  const opsi = [
+    document.getElementById('opsi0').value.trim(),
+    document.getElementById('opsi1').value.trim(),
+    document.getElementById('opsi2').value.trim(),
+    document.getElementById('opsi3').value.trim(),
+    document.getElementById('opsi4').value.trim(),
+  ];
+  const jawaban = parseInt(document.getElementById('soalJawaban').value);
+  const penjelasanJudul = document.getElementById('soalPenjelasanJudul').value.trim();
+  const penjelasanIsi = document.getElementById('soalPenjelasanIsi').value.trim();
+  const modul = document.getElementById('filterModulSoal').value;
+  const level = document.getElementById('filterLevelSoal').value;
+
+  if (!pertanyaan) { showFormMsg('❌ Pertanyaan wajib diisi', 'error'); return; }
+  if (opsi.filter(o => o).length < 2) { showFormMsg('❌ Minimal 2 opsi jawaban', 'error'); return; }
+
+  const payload = {
+    modul, level, pertanyaan,
+    opsi: opsi.filter(o => o),
+    jawaban_benar: jawaban,
+    penjelasan_judul: penjelasanJudul,
+    penjelasan_isi: penjelasanIsi
+  };
+
+  let error;
+  if (id) {
+    ({ error } = await db.from('soal').update(payload).eq('id', id));
+  } else {
+    ({ error } = await db.from('soal').insert(payload));
+  }
+
+  if (error) {
+    showFormMsg('❌ Gagal: ' + error.message, 'error');
+  } else {
+    showFormMsg('✅ Soal berhasil disimpan!', 'success');
+    setTimeout(() => {
+      document.getElementById('formSoal').style.display = 'none';
+      loadSoalList();
+    }, 1500);
+  }
+}
+
+async function loadSoalList() {
+  const list = document.getElementById('soalList');
+  if (!list) return;
+  list.innerHTML = '<div class="loading">⏳ Memuat soal...</div>';
+
+  const modul = document.getElementById('filterModulSoal').value;
+  const level = document.getElementById('filterLevelSoal').value;
+
+  const { data, error } = await db
+    .from('soal')
+    .select('*')
+    .eq('modul', modul)
+    .eq('level', level)
+    .order('urutan');
+
+  if (error) { list.innerHTML = '<div class="empty-state">❌ ' + error.message + '</div>'; return; }
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div class="empty-state">📭 Belum ada soal untuk modul & level ini. Tambah soal di atas!</div>';
+    return;
+  }
+
+  const letters = ['A','B','C','D','E'];
+  let html = '<div class="materi-list">';
+  data.forEach((soal, idx) => {
+    const opsi = soal.opsi || [];
+    html += `
+      <div class="materi-item" id="soal-${soal.id}" style="flex-direction:column;align-items:flex-start;gap:12px">
+        <div style="display:flex;width:100%;align-items:center;gap:12px">
+          <span class="modul-badge" style="background:rgba(124,58,237,.2);color:#a78bfa">${idx + 1}</span>
+          <div class="info" style="flex:1">
+            <h3 style="font-size:.9rem">${soal.pertanyaan}</h3>
+            <p>Jawaban: <strong style="color:#a78bfa">${letters[soal.jawaban_benar]}</strong> — ${opsi[soal.jawaban_benar] || '-'}</p>
+          </div>
+          <button class="btn-edit" onclick='showFormEditSoal(${JSON.stringify(soal).replace(/'/g, "&#39;")})'>✏️ Edit</button>
+          <button class="btn-hapus" onclick="hapusSoal('${soal.id}')">🗑</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;padding-left:8px">
+          ${opsi.map((o, i) => `<span style="font-size:.75rem;padding:3px 10px;border-radius:6px;background:${i === soal.jawaban_benar ? 'rgba(124,58,237,.2)' : '#1a1d27'};color:${i === soal.jawaban_benar ? '#a78bfa' : '#64748b'}">${letters[i]}. ${o}</span>`).join('')}
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  list.innerHTML = html;
+}
+
+async function hapusSoal(id) {
+  if (!confirm('Yakin hapus soal ini?')) return;
+  const { error } = await db.from('soal').delete().eq('id', id);
+  if (error) { alert('❌ Gagal hapus: ' + error.message); return; }
+  loadSoalList();
+}
+
+function showFormMsg(text, type) {
+  const el = document.getElementById('formSoalMsg');
+  el.className = 'msg ' + type;
+  el.textContent = text;
+}
+  
   async function loadUserList() {
   const list = document.getElementById('userList');
   if (!list) return;
@@ -373,6 +592,7 @@ async function editJudul(id, judulLama) {
   document.getElementById('adminEmail2').textContent = user.email;
   loadMateriList();
     loadUserList();
+    loadSoalList();
 }
 
   // ── FILE UPLOAD ──
