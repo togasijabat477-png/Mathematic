@@ -951,7 +951,42 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   renderReferensi();
   renderCreators();
   handlePageParam();
+   checkAuthNav(); // ← tambahkan ini
 })();
+
+// ── CEK STATUS LOGIN DI NAVBAR ──
+async function checkAuthNav() {
+  const { data: { session } } = await db.auth.getSession();
+  const el = document.getElementById('authNav');
+  if (!el) return;
+
+  if (session) {
+    // Sudah login — tampilkan email + tombol dashboard
+    const email = session.user.email;
+    const initial = email.charAt(0).toUpperCase();
+    el.innerHTML = `
+      <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:99px;background:rgba(124,58,237,.15);color:#a78bfa;text-decoration:none;font-size:.875rem;border:1px solid rgba(124,58,237,.3)">
+        <span style="width:24px;height:24px;border-radius:50%;background:#7c3aed;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff">${initial}</span>
+        Dashboard
+      </a>
+      <button onclick="logoutUser()" style="padding:6px 14px;border-radius:99px;border:1px solid rgba(239,68,68,.3);background:transparent;color:#f87171;cursor:pointer;font-size:.875rem">
+        Logout
+      </button>
+    `;
+  } else {
+    // Belum login — tampilkan tombol login
+    el.innerHTML = `
+      <a href="auth.html" style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:99px;background:#7c3aed;color:#fff;text-decoration:none;font-size:.875rem;font-weight:600">
+        🔐 Login
+      </a>
+    `;
+  }
+}
+
+async function logoutUser() {
+  await db.auth.signOut();
+  window.location.reload();
+}
 
 /* ═══════════════════════════════════════════
    ADAPTIVE CAROUSEL SYSTEM
