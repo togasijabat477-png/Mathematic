@@ -986,7 +986,7 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
   S.level = level;
   S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
