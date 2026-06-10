@@ -989,7 +989,17 @@ function startQuizRipple(e, level) {
 async function startQuiz(level) {
   const cfg = LEVELS[level];
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
+
+// Kalau tidak ada soal sama sekali
+if (S.questions.length === 0) {
+  alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+  return;
+}
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
