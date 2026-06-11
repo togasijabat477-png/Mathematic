@@ -647,25 +647,35 @@ loadSoalList();
   });
 
   function handleFile(file) {
-    if (!file.name.endsWith('.html')) {
-      showMsg('uploadMsg', '❌ Hanya file .html yang diperbolehkan', 'error');
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      showMsg('uploadMsg', '❌ File terlalu besar (maks 10MB)', 'error');
-      return;
-    }
-    selectedFile = file;
-    document.getElementById('fileName').textContent = file.name;
-    document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
-    document.getElementById('filePreview').style.display = 'flex';
+  const isHtml = file.name.endsWith('.html');
+  const isPdf = file.name.endsWith('.pdf');
 
-    // Auto-isi judul dari nama file
-    if (!document.getElementById('inputJudul').value) {
-      const autoTitle = file.name.replace('.html', '').replace(/_/g, ' ').replace(/-/g, ' ');
-      document.getElementById('inputJudul').value = autoTitle;
-    }
+  if (!isHtml && !isPdf) {
+    showMsg('uploadMsg', '❌ Hanya file .html atau .pdf yang diperbolehkan', 'error');
+    return;
   }
+  if (file.size > 10 * 1024 * 1024) {
+    showMsg('uploadMsg', '❌ File terlalu besar (maks 10MB)', 'error');
+    return;
+  }
+
+  selectedFile = file;
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+  document.getElementById('filePreview').style.display = 'flex';
+
+  // Auto-isi judul dari nama file
+  if (!document.getElementById('inputJudul').value) {
+    const autoTitle = file.name
+      .replace('.html', '').replace('.pdf', '')
+      .replace(/_/g, ' ').replace(/-/g, ' ');
+    document.getElementById('inputJudul').value = autoTitle;
+  }
+
+  // Tampilkan tipe file
+  const tipeLabel = isPdf ? '📕 PDF' : '📄 HTML';
+  document.getElementById('fileSize').textContent += ' · ' + tipeLabel;
+}
 
   // ── UPLOAD & SIMPAN ──
   document.getElementById('btnUpload').addEventListener('click', async () => {
