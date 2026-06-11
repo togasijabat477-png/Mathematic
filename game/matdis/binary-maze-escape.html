@@ -2,49 +2,30 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Binary Maze Escape - Game Edukasi Logika Biner</title>
-  <meta name="description" content="Game edukasi matematika diskrit tentang biner, boolean, dan gerbang logika." />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0-9..40,700;1,9..40,400&family=Playfair+Display:wght@700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" />
   <style>
-    /* ═════════════════════════════════════════════════════════════════
-       BINARY MAZE ESCAPE — Game Edukasi Logika Biner
-       Design System: Cyberpunk Digital / Neon Future
-       ═════════════════════════════════════════════════════════════════ */
-
-    /* Reset & CSS Variables */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      /* Color Palette (sesuai website Mathematic) */
       --bg: 220 18% 7%;
       --bg2: 220 15% 10%;
       --bg3: 220 14% 13%;
       --fg: 210 25% 92%;
       --fg2: 210 15% 70%;
       --fg3: 210 12% 50%;
-      --primary: 174 72% 52%;
       --teal: 174 72% 52%;
-      --teal-dim: 174 50% 32%;
       --danger: 0 84% 60%;
       --success: 142 71% 45%;
       --amber: 38 95% 58%;
       --purple: 265 65% 65%;
-
-      /* Fonts */
       --font-display: 'Playfair Display', Georgia, serif;
       --font-mono: 'Space Mono', monospace;
       --font-body: 'DM Sans', system-ui, sans-serif;
     }
 
-    html {
-      scroll-behavior: smooth;
-      background: hsl(var(--bg));
-    }
+    html { scroll-behavior: smooth; background: hsl(var(--bg)); }
 
     body {
       font-family: var(--font-body);
@@ -53,9 +34,9 @@
       line-height: 1.6;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      touch-action: manipulation;
     }
 
-    /* Digital Grid Background */
     body::before {
       content: '';
       position: fixed;
@@ -69,637 +50,377 @@
       animation: gridScroll 8s linear infinite;
     }
 
-    @keyframes gridScroll {
-      0% { background-position: 0 0; }
-      100% { background-position: 40px 40px; }
-    }
+    @keyframes gridScroll { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
+    @keyframes neonGlow { 0%,100% { text-shadow: 0 0 10px hsl(var(--teal)), 0 0 20px hsl(var(--teal)/0.5); } 50% { text-shadow: 0 0 20px hsl(var(--teal)), 0 0 40px hsl(var(--teal)/0.8); } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes popIn { 0% { transform:scale(0.5); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+    @keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+    @keyframes bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes playerMove { 0% { transform:scale(1.3); } 100% { transform:scale(1); } }
 
-    /* Glitch Effect */
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(-2px, -2px); }
-      60% { transform: translate(2px, 2px); }
-      80% { transform: translate(2px, -2px); }
-      100% { transform: translate(0); }
-    }
-
-    @keyframes glitchColor {
-      0% { color: hsl(var(--teal)); text-shadow: -2px 0 hsl(var(--danger)), 2px 0 hsl(var(--purple)); }
-      50% { color: hsl(var(--teal)); text-shadow: 2px 0 hsl(var(--danger)), -2px 0 hsl(var(--purple)); }
-      100% { color: hsl(var(--teal)); text-shadow: -2px 0 hsl(var(--danger)), 2px 0 hsl(var(--purple)); }
-    }
-
-    @keyframes neonGlow {
-      0%, 100% { text-shadow: 0 0 10px hsl(var(--teal)), 0 0 20px hsl(var(--teal) / 0.5); }
-      50% { text-shadow: 0 0 20px hsl(var(--teal)), 0 0 40px hsl(var(--teal) / 0.8); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       SCREEN MANAGEMENT
-       ════════════════════════════════════════════════════════════════ */
-
+    /* ── SCREEN MANAGEMENT ─────────────────────────── */
     .screen {
-      position: relative;
-      z-index: 1;
-      display: none;
-      min-height: 100vh;
+      position: relative; z-index: 1;
+      display: none; min-height: 100vh;
       padding: 20px;
-      animation: slideUp 0.6s ease-out;
+      animation: slideUp 0.5s ease-out;
     }
+    .screen.active { display: flex; }
 
-    .screen.active {
-      display: flex;
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       MAIN MENU SCREEN
-       ════════════════════════════════════════════════════════════════ */
-
+    /* ── MAIN MENU ─────────────────────────────────── */
     #menuScreen {
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 30px;
+      flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; gap: 28px;
     }
-
-    .menu-content {
-      max-width: 600px;
-      animation: slideUp 0.6s ease-out;
-    }
+    .menu-content { max-width: 560px; width: 100%; }
 
     .game-title {
       font-family: var(--font-display);
-      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-size: clamp(2rem, 8vw, 3.8rem);
       font-weight: 900;
       letter-spacing: -0.02em;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       animation: neonGlow 2s ease-in-out infinite;
       color: hsl(var(--teal));
     }
-
     .game-subtitle {
-      font-size: 1.25rem;
-      color: hsl(var(--fg2));
-      margin-bottom: 30px;
-      font-family: var(--font-mono);
+      font-size: 1.1rem; color: hsl(var(--fg2));
+      margin-bottom: 28px; font-family: var(--font-mono);
     }
-
-    .menu-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-bottom: 30px;
-    }
+    .menu-buttons { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
 
     .btn-menu {
-      padding: 14px 32px;
-      font-size: 1rem;
-      font-weight: 700;
-      border: 2px solid hsl(var(--teal));
-      border-radius: 8px;
-      background: transparent;
-      color: hsl(var(--teal));
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: var(--font-mono);
-      position: relative;
-      overflow: hidden;
+      padding: 14px 32px; font-size: 1rem; font-weight: 700;
+      border: 2px solid hsl(var(--teal)); border-radius: 8px;
+      background: transparent; color: hsl(var(--teal));
+      cursor: pointer; transition: all 0.25s ease;
+      font-family: var(--font-mono); position: relative; overflow: hidden;
     }
-
     .btn-menu::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: hsl(var(--teal));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s ease;
-      z-index: -1;
+      content: ''; position: absolute; inset: 0;
+      background: hsl(var(--teal)); transform: scaleX(0);
+      transform-origin: left; transition: transform 0.25s ease; z-index: -1;
     }
+    .btn-menu:hover { color: hsl(var(--bg)); box-shadow: 0 0 20px hsl(var(--teal)/0.5); }
+    .btn-menu:hover::before { transform: scaleX(1); }
+    .btn-menu:active { transform: scale(0.97); }
 
-    .btn-menu:hover {
-      color: hsl(var(--bg));
-      box-shadow: 0 0 20px hsl(var(--teal) / 0.5);
-    }
-
-    .btn-menu:hover::before {
-      transform: scaleX(1);
-    }
-
-    .menu-info {
-      font-size: 0.9rem;
-      color: hsl(var(--fg3));
-      margin-top: 30px;
-      line-height: 1.8;
-    }
-
+    .info-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
     .info-badge {
-      display: inline-block;
-      padding: 8px 16px;
-      background: hsl(var(--teal) / 0.1);
-      border: 1px solid hsl(var(--teal) / 0.3);
-      border-radius: 6px;
-      font-size: 0.85rem;
-      color: hsl(var(--teal));
-      margin: 5px;
+      display: inline-block; padding: 6px 14px;
+      background: hsl(var(--teal)/0.1); border: 1px solid hsl(var(--teal)/0.3);
+      border-radius: 6px; font-size: 0.8rem; color: hsl(var(--teal));
       font-family: var(--font-mono);
     }
 
-    /* ════════════════════════════════════════════════════════════════
-       GAMEPLAY SCREEN
-       ════════════════════════════════════════════════════════════════ */
-
+    /* ── GAMEPLAY SCREEN ───────────────────────────── */
     #gameScreen {
-      flex-direction: column;
-      align-items: center;
+      flex-direction: column; align-items: center;
       justify-content: flex-start;
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: 680px; margin: 0 auto; width: 100%;
+      padding: 12px 12px 100px;
     }
 
     .game-header {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-      padding: 20px;
-      background: hsl(var(--bg2) / 0.6);
-      border: 1px solid hsl(var(--teal) / 0.2);
-      border-radius: 8px;
-      backdrop-filter: blur(10px);
+      width: 100%; display: flex; justify-content: space-between;
+      align-items: center; gap: 10px; margin-bottom: 16px;
+      padding: 14px 18px;
+      background: hsl(var(--bg2)/0.8); border: 1px solid hsl(var(--teal)/0.25);
+      border-radius: 10px; backdrop-filter: blur(10px); flex-wrap: wrap;
     }
 
-    .game-info {
-      display: flex;
-      gap: 30px;
-      align-items: center;
-      flex: 1;
-      min-width: 300px;
-    }
+    .game-info { display: flex; gap: 20px; align-items: center; flex: 1; }
+    .info-item { display: flex; flex-direction: column; gap: 2px; }
+    .info-label { font-family: var(--font-mono); font-size: 0.65rem; color: hsl(var(--fg3)); text-transform: uppercase; letter-spacing: 0.1em; }
+    .info-value { font-size: 1.4rem; font-weight: 700; color: hsl(var(--teal)); font-family: var(--font-mono); }
+    .timer { font-size: 1.6rem; font-weight: 900; color: hsl(var(--teal)); font-family: var(--font-mono); }
+    .timer.warning { color: hsl(var(--amber)); animation: pulse 0.6s ease-in-out infinite; }
+    .timer.danger  { color: hsl(var(--danger)); animation: pulse 0.3s ease-in-out infinite; }
 
-    .info-item {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+    .header-buttons { display: flex; gap: 8px; }
+    .btn-sm {
+      padding: 8px 14px; font-size: 0.75rem; font-weight: 700;
+      border: 1.5px solid hsl(var(--teal)/0.5); border-radius: 6px;
+      background: transparent; color: hsl(var(--teal));
+      cursor: pointer; transition: all 0.2s; font-family: var(--font-mono);
     }
+    .btn-sm:hover { background: hsl(var(--teal)/0.15); border-color: hsl(var(--teal)); }
+    .btn-sm:active { transform: scale(0.95); }
+    .btn-sm.danger-btn { border-color: hsl(var(--danger)/0.5); color: hsl(var(--danger)); }
+    .btn-sm.danger-btn:hover { background: hsl(var(--danger)/0.15); border-color: hsl(var(--danger)); }
 
-    .info-label {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: hsl(var(--fg3));
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .info-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: hsl(var(--teal));
-      font-family: var(--font-mono);
-    }
-
-    .timer {
-      font-size: 2rem;
-      font-weight: 900;
-      color: hsl(var(--teal));
-    }
-
-    .timer.warning {
-      color: hsl(var(--amber));
-      animation: pulse 0.5s ease-in-out infinite;
-    }
-
-    .timer.danger {
-      color: hsl(var(--danger));
-      animation: pulse 0.3s ease-in-out infinite;
-    }
-
+    /* ── MAZE ──────────────────────────────────────── */
     .maze-container {
-      width: 100%;
-      max-width: 600px;
-      aspect-ratio: 1;
-      background: hsl(var(--bg3));
-      border: 2px solid hsl(var(--teal) / 0.3);
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 30px;
-      box-shadow: 0 0 30px hsl(var(--teal) / 0.2);
+      width: 100%; max-width: 520px;
+      background: hsl(var(--bg3)); border: 2px solid hsl(var(--teal)/0.3);
+      border-radius: 12px; position: relative; overflow: hidden;
+      box-shadow: 0 0 30px hsl(var(--teal)/0.15);
     }
-
     .maze-grid {
-      width: 100%;
-      height: 100%;
+      width: 100%; aspect-ratio: 1;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(5, 1fr);
-      gap: 2px;
-      padding: 10px;
+      gap: 3px; padding: 10px;
       background: hsl(var(--bg2));
     }
 
     .maze-cell {
-      border: 1px solid hsl(var(--teal) / 0.2);
+      border: 1px solid hsl(var(--teal)/0.15);
       border-radius: 4px;
       background: hsl(var(--bg3));
-      cursor: pointer;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      transition: all 0.2s ease;
+      cursor: pointer; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(1rem, 3.5vw, 1.6rem);
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none; -webkit-user-select: none;
     }
-
-    .maze-cell:hover {
-      border-color: hsl(var(--teal) / 0.5);
-      background: hsl(var(--teal) / 0.1);
+    .maze-cell.reachable {
+      border-color: hsl(var(--teal)/0.5);
+      background: hsl(var(--teal)/0.06);
     }
-
+    .maze-cell.reachable:hover { background: hsl(var(--teal)/0.15); }
     .maze-cell.wall {
-      background: hsl(var(--bg2));
-      cursor: not-allowed;
-      border-color: hsl(var(--fg3));
+      background: hsl(220 14% 8%);
+      cursor: not-allowed; border-color: hsl(var(--fg3)/0.3);
     }
-
     .maze-cell.player {
-      background: hsl(var(--teal) / 0.3);
+      background: hsl(var(--teal)/0.25);
       border-color: hsl(var(--teal));
-      box-shadow: 0 0 15px hsl(var(--teal) / 0.5);
-      animation: neonGlow 1.5s ease-in-out infinite;
+      box-shadow: 0 0 12px hsl(var(--teal)/0.5);
+      animation: neonGlow 1.5s ease-in-out infinite, playerMove 0.25s ease;
+      cursor: default;
     }
-
     .maze-cell.exit {
-      background: hsl(var(--success) / 0.2);
+      background: hsl(var(--success)/0.15);
       border-color: hsl(var(--success));
       animation: bounce 1s ease-in-out infinite;
     }
-
-    .maze-cell.door {
-      background: hsl(var(--amber) / 0.2);
+    .maze-cell.door-locked {
+      background: hsl(var(--danger)/0.1);
+      border-color: hsl(var(--danger)/0.5);
+    }
+    .maze-cell.door-open {
+      background: hsl(var(--amber)/0.15);
       border-color: hsl(var(--amber));
-      cursor: pointer;
-      position: relative;
     }
 
-    .maze-cell.door.locked {
-      border-color: hsl(var(--danger) / 0.5);
-      background: hsl(var(--danger) / 0.1);
+    /* ── D-PAD CONTROLS ────────────────────────────── */
+    .dpad-wrapper {
+      width: 100%; display: flex;
+      justify-content: center; align-items: center;
+      margin-top: 18px; gap: 20px;
     }
-
-    /* ════════════════════════════════════════════════════════════════
-       LOGIC PUZZLE MODAL
-       ════════════════════════════════════════════════════════════════ */
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: hsl(0 0% 0% / 0.8);
-      z-index: 100;
-      animation: fadeIn 0.3s ease;
-      backdrop-filter: blur(5px);
+    .dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 52px);
+      grid-template-rows: repeat(3, 52px);
+      gap: 4px;
     }
-
-    .modal-overlay.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .dpad-btn {
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      background: hsl(var(--bg2)); border: 2px solid hsl(var(--teal)/0.4);
+      border-radius: 8px; cursor: pointer;
+      font-size: 1.3rem; color: hsl(var(--teal));
+      transition: all 0.15s; user-select: none; -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    .dpad-btn:active, .dpad-btn.pressed {
+      background: hsl(var(--teal)/0.3);
+      border-color: hsl(var(--teal));
+      transform: scale(0.93);
     }
+    .dpad-empty { background: transparent; border: none; pointer-events: none; }
 
-    .modal-content {
-      background: hsl(var(--bg2));
-      border: 2px solid hsl(var(--teal));
-      border-radius: 12px;
-      padding: 30px;
-      max-width: 500px;
-      width: 90%;
-      animation: popIn 0.3s ease;
-      box-shadow: 0 0 40px hsl(var(--teal) / 0.3);
-    }
-
-    .modal-title {
-      font-family: var(--font-mono);
-      font-size: 1.25rem;
-      color: hsl(var(--teal));
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-weight: 700;
-    }
-
-    .puzzle-description {
-      font-size: 0.95rem;
-      color: hsl(var(--fg2));
-      margin-bottom: 25px;
-      line-height: 1.7;
-    }
-
-    .puzzle-type {
-      background: hsl(var(--bg3));
-      border-left: 3px solid hsl(var(--teal));
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-    }
-
-    .bit-inputs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-    }
-
-    .bit-input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .bit-label {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
+    .legend {
+      display: flex; flex-direction: column; gap: 6px;
+      font-family: var(--font-mono); font-size: 0.72rem;
       color: hsl(var(--fg3));
-      text-transform: uppercase;
     }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .legend-icon { font-size: 1rem; width: 20px; text-align: center; }
 
-    .bit-toggle {
-      width: 60px;
-      height: 60px;
-      border: 2px solid hsl(var(--teal) / 0.3);
-      border-radius: 6px;
-      background: hsl(var(--bg3));
-      color: hsl(var(--fg));
-      font-weight: 700;
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: var(--font-mono);
-    }
-
-    .bit-toggle:hover {
-      border-color: hsl(var(--teal));
-      background: hsl(var(--teal) / 0.1);
-    }
-
-    .bit-toggle.active {
-      background: hsl(var(--teal));
-      color: hsl(var(--bg));
-      border-color: hsl(var(--teal));
-      box-shadow: 0 0 15px hsl(var(--teal) / 0.6);
-    }
-
-    .modal-buttons {
-      display: flex;
-      gap: 15px;
-      margin-top: 25px;
-    }
-
-    .btn-modal {
-      flex: 1;
-      padding: 12px 20px;
-      border: 2px solid hsl(var(--teal));
-      border-radius: 6px;
-      background: transparent;
-      color: hsl(var(--teal));
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-    }
-
-    .btn-modal:hover {
-      background: hsl(var(--teal));
-      color: hsl(var(--bg));
-    }
-
-    .btn-modal.danger {
-      border-color: hsl(var(--danger));
-      color: hsl(var(--danger));
-    }
-
-    .btn-modal.danger:hover {
-      background: hsl(var(--danger));
-      color: hsl(var(--bg));
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       RESULT SCREENS
-       ════════════════════════════════════════════════════════════════ */
-
-    .popup-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: hsl(0 0% 0% / 0.9);
-      z-index: 110;
-      align-items: center;
-      justify-content: center;
+    /* ── PAUSE OVERLAY ─────────────────────────────── */
+    .pause-overlay {
+      display: none; position: fixed; inset: 0;
+      background: hsl(0 0% 0% / 0.85);
+      z-index: 90; align-items: center; justify-content: center;
       backdrop-filter: blur(8px);
     }
-
-    .popup-overlay.active {
-      display: flex;
-      animation: fadeIn 0.3s ease;
+    .pause-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+    .pause-box {
+      background: hsl(var(--bg2)); border: 2px solid hsl(var(--teal));
+      border-radius: 12px; padding: 40px 50px; text-align: center;
+      animation: popIn 0.3s ease;
     }
+    .pause-box h2 { font-family: var(--font-display); font-size: 2rem; color: hsl(var(--teal)); margin-bottom: 24px; }
+    .pause-box .btn-menu { min-width: 200px; }
 
+    /* ── MODAL: PUZZLE ─────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: hsl(0 0% 0% / 0.85); z-index: 100;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(6px);
+    }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.25s ease; }
+    .modal-content {
+      background: hsl(var(--bg2)); border: 2px solid hsl(var(--teal));
+      border-radius: 12px; padding: 28px;
+      max-width: 480px; width: 92%;
+      animation: popIn 0.3s ease;
+      box-shadow: 0 0 40px hsl(var(--teal)/0.25);
+    }
+    .modal-title {
+      font-family: var(--font-mono); font-size: 1.15rem;
+      color: hsl(var(--teal)); margin-bottom: 14px;
+      text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+    }
+    .puzzle-desc {
+      font-size: 0.92rem; color: hsl(var(--fg2));
+      margin-bottom: 16px; line-height: 1.7;
+    }
+    .puzzle-type {
+      background: hsl(var(--bg3)); border-left: 3px solid hsl(var(--teal));
+      padding: 14px; border-radius: 6px; margin-bottom: 20px;
+      font-family: var(--font-mono); font-size: 0.9rem; color: hsl(var(--fg));
+    }
+    .truth-table {
+      margin-bottom: 20px; width: 100%;
+      border-collapse: collapse; font-family: var(--font-mono); font-size: 0.85rem;
+    }
+    .truth-table th, .truth-table td {
+      border: 1px solid hsl(var(--teal)/0.2);
+      padding: 7px 14px; text-align: center;
+    }
+    .truth-table th { background: hsl(var(--teal)/0.15); color: hsl(var(--teal)); }
+    .truth-table tr.highlight { background: hsl(var(--teal)/0.1); color: hsl(var(--amber)); font-weight: 700; }
+    .bit-inputs { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+    .bit-input-group { display: flex; flex-direction: column; gap: 5px; }
+    .bit-label { font-family: var(--font-mono); font-size: 0.75rem; color: hsl(var(--fg3)); text-transform: uppercase; }
+    .bit-choices { display: flex; gap: 10px; }
+    .bit-toggle {
+      width: 64px; height: 64px; border: 2px solid hsl(var(--teal)/0.3);
+      border-radius: 8px; background: hsl(var(--bg3)); color: hsl(var(--fg));
+      font-weight: 700; font-size: 1.6rem; cursor: pointer;
+      transition: all 0.2s; font-family: var(--font-mono);
+    }
+    .bit-toggle:hover { border-color: hsl(var(--teal)); background: hsl(var(--teal)/0.1); }
+    .bit-toggle.active {
+      background: hsl(var(--teal)); color: hsl(var(--bg));
+      border-color: hsl(var(--teal)); box-shadow: 0 0 15px hsl(var(--teal)/0.6);
+    }
+    .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
+    .btn-modal {
+      flex: 1; padding: 12px 18px; border: 2px solid hsl(var(--teal));
+      border-radius: 6px; background: transparent; color: hsl(var(--teal));
+      font-weight: 700; cursor: pointer; transition: all 0.2s;
+      font-family: var(--font-mono); font-size: 0.9rem;
+    }
+    .btn-modal:hover { background: hsl(var(--teal)); color: hsl(var(--bg)); }
+    .btn-modal.skip { border-color: hsl(var(--danger)); color: hsl(var(--danger)); }
+    .btn-modal.skip:hover { background: hsl(var(--danger)); color: hsl(var(--bg)); }
+
+    /* ── POPUPS ────────────────────────────────────── */
+    .popup-overlay {
+      display: none; position: fixed; inset: 0;
+      background: hsl(0 0% 0% / 0.9); z-index: 110;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .popup-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
     .popup-content {
-      text-align: center;
-      background: hsl(var(--bg2));
-      border: 2px solid hsl(var(--teal));
-      border-radius: 12px;
-      padding: 50px 40px;
-      max-width: 500px;
-      width: 90%;
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-align: center; background: hsl(var(--bg2));
+      border: 2px solid hsl(var(--teal)); border-radius: 12px;
+      padding: 44px 36px; max-width: 460px; width: 92%;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
     }
-
-    .popup-icon {
-      font-size: 4rem;
-      margin-bottom: 20px;
-      display: inline-block;
-    }
-
+    .popup-content.popup-success { border-color: hsl(var(--success)); }
+    .popup-content.popup-error   { border-color: hsl(var(--danger)); }
+    .popup-icon { font-size: 3.5rem; margin-bottom: 16px; display: inline-block; }
     .popup-title {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      font-weight: 900;
-      margin-bottom: 15px;
-      letter-spacing: -0.02em;
+      font-family: var(--font-display); font-size: 2.2rem;
+      font-weight: 900; margin-bottom: 12px; letter-spacing: -0.02em;
     }
-
-    .popup-success .popup-title {
-      color: hsl(var(--success));
-    }
-
-    .popup-error .popup-title {
-      color: hsl(var(--danger));
-      animation: shake 0.4s ease-in-out;
-    }
-
-    .popup-message {
-      font-size: 1.05rem;
-      color: hsl(var(--fg2));
-      margin-bottom: 30px;
-      line-height: 1.7;
-    }
-
-    .popup-buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
+    .popup-success .popup-title { color: hsl(var(--success)); }
+    .popup-error   .popup-title { color: hsl(var(--danger)); animation: shake 0.4s ease-in-out; }
+    .popup-message { font-size: 1rem; color: hsl(var(--fg2)); margin-bottom: 28px; line-height: 1.7; }
+    .popup-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .btn-popup {
-      padding: 12px 28px;
-      border: 2px solid hsl(var(--teal));
-      border-radius: 6px;
-      background: transparent;
-      color: hsl(var(--teal));
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
+      padding: 11px 26px; border: 2px solid hsl(var(--teal));
+      border-radius: 6px; background: transparent; color: hsl(var(--teal));
+      font-weight: 700; cursor: pointer; transition: all 0.2s;
+      font-family: var(--font-mono); font-size: 0.9rem;
     }
+    .btn-popup:hover { background: hsl(var(--teal)); color: hsl(var(--bg)); box-shadow: 0 0 20px hsl(var(--teal)/0.4); }
+    .btn-popup:active { transform: scale(0.96); }
 
-    .btn-popup:hover {
-      background: hsl(var(--teal));
-      color: hsl(var(--bg));
-      box-shadow: 0 0 20px hsl(var(--teal) / 0.5);
+    /* ── INSTRUCTIONS MODAL ────────────────────────── */
+    .info-modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: hsl(0 0% 0% / 0.88); z-index: 105;
+      align-items: flex-start; justify-content: center;
+      padding: 20px; overflow-y: auto; backdrop-filter: blur(6px);
     }
+    .info-modal-overlay.active { display: flex; animation: fadeIn 0.25s ease; }
+    .info-modal {
+      background: hsl(var(--bg2)); border: 2px solid hsl(var(--teal)/0.5);
+      border-radius: 12px; padding: 30px;
+      max-width: 560px; width: 100%; margin: auto;
+      animation: popIn 0.3s ease;
+    }
+    .info-modal h2 { font-family: var(--font-mono); color: hsl(var(--teal)); margin-bottom: 20px; font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .info-modal h3 { font-family: var(--font-mono); color: hsl(var(--amber)); margin: 18px 0 10px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .info-modal p, .info-modal li { font-size: 0.9rem; color: hsl(var(--fg2)); line-height: 1.8; }
+    .info-modal ul { padding-left: 18px; }
+    .info-modal .gate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .gate-card { background: hsl(var(--bg3)); border: 1px solid hsl(var(--teal)/0.2); border-radius: 8px; padding: 12px; }
+    .gate-card strong { color: hsl(var(--teal)); font-family: var(--font-mono); font-size: 0.85rem; display: block; margin-bottom: 4px; }
+    .gate-card span { font-size: 0.8rem; color: hsl(var(--fg2)); }
 
-    /* ════════════════════════════════════════════════════════════════
-       RESPONSIVE DESIGN
-       ════════════════════════════════════════════════════════════════ */
-
-    @media (max-width: 768px) {
-      .game-header {
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .game-info {
-        width: 100%;
-        justify-content: space-around;
-      }
-
-      .maze-container {
-        max-width: 100%;
-      }
-
-      .modal-content {
-        padding: 20px;
-      }
-
-      .bit-toggle {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
-      }
-
-      .popup-content {
-        padding: 30px 20px;
-      }
-
-      .popup-title {
-        font-size: 1.8rem;
-      }
+    /* ── RESPONSIVE ────────────────────────────────── */
+    @media (max-width: 600px) {
+      #gameScreen { padding: 10px 8px 80px; }
+      .game-header { padding: 10px 12px; gap: 8px; }
+      .info-value { font-size: 1.2rem; }
+      .timer { font-size: 1.35rem; }
+      .game-info { gap: 14px; }
+      .dpad-btn { width: 46px; height: 46px; font-size: 1.2rem; }
+      .dpad { grid-template-columns: repeat(3,46px); grid-template-rows: repeat(3,46px); }
+      .bit-toggle { width: 56px; height: 56px; font-size: 1.3rem; }
+      .popup-content { padding: 30px 20px; }
+      .popup-title { font-size: 1.7rem; }
+      .btn-sm { padding: 6px 10px; font-size: 0.7rem; }
+    }
+    @media (min-width: 601px) {
+      .dpad-wrapper { margin-top: 20px; }
     }
   </style>
 </head>
 <body>
-  <button onclick="goBack()" style="
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 99px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(30,35,50,0.85);
-  backdrop-filter: blur(12px);
-  color: #fff;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.25s ease;
-" onmouseover="this.style.background='rgba(45,200,170,0.25)';this.style.borderColor='rgba(45,200,170,0.5)'"
-   onmouseout="this.style.background='rgba(30,35,50,0.85)';this.style.borderColor='rgba(255,255,255,0.15)'">
-  ← Kembali
-</button>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     SCREEN: MAIN MENU
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- MAIN MENU -->
 <div class="screen active" id="menuScreen">
   <div class="menu-content">
     <div class="game-title">Binary Maze Escape</div>
     <div class="game-subtitle">Game Edukasi Logika Biner</div>
     <div class="menu-buttons">
-      <button class="btn-menu" onclick="startGame()">MULAI PERMAINAN</button>
-      <button class="btn-menu" onclick="showInstructions()">PANDUAN</button>
-      <button class="btn-menu" onclick="showAbout()">TENTANG GAME</button>
+      <button class="btn-menu" onclick="startGame()">▶ MULAI PERMAINAN</button>
+      <button class="btn-menu" onclick="showInfoModal('instructions')">PANDUAN</button>
+      <button class="btn-menu" onclick="showInfoModal('about')">TENTANG GAME</button>
     </div>
-    <div class="menu-info">
-      <p style="margin-bottom: 15px;">Keluar dari labirin digital dengan memecahkan gerbang logika dan operasi biner!</p>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
-        <div class="info-badge">Binary</div>
-        <div class="info-badge">Boolean</div>
-        <div class="info-badge">Logic Gates</div>
-        <div class="info-badge">Discrete Math</div>
-      </div>
+    <p style="font-size:0.9rem; color:hsl(var(--fg3)); margin-bottom:12px;">Keluar dari labirin digital dengan memecahkan gerbang logika!</p>
+    <div class="info-badges">
+      <div class="info-badge">Binary</div>
+      <div class="info-badge">Boolean</div>
+      <div class="info-badge">Logic Gates</div>
+      <div class="info-badge">Discrete Math</div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     SCREEN: GAMEPLAY
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- GAME SCREEN -->
 <div class="screen" id="gameScreen">
   <div class="game-header">
     <div class="game-info">
@@ -713,15 +434,16 @@
       </div>
       <div class="info-item">
         <span class="info-label">Nyawa</span>
-        <span class="info-value" id="livesDisplay">3</span>
+        <span class="info-value" id="livesDisplay">❤❤❤</span>
+      </div>
+      <div class="info-item" style="justify-content:center;">
+        <span class="info-label">Waktu</span>
+        <span class="timer" id="timerDisplay">60</span>
       </div>
     </div>
-    <div class="info-item" style="justify-content: center;">
-      <span class="info-label">Waktu</span>
-      <span class="timer" id="timerDisplay">60</span>
-    </div>
-    <div class="info-item">
-      <button class="btn-menu" onclick="pauseGame()" style="padding: 8px 16px; font-size: 0.9rem;">PAUSE</button>
+    <div class="header-buttons">
+      <button class="btn-sm" onclick="togglePause()" id="pauseBtn">⏸ PAUSE</button>
+      <button class="btn-sm danger-btn" onclick="mainMenu()">✕ MENU</button>
     </div>
   </div>
 
@@ -729,557 +451,649 @@
     <div class="maze-grid" id="mazeGrid"></div>
   </div>
 
-  <button class="btn-menu" onclick="mainMenu()" style="margin-top: 20px;">KEMBALI KE MENU</button>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     MODAL: LOGIC PUZZLE
-     ═══════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="puzzleModal">
-  <div class="modal-content">
-    <div class="modal-title" id="puzzleTitle">Gerbang AND</div>
-    <div class="puzzle-description" id="puzzleDesc">
-      Tentukan output dari gerbang logika dengan input berikut:
+  <div class="dpad-wrapper">
+    <div class="dpad" id="dpad">
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" id="btnUp"    ontouchstart="dpadPress('up')"   ontouchend="dpadRelease('up')"   onmousedown="dpadPress('up')"   onmouseup="dpadRelease('up')">▲</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" id="btnLeft"  ontouchstart="dpadPress('left')" ontouchend="dpadRelease('left')" onmousedown="dpadPress('left')" onmouseup="dpadRelease('left')">◀</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" id="btnRight" ontouchstart="dpadPress('right')"ontouchend="dpadRelease('right')"onmousedown="dpadPress('right')"onmouseup="dpadRelease('right')">▶</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" id="btnDown"  ontouchstart="dpadPress('down')" ontouchend="dpadRelease('down')" onmousedown="dpadPress('down')" onmouseup="dpadRelease('down')">▼</button>
+      <div class="dpad-empty"></div>
     </div>
-    <div class="puzzle-type" id="puzzleType">
-      A AND B = ?
-    </div>
-    <div class="bit-inputs" id="bitInputs"></div>
-    <div class="modal-buttons">
-      <button class="btn-modal" onclick="submitAnswer()">SUBMIT</button>
-      <button class="btn-modal danger" onclick="skipPuzzle()">SKIP</button>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-icon">◉</span> Kamu</div>
+      <div class="legend-item"><span class="legend-icon">🔒</span> Pintu terkunci</div>
+      <div class="legend-item"><span class="legend-icon">🔓</span> Pintu terbuka</div>
+      <div class="legend-item"><span class="legend-icon">🏁</span> Keluar!</div>
+      <div class="legend-item"><span class="legend-icon">█</span> Dinding</div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     POPUP: SUCCESS / ERROR
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- PUZZLE MODAL -->
+<div class="modal-overlay" id="puzzleModal">
+  <div class="modal-content">
+    <div class="modal-title" id="puzzleTitle">Gerbang AND</div>
+    <div class="puzzle-desc" id="puzzleDesc">Tentukan output dari gerbang logika berikut:</div>
+    <div class="puzzle-type" id="puzzleType">A AND B = ?</div>
+    <table class="truth-table" id="truthTable"></table>
+    <div class="bit-inputs" id="bitInputs"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal" onclick="submitAnswer()">✓ SUBMIT</button>
+      <button class="btn-modal skip" onclick="skipPuzzle()">SKIP (−5 poin)</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT POPUP -->
 <div class="popup-overlay" id="resultPopup">
-  <div class="popup-content popup-success" id="popupContent">
+  <div class="popup-content popup-success" id="resultContent">
     <div class="popup-icon" id="popupIcon">✓</div>
     <div class="popup-title" id="popupTitle">BENAR!</div>
-    <div class="popup-message" id="popupMessage">
-      Pintu telah terbuka! Lanjutkan petualanganmu.
-    </div>
+    <div class="popup-message" id="popupMessage">Pintu terbuka!</div>
     <div class="popup-buttons">
       <button class="btn-popup" onclick="closeResultPopup()">LANJUT</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     POPUP: GAME OVER / WIN
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- GAME END POPUP -->
 <div class="popup-overlay" id="gameEndPopup">
   <div class="popup-content" id="gameEndContent">
     <div class="popup-icon" id="gameEndIcon">🎊</div>
     <div class="popup-title" id="gameEndTitle">SELAMAT!</div>
-    <div class="popup-message" id="gameEndMessage">
-      Kamu berhasil keluar dari labirin! Total Skor: 1000
-    </div>
-    <div class="popup-buttons">
-      <button class="btn-popup" onclick="mainMenu()">MAIN LAGI</button>
-      <button class="btn-popup" onclick="nextLevel()">LEVEL BERIKUTNYA</button>
-    </div>
+    <div class="popup-message" id="gameEndMessage">Level selesai!</div>
+    <div class="popup-buttons" id="gameEndButtons"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     JAVASCRIPT GAME ENGINE
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- PAUSE OVERLAY -->
+<div class="pause-overlay" id="pauseOverlay">
+  <div class="pause-box">
+    <h2>⏸ DIJEDA</h2>
+    <button class="btn-menu" onclick="togglePause()">▶ LANJUTKAN</button>
+  </div>
+</div>
+
+<!-- INFO MODAL (Panduan / Tentang) -->
+<div class="info-modal-overlay" id="infoModalOverlay">
+  <div class="info-modal" id="infoModalContent"></div>
+</div>
+
 <script>
-  function goBack() {
-  var tab = sessionStorage.getItem('materiTab') || 'diskrit';
-  window.location.href = '../../index.html?page=game&tab=' + tab;
-}
-  // ═════════════════════════════════════════════════════════════════
-  // GAME CONFIGURATION & STATE
-  // ═════════════════════════════════════════════════════════════════
+  // ── CONFIG ────────────────────────────────────────
+  const CFG = { gridSize: 5, timeLimit: 60, initialLives: 3, maxLevels: 6 };
 
-  const GAME_CONFIG = {
-    gridSize: 5,
-    timeLimit: 60,
-    initialLives: 3,
-    maxLevels: 6
-  };
-
-  const LOGIC_GATES = {
+  const GATES = {
     AND: {
       name: 'Gerbang AND',
-      desc: 'Output 1 jika SEMUA input adalah 1',
+      desc: 'Output bernilai 1 hanya jika SEMUA input bernilai 1.',
       formula: 'A AND B = A ∧ B',
-      calculate: (a, b) => a && b ? 1 : 0
+      calc: (a, b) => (a & b),
+      table: [['A','B','Output'],[0,0,0],[0,1,0],[1,0,0],[1,1,1]]
     },
     OR: {
       name: 'Gerbang OR',
-      desc: 'Output 1 jika MINIMAL SATU input adalah 1',
+      desc: 'Output bernilai 1 jika MINIMAL SATU input bernilai 1.',
       formula: 'A OR B = A ∨ B',
-      calculate: (a, b) => a || b ? 1 : 0
+      calc: (a, b) => (a | b),
+      table: [['A','B','Output'],[0,0,0],[0,1,1],[1,0,1],[1,1,1]]
     },
     XOR: {
       name: 'Gerbang XOR',
-      desc: 'Output 1 jika input BERBEDA',
+      desc: 'Output bernilai 1 jika kedua input BERBEDA.',
       formula: 'A XOR B = A ⊕ B',
-      calculate: (a, b) => a !== b ? 1 : 0
+      calc: (a, b) => (a ^ b),
+      table: [['A','B','Output'],[0,0,0],[0,1,1],[1,0,1],[1,1,0]]
     },
     NOT: {
       name: 'Gerbang NOT',
-      desc: 'Output adalah kebalikan dari input',
+      desc: 'Output adalah KEBALIKAN dari input.',
       formula: 'NOT A = ¬A',
-      calculate: (a) => a ? 0 : 1
+      calc: (a) => a ? 0 : 1,
+      table: [['A','Output'],[0,1],[1,0]]
     }
   };
 
-  // Game State
-  let gameState = {
-    currentLevel: 1,
-    score: 0,
-    lives: GAME_CONFIG.initialLives,
-    timeRemaining: GAME_CONFIG.timeLimit,
-    playerPos: null,
-    mazeLayout: [],
+  // ── STATE ─────────────────────────────────────────
+  let gs = {
+    level: 1, score: 0, lives: CFG.initialLives,
+    time: CFG.timeLimit,
+    playerPos: {x:0,y:0},
+    maze: [],      // cell values: 0=empty,-1=wall,2=door-locked,4=door-open,3=exit
     doors: [],
-    currentPuzzle: null,
-    isPaused: false,
-    gameActive: true,
-    timerInterval: null
+    puzzle: null,
+    paused: false, active: true,
+    timerID: null
   };
 
-  // ═════════════════════════════════════════════════════════════════
-  // INITIALIZATION & SCREEN MANAGEMENT
-  // ═════════════════════════════════════════════════════════════════
-
-  function showScreen(screenId) {
+  // ── SCREEN MANAGEMENT ─────────────────────────────
+  function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    document.getElementById(id).classList.add('active');
   }
 
   function mainMenu() {
-    clearInterval(gameState.timerInterval);
+    clearInterval(gs.timerID);
+    document.getElementById('pauseOverlay').classList.remove('active');
+    document.getElementById('gameEndPopup').classList.remove('active');
     showScreen('menuScreen');
-    gameState.isPaused = false;
   }
 
-  function startGame() {
-    gameState = {
-      currentLevel: 1,
-      score: 0,
-      lives: GAME_CONFIG.initialLives,
-      timeRemaining: GAME_CONFIG.timeLimit,
-      playerPos: null,
-      mazeLayout: [],
-      doors: [],
-      currentPuzzle: null,
-      isPaused: false,
-      gameActive: true,
-      timerInterval: null
+  // ── GAME START / LEVEL LOAD ────────────────────────
+  function startGame(level) {
+    clearInterval(gs.timerID);
+    gs = {
+      level: level || 1, score: gs.score || 0,
+      lives: CFG.initialLives, time: CFG.timeLimit,
+      playerPos: {x:0,y:0}, maze: [], doors: [],
+      puzzle: null, paused: false, active: true, timerID: null
     };
-    loadLevel();
+    if (level) gs.score = gs.score; // keep score on level-up handled separately
+    generateMaze();
+    renderMaze();
+    updateHUD();
     showScreen('gameScreen');
     startTimer();
   }
 
-  function loadLevel() {
-    generateMaze();
-    renderMaze();
-    updateDisplay();
+  function startFresh() {
+    gs.score = 0;
+    startGame(1);
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  // MAZE GENERATION & RENDERING
-  // ═════════════════════════════════════════════════════════════════
-
+  // ── MAZE GENERATION ───────────────────────────────
   function generateMaze() {
-    const size = GAME_CONFIG.gridSize;
-    gameState.mazeLayout = Array(size * size).fill(0);
-    gameState.doors = [];
+    const n = CFG.gridSize;
+    gs.maze = Array(n * n).fill(0);
+    gs.doors = [];
 
-    // Mulai dari posisi (0, 0)
-    gameState.playerPos = { x: 0, y: 0 };
-    gameState.mazeLayout[0] = 1; // Player start
+    const start = 0;
+    const exit  = n * n - 1;
 
-    // Exit di pojok kanan bawah
-    const exitPos = (size - 1) * size + (size - 1);
-    gameState.mazeLayout[exitPos] = 3; // 3 = exit
+    // Carve guaranteed path first using DFS-ish approach
+    const path = findPath(start, exit, n);
 
-    // Tambah beberapa dinding
-    for (let i = 0; i < size * size; i++) {
-      if (i !== 0 && i !== exitPos && Math.random() < 0.2) {
-        gameState.mazeLayout[i] = -1; // -1 = wall
+    // Place walls on non-path cells (probabilistic based on level)
+    const wallChance = 0.15 + gs.level * 0.02;
+    for (let i = 0; i < n * n; i++) {
+      if (!path.has(i) && i !== start && i !== exit) {
+        if (Math.random() < wallChance) gs.maze[i] = -1;
       }
     }
 
-    // Tambah pintu logika (1 + level)
-    const doorsCount = Math.min(1 + gameState.currentLevel, 4);
-    for (let i = 0; i < doorsCount; i++) {
-      let doorPos = Math.floor(Math.random() * (size * size));
-      while (gameState.mazeLayout[doorPos] !== 0) {
-        doorPos = Math.floor(Math.random() * (size * size));
+    // Place doors on path (not start/exit)
+    const pathArr = [...path].filter(i => i !== start && i !== exit);
+    const doorsCount = Math.min(1 + gs.level, 4);
+    const gateKeys = Object.keys(GATES);
+    let placed = 0;
+    for (let i = 0; i < pathArr.length && placed < doorsCount; i++) {
+      const idx = pathArr[i];
+      // Space out doors
+      if (Math.random() < 0.5 || placed === 0) {
+        gs.maze[idx] = 2; // door locked
+        gs.doors.push({
+          pos: idx, locked: true,
+          gateType: gateKeys[Math.floor(Math.random() * gateKeys.length)]
+        });
+        placed++;
       }
-      gameState.mazeLayout[doorPos] = 2; // 2 = door
-      gameState.doors.push({
-        pos: doorPos,
-        locked: true,
-        gateType: Object.keys(LOGIC_GATES)[Math.floor(Math.random() * 4)]
-      });
     }
+
+    gs.maze[exit] = 3; // exit
+    // player pos recorded separately, maze[0] stays 0
   }
 
+  // BFS to find path from start to exit; returns Set of cell indices on path
+  function findPath(start, end, n) {
+    const visited = new Array(n * n).fill(false);
+    const parent  = new Array(n * n).fill(-1);
+    const queue = [start];
+    visited[start] = true;
+
+    while (queue.length) {
+      const cur = queue.shift();
+      if (cur === end) break;
+      for (const nb of neighbors(cur, n)) {
+        if (!visited[nb] && gs.maze[nb] !== -1) {
+          visited[nb] = true;
+          parent[nb] = cur;
+          queue.push(nb);
+        }
+      }
+    }
+
+    const path = new Set();
+    let cur = end;
+    while (cur !== -1) { path.add(cur); cur = parent[cur]; }
+    return path;
+  }
+
+  function neighbors(idx, n) {
+    const x = idx % n, y = Math.floor(idx / n);
+    const res = [];
+    if (x > 0) res.push(idx - 1);
+    if (x < n-1) res.push(idx + 1);
+    if (y > 0) res.push(idx - n);
+    if (y < n-1) res.push(idx + n);
+    return res;
+  }
+
+  // ── RENDER MAZE ───────────────────────────────────
   function renderMaze() {
     const grid = document.getElementById('mazeGrid');
     grid.innerHTML = '';
-    const size = GAME_CONFIG.gridSize;
+    const n = CFG.gridSize;
+    grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    grid.style.gridTemplateRows    = `repeat(${n}, 1fr)`;
 
-    for (let i = 0; i < size * size; i++) {
+    const px = gs.playerPos.x, py = gs.playerPos.y;
+    const reachable = getReachable(px, py, n);
+
+    for (let i = 0; i < n * n; i++) {
       const cell = document.createElement('div');
       cell.className = 'maze-cell';
+      const x = i % n, y = Math.floor(i / n);
+      const v = gs.maze[i];
 
-      const cellType = gameState.mazeLayout[i];
-      const x = i % size;
-      const y = Math.floor(i / size);
-
-      if (cellType === -1) {
-        cell.classList.add('wall');
-        cell.textContent = '█';
-      } else if (cellType === 1) {
+      if (x === px && y === py) {
         cell.classList.add('player');
         cell.textContent = '◉';
-      } else if (cellType === 3) {
+      } else if (v === -1) {
+        cell.classList.add('wall');
+        cell.textContent = '█';
+      } else if (v === 3) {
         cell.classList.add('exit');
-        cell.textContent = '⬛';
-      } else if (cellType === 2) {
-        cell.classList.add('door');
-        const door = gameState.doors.find(d => d.pos === i);
-        if (door && door.locked) {
-          cell.classList.add('locked');
-          cell.textContent = '🔒';
-        } else {
-          cell.textContent = '🔓';
+        cell.textContent = '🏁';
+        if (reachable.has(i)) {
+          cell.classList.add('reachable');
+          cell.onclick = () => movePlayer(x, y);
         }
-        cell.onclick = () => !door.locked && movePlayer(x, y);
+      } else if (v === 2) {
+        cell.classList.add('door-locked');
+        cell.textContent = '🔒';
+        if (reachable.has(i)) {
+          cell.classList.add('reachable');
+          cell.onclick = () => movePlayer(x, y);
+        }
+      } else if (v === 4) {
+        cell.classList.add('door-open');
+        cell.textContent = '🔓';
+        if (reachable.has(i)) {
+          cell.classList.add('reachable');
+          cell.onclick = () => movePlayer(x, y);
+        }
       } else {
-        cell.onclick = () => movePlayer(x, y);
-        cell.textContent = '·';
+        if (reachable.has(i)) {
+          cell.classList.add('reachable');
+          cell.onclick = () => movePlayer(x, y);
+          cell.textContent = '·';
+        } else {
+          cell.textContent = '·';
+        }
       }
-
       grid.appendChild(cell);
     }
   }
 
+  function getReachable(px, py, n) {
+    const s = new Set();
+    const idx = py * n + px;
+    for (const nb of neighbors(idx, n)) {
+      s.add(nb);
+    }
+    return s;
+  }
+
+  // ── MOVE PLAYER ───────────────────────────────────
   function movePlayer(x, y) {
-    if (!gameState.gameActive || gameState.isPaused) return;
+    if (!gs.active || gs.paused) return;
 
-    const newPos = y * GAME_CONFIG.gridSize + x;
-    const cellType = gameState.mazeLayout[newPos];
+    const n = CFG.gridSize;
+    const newIdx = y * n + x;
+    const oldIdx = gs.playerPos.y * n + gs.playerPos.x;
 
-    if (cellType === -1) {
-      showErrorPopup('Menabrak dinding!', 'Jangan memasuki area terlarang!');
-      gameState.lives--;
-      updateDisplay();
-      if (gameState.lives <= 0) endGame(false);
+    // Must be adjacent
+    const dx = Math.abs(x - gs.playerPos.x), dy = Math.abs(y - gs.playerPos.y);
+    if (dx + dy !== 1) return;
+
+    const v = gs.maze[newIdx];
+
+    if (v === -1) {
+      // Hit wall — lose life
+      showFeedback(false, 'Menabrak Dinding!', 'Hindari dinding! Kamu kehilangan 1 nyawa.');
+      loseLife();
       return;
     }
 
-    if (cellType === 2) {
-      const door = gameState.doors.find(d => d.pos === newPos);
+    if (v === 2) {
+      // Locked door
+      const door = gs.doors.find(d => d.pos === newIdx);
       if (door && door.locked) {
         openPuzzleModal(door);
         return;
       }
     }
 
-    // Pindahkan player
-    const oldPos = gameState.playerPos.y * GAME_CONFIG.gridSize + gameState.playerPos.x;
-    gameState.mazeLayout[oldPos] = 0;
-    gameState.playerPos = { x, y };
-    gameState.mazeLayout[newPos] = 1;
+    // Move
+    gs.maze[oldIdx] = 0;
+    gs.playerPos = {x, y};
+    gs.score += 5;
 
-    // Cek exit
-    if (cellType === 3) {
+    if (v === 3) {
+      // Reached exit!
+      gs.score += 100 * gs.level;
+      renderMaze();
+      updateHUD();
       endGame(true);
       return;
     }
 
     renderMaze();
-    gameState.score += 10;
-    updateDisplay();
+    updateHUD();
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  // LOGIC PUZZLE SYSTEM
-  // ═════════════════════════════════════════════════════════════════
+  function moveDir(dir) {
+    if (!gs.active || gs.paused) return;
+    const {x, y} = gs.playerPos;
+    let nx = x, ny = y;
+    if (dir === 'up')    ny--;
+    if (dir === 'down')  ny++;
+    if (dir === 'left')  nx--;
+    if (dir === 'right') nx++;
+    const n = CFG.gridSize;
+    if (nx < 0 || nx >= n || ny < 0 || ny >= n) return;
+    movePlayer(nx, ny);
+  }
 
+  // D-pad
+  function dpadPress(dir) {
+    moveDir(dir);
+    const map = {up:'btnUp',down:'btnDown',left:'btnLeft',right:'btnRight'};
+    document.getElementById(map[dir]).classList.add('pressed');
+  }
+  function dpadRelease(dir) {
+    const map = {up:'btnUp',down:'btnDown',left:'btnLeft',right:'btnRight'};
+    document.getElementById(map[dir]).classList.remove('pressed');
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    const map = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',
+                 KeyW:'up',KeyS:'down',KeyA:'left',KeyD:'right'};
+    if (map[e.code]) { e.preventDefault(); moveDir(map[e.code]); }
+    if (e.code === 'Escape') togglePause();
+  });
+
+  // ── PUZZLE MODAL ──────────────────────────────────
   function openPuzzleModal(door) {
-    const gateType = door.gateType;
-    const gate = LOGIC_GATES[gateType];
+    const g = GATES[door.gateType];
+    const a = Math.random() > 0.5 ? 1 : 0;
+    const b = door.gateType === 'NOT' ? null : (Math.random() > 0.5 ? 1 : 0);
+    const correct = door.gateType === 'NOT' ? g.calc(a) : g.calc(a, b);
 
-    // Generate random inputs
-    const inputA = Math.random() > 0.5 ? 1 : 0;
-    const inputB = gateType === 'NOT' ? null : (Math.random() > 0.5 ? 1 : 0);
+    gs.puzzle = { door, gateType: door.gateType, a, b, correct, selected: undefined };
 
-    gameState.currentPuzzle = {
-      door: door,
-      gateType: gateType,
-      inputA: inputA,
-      inputB: inputB,
-      correctAnswer: gateType === 'NOT' 
-        ? gate.calculate(inputA)
-        : gate.calculate(inputA, inputB)
-    };
+    document.getElementById('puzzleTitle').textContent = g.name;
+    document.getElementById('puzzleDesc').textContent  = g.desc;
+    document.getElementById('puzzleType').textContent  =
+      door.gateType === 'NOT'
+        ? `${g.formula} | Input: A = ${a}`
+        : `${g.formula} | A = ${a}, B = ${b}`;
 
-    // Update modal
-    document.getElementById('puzzleTitle').textContent = gate.name;
-    document.getElementById('puzzleDesc').textContent = gate.desc;
+    // Truth table
+    const tbl = document.getElementById('truthTable');
+    tbl.innerHTML = '';
+    const [header, ...rows] = g.table;
+    const thead = tbl.createTHead();
+    const hr = thead.insertRow();
+    header.forEach(h => { const th = document.createElement('th'); th.textContent = h; hr.appendChild(th); });
+    const tbody = tbl.createTBody();
+    rows.forEach(row => {
+      const tr = tbody.insertRow();
+      // Highlight the current question row
+      const isThis = door.gateType === 'NOT'
+        ? row[0] === a
+        : row[0] === a && row[1] === b;
+      if (isThis) tr.classList.add('highlight');
+      row.forEach((v, i) => {
+        const td = tr.insertCell();
+        td.textContent = (isThis && i === row.length - 1) ? '?' : v;
+      });
+    });
 
-    if (gateType === 'NOT') {
-      document.getElementById('puzzleType').textContent = `${gate.formula} | Input: A = ${inputA}`;
-    } else {
-      document.getElementById('puzzleType').textContent = `${gate.formula} | A = ${inputA}, B = ${inputB}`;
-    }
-
-    // Render bit inputs
-    const bitInputsContainer = document.getElementById('bitInputs');
-    bitInputsContainer.innerHTML = '';
-
-    const inputGroup = document.createElement('div');
-    inputGroup.className = 'bit-input-group';
-    inputGroup.innerHTML = `
-      <span class="bit-label">Jawaban Output</span>
-      <div style="display: flex; gap: 10px;">
-        <button class="bit-toggle" data-bit="0" onclick="selectBit(0)">0</button>
-        <button class="bit-toggle" data-bit="1" onclick="selectBit(1)">1</button>
-      </div>
-    `;
-    bitInputsContainer.appendChild(inputGroup);
+    // Answer buttons
+    const container = document.getElementById('bitInputs');
+    container.innerHTML = `
+      <div class="bit-input-group">
+        <span class="bit-label">Pilih Output:</span>
+        <div class="bit-choices">
+          <button class="bit-toggle" data-bit="0" onclick="selectBit(0)">0</button>
+          <button class="bit-toggle" data-bit="1" onclick="selectBit(1)">1</button>
+        </div>
+      </div>`;
 
     document.getElementById('puzzleModal').classList.add('active');
   }
 
   function selectBit(bit) {
-    document.querySelectorAll('.bit-toggle').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.bit-toggle').forEach(b => b.classList.remove('active'));
     document.querySelector(`[data-bit="${bit}"]`).classList.add('active');
-    gameState.currentPuzzle.selectedAnswer = bit;
+    gs.puzzle.selected = bit;
   }
 
   function submitAnswer() {
-    const puzzle = gameState.currentPuzzle;
-    const selectedAnswer = puzzle.selectedAnswer;
-
-    if (selectedAnswer === undefined) {
-      showErrorPopup('Pilih jawaban!', 'Pilih 0 atau 1 sebagai output.');
+    const p = gs.puzzle;
+    if (p.selected === undefined) {
+      document.getElementById('puzzleTitle').style.animation = 'shake 0.4s ease-in-out';
+      setTimeout(() => document.getElementById('puzzleTitle').style.animation = '', 500);
       return;
     }
-
     document.getElementById('puzzleModal').classList.remove('active');
 
-    if (selectedAnswer === puzzle.correctAnswer) {
-      puzzle.door.locked = false;
-      gameState.score += 50 * gameState.currentLevel;
+    if (p.selected === p.correct) {
+      p.door.locked = false;
+      gs.maze[p.door.pos] = 4; // door-open
+      gs.score += 50 * gs.level;
       renderMaze();
-      updateDisplay();
-      showSuccessPopup('Benar!', `Jawaban ${puzzle.correctAnswer} benar! Pintu terbuka.`);
+      updateHUD();
+      showFeedback(true, 'Benar! 🎉', `Output ${p.correct} tepat! Pintu terbuka. +${50 * gs.level} poin`);
     } else {
-      gameState.lives--;
-      updateDisplay();
-      if (gameState.lives <= 0) {
-        endGame(false);
-      } else {
-        showErrorPopup('Salah!', `Jawaban yang benar adalah ${puzzle.correctAnswer}`);
-      }
+      showFeedback(false, 'Salah!', `Jawaban yang benar adalah ${p.correct}. Coba lagi!`);
+      loseLife();
     }
   }
 
   function skipPuzzle() {
     document.getElementById('puzzleModal').classList.remove('active');
-    gameState.currentPuzzle = null;
+    gs.score = Math.max(0, gs.score - 5);
+    gs.puzzle = null;
+    updateHUD();
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  // TIMER & GAME CONTROL
-  // ═════════════════════════════════════════════════════════════════
+  // ── LIVES ─────────────────────────────────────────
+  function loseLife() {
+    gs.lives--;
+    updateHUD();
+    if (gs.lives <= 0) setTimeout(() => endGame(false), 1200);
+  }
 
+  // ── TIMER ─────────────────────────────────────────
   function startTimer() {
-    gameState.timerInterval = setInterval(() => {
-      if (!gameState.isPaused) {
-        gameState.timeRemaining--;
+    gs.timerID = setInterval(() => {
+      if (!gs.paused && gs.active) {
+        gs.time--;
         updateTimerDisplay();
-
-        if (gameState.timeRemaining <= 0) {
-          clearInterval(gameState.timerInterval);
-          endGame(false);
-        }
+        if (gs.time <= 0) { clearInterval(gs.timerID); endGame(false); }
       }
     }, 1000);
   }
 
   function updateTimerDisplay() {
-    const timerEl = document.getElementById('timerDisplay');
-    timerEl.textContent = gameState.timeRemaining;
-
-    if (gameState.timeRemaining <= 10) {
-      timerEl.classList.add('danger');
-    } else if (gameState.timeRemaining <= 20) {
-      timerEl.classList.add('warning');
-    } else {
-      timerEl.classList.remove('danger', 'warning');
-    }
+    const el = document.getElementById('timerDisplay');
+    el.textContent = gs.time;
+    el.className = 'timer' + (gs.time <= 10 ? ' danger' : gs.time <= 20 ? ' warning' : '');
   }
 
-  function pauseGame() {
-    gameState.isPaused = !gameState.isPaused;
-    if (gameState.isPaused) {
-      alert('Game dijeda. Tekan OK untuk melanjutkan.');
-    }
-    gameState.isPaused = false;
+  // ── PAUSE ─────────────────────────────────────────
+  function togglePause() {
+    if (!gs.active) return;
+    gs.paused = !gs.paused;
+    document.getElementById('pauseOverlay').classList.toggle('active', gs.paused);
+    document.getElementById('pauseBtn').textContent = gs.paused ? '▶ LANJUT' : '⏸ PAUSE';
   }
 
-  function updateDisplay() {
-    document.getElementById('levelDisplay').textContent = gameState.currentLevel;
-    document.getElementById('scoreDisplay').textContent = gameState.score;
-    document.getElementById('livesDisplay').textContent = gameState.lives;
+  // ── HUD ───────────────────────────────────────────
+  function updateHUD() {
+    document.getElementById('levelDisplay').textContent = gs.level;
+    document.getElementById('scoreDisplay').textContent = gs.score;
+    document.getElementById('livesDisplay').textContent = '❤'.repeat(Math.max(0, gs.lives)) + '🖤'.repeat(Math.max(0, CFG.initialLives - gs.lives));
+    updateTimerDisplay();
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  // GAME END LOGIC
-  // ═════════════════════════════════════════════════════════════════
-
+  // ── GAME END ──────────────────────────────────────
   function endGame(won) {
-    gameState.gameActive = false;
-    clearInterval(gameState.timerInterval);
+    gs.active = false;
+    clearInterval(gs.timerID);
 
-    const endPopup = document.getElementById('gameEndPopup');
-    const endContent = document.getElementById('gameEndContent');
+    const popup  = document.getElementById('gameEndPopup');
+    const content = document.getElementById('gameEndContent');
+    const btns   = document.getElementById('gameEndButtons');
 
-    if (won) {
-      endContent.classList.remove('popup-error');
-      endContent.classList.add('popup-success');
-      document.getElementById('gameEndIcon').textContent = '🎊';
-      document.getElementById('gameEndTitle').textContent = 'SELAMAT!';
-      document.getElementById('gameEndMessage').textContent = `Level ${gameState.currentLevel} selesai! Skor: ${gameState.score}`;
-    } else {
-      endContent.classList.remove('popup-success');
-      endContent.classList.add('popup-error');
-      document.getElementById('gameEndIcon').textContent = '💀';
-      document.getElementById('gameEndTitle').textContent = 'GAME OVER';
-      document.getElementById('gameEndMessage').textContent = `Total Skor: ${gameState.score}`;
-      if (gameState.currentLevel < GAME_CONFIG.maxLevels) {
-        document.querySelector('#gameEndPopup .popup-buttons').innerHTML = `
-          <button class="btn-popup" onclick="mainMenu()">MAIN LAGI</button>
-          <button class="btn-popup" onclick="nextLevel()">LANJUT KE LEVEL ${gameState.currentLevel + 1}</button>
-        `;
-      }
+    content.className = 'popup-content ' + (won ? 'popup-success' : 'popup-error');
+    document.getElementById('gameEndIcon').textContent  = won ? '🎊' : '💀';
+    document.getElementById('gameEndTitle').textContent = won ? 'LEVEL SELESAI!' : 'GAME OVER';
+    document.getElementById('gameEndMessage').textContent =
+      won ? `Skor: ${gs.score} | Level ${gs.level} cleared!`
+          : `Sisa waktu habis / nyawa habis. Skor: ${gs.score}`;
+
+    btns.innerHTML = '';
+    if (won && gs.level < CFG.maxLevels) {
+      const nb = document.createElement('button');
+      nb.className = 'btn-popup';
+      nb.textContent = `LEVEL ${gs.level + 1} →`;
+      nb.onclick = () => {
+        const nextLevel = gs.level + 1, savedScore = gs.score;
+        popup.classList.remove('active');
+        gs.score = savedScore;
+        gs.level = nextLevel;
+        startGame(nextLevel);
+        gs.score = savedScore; // re-apply after startGame resets
+        updateHUD();
+      };
+      btns.appendChild(nb);
+    } else if (won && gs.level >= CFG.maxLevels) {
+      document.getElementById('gameEndTitle').textContent = '🏆 SELESAI!';
+      document.getElementById('gameEndMessage').textContent = `Semua level takluk! Skor Akhir: ${gs.score}`;
     }
 
-    endPopup.classList.add('active');
-  }
+    const mb = document.createElement('button');
+    mb.className = 'btn-popup';
+    mb.textContent = 'MAIN LAGI';
+    mb.onclick = () => { popup.classList.remove('active'); startFresh(); };
+    btns.appendChild(mb);
 
-  function nextLevel() {
-    if (gameState.currentLevel < GAME_CONFIG.maxLevels) {
-      gameState.currentLevel++;
-      document.getElementById('gameEndPopup').classList.remove('active');
-      startGame();
-    } else {
-      alert('Kamu telah menyelesaikan semua level!');
-      mainMenu();
-    }
-  }
+    const mmb = document.createElement('button');
+    mmb.className = 'btn-popup';
+    mmb.textContent = 'MENU UTAMA';
+    mmb.onclick = () => { popup.classList.remove('active'); mainMenu(); };
+    btns.appendChild(mmb);
 
-  // ═════════════════════════════════════════════════════════════════
-  // POPUP HELPERS
-  // ═════════════════════════════════════════════════════════════════
-
-  function showSuccessPopup(title, message) {
-    const popup = document.getElementById('resultPopup');
-    const content = popup.querySelector('.popup-content');
-    
-    content.classList.remove('popup-error');
-    content.classList.add('popup-success');
-    
-    document.getElementById('popupIcon').textContent = '✓';
-    document.getElementById('popupTitle').textContent = title;
-    document.getElementById('popupMessage').textContent = message;
-    
     popup.classList.add('active');
   }
 
-  function showErrorPopup(title, message) {
+  // ── FEEDBACK POPUP ────────────────────────────────
+  function showFeedback(ok, title, msg) {
     const popup = document.getElementById('resultPopup');
-    const content = popup.querySelector('.popup-content');
-    
-    content.classList.remove('popup-success');
-    content.classList.add('popup-error');
-    
-    document.getElementById('popupIcon').textContent = '✕';
+    const content = document.getElementById('resultContent');
+    content.className = 'popup-content ' + (ok ? 'popup-success' : 'popup-error');
+    document.getElementById('popupIcon').textContent  = ok ? '✓' : '✕';
     document.getElementById('popupTitle').textContent = title;
-    document.getElementById('popupMessage').textContent = message;
-    
+    document.getElementById('popupMessage').textContent = msg;
     popup.classList.add('active');
+    if (ok) setTimeout(() => popup.classList.remove('active'), 1800);
   }
 
   function closeResultPopup() {
     document.getElementById('resultPopup').classList.remove('active');
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  // INSTRUCTIONS & ABOUT
-  // ═════════════════════════════════════════════════════════════════
+  // ── INFO MODALS ───────────────────────────────────
+  function showInfoModal(type) {
+    const overlay = document.getElementById('infoModalOverlay');
+    const content = document.getElementById('infoModalContent');
+    overlay.classList.add('active');
 
-  function showInstructions() {
-    alert(`
-PANDUAN BINARY MAZE ESCAPE
-
-📖 CARA BERMAIN:
-1. Navigasi labirin dengan mengklik sel-sel
-2. Hindari dinding (█) - akan kehilangan nyawa
-3. Buka pintu (🔒) dengan menjawab soal logika
-4. Capai exit (⬛) di pojok kanan bawah
-
-🔐 GERBANG LOGIKA:
-• AND: Output 1 jika SEMUA input = 1
-• OR: Output 1 jika MINIMAL 1 input = 1
-• XOR: Output 1 jika input BERBEDA
-• NOT: Output kebalikan dari input
-
-⏱️ SISTEM:
-• Timer: 60 detik per level
-• Nyawa: 3 kesempatan
-• Skor: +10 per langkah, +50 per pintu dibuka
-• Level: 1-6 dengan kesulitan bertingkat
-
-💡 TIPS:
-• Pelajari pola gerbang logika
-• Rencanakan jalur sebelum bergerak
-• Setiap level lebih sulit dari sebelumnya
-    `);
+    if (type === 'instructions') {
+      content.innerHTML = `
+        <h2>📖 Panduan Bermain</h2>
+        <h3>🎮 Cara Bergerak</h3>
+        <ul>
+          <li>Gunakan <strong>D-Pad</strong> (di bawah labirin) untuk HP/tablet</li>
+          <li>Gunakan tombol <strong>WASD</strong> atau <strong>Arrow Keys</strong> untuk laptop</li>
+          <li>Klik/tap sel yang berdekatan dengan posisimu</li>
+        </ul>
+        <h3>🔐 Aturan Labirin</h3>
+        <ul>
+          <li>🔒 <strong>Pintu terkunci</strong> — jawab soal logika untuk membuka</li>
+          <li>🔓 <strong>Pintu terbuka</strong> — langsung bisa dilewati</li>
+          <li>🏁 <strong>Exit</strong> — capai ini untuk menyelesaikan level!</li>
+          <li>█ <strong>Dinding</strong> — jangan menabrak! Kamu kehilangan 1 nyawa</li>
+        </ul>
+        <h3>⚙️ Sistem Poin</h3>
+        <ul>
+          <li>+5 poin tiap langkah</li>
+          <li>+50 × level untuk tiap pintu terbuka</li>
+          <li>+100 × level bonus saat mencapai exit</li>
+          <li>−5 poin jika skip soal</li>
+        </ul>
+        <h3>⏱️ Nyawa & Waktu</h3>
+        <ul>
+          <li>3 nyawa per level</li>
+          <li>60 detik per level</li>
+          <li>Game over jika nyawa atau waktu habis</li>
+        </ul>
+        <div style="margin-top:20px; text-align:center;">
+          <button class="btn-popup" onclick="closeInfoModal()">MENGERTI!</button>
+        </div>`;
+    } else {
+      content.innerHTML = `
+        <h2>ℹ️ Tentang Game</h2>
+        <p style="margin-bottom:16px;">Game edukasi untuk belajar Matematika Diskrit — khususnya logika gerbang biner.</p>
+        <h3>🔌 Gerbang Logika</h3>
+        <div class="gate-grid">
+          <div class="gate-card"><strong>AND (∧)</strong><span>Output 1 hanya jika A=1 DAN B=1</span></div>
+          <div class="gate-card"><strong>OR (∨)</strong><span>Output 1 jika A=1 ATAU B=1</span></div>
+          <div class="gate-card"><strong>XOR (⊕)</strong><span>Output 1 jika A dan B BERBEDA</span></div>
+          <div class="gate-card"><strong>NOT (¬)</strong><span>Output KEBALIKAN dari A</span></div>
+        </div>
+        <h3>🎯 Tujuan Pembelajaran</h3>
+        <ul>
+          <li>Memahami sistem bilangan biner (0 dan 1)</li>
+          <li>Menguasai logika boolean</li>
+          <li>Mengaplikasikan gerbang logika</li>
+          <li>Berpikir logis dalam pemecahan masalah</li>
+        </ul>
+        <div style="margin-top:20px; text-align:center;">
+          <button class="btn-popup" onclick="closeInfoModal()">TUTUP</button>
+        </div>`;
+    }
   }
 
-  function showAbout() {
-    alert(`
-TENTANG GAME
-
-Nama: Binary Maze Escape
-Tipe: Educational Game - Discrete Mathematics
-Subjek: Binary Numbers, Boolean Logic, Logic Gates
-
-Tujuan pembelajaran:
-✓ Memahami operasi biner (0 dan 1)
-✓ Menguasai logika boolean
-✓ Mengaplikasikan gerbang logika (AND, OR, XOR, NOT)
-✓ Berpikir logis dalam pemecahan masalah
-
-Dikembangkan untuk platform pembelajaran Mathematic
-    `);
+  function closeInfoModal() {
+    document.getElementById('infoModalOverlay').classList.remove('active');
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  // INITIALIZATION
-  // ═════════════════════════════════════════════════════════════════
-
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('[Binary Maze Escape] Game loaded successfully');
+  // Close info modal on backdrop click
+  document.getElementById('infoModalOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeInfoModal();
   });
-</script>
 
+  // Prevent scroll when touching dpad
+  document.getElementById('dpad').addEventListener('touchstart', e => e.preventDefault(), {passive: false});
+</script>
 </body>
 </html>
