@@ -731,12 +731,13 @@ const { data: storageData, error: storageError } = await db.storage
 
       // 3. Simpan ke tabel materi
       const { error: dbError } = await db.from('materi').insert({
-        modul: modul,
-        judul: judul,
-        konten: deskripsi || null,
-        urutan: urutan,
-        url: publicUrl
-      });
+  modul: modul,
+  judul: judul,
+  konten: deskripsi || null,
+  urutan: urutan,
+  url: publicUrl,
+  tipe: selectedFile.name.endsWith('.pdf') ? 'pdf' : 'html'
+});
 
       if (dbError) throw dbError;
 
