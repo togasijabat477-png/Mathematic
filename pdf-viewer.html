@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Materi — Math Unity</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0f1117; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; }
+
+    .topbar {
+      background: #1a1d27; border-bottom: 1px solid #2d3148;
+      padding: 12px 24px; display: flex; align-items: center; gap: 16px;
+      flex-shrink: 0;
+    }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: 1px solid #2d3148;
+      color: #94a3b8; padding: 8px 16px; border-radius: 8px;
+      cursor: pointer; font-size: .875rem; text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-back:hover { background: #2d3148; color: #fff; }
+    .topbar h1 { font-size: 1rem; font-weight: 600; color: #e2e8f0; }
+
+    .pdf-wrap { flex: 1; overflow: hidden; }
+    iframe {
+      width: 100%; height: 100%; border: none;
+      background: #fff;
+    }
+
+    .error-state {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: 100%; gap: 16px; color: #64748b;
+    }
+    .error-state .icon { font-size: 3rem; }
+    .btn-open {
+      padding: 12px 24px; border-radius: 10px;
+      background: #7c3aed; color: #fff; border: none;
+      cursor: pointer; font-size: .95rem; font-weight: 600;
+      text-decoration: none; transition: all .2s;
+    }
+    .btn-open:hover { background: #6d28d9; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="#" class="btn-back" id="btnBack">← Kembali</a>
+  <h1 id="pageTitle">📕 Materi PDF</h1>
+</div>
+
+<div class="pdf-wrap">
+  <iframe id="pdfFrame" src="" title="PDF Viewer"></iframe>
+</div>
+
+<script>
+  // Ambil URL dari query string
+  const params = new URLSearchParams(window.location.search);
+  const pdfUrl = params.get('url');
+  const backPage = sessionStorage.getItem('backPage') || 'materi';
+  const materiTab = sessionStorage.getItem('materiTab') || 'diskrit';
+
+  // Tombol kembali
+  document.getElementById('btnBack').href = 
+    'index.html?page=' + backPage + '&tab=' + materiTab;
+
+  if (pdfUrl) {
+    document.getElementById('pdfFrame').src = pdfUrl;
+    // Judul dari nama file
+    const fileName = decodeURIComponent(pdfUrl.split('/').pop())
+      .replace('.pdf', '').replace(/_/g, ' ');
+    document.getElementById('pageTitle').textContent = '📕 ' + fileName;
+  } else {
+    document.querySelector('.pdf-wrap').innerHTML = `
+      <div class="error-state">
+        <div class="icon">😕</div>
+        <p>File PDF tidak ditemukan</p>
+        <a href="index.html" class="btn-open">Kembali ke Beranda</a>
+      </div>`;
+  }
+</script>
+</body>
+</html>
