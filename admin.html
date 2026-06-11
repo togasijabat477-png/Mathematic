@@ -164,6 +164,66 @@
 
   <div class="container">
 
+    <!-- UPLOAD SOAL DARI TXT -->
+<div class="card">
+  <h2>📋 Import Soal dari File TXT</h2>
+  <p style="font-size:.875rem;color:#94a3b8;margin-bottom:20px">
+    Upload file .txt berisi soal dengan format tertentu — sistem akan otomatis parsing dan simpan ke database.
+  </p>
+
+  <!-- Download template -->
+  <button onclick="downloadTemplate()" style="padding:8px 16px;border-radius:8px;border:1px solid #2d3148;background:transparent;color:#94a3b8;cursor:pointer;font-size:.875rem;margin-bottom:20px">
+    📥 Download Template TXT
+  </button>
+
+  <!-- Filter modul & judul -->
+  <div class="form-row">
+    <div>
+      <label>Modul</label>
+      <select id="txtModul" onchange="updateTxtJudul()">
+        <option value="Matematika Diskrit">∑ Matematika Diskrit</option>
+        <option value="Aljabar Linear">λ Aljabar Linear</option>
+        <option value="Kriptografi">🔐 Kriptografi</option>
+      </select>
+    </div>
+    <div>
+      <label>Judul</label>
+      <select id="txtJudul"></select>
+    </div>
+  </div>
+
+  <div class="form-row" style="margin-top:16px">
+    <div>
+      <label>Level</label>
+      <select id="txtLevel">
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Upload area -->
+  <div class="upload-area" id="txtUploadArea" style="margin-top:16px">
+    <div class="icon">📋</div>
+    <p><strong>Klik untuk pilih file .txt</strong></p>
+    <p style="margin-top:8px">Format soal harus sesuai template</p>
+    <input type="file" id="txtFileInput" accept=".txt" style="display:none" />
+  </div>
+
+  <!-- Preview hasil parsing -->
+  <div id="txtPreview" style="display:none;margin-top:16px">
+    <div style="background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:16px">
+      <h3 style="color:#a78bfa;margin-bottom:12px;font-size:.95rem" id="txtPreviewTitle"></h3>
+      <div id="txtPreviewList"></div>
+    </div>
+    <button class="btn-primary" style="margin-top:16px" id="btnImportSoal">
+      💾 Import Semua Soal ke Database
+    </button>
+  </div>
+
+  <div id="txtMsg"></div>
+</div>
     <!-- UPLOAD MATERI -->
     <div class="card">
       <h2>📤 Upload Materi Baru</h2>
@@ -324,6 +384,213 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY'
   );
 
+// ── IMPORT SOAL DARI TXT ──
+
+// Inisialisasi judul options
+function updateTxtJudul() {
+  const modul = document.getElementById('txtModul').value;
+  const judulSelect = document.getElementById('txtJudul');
+  const judul = JUDUL_MAP[modul] || [];
+  judulSelect.innerHTML = judul.map(j =>
+    `<option value="${j}">${j}</option>`
+  ).join('');
+}
+
+// Setup upload area TXT
+document.getElementById('txtUploadArea').addEventListener('click', () => {
+  document.getElementById('txtFileInput').click();
+});
+
+document.getElementById('txtFileInput').addEventListener('change', (e) => {
+  if (e.target.files[0]) parseTxtFile(e.target.files[0]);
+});
+
+let parsedSoal = [];
+
+function parseTxtFile(file) {
+  if (!file.name.endsWith('.txt')) {
+    showTxtMsg('❌ Hanya file .txt yang diperbolehkan', 'error'); return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const text = e.target.result;
+    parsedSoal = parseSoalFromTxt(text);
+
+    if (parsedSoal.length === 0) {
+      showTxtMsg('❌ Tidak ada soal yang berhasil di-parse. Pastikan format sesuai template.', 'error');
+      return;
+    }
+
+    // Tampilkan preview
+    showTxtPreview(parsedSoal);
+    showTxtMsg(`✅ Berhasil parse ${parsedSoal.length} soal`, 'success');
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseSoalFromTxt(text) {
+  const result = [];
+  const blocks = text.split('---').map(b => b.trim()).filter(b => b);
+  const letters = ['A','B','C','D','E'];
+
+  blocks.forEach(block => {
+    try {
+      const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+
+      // Cari index SOAL
+      const soalIdx = lines.findIndex(l => l.toUpperCase() === 'SOAL');
+      if (soalIdx === -1) return;
+
+      const pertanyaan = lines[soalIdx + 1];
+      if (!pertanyaan) return;
+
+      // Ambil opsi A-E
+      const opsi = [];
+      letters.forEach(letter => {
+        const line = lines.find(l => l.toUpperCase().startsWith(letter + '.'));
+        if (line) opsi.push(line.substring(2).trim());
+      });
+
+      if (opsi.length < 2) return;
+
+      // Ambil jawaban
+      const jawabanLine = lines.find(l => l.toUpperCase().startsWith('JAWABAN:'));
+      if (!jawabanLine) return;
+      const jawabanHuruf = jawabanLine.split(':')[1].trim().toUpperCase();
+      const jawabanIdx = letters.indexOf(jawabanHuruf);
+      if (jawabanIdx === -1) return;
+
+      // Ambil penjelasan
+      const penjelasanLine = lines.find(l => l.toUpperCase().startsWith('PENJELASAN:'));
+      const penjelasan = penjelasanLine ? penjelasanLine.substring(11).trim() : '';
+
+      result.push({
+        pertanyaan,
+        opsi,
+        jawaban_benar: jawabanIdx,
+        penjelasan_isi: penjelasan
+      });
+
+    } catch(err) {
+      console.error('Error parse block:', err);
+    }
+  });
+
+  return result;
+}
+
+function showTxtPreview(soalList) {
+  const letters = ['A','B','C','D','E'];
+  document.getElementById('txtPreviewTitle').textContent =
+    `Preview — ${soalList.length} soal berhasil di-parse:`;
+
+  let html = '';
+  soalList.forEach((s, i) => {
+    html += `
+      <div style="padding:12px;border-bottom:1px solid #2d3148;margin-bottom:8px">
+        <p style="font-size:.875rem;font-weight:600;margin-bottom:8px">${i+1}. ${s.pertanyaan}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+          ${s.opsi.map((o, idx) => `
+            <span style="font-size:.75rem;padding:3px 10px;border-radius:6px;
+              background:${idx === s.jawaban_benar ? 'rgba(124,58,237,.2)' : '#1a1d27'};
+              color:${idx === s.jawaban_benar ? '#a78bfa' : '#64748b'}">
+              ${letters[idx]}. ${o}
+            </span>`).join('')}
+        </div>
+        ${s.penjelasan_isi ? `<p style="font-size:.75rem;color:#64748b">💡 ${s.penjelasan_isi}</p>` : ''}
+      </div>`;
+  });
+
+  document.getElementById('txtPreviewList').innerHTML = html;
+  document.getElementById('txtPreview').style.display = 'block';
+}
+
+document.getElementById('btnImportSoal').addEventListener('click', async () => {
+  if (!parsedSoal.length) return;
+
+  const modul = document.getElementById('txtModul').value;
+  const judul = document.getElementById('txtJudul').value;
+  const level = document.getElementById('txtLevel').value;
+  const btn = document.getElementById('btnImportSoal');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Menyimpan...';
+
+  try {
+    const payload = parsedSoal.map((s, i) => ({
+      modul, judul, level,
+      pertanyaan: s.pertanyaan,
+      opsi: s.opsi,
+      jawaban_benar: s.jawaban_benar,
+      penjelasan_isi: s.penjelasan_isi,
+      penjelasan_judul: s.pertanyaan.substring(0, 50),
+      urutan: i + 1,
+      aktif: true
+    }));
+
+    const { error } = await db.from('soal').insert(payload);
+
+    if (error) throw error;
+
+    showTxtMsg(`✅ ${parsedSoal.length} soal berhasil diimport!`, 'success');
+    document.getElementById('txtPreview').style.display = 'none';
+    document.getElementById('txtFileInput').value = '';
+    parsedSoal = [];
+    loadSoalList();
+
+  } catch(err) {
+    showTxtMsg('❌ Gagal import: ' + err.message, 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '💾 Import Semua Soal ke Database';
+});
+
+function showTxtMsg(text, type) {
+  const el = document.getElementById('txtMsg');
+  el.className = 'msg ' + type;
+  el.textContent = text;
+  setTimeout(() => { el.textContent = ''; el.className = ''; }, 5000);
+}
+
+// ── DOWNLOAD TEMPLATE ──
+function downloadTemplate() {
+  const template = `SOAL
+Tulis pertanyaan soal di sini...
+A. Opsi jawaban A
+B. Opsi jawaban B
+C. Opsi jawaban C
+D. Opsi jawaban D
+E. Opsi jawaban E
+JAWABAN: A
+PENJELASAN: Tulis penjelasan jawaban di sini.
+---
+SOAL
+Pertanyaan kedua di sini...
+A. Opsi A
+B. Opsi B
+C. Opsi C
+D. Opsi D
+E. Opsi E
+JAWABAN: B
+PENJELASAN: Penjelasan soal kedua.
+---`;
+
+  const blob = new Blob([template], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'template_soal.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Init judul TXT saat load
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('txtJudul')) updateTxtJudul();
+});
+  
 // ── MAPPING JUDUL PER MODUL ──
 const JUDUL_MAP = {
   'Matematika Diskrit': [
