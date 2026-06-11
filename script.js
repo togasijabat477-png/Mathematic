@@ -519,10 +519,7 @@ function renderFeatures() {
   document.getElementById('featuresGrid').innerHTML = html;
 }
 
-function openModuleFile(file) {
-  // replaceState: perbarui entry saat ini dengan info materi+tab
-  // Saat user tekan Back dari modul, browser kembali ke entry INI (materi)
-  // bukan ke entry kosong sebelumnya
+function openModuleFile(file, tipe) {
   history.replaceState(
     { page: 'materi', tab: activeMateriTab },
     '',
@@ -530,7 +527,13 @@ function openModuleFile(file) {
   );
   sessionStorage.setItem('backPage', 'materi');
   sessionStorage.setItem('materiTab', activeMateriTab);
-  window.location.href = file;
+
+  if (tipe === 'pdf') {
+    // Buka PDF di viewer khusus
+    window.location.href = 'pdf-viewer.html?url=' + encodeURIComponent(file);
+  } else {
+    window.location.href = file;
+  }
 }
 
 function openGameFile(file) {
@@ -625,9 +628,8 @@ function renderMateriSections(sections) {
       '<button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
       '<div id="' + gridId + '" class="materi-grid">';
 
-    s.items.forEach(function(item) {
-      html += '<div class="materi-card"' + 
-        (item.file ? ' onclick="openModuleFile(\'' + item.file + '\')"' : '') + '>' +
+   s.items.forEach(function(item) {
+  html += '<div class="materi-card"' + (item.file ? ' onclick="openModuleFile(\'' + item.file + '\',\'' + (item.tipe||'html') + '\')"' : '') + '>' +
         '<div class="accent-line"></div>' +
         '<div class="num">' + item.num + '</div>' +
         '<h3>' + item.title + '</h3>' +
