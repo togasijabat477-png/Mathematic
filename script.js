@@ -957,29 +957,33 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
 // ── CEK STATUS LOGIN DI NAVBAR ──
 async function checkAuthNav() {
   const { data: { session } } = await db.auth.getSession();
-  const el = document.getElementById('authNav');
-  if (!el) return;
-
-  if (session) {
-    // Sudah login — tampilkan email + tombol dashboard
-    const email = session.user.email;
-    const initial = email.charAt(0).toUpperCase();
-    el.innerHTML = `
-      <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:99px;background:rgba(124,58,237,.15);color:#a78bfa;text-decoration:none;font-size:.875rem;border:1px solid rgba(124,58,237,.3)">
-        <span style="width:24px;height:24px;border-radius:50%;background:#7c3aed;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff">${initial}</span>
-        Dashboard
-      </a>
-      <button onclick="logoutUser()" style="padding:6px 14px;border-radius:99px;border:1px solid rgba(239,68,68,.3);background:transparent;color:#f87171;cursor:pointer;font-size:.875rem">
-        Logout
-      </button>
-    `;
-  } else {
-    // Belum login — tampilkan tombol login
-    el.innerHTML = `
-      <a href="auth.html" style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:99px;background:#7c3aed;color:#fff;text-decoration:none;font-size:.875rem;font-weight:600">
-        🔐 Login
-      </a>
-    `;
+  
+  // Update dropdown
+  const dropdownEl = document.getElementById('authDropdown');
+  if (dropdownEl) {
+    if (session) {
+      const email = session.user.email;
+      const initial = email.charAt(0).toUpperCase();
+      dropdownEl.innerHTML = `
+        <div style="height:1px;background:#2d3148;margin:8px 0"></div>
+        <a href="dashboard.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:hsl(var(--fg));text-decoration:none;border-radius:8px;transition:background .2s">
+          <span style="width:28px;height:28px;border-radius:50%;background:#7c3aed;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0">${initial}</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" onclick="logoutUser();return false;" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#f87171;text-decoration:none;border-radius:8px;transition:background .2s">
+          <span>🚪</span>
+          <span>Logout (${email.split('@')[0]})</span>
+        </a>
+      `;
+    } else {
+      dropdownEl.innerHTML = `
+        <div style="height:1px;background:#2d3148;margin:8px 0"></div>
+        <a href="auth.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:hsl(var(--fg));text-decoration:none;border-radius:8px;transition:background .2s">
+          <span>🔐</span>
+          <span>Login / Register</span>
+        </a>
+      `;
+    }
   }
 }
 
