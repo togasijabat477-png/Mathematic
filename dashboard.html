@@ -1,1 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Math Unity</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gold: #fbbf24;
+            --silver: #9ca3af;
+            --bronze: #d97706;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--text-main);
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .profile-card {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .card-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .card-header i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* Profile Section */
+        .profile-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+        }
+
+        .profile-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e0e7ff;
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* Progress Bars */
+        .module-item {
+            margin-bottom: 20px;
+        }
+
+        .module-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .progress-bg {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Leaderboard */
+        .leaderboard-list {
+            list-style: none;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 15px;
+        }
+
+        .rank-1 { background: var(--gold); color: #78350f; }
+        .rank-2 { background: var(--silver); color: #374151; }
+        .rank-3 { background: var(--bronze); color: #78350f; }
+        .rank-other { background: #f3f4f6; color: var(--text-muted); }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .player-score {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .score-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Loading Skeleton Animation */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        .skeleton-text { height: 16px; margin-bottom: 8px; }
+        .skeleton-title { height: 24px; width: 60%; margin-bottom: 16px; }
+        .skeleton-avatar { width: 80px; height: 80px; border-radius: 50%; }
+        .skeleton-bar { height: 10px; width: 100%; }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-square-root-variable"></i>
+                </div>
+                <h1>Math Unity</h1>
+            </div>
+            <div class="nav-actions">
+                <a href="index.html" class="btn btn-outline">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </a>
+                <button class="btn btn-danger" onclick="alert('Anda telah logout!')">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            
+            <!-- Profile Card -->
+            <div class="card profile-card">
+                <div id="profile-loading">
+                    <div class="skeleton skeleton-avatar" style="margin-bottom: 15px;"></div>
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                </div>
+                <div id="profile-content" class="profile-content hidden">
+                    <div class="avatar">A</div>
+                    <div class="profile-info">
+                        <h3>Halo, <span id="username">Andi</span>! 👋</h3>
+                        <p>Selamat datang kembali di perjalanan matematikamu.</p>
+                        <span class="badge">Level 5: Math Explorer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <h2>Progress per Modul</h2>
+                </div>
+                
+                <div id="progress-loading">
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-bar" style="margin-bottom: 20px;"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-bar" style="margin-bottom: 20px;"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-bar"></div>
+                </div>
+
+                <div id="progress-content" class="hidden">
+                    <div class="module-item">
+                        <div class="module-header">
+                            <span>Aljabar Dasar</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="progress-bg">
+                            <div class="progress-fill" data-width="85%"></div>
+                        </div>
+                    </div>
+                    <div class="module-item">
+                        <div class="module-header">
+                            <span>Geometri Ruang</span>
+                            <span>60%</span>
+                        </div>
+                        <div class="progress-bg">
+                            <div class="progress-fill" data-width="60%" style="background: linear-gradient(90deg, #f59e0b, #ec4899);"></div>
+                        </div>
+                    </div>
+                    <div class="module-item">
+                        <div class="module-header">
+                            <span>Statistika & Peluang</span>
+                            <span>30%</span>
+                        </div>
+                        <div class="progress-bg">
+                            <div class="progress-fill" data-width="30%" style="background: linear-gradient(90deg, #10b981, #3b82f6);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-trophy" style="color: var(--gold);"></i>
+                    <h2>Leaderboard — Top 5</h2>
+                </div>
+
+                <div id="leaderboard-loading">
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text"></div>
+                </div>
+
+                <ul id="leaderboard-content" class="leaderboard-list hidden">
+                    <li class="leaderboard-item">
+                        <div class="rank rank-1">1</div>
+                        <div class="player-info">
+                            <div class="player-name">Budi Santoso</div>
+                            <div class="player-score">Master Matematika</div>
+                        </div>
+                        <div class="score-value">2,450 XP</div>
+                    </li>
+                    <li class="leaderboard-item">
+                        <div class="rank rank-2">2</div>
+                        <div class="player-info">
+                            <div class="player-name">Siti Aminah</div>
+                            <div class="player-score">Jenius Geometri</div>
+                        </div>
+                        <div class="score-value">2,310 XP</div>
+                    </li>
+                    <li class="leaderboard-item">
+                        <div class="rank rank-3">3</div>
+                        <div class="player-info">
+                            <div class="player-name">Andi (Kamu)</div>
+                            <div class="player-score">Math Explorer</div>
+                        </div>
+                        <div class="score-value">2,100 XP</div>
+                    </li>
+                    <li class="leaderboard-item">
+                        <div class="rank rank-other">4</div>
+                        <div class="player-info">
+                            <div class="player-name">Dewi Lestari</div>
+                            <div class="player-score">Pecinta Angka</div>
+                        </div>
+                        <div class="score-value">1,980 XP</div>
+                    </li>
+                    <li class="leaderboard-item">
+                        <div class="rank rank-other">5</div>
+                        <div class="player-info">
+                            <div class="player-name">Rizky Pratama</div>
+                            <div class="player-score">Pemula Pro</div>
+                        </div>
+                        <div class="score-value">1,850 XP</div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Simulasi proses pemuatan data (Loading State)
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                // Sembunyikan skeleton loading
+                document.getElementById('profile-loading').classList.add('hidden');
+                document.getElementById('progress-loading').classList.add('hidden');
+                document.getElementById('leaderboard-loading').classList.add('hidden');
+
+                // Tampilkan konten sebenarnya dengan animasi fade-in
+                const profileContent = document.getElementById('profile-content');
+                const progressContent = document.getElementById('progress-content');
+                const leaderboardContent = document.getElementById('leaderboard-content');
+
+                profileContent.classList.remove('hidden');
+                profileContent.classList.add('fade-in');
+                
+                progressContent.classList.remove('hidden');
+                progressContent.classList.add('fade-in');
+                
+                leaderboardContent.classList.remove('hidden');
+                leaderboardContent.classList.add('fade-in');
+
+                // Animasi progress bar mengisi
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 300);
+                });
+
+            }, 1500); // Simulasi delay 1.5 detik
+        });
+    </script>
+</body>
+</html>
