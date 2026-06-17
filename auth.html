@@ -6,12 +6,7 @@
     <title>Login — Math Unity</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
@@ -24,31 +19,13 @@
             overflow: hidden;
             position: relative;
         }
-
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
-        .math-symbols {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .math-symbol {
-            position: absolute;
-            font-size: 2rem;
-            color: rgba(99, 102, 241, 0.15);
-            animation: float 6s ease-in-out infinite;
-            font-weight: 300;
-        }
-
+        .math-symbols { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .math-symbol { position: absolute; font-size: 2rem; color: rgba(99, 102, 241, 0.15); animation: float 6s ease-in-out infinite; font-weight: 300; }
         .math-symbol:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; font-size: 2.5rem; }
         .math-symbol:nth-child(2) { top: 25%; right: 15%; animation-delay: 1s; font-size: 1.8rem; }
         .math-symbol:nth-child(3) { bottom: 30%; left: 15%; animation-delay: 2s; font-size: 2.2rem; }
@@ -57,271 +34,50 @@
         .math-symbol:nth-child(6) { top: 40%; left: 5%; animation-delay: 3s; font-size: 1.5rem; }
         .math-symbol:nth-child(7) { bottom: 10%; left: 30%; animation-delay: 2.5s; font-size: 2.8rem; }
         .math-symbol:nth-child(8) { top: 10%; right: 30%; animation-delay: 4s; font-size: 1.6rem; }
-
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
             50% { transform: translateY(-20px) rotate(10deg); opacity: 0.25; }
         }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 480px;
-            padding: 20px;
-        }
-
+        .container { position: relative; z-index: 1; width: 100%; max-width: 480px; padding: 20px; }
         .card {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 
-                0 8px 32px rgba(99, 102, 241, 0.1),
-                0 2px 8px rgba(0, 0, 0, 0.04),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
             padding: 48px 40px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0 12px 40px rgba(99, 102, 241, 0.15),
-                0 4px 12px rgba(0, 0, 0, 0.06),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 32px;
-        }
-
-        .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .logo-text {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e1b4b, #4338ca);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .welcome {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-
-        .welcome h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e1b4b;
-            margin-bottom: 8px;
-        }
-
-        .welcome p {
-            font-size: 0.9rem;
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        /* Toggle Tabs */
-        .toggle-tabs {
-            display: flex;
-            background: rgba(99, 102, 241, 0.08);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 32px;
-            gap: 4px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px 24px;
-            border: none;
-            background: transparent;
-            color: #6b7280;
-            font-size: 0.95rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .tab-btn:hover:not(.active) {
-            color: #6366f1;
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        /* Form Container */
-        .form-container {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .form-container.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 16px;
-            font-size: 1.1rem;
-            color: #9ca3af;
-            transition: color 0.3s ease;
-            z-index: 2;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px 14px 48px;
-            border: 2px solid #e5e7eb;
-            border-radius: 14px;
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            background: rgba(255, 255, 255, 0.9);
-            color: #1f2937;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .form-group input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-            background: #ffffff;
-        }
-
-        .input-wrapper .toggle-password {
-            position: absolute;
-            right: 16px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            color: #9ca3af;
-            transition: color 0.3s ease;
-            z-index: 2;
-        }
-
-        .input-wrapper .toggle-password:hover {
-            color: #6366f1;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
-            margin-top: 8px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 24px;
-            font-size: 0.9rem;
-            color: #6b7280;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: #6366f1;
-            transform: translateX(-4px);
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 36px 24px;
-                border-radius: 20px;
-            }
-
-            .logo-text {
-                font-size: 1.5rem;
-            }
-
-            .welcome h1 {
-                font-size: 1.3rem;
-            }
-        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9); }
+        .logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 32px; }
+        .logo-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+        .logo-text { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #1e1b4b, #4338ca); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .welcome { text-align: center; margin-bottom: 36px; }
+        .welcome h1 { font-size: 1.5rem; font-weight: 700; color: #1e1b4b; margin-bottom: 8px; }
+        .welcome p { font-size: 0.9rem; color: #6b7280; line-height: 1.6; }
+        .toggle-tabs { display: flex; background: rgba(99, 102, 241, 0.08); border-radius: 12px; padding: 4px; margin-bottom: 32px; gap: 4px; }
+        .tab-btn { flex: 1; padding: 12px 24px; border: none; background: transparent; color: #6b7280; font-size: 0.95rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; border-radius: 10px; transition: all 0.3s ease; }
+        .tab-btn.active { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+        .tab-btn:hover:not(.active) { color: #6366f1; background: rgba(99, 102, 241, 0.1); }
+        .form-container { display: none; animation: fadeIn 0.4s ease; }
+        .form-container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-icon { position: absolute; left: 16px; font-size: 1.1rem; color: #9ca3af; transition: color 0.3s ease; z-index: 2; }
+        .form-group input { width: 100%; padding: 14px 16px 14px 48px; border: 2px solid #e5e7eb; border-radius: 14px; font-size: 0.95rem; font-family: 'Inter', sans-serif; background: rgba(255, 255, 255, 0.9); color: #1f2937; transition: all 0.3s ease; outline: none; }
+        .form-group input:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); background: #ffffff; }
+        .input-wrapper .toggle-password { position: absolute; right: 16px; background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #9ca3af; transition: color 0.3s ease; z-index: 2; }
+        .input-wrapper .toggle-password:hover { color: #6366f1; }
+        .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 14px; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3); margin-top: 8px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+        .btn-primary:active { transform: translateY(0); }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 24px; font-size: 0.9rem; color: #6b7280; text-decoration: none; font-weight: 500; transition: all 0.3s ease; }
+        .back-link:hover { color: #6366f1; transform: translateX(-4px); }
+        .text-center { text-align: center; }
+        @media (max-width: 480px) { .card { padding: 36px 24px; border-radius: 20px; } .logo-text { font-size: 1.5rem; } .welcome h1 { font-size: 1.3rem; } }
     </style>
 </head>
 <body>
@@ -344,14 +100,13 @@
             </div>
 
             <div class="welcome">
-                <h1>Selamat Datang 👋</h1>
+                <h1>Selamat Datang </h1>
                 <p id="welcome-text">Masuk untuk melanjutkan belajar matematika</p>
             </div>
 
-            <!-- Toggle Tabs -->
             <div class="toggle-tabs">
-                <button class="tab-btn active" onclick="switchTab('login')">Masuk</button>
-                <button class="tab-btn" onclick="switchTab('register')">Daftar</button>
+                <button type="button" class="tab-btn active" onclick="switchTab('login')">Masuk</button>
+                <button type="button" class="tab-btn" onclick="switchTab('register')">Daftar</button>
             </div>
 
             <!-- Login Form -->
@@ -364,7 +119,6 @@
                             <input type="email" id="email" placeholder="Masukkan email Anda" required>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="password">Password</label>
                         <div class="input-wrapper">
@@ -373,7 +127,6 @@
                             <button type="button" class="toggle-password" onclick="togglePassword()">👁</button>
                         </div>
                     </div>
-
                     <button type="submit" class="btn-primary">Masuk →</button>
                 </form>
             </div>
@@ -388,7 +141,6 @@
                             <input type="text" id="reg-name" placeholder="Masukkan nama Anda" required>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="reg-email">Email</label>
                         <div class="input-wrapper">
@@ -396,7 +148,6 @@
                             <input type="email" id="reg-email" placeholder="Masukkan email Anda" required>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="reg-password">Password</label>
                         <div class="input-wrapper">
@@ -405,7 +156,6 @@
                             <button type="button" class="toggle-password" onclick="toggleRegPassword()">👁</button>
                         </div>
                     </div>
-
                     <button type="submit" class="btn-primary">Daftar Sekarang →</button>
                 </form>
             </div>
@@ -417,7 +167,6 @@
     </div>
 
     <script>
-        // Switch between login and register tabs
         function switchTab(tab) {
             const loginForm = document.getElementById('login-form');
             const registerForm = document.getElementById('register-form');
@@ -449,51 +198,46 @@
             passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
         }
 
-        // Handle Login
         function handleLogin(e) {
-            e.preventDefault();
+            e.preventDefault(); // Mencegah form refresh halaman
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            // Simpan ke localStorage untuk simulasi login
             const users = JSON.parse(localStorage.getItem('users') || '[]');
             const user = users.find(u => u.email === email && u.password === password);
 
             if (user) {
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 alert('Login berhasil! Selamat datang, ' + user.name);
-                window.location.href = 'index.html'; // Ganti dengan halaman tujuan
+                
+                // Redirect ke beranda
+                console.log('Mengarahkan ke index.html...');
+                window.location.href = 'index.html'; 
             } else {
-                alert('Email atau password salah!');
+                alert('Email atau password salah! (Pastikan Anda sudah mendaftar terlebih dahulu)');
             }
         }
 
-        // Handle Register
         function handleRegister(e) {
-            e.preventDefault();
+            e.preventDefault(); // Mencegah form refresh halaman
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
 
-            // Ambil users yang ada
             const users = JSON.parse(localStorage.getItem('users') || '[]');
             
-            // Cek apakah email sudah terdaftar
             if (users.find(u => u.email === email)) {
-                alert('Email sudah terdaftar! Silakan login.');
+                alert('Email sudah terdaftar! Silakan langsung login.');
                 switchTab('login');
                 return;
             }
 
-            // Simpan user baru
             const newUser = { name, email, password };
             users.push(newUser);
             localStorage.setItem('users', JSON.stringify(users));
 
             alert('Pendaftaran berhasil! Silakan login.');
             switchTab('login');
-            
-            // Isi email yang sudah terdaftar
             document.getElementById('email').value = email;
         }
     </script>
