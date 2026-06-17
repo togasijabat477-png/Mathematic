@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quiz Matriks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -686,22 +687,22 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Matriks ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Matriks ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
         <div class="hero-rule"></div>
       </h1>
-      <p class="hero-sub">Uji pemahamanmu tentang materi matriks melalui soal-soal yang disusun secara terstruktur. Pilih tingkat kesulitan yang sesuai dengan kemampuanmu.</p>
+      <p class="hero-sub">Uji kemampuan nalarmu dengan soal-soal logika yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
     </div>
 
     <div class="level-grid">
       <div class="level-card easy" onclick="startQuizRipple(event,'easy')">
-        <div class="bg-symbol">[]</div>
-        <div class="lv-icon">🧮</div>
+        <div class="bg-symbol">∥</div>
+        <div class="lv-icon">🔢</div>
         <div class="lv-info">
           <div class="lv-name">Easy — Dasar Matriks</div>
-          <div class="lv-desc">Pelajari konsep dasar matriks seperti ordo matriks, jenis matriks, dan operasi dasar matriks.</div>
+          <div class="lv-desc">Mulai dari pengenalan matriks, elemen matriks, ordo matriks, serta operasi dasar seperti penjumlahan dan pengurangan matriks sederhana.</div>
           <div class="lv-tags">
             <span class="tag">10 Soal</span>
             <span class="tag">30 Menit</span>
@@ -712,11 +713,11 @@ body::before {
       </div>
 
       <div class="level-card medium" onclick="startQuizRipple(event,'medium')">
-        <div class="bg-symbol">⊗</div>
-        <div class="lv-icon">🌀</div>
+        <div class="bg-symbol">M₂×₂</div>
+        <div class="lv-icon">🧮</div>
         <div class="lv-info">
-          <div class="lv-name">Medium — Operasi Matriks</div>
-          <div class="lv-desc">Pelajari penjumlahan, pengurangan, perkalian matriks, transpose, dan determinan matriks.</div>
+          <div class="lv-name">>Medium — Matriks (Operasi & Determinan)</div>
+          <div class="lv-desc">Operasi matriks lanjutan seperti perkalian matriks, determinan ordo 2×2, serta konsep invers matriks sederhana.</div>
           <div class="lv-tags">
             <span class="tag">20 Soal</span>
             <span class="tag">40 Menit</span>
@@ -727,11 +728,11 @@ body::before {
       </div>
 
       <div class="level-card hard" onclick="startQuizRipple(event,'hard')">
-        <div class="bg-symbol">Aᵀ</div>
-        <div class="lv-icon">🧬</div>
+        <div class="bg-symbol">|A|₃×₃</div>
+        <div class="lv-icon">🧠</div>
         <div class="lv-info">
-          <div class="lv-name">Hard — Analisis Matriks</div>
-          <div class="lv-desc">Pelajari invers matriks, matriks kofaktor, adjoin, nilai eigen, dan vektor eigen.</div>
+          <div class="lv-name">Hard — Matriks Lanjutan</div>
+          <div class="lv-desc">Determinan ordo 3×3, invers matriks kompleks, matriks adjoint, eigenvalue dasar, serta diagonal matriks.</div>
           <div class="lv-tags">
             <span class="tag">30 Soal</span>
             <span class="tag">50 Menit</span>
@@ -743,8 +744,8 @@ body::before {
     </div>
 
     <div class="quote-box">
-      "Matriks adalah bahasa yang digunakan matematika untuk menggambarkan transformasi dan struktur."
-      <cite>— Arthur Cayley</cite>
+     "Matriks adalah bahasa dasar dari aljabar linear yang memungkinkan kita menyederhanakan sistem kompleks menjadi bentuk terstruktur."
+      <cite>— David C. Lay</cite>
     </div>
   </div>
 
@@ -889,771 +890,20 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Matematika Diskrit';
+const SOAL_JUDUL = 'Matriks';
+  
 // ══════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{
-  q: "Ordo dari matriks 2×3 berarti...",
-  opts: ["2 baris dan 3 kolom", "2 kolom dan 3 baris", "3 baris dan 3 kolom", "2 elemen dan 3 elemen", "Jumlah baris dikali kolom"],
-  ans: 0,
-  exp: { title: "Ordo Matriks", body: "Ordo matriks ditulis baris × kolom.\n\n2×3 berarti memiliki 2 baris dan 3 kolom." }
-},
-{
-  q: "Banyak elemen pada matriks berordo 3×2 adalah...",
-  opts: ["5", "6", "3", "2", "9"],
-  ans: 1,
-  exp: { title: "Jumlah Elemen Matriks", body: "Jumlah elemen = baris × kolom.\n\n3×2 = 6 elemen." }
-},
-{
-  q: "Matriks yang jumlah baris dan kolomnya sama disebut...",
-  opts: ["Matriks nol", "Matriks identitas", "Matriks persegi", "Matriks diagonal", "Matriks baris"],
-  ans: 2,
-  exp: { title: "Matriks Persegi", body: "Matriks persegi memiliki jumlah baris dan kolom yang sama." }
-},
-{
-  q: "Matriks yang semua elemennya nol disebut...",
-  opts: ["Matriks identitas", "Matriks diagonal", "Matriks nol", "Matriks transpose", "Matriks persegi"],
-  ans: 2,
-  exp: { title: "Matriks Nol", body: "Matriks nol adalah matriks yang seluruh elemennya bernilai 0." }
-},
-{
-  q: "Matriks identitas memiliki ciri...",
-  opts: ["Semua elemen nol", "Diagonal utama bernilai 1", "Semua elemen sama", "Tidak punya diagonal", "Semua diagonal nol"],
-  ans: 1,
-  exp: { title: "Matriks Identitas", body: "Matriks identitas memiliki diagonal utama bernilai 1 dan elemen lainnya 0." }
-},
-{
-  q: "Transpose matriks diperoleh dengan cara...",
-  opts: ["Mengalikan matriks", "Menukar baris menjadi kolom", "Mengubah semua elemen menjadi nol", "Mengurangi matriks", "Membalik tanda elemen"],
-  ans: 1,
-  exp: { title: "Transpose Matriks", body: "Transpose diperoleh dengan menukar posisi baris menjadi kolom." }
-},
-{
-  q: "Penjumlahan matriks dapat dilakukan jika...",
-  opts: ["Jumlah elemen sama", "Ordonnya sama", "Diagonalnya sama", "Nilainya sama", "Semua elemen positif"],
-  ans: 1,
-  exp: { title: "Syarat Penjumlahan Matriks", body: "Penjumlahan matriks hanya bisa dilakukan jika kedua matriks memiliki ordo yang sama." }
-},
-{
-  q: "Hasil dari 2 + 3 pada elemen matriks adalah...",
-  opts: ["1", "5", "6", "4", "0"],
-  ans: 1,
-  exp: { title: "Operasi Penjumlahan", body: "Penjumlahan elemen dilakukan langsung.\n\n2 + 3 = 5." }
-},
-{
-  q: "Matriks berordo 1×3 disebut...",
-  opts: ["Matriks kolom", "Matriks diagonal", "Matriks persegi", "Matriks baris", "Matriks identitas"],
-  ans: 3,
-  exp: { title: "Matriks Baris", body: "Matriks baris memiliki satu baris." }
-},
-{
-  q: "Matriks berordo 3×1 disebut...",
-  opts: ["Matriks diagonal", "Matriks kolom", "Matriks identitas", "Matriks persegi", "Matriks nol"],
-  ans: 1,
-  exp: { title: "Matriks Kolom", body: "Matriks kolom memiliki satu kolom." }
-},
-{
-  q: "Diagonal utama matriks adalah...",
-  opts: ["Elemen dari kanan atas ke kiri bawah", "Elemen kiri atas ke kanan bawah", "Semua elemen kolom pertama", "Semua elemen baris pertama", "Semua elemen nol"],
-  ans: 1,
-  exp: { title: "Diagonal Utama", body: "Diagonal utama dimulai dari kiri atas menuju kanan bawah." }
-},
-{
-  q: "Jika A dan B berordo sama, maka A + B dilakukan dengan...",
-  opts: ["Mengalikan elemen", "Menjumlah elemen yang seletak", "Mengurangi diagonal", "Transpose", "Mengubah ordo"],
-  ans: 1,
-  exp: { title: "Penjumlahan Matriks", body: "Penjumlahan dilakukan dengan menjumlahkan elemen-elemen yang seletak." }
-},
-{
-  q: "Hasil dari 7 - 2 pada operasi matriks adalah...",
-  opts: ["9", "5", "4", "3", "2"],
-  ans: 1,
-  exp: { title: "Pengurangan Matriks", body: "Pengurangan elemen dilakukan langsung.\n\n7 - 2 = 5." }
-},
-{
-  q: "Matriks diagonal adalah matriks yang...",
-  opts: ["Semua elemen sama", "Diagonal utama boleh tidak nol", "Semua elemen di luar diagonal utama nol", "Semua elemen nol", "Tidak memiliki diagonal"],
-  ans: 2,
-  exp: { title: "Matriks Diagonal", body: "Pada matriks diagonal, elemen di luar diagonal utama bernilai 0." }
-},
-{
-  q: "Jika matriks A berordo 2×2, maka transpose A juga berordo...",
-  opts: ["2×3", "3×2", "2×2", "1×2", "4×4"],
-  ans: 2,
-  exp: { title: "Ordo Transpose", body: "Transpose menukar baris dan kolom.\n\nUntuk 2×2 tetap menjadi 2×2." }
-},
-{
-  q: "Ordo transpose dari matriks 2×3 adalah...",
-  opts: ["2×3", "3×2", "3×3", "1×6", "6×1"],
-  ans: 1,
-  exp: { title: "Transpose Matriks", body: "Transpose menukar baris menjadi kolom.\n\n2×3 menjadi 3×2." }
-},
-{
-  q: "Elemen pada baris ke-2 kolom ke-1 ditulis...",
-  opts: ["a11", "a12", "a21", "a22", "a33"],
-  ans: 2,
-  exp: { title: "Notasi Matriks", body: "a21 berarti elemen pada baris ke-2 dan kolom ke-1." }
-},
-{
-  q: "Matriks identitas 2×2 memiliki bentuk...",
-  opts: ["[1 1;1 1]", "[0 0;0 0]", "[1 0;0 1]", "[0 1;1 0]", "[2 0;0 2]"],
-  ans: 2,
-  exp: { title: "Identitas 2×2", body: "Matriks identitas memiliki diagonal utama bernilai 1 dan lainnya 0." }
-},
-{
-  q: "Perkalian sebuah matriks dengan angka disebut...",
-  opts: ["Transpose", "Skalar", "Diagonal", "Invers", "Determinan"],
-  ans: 1,
-  exp: { title: "Perkalian Skalar", body: "Mengalikan matriks dengan suatu bilangan disebut perkalian skalar." }
-},
-{
-  q: "Jika setiap elemen matriks dikali 2, maka operasi tersebut adalah...",
-  opts: ["Transpose", "Penjumlahan", "Skalar", "Diagonal", "Identitas"],
-  ans: 2,
-  exp: { title: "Perkalian Skalar", body: "Perkalian skalar dilakukan dengan mengalikan semua elemen matriks dengan suatu bilangan." }
-},
-{
-  q: "Matriks 3×3 memiliki jumlah elemen sebanyak...",
-  opts: ["3", "6", "9", "12", "15"],
-  ans: 2,
-  exp: { title: "Jumlah Elemen", body: "Jumlah elemen = 3 × 3 = 9." }
-},
-{
-  q: "Matriks yang hanya memiliki satu kolom disebut...",
-  opts: ["Matriks diagonal", "Matriks baris", "Matriks kolom", "Matriks persegi", "Matriks nol"],
-  ans: 2,
-  exp: { title: "Matriks Kolom", body: "Matriks kolom hanya memiliki satu kolom." }
-},
-{
-  q: "Jika A = B maka...",
-  opts: ["Ordonya berbeda", "Elemen seletaknya sama", "Jumlah elemen berbeda", "Diagonalnya nol", "Kolomnya berbeda"],
-  ans: 1,
-  exp: { title: "Kesamaan Matriks", body: "Dua matriks sama jika ordonya sama dan elemen seletaknya sama." }
-},
-{
-  q: "Matriks persegi ordo 4 memiliki...",
-  opts: ["4 baris saja", "4 kolom saja", "4 baris dan 4 kolom", "8 elemen", "16 kolom"],
-  ans: 2,
-  exp: { title: "Matriks Persegi", body: "Ordo 4 berarti memiliki 4 baris dan 4 kolom." }
-},
-{
-  q: "Elemen diagonal utama pada matriks identitas selalu...",
-  opts: ["0", "2", "1", "-1", "Bebas"],
-  ans: 2,
-  exp: { title: "Diagonal Identitas", body: "Pada matriks identitas, diagonal utama selalu bernilai 1." }
-},
-{
-  q: "Jika matriks memiliki 2 baris dan 1 kolom maka ordonya...",
-  opts: ["1×2", "2×1", "2×2", "1×1", "3×1"],
-  ans: 1,
-  exp: { title: "Ordo Matriks", body: "Ordo ditulis baris × kolom.\n\n2 baris dan 1 kolom = 2×1." }
-},
-{
-  q: "Operasi transpose dilambangkan dengan...",
-  opts: ["A⁻¹", "Aᵀ", "det(A)", "A+B", "A-B"],
-  ans: 1,
-  exp: { title: "Simbol Transpose", body: "Transpose matriks dilambangkan dengan superscript T, yaitu Aᵀ." }
-},
-{
-  q: "Matriks yang memiliki satu baris disebut...",
-  opts: ["Matriks kolom", "Matriks diagonal", "Matriks baris", "Matriks identitas", "Matriks persegi"],
-  ans: 2,
-  exp: { title: "Matriks Baris", body: "Matriks baris adalah matriks yang hanya memiliki satu baris." }
-},
-{
-  q: "Jika ordo matriks A adalah 2×3 dan B adalah 2×3 maka...",
-  opts: ["A+B tidak bisa", "A+B bisa dilakukan", "A harus transpose", "B harus nol", "Tidak memiliki elemen"],
-  ans: 1,
-  exp: { title: "Penjumlahan Matriks", body: "Karena ordonya sama, maka A+B dapat dilakukan." }
-},
-{
-  q: "Matriks yang seluruh elemennya di luar diagonal utama bernilai nol disebut...",
-  opts: ["Matriks identitas", "Matriks diagonal", "Matriks nol", "Matriks baris", "Matriks kolom"],
-  ans: 1,
-  exp: { title: "Matriks Diagonal", body: "Matriks diagonal memiliki elemen di luar diagonal utama bernilai nol." }
-},
-
-// MEDIUM 10-29
-{
-  q: "Penjumlahan matriks hanya dapat dilakukan jika...",
-  opts: ["Jumlah elemen sama", "Diagonal sama", "Ordo kedua matriks sama", "Nilai matriks sama", "Memiliki determinan sama"],
-  ans: 2,
-  exp: { title: "Syarat Penjumlahan Matriks", body: "Penjumlahan matriks hanya dapat dilakukan jika kedua matriks memiliki ordo yang sama." }
-},
-{
-  q: "Jika A = [[1,2],[3,4]] dan B = [[2,1],[0,5]], maka A + B adalah...",
-  opts: ["[[3,3],[3,9]]", "[[2,2],[3,5]]", "[[1,1],[3,9]]", "[[3,1],[0,9]]", "[[0,3],[3,4]]"],
-  ans: 0,
-  exp: { title: "Penjumlahan Matriks", body: "Penjumlahan dilakukan pada elemen seletak.\n\n1+2=3\n2+1=3\n3+0=3\n4+5=9" }
-},
-{
-  q: "Hasil pengurangan [[7,5],[4,6]] - [[2,1],[3,2]] adalah...",
-  opts: ["[[5,4],[1,4]]", "[[9,6],[7,8]]", "[[5,5],[1,2]]", "[[7,1],[3,4]]", "[[2,4],[1,4]]"],
-  ans: 0,
-  exp: { title: "Pengurangan Matriks", body: "Kurangkan setiap elemen yang seletak.\n\n7-2=5\n5-1=4\n4-3=1\n6-2=4" }
-},
-{
-  q: "Transpose dari matriks [[1,2,3],[4,5,6]] adalah...",
-  opts: ["[[1,4],[2,5],[3,6]]", "[[1,2],[3,4],[5,6]]", "[[1,2,3],[4,5,6]]", "[[4,5,6],[1,2,3]]", "[[6,5],[4,3],[2,1]]"],
-  ans: 0,
-  exp: { title: "Transpose Matriks", body: "Transpose diperoleh dengan menukar baris menjadi kolom." }
-},
-{
-  q: "Determinan matriks [[2,3],[1,4]] adalah...",
-  opts: ["5", "8", "3", "2", "11"],
-  ans: 0,
-  exp: { title: "Determinan 2×2", body: "det(A)=ad-bc\n=(2×4)-(3×1)=8-3=5" }
-},
-{
-  q: "Jika A = [[1,0],[2,3]], maka 2A adalah...",
-  opts: ["[[2,0],[4,6]]", "[[1,0],[4,6]]", "[[2,2],[4,6]]", "[[0,0],[2,3]]", "[[2,3],[4,5]]"],
-  ans: 0,
-  exp: { title: "Perkalian Skalar", body: "Kalikan setiap elemen dengan 2." }
-},
-{
-  q: "Ordo hasil transpose dari matriks 2×3 adalah...",
-  opts: ["2×3", "3×2", "3×3", "1×6", "6×1"],
-  ans: 1,
-  exp: { title: "Ordo Transpose", body: "Transpose menukar baris dan kolom.\n\n2×3 menjadi 3×2." }
-},
-{
-  q: "Jika det(A)=0 maka matriks disebut...",
-  opts: ["Diagonal", "Singular", "Transpose", "Identitas", "Baris"],
-  ans: 1,
-  exp: { title: "Matriks Singular", body: "Matriks dengan determinan 0 disebut matriks singular." }
-},
-{
-  q: "Hasil dari [[1,2],[3,4]] + [[0,1],[2,3]] adalah...",
-  opts: ["[[1,3],[5,7]]", "[[1,1],[1,1]]", "[[0,3],[5,7]]", "[[1,2],[2,3]]", "[[3,3],[3,3]]"],
-  ans: 0,
-  exp: { title: "Operasi Penjumlahan", body: "Jumlahkan setiap elemen yang seletak." }
-},
-{
-  q: "Jika A = [[5,1],[2,0]], maka Aᵀ adalah...",
-  opts: ["[[5,2],[1,0]]", "[[5,1],[2,0]]", "[[0,2],[1,5]]", "[[5,0],[1,2]]", "[[1,5],[0,2]]"],
-  ans: 0,
-  exp: { title: "Transpose", body: "Baris menjadi kolom." }
-},
-{
-  q: "Determinan dari [[3,1],[2,5]] adalah...",
-  opts: ["13", "15", "11", "17", "8"],
-  ans: 0,
-  exp: { title: "Determinan", body: "(3×5)-(1×2)=15-2=13" }
-},
-{
-  q: "Jika A berordo 2×2 dan B berordo 2×2 maka A-B...",
-  opts: ["Tidak bisa", "Bisa dilakukan", "Harus transpose dulu", "Harus identitas", "Harus diagonal"],
-  ans: 1,
-  exp: { title: "Pengurangan Matriks", body: "Pengurangan dapat dilakukan jika ordo kedua matriks sama." }
-},
-{
-  q: "Hasil 3 × [[1,2],[0,4]] adalah...",
-  opts: ["[[3,6],[0,12]]", "[[1,6],[0,12]]", "[[3,2],[0,4]]", "[[0,0],[0,12]]", "[[4,8],[0,16]]"],
-  ans: 0,
-  exp: { title: "Perkalian Skalar", body: "Kalikan seluruh elemen dengan 3." }
-},
-{
-  q: "Transpose dari matriks kolom akan menjadi...",
-  opts: ["Matriks diagonal", "Matriks nol", "Matriks baris", "Matriks identitas", "Matriks persegi"],
-  ans: 2,
-  exp: { title: "Transpose Matriks Kolom", body: "Transpose matriks kolom menghasilkan matriks baris." }
-},
-{
-  q: "Determinan matriks identitas 2×2 adalah...",
-  opts: ["0", "1", "2", "-1", "4"],
-  ans: 1,
-  exp: { title: "Determinan Identitas", body: "det(I)=1 untuk matriks identitas." }
-},
-{
-  q: "Jika A=[[2,1],[1,2]] dan B=[[1,0],[3,2]], maka A+B adalah...",
-  opts: ["[[3,1],[4,4]]", "[[1,1],[2,2]]", "[[2,0],[3,4]]", "[[3,0],[1,4]]", "[[3,2],[4,2]]"],
-  ans: 0,
-  exp: { title: "Penjumlahan Matriks", body: "Jumlahkan elemen yang seletak." }
-},
-{
-  q: "Nilai determinan dari [[4,2],[1,3]] adalah...",
-  opts: ["10", "12", "8", "6", "5"],
-  ans: 0,
-  exp: { title: "Determinan Matriks", body: "(4×3)-(2×1)=12-2=10" }
-},
-{
-  q: "Jika A=[[6,2],[5,1]] dan B=[[1,1],[2,0]], maka A-B adalah...",
-  opts: ["[[5,1],[3,1]]", "[[7,3],[7,1]]", "[[6,1],[3,0]]", "[[5,2],[5,1]]", "[[1,1],[1,1]]"],
-  ans: 0,
-  exp: { title: "Pengurangan Matriks", body: "Kurangkan setiap elemen yang seletak." }
-},
-{
-  q: "Transpose dari transpose matriks A adalah...",
-  opts: ["A⁻¹", "0", "A", "det(A)", "I"],
-  ans: 2,
-  exp: { title: "Sifat Transpose", body: "(Aᵀ)ᵀ = A" }
-},
-{
-  q: "Jika determinan matriks bernilai negatif maka...",
-  opts: ["Matriks tidak valid", "Tetap diperbolehkan", "Harus nol", "Harus positif", "Matriks singular"],
-  ans: 1,
-  exp: { title: "Nilai Determinan", body: "Determinan boleh bernilai positif, negatif, maupun nol." }
-},
-{
-  q: "Matriks 2×2 memiliki rumus determinan...",
-  opts: ["ad-bc", "ab-cd", "ac-bd", "ab+cd", "a+b-c+d"],
-  ans: 0,
-  exp: { title: "Rumus Determinan", body: "Untuk matriks [[a,b],[c,d]], determinan = ad - bc." }
-},
-{
-  q: "Jika A=[[1,2],[3,4]], maka det(A)...",
-  opts: ["-2", "2", "10", "5", "-5"],
-  ans: 0,
-  exp: { title: "Determinan Matriks", body: "(1×4)-(2×3)=4-6=-2" }
-},
-{
-  q: "Transpose dari matriks baris akan menjadi...",
-  opts: ["Matriks diagonal", "Matriks kolom", "Matriks identitas", "Matriks nol", "Matriks persegi"],
-  ans: 1,
-  exp: { title: "Transpose Matriks Baris", body: "Transpose matriks baris menghasilkan matriks kolom." }
-},
-{
-  q: "Jika A=[[2,2],[2,2]] maka det(A)...",
-  opts: ["0", "2", "4", "8", "-4"],
-  ans: 0,
-  exp: { title: "Determinan Nol", body: "(2×2)-(2×2)=4-4=0" }
-},
-{
-  q: "Jika dua matriks memiliki ordo berbeda maka...",
-  opts: ["Tetap bisa dijumlah", "Tidak bisa dijumlah", "Harus transpose", "Harus identitas", "Harus diagonal"],
-  ans: 1,
-  exp: { title: "Syarat Ordo", body: "Penjumlahan dan pengurangan matriks memerlukan ordo yang sama." }
-},
-{
-  q: "Hasil transpose dari matriks persegi tetap memiliki...",
-  opts: ["Ordo berbeda", "Jumlah elemen berbeda", "Ordo yang sama", "Diagonal nol", "Tidak memiliki kolom"],
-  ans: 2,
-  exp: { title: "Transpose Matriks Persegi", body: "Transpose matriks persegi tetap memiliki ordo yang sama." }
-},
-{
-  q: "Jika A=[[0,1],[2,3]], maka 4A adalah...",
-  opts: ["[[0,4],[8,12]]", "[[4,1],[2,3]]", "[[0,1],[8,12]]", "[[0,4],[2,3]]", "[[4,4],[4,4]]"],
-  ans: 0,
-  exp: { title: "Perkalian Skalar", body: "Kalikan semua elemen dengan 4." }
-},
-{
-  q: "Nilai determinan matriks [[1,5],[2,4]] adalah...",
-  opts: ["-6", "6", "14", "4", "20"],
-  ans: 0,
-  exp: { title: "Determinan", body: "(1×4)-(5×2)=4-10=-6" }
-},
-{
-  q: "Jika A=[[3,2],[1,0]], maka Aᵀ adalah...",
-  opts: ["[[3,1],[2,0]]", "[[3,2],[1,0]]", "[[0,1],[2,3]]", "[[1,3],[0,2]]", "[[2,3],[0,1]]"],
-  ans: 0,
-  exp: { title: "Transpose", body: "Tukar baris menjadi kolom." }
-},
-{
-  q: "Determinan dari [[5,2],[3,1]] adalah...",
-  opts: ["-1", "1", "5", "11", "7"],
-  ans: 0,
-  exp: { title: "Determinan 2×2", body: "(5×1)-(2×3)=5-6=-1" }
-},
-
-// HARD 60-89 — used as index 30-59
-{
-  q: "Jika A=[[2,1],[1,1]], maka invers matriks A adalah...",
-  opts: [
-    "[[1,-1],[-1,2]]",
-    "[[2,-1],[-1,1]]",
-    "[[1,1],[1,2]]",
-    "[[-1,1],[1,-2]]",
-    "[[2,1],[1,1]]"
-  ],
-  ans: 0,
-  exp: {
-    title: "Invers Matriks",
-    body: "det(A)=2×1-1×1=1\nA⁻¹=1/det(A) × [[d,-b],[-c,a]]\n=[[1,-1],[-1,2]]"
-  }
-},
-{
-  q: "Determinan matriks [[4,2],[1,3]] adalah...",
-  opts: ["10","8","12","6","14"],
-  ans: 0,
-  exp: {
-    title: "Determinan",
-    body: "(4×3)-(2×1)=12-2=10"
-  }
-},
-{
-  q: "Kofaktor C₁₂ dari [[1,2],[3,4]] adalah...",
-  opts: ["-3","3","4","-4","1"],
-  ans: 0,
-  exp: {
-    title: "Kofaktor",
-    body: "Minor a₁₂=3\nC₁₂=(-1)^(1+2)×3=-3"
-  }
-},
-{
-  q: "Adjoin dari [[1,2],[3,4]] adalah...",
-  opts: [
-    "[[4,-2],[-3,1]]",
-    "[[1,-2],[-3,4]]",
-    "[[4,2],[3,1]]",
-    "[[1,2],[3,4]]",
-    "[[-4,2],[3,-1]]"
-  ],
-  ans: 0,
-  exp: {
-    title: "Adjoin",
-    body: "Adj(A)=transpose matriks kofaktor."
-  }
-},
-{
-  q: "Nilai eigen matriks [[3,0],[0,5]] adalah...",
-  opts: [
-    "3 dan 5",
-    "1 dan 5",
-    "0 dan 3",
-    "2 dan 5",
-    "3 dan 3"
-  ],
-  ans: 0,
-  exp: {
-    title: "Nilai Eigen",
-    body: "Untuk matriks diagonal, nilai eigen adalah elemen diagonal utama."
-  }
-},
-{
-  q: "Jika det(A)=0 maka matriks A disebut...",
-  opts: [
-    "Diagonal",
-    "Singular",
-    "Ortogonal",
-    "Simetris",
-    "Identitas"
-  ],
-  ans: 1,
-  exp: {
-    title: "Matriks Singular",
-    body: "Determinan nol berarti matriks singular."
-  }
-},
-{
-  q: "Transpose dari transpose matriks A adalah...",
-  opts: ["A","A⁻¹","0","I","det(A)"],
-  ans: 0,
-  exp: {
-    title: "Sifat Transpose",
-    body: "(Aᵀ)ᵀ=A"
-  }
-},
-{
-  q: "Jika A=[[1,2],[2,4]], maka A...",
-  opts: [
-    "Memiliki invers",
-    "Singular",
-    "Diagonal",
-    "Identitas",
-    "Simetris dan invertibel"
-  ],
-  ans: 1,
-  exp: {
-    title: "Determinan Nol",
-    body: "det(A)=1×4-2×2=0\nMaka A singular."
-  }
-},
-{
-  q: "Persamaan karakteristik digunakan untuk mencari...",
-  opts: [
-    "Transpose",
-    "Kofaktor",
-    "Determinan",
-    "Nilai eigen",
-    "Adjoin"
-  ],
-  ans: 3,
-  exp: {
-    title: "Persamaan Karakteristik",
-    body: "Nilai eigen dicari dari det(A-λI)=0"
-  }
-},
-{
-  q: "Jika λ adalah nilai eigen matriks A maka memenuhi...",
-  opts: [
-    "det(A)=0",
-    "A=I",
-    "det(A-λI)=0",
-    "Aᵀ=A",
-    "A⁻¹=A"
-  ],
-  ans: 2,
-  exp: {
-    title: "Syarat Nilai Eigen",
-    body: "Nilai eigen memenuhi det(A-λI)=0"
-  }
-},
-{
-  q: "Vektor eigen adalah vektor yang memenuhi...",
-  opts: [
-    "Av=0",
-    "Av=v",
-    "Av=λv",
-    "A+v=0",
-    "Aᵀv=v"
-  ],
-  ans: 2,
-  exp: {
-    title: "Definisi Vektor Eigen",
-    body: "Vektor eigen memenuhi Av=λv"
-  }
-},
-{
-  q: "Jika A matriks identitas maka semua nilai eigennya adalah...",
-  opts: ["0","1","2","-1","Tidak ada"],
-  ans: 1,
-  exp: {
-    title: "Eigen Matriks Identitas",
-    body: "Semua nilai eigen matriks identitas bernilai 1."
-  }
-},
-{
-  q: "Minor elemen a₂₁ dari [[1,2],[3,4]] adalah...",
-  opts: ["2","1","3","4","-2"],
-  ans: 0,
-  exp: {
-    title: "Minor Matriks",
-    body: "Hapus baris 2 kolom 1, tersisa 2."
-  }
-},
-{
-  q: "Kofaktor C₂₁ dari [[1,2],[3,4]] adalah...",
-  opts: ["-2","2","4","-4","1"],
-  ans: 0,
-  exp: {
-    title: "Kofaktor",
-    body: "C₂₁=(-1)^(2+1)×2=-2"
-  }
-},
-{
-  q: "Jika matriks A simetris maka...",
-  opts: [
-    "A⁻¹=A",
-    "Aᵀ=A",
-    "det(A)=0",
-    "A diagonal",
-    "A singular"
-  ],
-  ans: 1,
-  exp: {
-    title: "Matriks Simetris",
-    body: "Matriks simetris memenuhi Aᵀ=A"
-  }
-},
-{
-  q: "Invers matriks hanya ada jika...",
-  opts: [
-    "det(A)=0",
-    "A diagonal",
-    "det(A)≠0",
-    "Aᵀ=A",
-    "A singular"
-  ],
-  ans: 2,
-  exp: {
-    title: "Syarat Invers",
-    body: "Matriks invertibel jika determinannya tidak nol."
-  }
-},
-{
-  q: "Determinan matriks identitas adalah...",
-  opts: ["0","1","2","-1","Tidak tentu"],
-  ans: 1,
-  exp: {
-    title: "Determinan Identitas",
-    body: "det(I)=1"
-  }
-},
-{
-  q: "Jika A=[[0,1],[-2,3]], maka det(A)...",
-  opts: ["2","3","-2","-3","1"],
-  ans: 0,
-  exp: {
-    title: "Determinan",
-    body: "(0×3)-(1×-2)=2"
-  }
-},
-{
-  q: "Jika A=[[2,0],[0,2]], maka nilai eigennya...",
-  opts: [
-    "2 dan 2",
-    "0 dan 2",
-    "1 dan 2",
-    "-2 dan 2",
-    "1 dan 1"
-  ],
-  ans: 0,
-  exp: {
-    title: "Eigen Matriks Skalar",
-    body: "Semua diagonal utama bernilai 2."
-  }
-},
-{
-  q: "Adjoin matriks diperoleh dari...",
-  opts: [
-    "Transpose invers",
-    "Transpose kofaktor",
-    "Minor",
-    "Determinan",
-    "Diagonal"
-  ],
-  ans: 1,
-  exp: {
-    title: "Adjoin",
-    body: "Adj(A)=transpose matriks kofaktor."
-  }
-},
-{
-  q: "Jika det(A)<0 maka...",
-  opts: [
-    "Tidak valid",
-    "Singular",
-    "Tetap diperbolehkan",
-    "Harus positif",
-    "Tidak punya invers"
-  ],
-  ans: 2,
-  exp: {
-    title: "Nilai Determinan",
-    body: "Determinan boleh negatif."
-  }
-},
-{
-  q: "Matriks identitas 2×2 adalah...",
-  opts: [
-    "[[1,0],[0,1]]",
-    "[[0,0],[0,0]]",
-    "[[1,1],[1,1]]",
-    "[[0,1],[1,0]]",
-    "[[2,0],[0,2]]"
-  ],
-  ans: 0,
-  exp: {
-    title: "Identitas",
-    body: "Diagonal utama 1, lainnya 0."
-  }
-},
-{
-  q: "Jika det(A)=5 maka det(A⁻¹)...",
-  opts: [
-    "5",
-    "-5",
-    "1/5",
-    "0",
-    "25"
-  ],
-  ans: 2,
-  exp: {
-    title: "Determinan Invers",
-    body: "det(A⁻¹)=1/det(A)=1/5"
-  }
-},
-{
-  q: "Jika A=[[1,0],[0,4]], maka invers A adalah...",
-  opts: [
-    "[[1,0],[0,1/4]]",
-    "[[1,0],[0,4]]",
-    "[[4,0],[0,1]]",
-    "[[0,1],[4,0]]",
-    "[[-1,0],[0,-4]]"
-  ],
-  ans: 0,
-  exp: {
-    title: "Invers Matriks Diagonal",
-    body: "Balik elemen diagonal utama."
-  }
-},
-{
-  q: "Jika A=[[5,0],[0,7]], maka trace(A)...",
-  opts: ["12","35","7","5","2"],
-  ans: 0,
-  exp: {
-    title: "Trace Matriks",
-    body: "Trace adalah jumlah diagonal utama.\n5+7=12"
-  }
-},
-{
-  q: "Jumlah nilai eigen matriks sama dengan...",
-  opts: [
-    "Determinan",
-    "Trace",
-    "Transpose",
-    "Kofaktor",
-    "Minor"
-  ],
-  ans: 1,
-  exp: {
-    title: "Sifat Nilai Eigen",
-    body: "Jumlah nilai eigen = trace matriks."
-  }
-},
-{
-  q: "Hasil kali nilai eigen matriks sama dengan...",
-  opts: [
-    "Trace",
-    "Transpose",
-    "Determinan",
-    "Kofaktor",
-    "Minor"
-  ],
-  ans: 2,
-  exp: {
-    title: "Sifat Eigen",
-    body: "Hasil kali nilai eigen = determinan."
-  }
-},
-{
-  q: "Jika matriks memiliki invers maka matriks tersebut...",
-  opts: [
-    "Singular",
-    "Tidak singular",
-    "Diagonal",
-    "Nol",
-    "Ortogonal"
-  ],
-  ans: 1,
-  exp: {
-    title: "Invertibel",
-    body: "Matriks invertibel pasti tidak singular."
-  }
-},
-{
-  q: "Jika A=[[2,3],[0,1]], maka det(A)...",
-  opts: ["2","3","1","5","6"],
-  ans: 0,
-  exp: {
-    title: "Determinan",
-    body: "(2×1)-(3×0)=2"
-  }
-},
-{
-  q: "Jika v adalah vektor eigen maka v tidak boleh...",
-  opts: [
-    "Positif",
-    "Negatif",
-    "Vektor nol",
-    "Berordo 2",
-    "Berordo 3"
-  ],
-  ans: 2,
-  exp: {
-    title: "Vektor Eigen",
-    body: "Vektor eigen harus non nol."
-  }
-}
-];
+let ALL_Q = []; // soal diambil dari database
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
@@ -1686,7 +936,7 @@ function buildWord(elId, text, baseDelay) {
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
-  const SYM = ['A', 'Aᵀ', 'A⁻¹', 'det(A)', 'Δ', 'λ', 'μ', '⊗', 'Σ', '||A||'];
+  const SYM = ['[]', 'A', 'Aᵀ', 'A⁻¹', '|A|', 'I', '0', 'λ', 'M₂×₂', 'Mₙ×ₙ'];
   let pts=[], W, H;
   function resize() { W=cvs.width=window.innerWidth; H=cvs.height=window.innerHeight; }
   resize(); window.addEventListener('resize', resize);
@@ -1742,10 +992,68 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  // Loading state
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  // Reset pointer events
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  // Pakai soal dari DB, kalau kosong pakai ALL_Q lokal
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  // Cek apakah ada soal
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  // Acak urutan soal
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1842,19 +1150,19 @@ function renderQ() {
     div.className = 'opt';
 
     // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
-      div.classList.add('locked');
-    } else {
-      div.onclick = () => selectAnswer(i);
-    }
+    if (a === -1) {
+  // Sudah menyerah — kunci semua opsi
+  div.classList.add('locked');
+} else {
+  // Belum menyerah — selalu bisa klik
+  div.onclick = () => selectAnswer(i);
+  if (i === a) {
+    // Highlight jawaban yang dipilih
+    div.style.background = 'var(--ink)';
+    div.style.color = '#fff';
+    div.style.borderColor = 'var(--ink)';
+  }
+}
 
     div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
@@ -1871,7 +1179,8 @@ function renderQ() {
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  // Hanya blokir jika sudah menyerah
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
