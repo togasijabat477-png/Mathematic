@@ -134,11 +134,11 @@ var materiData = {
     items:[
       {num:"Latihan",title:"Logika",description:"Latihan soal Logika tingkat menengah",tag:"Practice",file:"soal/matdis/Logika.html"},
       {num:"Latihan",title:"Himpunan",description:"Latihan soal Himpunan",tag:"Practice",file:"soal/matdis/Himpunan.html"},
-      {num:"Latihan",title:"Relasi & Fungsi",description:"Latihan soal Relasi & Fungsi",tag:"Practice",file:"soal/matdis/Soal_Matriks.html"},
-      {num:"Latihan",title:"Teori Graf",description:"Latihan soal Teori Graf",tag:"Practice",file:"soal/matdis/soal_graf.html"},
+      {num:"Latihan",title:"Relasi & Fungsi",description:"Latihan soal Relasi & Fungsi",tag:"Practice",file:"soal/matdis/Relasi_&_Fungsi.html"},
+      {num:"Latihan",title:"Teori Graf",description:"Latihan soal Teori Graf",tag:"Practice",file:"soal/matdis/Teori_Graf.html"},
       {num:"Latihan",title:"Aljabar Bolean",description:"Latihan soal Aljabar Bolean",tag:"Practice",file:"soal/matdis/Aljabar_Bolean.html"},
       {num:"Latihan",title:"Pohon",description:"Latihan soal Pohon",tag:"Practice",file:"soal/matdis/Latihan_Soal_Pohon.html"}
-      {num:"Latihan",title:"Number Of Theory",description:"Latihan soal Number Of Theory",tag:"Practice",file:"soal/matdis/Latihan_Soal_Pohon.html"}
+      {num:"Latihan",title:"Number Of Theory",description:"Latihan soal Number Of Theory",tag:"Practice",file:"soal/matdis/Number_Of_Teori.html"}
     ]
   }],
    
