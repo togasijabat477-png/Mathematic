@@ -354,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -423,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -629,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -766,9 +764,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -893,12 +888,9 @@ body::before {
 const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
 const SOAL_MODUL = 'Matematika Diskrit';
-const SOAL_JUDUL = 'Logika';
+const SOAL_JUDUL = 'Logika Matematika';
   
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-let ALL_Q = []; // soal diambil dari database
+let ALL_Q = [];
 
 const LEVELS = {
   easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
@@ -910,14 +902,11 @@ const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -930,13 +919,11 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
-  const SYM = ['∧','∨','⇒','⇔','~','∀','∃','¬','≡','⊕'];
+  const SYM =  ['∧','∨','⇒','⇔','~','∀','∃','¬','≡','⊕'];
   let pts=[], W, H;
   function resize() { W=cvs.width=window.innerWidth; H=cvs.height=window.innerHeight; }
   resize(); window.addEventListener('resize', resize);
@@ -966,9 +953,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -977,9 +962,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -995,7 +978,6 @@ function startQuizRipple(e, level) {
 async function startQuiz(level) {
   const cfg = LEVELS[level];
 
-  // Loading state
   document.querySelectorAll('.level-card').forEach(c => {
     c.style.opacity = '0.5';
     c.style.pointerEvents = 'none';
@@ -1034,22 +1016,18 @@ async function startQuiz(level) {
     console.error('Gagal fetch soal:', err);
   }
 
-  // Reset pointer events
   document.querySelectorAll('.level-card').forEach(c => {
     c.style.opacity = '';
     c.style.pointerEvents = '';
   });
 
-  // Pakai soal dari DB, kalau kosong pakai ALL_Q lokal
   const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
 
-  // Cek apakah ada soal
   if (sumberSoal.length === 0) {
     alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
     return;
   }
 
-  // Acak urutan soal
   const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
 
   S.level = level;
@@ -1062,7 +1040,6 @@ async function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1074,29 +1051,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -1120,9 +1075,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -1142,29 +1095,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
     if (a === -1) {
-  // Sudah menyerah — kunci semua opsi
-  div.classList.add('locked');
-} else {
-  // Belum menyerah — selalu bisa klik
-  div.onclick = () => selectAnswer(i);
-  if (i === a) {
-    // Highlight jawaban yang dipilih
-    div.style.background = 'var(--ink)';
-    div.style.color = '#fff';
-    div.style.borderColor = 'var(--ink)';
-  }
-}
+      // Surrendered — lock all options
+      div.classList.add('locked');
+    } else {
+      // Can still answer — highlight selected with neutral dark style only
+      div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
+    }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -1174,12 +1123,10 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  // Hanya blokir jika sudah menyerah
   if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
@@ -1204,9 +1151,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -1218,9 +1163,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -1240,9 +1183,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -1260,9 +1201,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -1292,7 +1231,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -1303,9 +1242,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -1383,9 +1320,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1395,18 +1330,14 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
-  buildWord('w2', 'Logika', 0.75);
+  buildWord('w2', 'Logika Matematika', 0.75);
   document.querySelectorAll('.level-card').forEach((card, i) => {
     card.style.animationDelay = (1.5 + i * 0.2) + 's';
     card.classList.add('in');
