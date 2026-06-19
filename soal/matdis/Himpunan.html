@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quiz Himpunan Matematika</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -353,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -422,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -628,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -686,16 +685,16 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Himpunan ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Himpunan ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
         <div class="hero-rule"></div>
       </h1>
-      <p class="hero-sub">Uji kemampuanmu dalam memahami materi himpunan pada matematika diskrit melalui soal-soal yang terstruktur. Pilih level sesuai dengan kesiapanmu.</p>
+      <p class="hero-sub">Uji kemampuan nalarmu dengan soal-soal logika yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
     </div>
 
-    <div class="level-grid">
+     <div class="level-grid">
       <div class="level-card easy" onclick="startQuizRipple(event,'easy')">
         <div class="bg-symbol">∈</div>
         <div class="lv-icon">📘</div>
@@ -743,7 +742,7 @@ body::before {
     </div>
 
     <div class="quote-box">
-      "Matematika adalah seni memberi nama pada pola, dan himpunan adalah bahasa dasarnya."
+       "Matematika adalah seni memberi nama pada pola, dan himpunan adalah bahasa dasarnya."
       <cite>— Georg Cantor</cite>
     </div>
   </div>
@@ -765,9 +764,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -889,578 +885,28 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{
-  q: "Himpunan adalah...",
-  opts: ["Kumpulan bilangan saja", "Kumpulan objek yang terdefinisi jelas", "Kumpulan sembarang benda", "Kumpulan angka acak", "Semua jawaban salah"],
-  ans: 1,
-  exp: { title: "Definisi Himpunan", body: "Himpunan adalah kumpulan objek yang terdefinisi dengan jelas, sehingga dapat diketahui apakah suatu objek termasuk atau tidak." }
-},
-{
-  q: "Contoh himpunan yang benar adalah...",
-  opts: ["Kumpulan siswa pintar", "Kumpulan bunga indah", "Kumpulan bilangan genap", "Kumpulan makanan enak", "Kumpulan film bagus"],
-  ans: 2,
-  exp: { title: "Himpunan Jelas", body: "Himpunan harus jelas anggotanya. 'Bilangan genap' jelas, sedangkan 'pintar' atau 'indah' bersifat subjektif." }
-},
-{
-  q: "Jika A = {1,2,3}, maka 2 ∈ A artinya...",
-  opts: ["2 bukan anggota A", "2 anggota A", "2 bagian dari B", "2 bukan himpunan", "2 sama dengan A"],
-  ans: 1,
-  exp: { title: "Simbol ∈", body: "Simbol ∈ berarti 'anggota dari'. Jadi 2 ∈ A artinya 2 adalah anggota A." }
-},
-{
-  q: "Jika 5 ∉ A, artinya...",
-  opts: ["5 anggota A", "5 bukan anggota A", "5 sama dengan A", "A kosong", "A penuh"],
-  ans: 1,
-  exp: { title: "Simbol ∉", body: "Simbol ∉ berarti 'bukan anggota'. Jadi 5 tidak termasuk dalam A." }
-},
-{
-  q: "Penulisan himpunan biasanya menggunakan tanda...",
-  opts: ["()", "[]", "{}", "<>", "//"],
-  ans: 2,
-  exp: { title: "Notasi Himpunan", body: "Himpunan ditulis menggunakan kurung kurawal { }." }
-},
-{
-  q: "Himpunan kosong dilambangkan dengan...",
-  opts: ["{}", "∅", "[]", "0", "()"],
-  ans: 1,
-  exp: { title: "Himpunan Kosong", body: "Himpunan kosong dilambangkan dengan ∅ atau {}." }
-},
-{
-  q: "Jika A = {1,2,3} dan B = {3,4,5}, maka A ∪ B adalah...",
-  opts: ["{1,2,3}", "{3}", "{1,2,3,4,5}", "{4,5}", "{1,2}"],
-  ans: 2,
-  exp: { title: "Gabungan", body: "Gabungan (∪) adalah semua elemen dari A dan B tanpa pengulangan." }
-},
-{
-  q: "Jika A = {1,2,3} dan B = {3,4,5}, maka A ∩ B adalah...",
-  opts: ["{1,2}", "{3}", "{4,5}", "{1,2,3}", "∅"],
-  ans: 1,
-  exp: { title: "Irisan", body: "Irisan (∩) adalah elemen yang sama di kedua himpunan." }
-},
-{
-  q: "Jika A = {1,2,3}, maka banyak anggota A adalah...",
-  opts: ["1", "2", "3", "4", "0"],
-  ans: 2,
-  exp: { title: "Banyak Anggota", body: "Jumlah anggota A = 3, yaitu 1, 2, dan 3." }
-},
-{
-  q: "Jika A = {a,b,c}, maka n(A) adalah...",
-  opts: ["1", "2", "3", "4", "0"],
-  ans: 2,
-  exp: { title: "Notasi n(A)", body: "n(A) menyatakan banyaknya anggota himpunan A." }
-},
-{
-  q: "Himpunan semesta dilambangkan dengan...",
-  opts: ["A", "B", "U", "S", "H"],
-  ans: 2,
-  exp: { title: "Semesta", body: "Himpunan semesta dilambangkan dengan U." }
-},
-{
-  q: "Jika A ⊆ B, maka artinya...",
-  opts: ["A sama dengan B", "A bagian dari B", "B bagian dari A", "A kosong", "Tidak ada hubungan"],
-  ans: 1,
-  exp: { title: "Subset", body: "A ⊆ B berarti semua anggota A ada di B." }
-},
-{
-  q: "Jika A ⊆ B dan B ⊆ A, maka...",
-  opts: ["A ≠ B", "A = B", "A kosong", "B kosong", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "Kesamaan", body: "Jika saling subset, maka A = B." }
-},
-{
-  q: "Jika A = {1,2} dan B = {1,2,3}, maka...",
-  opts: ["A ⊆ B", "B ⊆ A", "A = B", "Tidak ada hubungan", "A kosong"],
-  ans: 0,
-  exp: { title: "Contoh Subset", body: "Semua anggota A ada di B, jadi A ⊆ B." }
-},
-{
-  q: "A - B berarti...",
-  opts: ["Gabungan", "Irisan", "Elemen A yang tidak di B", "Elemen B saja", "Kosong"],
-  ans: 2,
-  exp: { title: "Selisih", body: "A - B adalah elemen A yang tidak terdapat di B." }
-},
-{
-  q: "Jika A = {1,2,3} dan B = {2,3}, maka A - B adalah...",
-  opts: ["{1}", "{2}", "{3}", "{1,2}", "{1,3}"],
-  ans: 0,
-  exp: { title: "Contoh Selisih", body: "A - B = {1} karena hanya 1 yang tidak ada di B." }
-},
-{
-  q: "Jika A ∩ B = ∅, maka A dan B disebut...",
-  opts: ["Sama", "Subset", "Saling lepas", "Gabungan", "Komplemen"],
-  ans: 2,
-  exp: { title: "Disjoint", body: "Jika tidak ada elemen sama, disebut saling lepas." }
-},
-{
-  q: "Komplemen A dilambangkan dengan...",
-  opts: ["A∩", "A∪", "Aᶜ", "A-", "A+"],
-  ans: 2,
-  exp: { title: "Komplemen", body: "Komplemen A adalah semua elemen di semesta yang tidak di A." }
-},
-{
-  q: "Jika A ⊆ U, maka A ∪ Aᶜ = ...",
-  opts: ["∅", "A", "U", "Aᶜ", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Hukum Komplemen", body: "A ∪ Aᶜ = U." }
-},
-{
-  q: "Jika A ⊆ U, maka A ∩ Aᶜ = ...",
-  opts: ["∅", "A", "U", "Aᶜ", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Hukum Komplemen", body: "A ∩ Aᶜ = ∅." }
-},
-{
-  q: "Himpunan {1,2,2,3} sama dengan...",
-  opts: ["{1,2,3}", "{1,2,2,3}", "{2,3}", "{1,3}", "∅"],
-  ans: 0,
-  exp: { title: "Duplikasi", body: "Himpunan tidak menghitung elemen yang sama lebih dari sekali." }
-},
-{
-  q: "Urutan dalam himpunan...",
-  opts: ["Penting", "Tidak penting", "Kadang penting", "Harus urut", "Selalu berubah"],
-  ans: 1,
-  exp: { title: "Sifat Himpunan", body: "Urutan tidak berpengaruh dalam himpunan." }
-},
-{
-  q: "Jika A = {1,2} dan B = {2,1}, maka...",
-  opts: ["Berbeda", "Sama", "Subset", "Tidak tentu", "Kosong"],
-  ans: 1,
-  exp: { title: "Kesamaan", body: "Urutan tidak berpengaruh, jadi himpunan sama." }
-},
-{
-  q: "Banyaknya himpunan bagian dari 2 elemen adalah...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Jumlah Subset", body: "2^2 = 4." }
-},
-{
-  q: "Banyaknya himpunan bagian dari 3 elemen adalah...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: { title: "Jumlah Subset", body: "2^3 = 8." }
-},
-{
-  q: "Jika A = ∅, maka A ⊆ B berlaku untuk...",
-  opts: ["Semua B", "Tidak ada", "Hanya B kosong", "Hanya B penuh", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Subset Kosong", body: "Himpunan kosong adalah subset dari semua himpunan." }
-},
-{
-  q: "Jika A = {1,2,3}, maka A ∪ ∅ = ...",
-  opts: ["∅", "A", "{1}", "{2}", "{3}"],
-  ans: 1,
-  exp: { title: "Gabungan dengan Kosong", body: "Gabungan dengan himpunan kosong tetap himpunan itu sendiri." }
-},
-{
-  q: "Jika A = {1,2,3}, maka A ∩ ∅ = ...",
-  opts: ["∅", "A", "{1}", "{2}", "{3}"],
-  ans: 0,
-  exp: { title: "Irisan dengan Kosong", body: "Irisan dengan himpunan kosong selalu kosong." }
-},
-{
-  q: "Jika A = {1,2,3} dan B = {4,5}, maka A ∩ B = ...",
-  opts: ["{1}", "{2}", "{3}", "∅", "{4}"],
-  ans: 3,
-  exp: { title: "Tidak Ada Irisan", body: "Tidak ada elemen yang sama, jadi hasilnya ∅." }
-},
-{
-  q: "Jika A = {1,2} dan B = {3,4}, maka A ∪ B = ...",
-  opts: ["{1,2}", "{3,4}", "{1,2,3,4}", "{1,3}", "∅"],
-  ans: 2,
-  exp: { title: "Gabungan", body: "Gabungan menggabungkan semua elemen tanpa duplikasi." }
-},
-
-// MEDIUM 10-29
-{
-  q: "Gabungan (A ∪ B) berarti...",
-  opts: ["A dan B yang sama", "Semua anggota A saja", "Semua anggota B saja", "Semua anggota A atau B", "Anggota yang bukan A dan B"],
-  ans: 3,
-  exp: { title: "Gabungan Himpunan", body: "A ∪ B adalah semua elemen yang ada di A ATAU B (atau keduanya).\n\nArtinya: menggabungkan semua anggota tanpa duplikasi." }
-},
-{
-  q: "Irisan (A ∩ B) berarti...",
-  opts: ["Semua anggota A dan B", "Anggota yang hanya di A", "Anggota yang hanya di B", "Anggota yang ada di A atau B", "Tidak ada hubungan"],
-  ans: 0,
-  exp: { title: "Irisan Himpunan", body: "A ∩ B adalah elemen yang ada di A DAN B sekaligus.\n\nHanya bagian yang sama dari kedua himpunan." }
-},
-{
-  q: "Komplemen A (A') adalah...",
-  opts: ["Semua anggota A", "Anggota di luar A dalam semesta", "Irisan A dan B", "Gabungan A dan B", "Subset A"],
-  ans: 1,
-  exp: { title: "Komplemen", body: "A' adalah semua elemen dalam semesta (U) yang TIDAK ada di A." }
-},
-{
-  q: "Hukum De Morgan: (A ∪ B)' sama dengan...",
-  opts: ["A' ∪ B'", "A ∩ B", "A' ∩ B'", "A ∪ B", "A ∩ B'"],
-  ans: 2,
-  exp: { title: "De Morgan I", body: "(A ∪ B)' = A' ∩ B'\n\nNegasi gabungan menjadi irisan komplemen." }
-},
-{
-  q: "A - B berarti...",
-  opts: ["A gabungan B", "A irisan B", "Elemen A yang tidak ada di B", "Elemen B yang tidak ada di A", "Semua semesta"],
-  ans: 2,
-  exp: { title: "Selisih Himpunan", body: "A - B adalah elemen yang ada di A tetapi tidak ada di B." }
-},
-{
-  q: "A Δ B (selisih simetris) berarti...",
-  opts: ["A ∩ B", "A ∪ B", "(A - B) ∪ (B - A)", "A - B saja", "A' ∩ B'"],
-  ans: 2,
-  exp: { title: "Symmetric Difference", body: "A Δ B = elemen yang ada di A atau B, tetapi tidak keduanya.\n= (A - B) ∪ (B - A)" }
-},
-{
-  q: "Jika A ⊆ B maka...",
-  opts: ["A ∩ B = A", "A ∩ B = B", "A ∪ B = A", "A = B", "A ∩ B = ∅"],
-  ans: 0,
-  exp: { title: "Subset", body: "Jika A bagian dari B, maka semua elemen A ada di B.\nJadi A ∩ B = A." }
-},
-{
-  q: "Himpunan semesta dilambangkan dengan...",
-  opts: ["∅", "A'", "U", "V", "S"],
-  ans: 2,
-  exp: { title: "Semesta", body: "Himpunan semesta (U) adalah semua elemen yang dibicarakan dalam konteks." }
-},
-{
-  q: "Himpunan kosong adalah...",
-  opts: ["{0}", "∅", "{∅}", "{ } semua anggota", "U"],
-  ans: 1,
-  exp: { title: "Himpunan Kosong", body: "Himpunan kosong (∅) adalah himpunan tanpa anggota." }
-},
-{
-  q: "A ∪ ∅ hasilnya adalah...",
-  opts: ["∅", "A", "U", "A'", "B"],
-  ans: 1,
-  exp: { title: "Identitas Gabungan", body: "A ∪ ∅ = A karena tidak ada tambahan elemen." }
-},
-{
-  q: "A ∩ ∅ hasilnya adalah...",
-  opts: ["A", "∅", "U", "A'", "B"],
-  ans: 1,
-  exp: { title: "Irisan dengan Kosong", body: "A ∩ ∅ = ∅ karena tidak ada elemen yang sama." }
-},
-{
-  q: "n(A ∪ B) = ...",
-  opts: ["n(A)+n(B)", "n(A)+n(B)-n(A∩B)", "n(A∩B)", "n(U)", "n(A)-n(B)"],
-  ans: 1,
-  exp: { title: "Rumus Venn", body: "n(A ∪ B) = n(A) + n(B) - n(A ∩ B)\n\nMenghindari penghitungan ganda." }
-},
-{
-  q: "Jika (A ∩ B) = ∅ maka A dan B disebut...",
-  opts: ["Subset", "Sama", "Saling lepas", "Komplemen", "Gabungan"],
-  ans: 2,
-  exp: { title: "Disjoint Set", body: "Jika irisan kosong, berarti tidak ada anggota yang sama." }
-},
-{
-  q: "A'' sama dengan...",
-  opts: ["∅", "A", "A'", "U", "B"],
-  ans: 1,
-  exp: { title: "Komplemen Ganda", body: "(A')' = A\n\nNegasi dua kali kembali ke semula." }
-},
-{
-  q: "(A ∩ B)' sama dengan...",
-  opts: ["A' ∩ B'", "A' ∪ B'", "A ∪ B", "A ∩ B", "∅"],
-  ans: 1,
-  exp: { title: "De Morgan II", body: "(A ∩ B)' = A' ∪ B'" }
-},
-{
-  q: "A - B sama dengan...",
-  opts: ["A ∩ B", "A ∩ B'", "A ∪ B", "B - A", "A' ∩ B"],
-  ans: 1,
-  exp: { title: "Selisih Himpunan", body: "A - B = A ∩ B'\n\nArtinya A dikurangi bagian yang ada di B." }
-},
-{
-  q: "B - A berarti...",
-  opts: ["A ∩ B", "B ∩ A", "B ∩ A'", "A ∪ B", "A' ∩ B'"],
-  ans: 2,
-  exp: { title: "Selisih", body: "B - A = B ∩ A'\n\nElemen B yang tidak ada di A." }
-},
-{
-  q: "Sifat idempotent: A ∪ A = ...",
-  opts: ["∅", "A", "U", "A'", "B"],
-  ans: 1,
-  exp: { title: "Idempotent", body: "A ∪ A = A dan A ∩ A = A" }
-},
-{
-  q: "A ∩ A = ...",
-  opts: ["∅", "A", "U", "A'", "B"],
-  ans: 1,
-  exp: { title: "Idempotent", body: "Irisan himpunan dengan dirinya sendiri tetap A." }
-},
-{
-  q: "A ∪ A' = ...",
-  opts: ["∅", "A", "U", "A'", "B"],
-  ans: 2,
-  exp: { title: "Hukum Komplemen", body: "A ∪ A' = U (semua elemen dalam semesta)." }
-},
-{
-  q: "A ∩ A' = ...",
-  opts: ["∅", "A", "U", "A'", "B"],
-  ans: 0,
-  exp: { title: "Hukum Komplemen", body: "A dan komplemennya tidak punya irisan." }
-},
-{
-  q: "Jika A ⊆ B maka A ∪ B = ...",
-  opts: ["A", "B", "∅", "U", "A ∩ B"],
-  ans: 1,
-  exp: { title: "Subset Union", body: "Jika A bagian dari B, maka gabungannya adalah B." }
-},
-{
-  q: "Jika A ⊆ B maka A ∩ B = ...",
-  opts: ["A", "B", "∅", "U", "A'"],
-  ans: 0,
-  exp: { title: "Subset Intersection", body: "Jika A ⊆ B maka irisan mereka adalah A." }
-},
-{
-  q: "n(A ∩ B) menunjukkan...",
-  opts: ["Jumlah elemen A saja", "Jumlah elemen B saja", "Jumlah elemen bersama", "Jumlah semesta", "Selisih"],
-  ans: 2,
-  exp: { title: "Kardinalitas Irisan", body: "n(A ∩ B) adalah jumlah elemen yang ada di kedua himpunan." }
-},
-{
-  q: "Diagram Venn digunakan untuk...",
-  opts: ["Menjumlahkan angka", "Menggambarkan hubungan himpunan", "Mengurutkan data", "Menghitung integral", "Menggambar grafik fungsi"],
-  ans: 1,
-  exp: { title: "Venn Diagram", body: "Diagram Venn digunakan untuk menunjukkan hubungan antar himpunan." }
-},
-{
-  q: "Jika U = {1,2,3,4,5} dan A = {1,2}, maka A' adalah...",
-  opts: ["{1,2}", "{3,4,5}", "{1,2,3}", "{2,3,4}", "∅"],
-  ans: 1,
-  exp: { title: "Komplemen", body: "A' = semua elemen U yang tidak ada di A → {3,4,5}" }
-},
-{
-  q: "(A ∪ B) = B jika...",
-  opts: ["A = ∅", "A ⊆ B", "B = ∅", "A = B", "A ∩ B = ∅"],
-  ans: 1,
-  exp: { title: "Union Property", body: "Jika A bagian dari B, maka gabungan A dan B tetap B." }
-},
-{
-  q: "(A ∩ B) = A jika...",
-  opts: ["A ⊆ B", "B ⊆ A", "A = B", "A = ∅", "B = ∅"],
-  ans: 0,
-  exp: { title: "Intersection Property", body: "Jika A ⊆ B maka irisan A dan B adalah A." }
-},
-{
-  q: "Jika A = B maka A Δ B = ...",
-  opts: ["A", "B", "U", "∅", "A ∪ B"],
-  ans: 3,
-  exp: { title: "Symmetric Difference", body: "Jika dua himpunan sama, tidak ada perbedaan → hasil ∅." }
-},
-{
-  q: "Bentuk lain dari A ∪ B adalah...",
-  opts: ["A ∩ B'", "B ∩ A'", "A ∩ B", "A + B (tanpa irisan)", "A' ∩ B'"],
-  ans: 3,
-  exp: { title: "Union Concept", body: "A ∪ B berarti semua elemen A dan B tanpa duplikasi (gabungan total)." }
-},
-
-// HARD 60-89 — used as index 30-59
-{
-  q: "Jika A ⊆ B dan B ⊆ C, maka hubungan antara A dan C adalah...",
-  opts: ["A = C", "A ⊆ C", "C ⊆ A", "A ∩ C = ∅", "Tidak dapat ditentukan"],
-  ans: 1,
-  exp: { title: "Sifat Transitif Subset", body: "Jika A ⊆ B dan B ⊆ C, maka otomatis A ⊆ C.\n\nIni disebut sifat transitif pada himpunan." }
-},
-{
-  q: "Jika A ∩ B = A, maka dapat disimpulkan bahwa...",
-  opts: ["A ⊆ B", "B ⊆ A", "A = B", "A ∪ B = A", "A ∩ B = B"],
-  ans: 0,
-  exp: { title: "Sifat Irisan", body: "Jika A ∩ B = A, berarti semua anggota A ada di B.\n\nJadi A ⊆ B." }
-},
-{
-  q: "Jika A ∪ B = A, maka dapat disimpulkan bahwa...",
-  opts: ["A ⊆ B", "B ⊆ A", "A = B", "A ∩ B = A", "Tidak dapat ditentukan"],
-  ans: 1,
-  exp: { title: "Sifat Gabungan", body: "Jika A ∪ B = A, berarti B tidak menambah elemen baru.\n\nArtinya semua anggota B sudah ada di A → B ⊆ A." }
-},
-{
-  q: "Komplemen dari (A ∪ B) adalah...",
-  opts: ["Aᶜ ∪ Bᶜ", "Aᶜ ∩ Bᶜ", "A ∩ B", "A ∪ B", "∅"],
-  ans: 1,
-  exp: { title: "Hukum De Morgan", body: "(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ\n\nIni adalah hukum De Morgan pada himpunan." }
-},
-{
-  q: "Komplemen dari (A ∩ B) adalah...",
-  opts: ["Aᶜ ∩ Bᶜ", "Aᶜ ∪ Bᶜ", "A ∪ B", "A ∩ B", "U"],
-  ans: 1,
-  exp: { title: "Hukum De Morgan II", body: "(A ∩ B)ᶜ = Aᶜ ∪ Bᶜ" }
-},
-{
-  q: "Jika A ⊆ B, maka A ∩ B sama dengan...",
-  opts: ["A", "B", "∅", "U", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Subset dan Irisan", body: "Jika A ⊆ B, maka semua elemen A ada di B.\n\nJadi A ∩ B = A." }
-},
-{
-  q: "Jika A ⊆ B, maka A ∪ B sama dengan...",
-  opts: ["A", "B", "∅", "U", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "Subset dan Gabungan", body: "Jika A ⊆ B, maka gabungan tidak menambah apa-apa.\n\nJadi A ∪ B = B." }
-},
-{
-  q: "Jika A ∩ B = ∅, maka A dan B disebut...",
-  opts: ["Subset", "Komplemen", "Saling lepas", "Identik", "Universal"],
-  ans: 2,
-  exp: { title: "Himpunan Saling Lepas", body: "Jika A ∩ B = ∅, maka tidak ada elemen yang sama.\n\nDisebut himpunan saling lepas (disjoint)." }
-},
-{
-  q: "Banyaknya himpunan bagian dari himpunan dengan n elemen adalah...",
-  opts: ["n", "2n", "2^n", "n^2", "n!"],
-  ans: 2,
-  exp: { title: "Jumlah Subset", body: "Jumlah himpunan bagian = 2^n.\n\nContoh: n=3 → 2³ = 8 subset." }
-},
-{
-  q: "Jika A memiliki 3 elemen, maka banyak himpunan bagiannya adalah...",
-  opts: ["3", "6", "8", "9", "12"],
-  ans: 2,
-  exp: { title: "Contoh Subset", body: "2^3 = 8 subset." }
-},
-{
-  q: "A - B sama dengan...",
-  opts: ["A ∩ B", "A ∪ B", "A ∩ Bᶜ", "Aᶜ ∩ B", "B ∩ Aᶜ"],
-  ans: 2,
-  exp: { title: "Selisih Himpunan", body: "A - B = A ∩ Bᶜ\n\nArtinya elemen A yang tidak ada di B." }
-},
-{
-  q: "Jika A - B = ∅, maka...",
-  opts: ["A ⊆ B", "B ⊆ A", "A = B", "A ∩ B = ∅", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Selisih Kosong", body: "Jika A - B kosong, berarti tidak ada elemen A di luar B.\n\nJadi A ⊆ B." }
-},
-{
-  q: "Jika A ⊆ B dan B ⊆ A, maka...",
-  opts: ["A ≠ B", "A = B", "A ∩ B = ∅", "A ⊂ B", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "Kesamaan Himpunan", body: "Jika saling subset, maka himpunannya sama.\n\nA = B." }
-},
-{
-  q: "Jika A ⊂ B, maka pernyataan yang benar adalah...",
-  opts: ["A = B", "A ⊆ B", "B ⊆ A", "A ∩ B = ∅", "Tidak ada"],
-  ans: 1,
-  exp: { title: "Subset Sejati", body: "A ⊂ B berarti A ⊆ B dan A ≠ B." }
-},
-{
-  q: "Himpunan semesta biasanya dilambangkan dengan...",
-  opts: ["A", "S", "U", "H", "Ω"],
-  ans: 2,
-  exp: { title: "Simbol Semesta", body: "Himpunan semesta dilambangkan dengan U." }
-},
-{
-  q: "Jika Aᶜ = ∅, maka A adalah...",
-  opts: ["∅", "U", "Subset", "Tidak tentu", "Aᶜ"],
-  ans: 1,
-  exp: { title: "Komplemen Kosong", body: "Jika komplemen kosong, berarti A = U." }
-},
-{
-  q: "Jika Aᶜ = U, maka A adalah...",
-  opts: ["U", "∅", "Subset", "Tidak tentu", "Aᶜ"],
-  ans: 1,
-  exp: { title: "Komplemen Semesta", body: "Jika komplemen = U, maka A = ∅." }
-},
-{
-  q: "Himpunan kosong dilambangkan dengan...",
-  opts: ["{}", "∅", "[]", "()", "0"],
-  ans: 1,
-  exp: { title: "Himpunan Kosong", body: "Simbol himpunan kosong adalah ∅." }
-},
-{
-  q: "Jika n(A)=5 dan n(B)=3 serta A dan B saling lepas, maka n(A ∪ B)...",
-  opts: ["8", "2", "15", "5", "3"],
-  ans: 0,
-  exp: { title: "Gabungan Disjoint", body: "Jika saling lepas:\nn(A ∪ B) = n(A) + n(B)\n= 5 + 3 = 8" }
-},
-{
-  q: "Jika n(A)=5, n(B)=3, dan n(A ∩ B)=1, maka n(A ∪ B)...",
-  opts: ["8", "7", "6", "5", "9"],
-  ans: 1,
-  exp: { title: "Rumus Gabungan", body: "n(A ∪ B) = n(A) + n(B) - n(A ∩ B)\n= 5 + 3 - 1 = 7" }
-},
-{
-  q: "Rumus umum n(A ∪ B) adalah...",
-  opts: ["n(A)+n(B)", "n(A)+n(B)-n(A∩B)", "n(A∩B)", "n(A)-n(B)", "n(B)-n(A)"],
-  ans: 1,
-  exp: { title: "Rumus Dasar", body: "n(A ∪ B) = n(A) + n(B) - n(A ∩ B)" }
-},
-{
-  q: "Jika A ∩ B = B, maka...",
-  opts: ["A ⊆ B", "B ⊆ A", "A = B", "Tidak tentu", "A ∩ B = ∅"],
-  ans: 1,
-  exp: { title: "Irisan Sama dengan B", body: "Jika hasil irisan adalah B, berarti semua elemen B ada di A.\n\nJadi B ⊆ A." }
-},
-{
-  q: "Jika A ∪ B = B, maka...",
-  opts: ["A ⊆ B", "B ⊆ A", "A = B", "Tidak tentu", "A ∩ B = ∅"],
-  ans: 0,
-  exp: { title: "Gabungan Sama dengan B", body: "Jika gabungan tidak menambah elemen, maka A ⊆ B." }
-},
-{
-  q: "Jika A = ∅, maka A ⊆ B berlaku untuk...",
-  opts: ["Semua B", "Tidak ada", "Hanya B kosong", "Hanya B penuh", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Subset Kosong", body: "Himpunan kosong adalah subset dari semua himpunan." }
-},
-{
-  q: "Jika A ⊆ U, maka A ∪ Aᶜ = ...",
-  opts: ["∅", "A", "U", "Aᶜ", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Hukum Komplemen", body: "A ∪ Aᶜ = U (himpunan semesta)." }
-},
-{
-  q: "Jika A ⊆ U, maka A ∩ Aᶜ = ...",
-  opts: ["∅", "A", "U", "Aᶜ", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Irisan Komplemen", body: "A ∩ Aᶜ = ∅." }
-},
-{
-  q: "Himpunan {1,2} dan {2,1} adalah...",
-  opts: ["Berbeda", "Sama", "Subset", "Tidak tentu", "Saling lepas"],
-  ans: 1,
-  exp: { title: "Urutan Tidak Berpengaruh", body: "Himpunan tidak memperhatikan urutan.\n\n{1,2} = {2,1}" }
-},
-{
-  q: "Jika A ⊆ B dan A ≠ B, maka disebut...",
-  opts: ["Subset sejati", "Subset biasa", "Komplemen", "Disjoint", "Union"],
-  ans: 0,
-  exp: { title: "Subset Sejati", body: "A ⊂ B artinya subset sejati (tidak sama)." }
-},
-{
-  q: "Diketahui (A - B)ᶜ = Aᶜ ∪ B. Pernyataan tersebut adalah...",
-  opts: ["Selalu benar", "Selalu salah", "Kadang benar", "Hanya benar jika A ⊆ B", "Hanya benar jika B ⊆ A"],
-  ans: 0,
-  exp: { 
-    title: "Identitas Selisih dan Komplemen", 
-    body: "Mulai dari definisi:\nA - B = A ∩ Bᶜ\n\nAmbil komplemennya:\n(A - B)ᶜ = (A ∩ Bᶜ)ᶜ\n\nGunakan De Morgan:\n= Aᶜ ∪ (Bᶜ)ᶜ\n= Aᶜ ∪ B\n\nJadi identitas tersebut SELALU BENAR untuk semua himpunan.\n\nIni menggabungkan konsep selisih, komplemen, dan hukum De Morgan sekaligus." 
-  }
-},
-{
-  q: "Jika A dan B identik, maka...",
-  opts: ["Semua elemen sama", "Tidak ada elemen sama", "A kosong", "B kosong", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Himpunan Identik", body: "Dua himpunan sama jika semua elemennya sama." }
-}
-];
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Matematika Diskrit';
+const SOAL_JUDUL = 'Himpunan';
+  
+let ALL_Q = [];
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -1473,9 +919,7 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
@@ -1509,9 +953,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1520,9 +962,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -1535,10 +975,63 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1547,7 +1040,6 @@ function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1559,29 +1051,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -1605,9 +1075,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -1627,29 +1095,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
+    if (a === -1) {
+      // Surrendered — lock all options
       div.classList.add('locked');
     } else {
+      // Can still answer — highlight selected with neutral dark style only
       div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
     }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -1659,12 +1123,11 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
@@ -1688,9 +1151,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -1702,9 +1163,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -1724,9 +1183,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -1744,9 +1201,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -1776,7 +1231,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -1787,9 +1242,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -1867,9 +1320,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1879,15 +1330,11 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
   buildWord('w2', 'Himpunan', 0.75);
