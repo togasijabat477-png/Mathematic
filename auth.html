@@ -554,22 +554,54 @@
   });
 
   document.getElementById('btnRegister').addEventListener('click', async () => {
-    const email = document.getElementById('registerEmail').value.trim();
-    const password = document.getElementById('registerPassword').value;
-    const msg = document.getElementById('registerMsg');
-    const btn = document.getElementById('btnRegister');
-    if (!email || !password) { showMsg(msg, '❌ Email dan password wajib diisi', 'error'); return; }
-    if (password.length < 6) { showMsg(msg, '❌ Password minimal 6 karakter', 'error'); return; }
-    btn.disabled = true; btn.textContent = '⏳ Mendaftar...';
-    const { error } = await db.auth.signUp({ email, password });
-    if (error) {
-      showMsg(msg, '❌ ' + error.message, 'error');
-    } else {
-      showMsg(msg, '✅ Akun berhasil dibuat! Silakan masuk.', 'success');
-      setTimeout(() => switchTab('login'), 2000);
+  const nama = document.getElementById('registerNama').value.trim();
+  const nim = document.getElementById('registerNim').value.trim();
+  const wa = document.getElementById('registerWa').value.trim();
+  const email = document.getElementById('registerEmail').value.trim();
+  const password = document.getElementById('registerPassword').value;
+  const msg = document.getElementById('registerMsg');
+  const btn = document.getElementById('btnRegister');
+
+  // Validasi
+  if (!nama) { showMsg(msg, '❌ Nama lengkap wajib diisi', 'error'); return; }
+  if (!nim) { showMsg(msg, '❌ NIM wajib diisi', 'error'); return; }
+  if (!wa) { showMsg(msg, '❌ Nomor WhatsApp wajib diisi', 'error'); return; }
+  if (!email) { showMsg(msg, '❌ Email wajib diisi', 'error'); return; }
+  if (!password) { showMsg(msg, '❌ Password wajib diisi', 'error'); return; }
+  if (password.length < 6) { showMsg(msg, '❌ Password minimal 6 karakter', 'error'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ Mendaftar...';
+
+  // Daftar ke Supabase Auth
+  const { data, error } = await db.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { nama, nim, no_wa: wa } // simpan di metadata sementara
     }
-    btn.disabled = false; btn.textContent = 'Daftar Sekarang →';
   });
+
+  if (error) {
+    showMsg(msg, '❌ ' + error.message, 'error');
+    btn.disabled = false; btn.textContent = 'Daftar Sekarang →';
+    return;
+  }
+
+  // Simpan data tambahan ke tabel profiles
+  if (data.user) {
+    await db.from('profiles').upsert({
+      id: data.user.id,
+      email: email,
+      nama: nama,
+      nim: nim,
+      no_wa: wa,
+      role: 'user'
+    });
+  }
+
+  showMsg(msg, '✅ Akun berhasil dibuat! Cek email kamu untuk verifikasi sebelum login.', 'success');
+  btn.disabled = false; btn.textContent = 'Daftar Sekarang →';
+});
 
   function showMsg(el, text, type) {
     el.className = 'auth-msg ' + type;
