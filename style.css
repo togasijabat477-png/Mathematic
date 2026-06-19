@@ -452,7 +452,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   border-radius: var(--radius);
-  background: #dc3545;
+  background: #0edd1e;
   padding: 14px 36px; font-weight: 700; color: hsl(var(--bg));
   box-shadow: 0 8px 30px hsl(174 72% 52% / .25);
   transition: all .35s var(--ease-spring);
