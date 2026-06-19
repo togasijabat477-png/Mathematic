@@ -443,33 +443,57 @@
       </div>
 
       <!-- REGISTER -->
-      <div id="formRegister" style="display:none">
-        <div class="auth-heading">
-          <h2>Buat Akun Baru ✨</h2>
-          <p>Daftar gratis dan mulai belajar sekarang juga</p>
-        </div>
+      <!-- Register Form -->
+<div id="formRegister" style="display:none">
+  <div class="auth-heading">
+    <h2>Buat Akun Baru ✨</h2>
+    <p>Daftar gratis dan mulai belajar sekarang juga</p>
+  </div>
 
-        <div class="form-group">
-          <label>📧 Email</label>
-          <div class="input-wrap">
-            <span class="input-icon">✉️</span>
-            <input type="email" id="registerEmail" placeholder="email@example.com" autocomplete="email" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>🔒 Password</label>
-          <div class="input-wrap">
-            <span class="input-icon">🔑</span>
-            <input type="password" id="registerPassword" placeholder="Minimal 6 karakter" autocomplete="new-password" />
-            <button class="toggle-pw" onclick="togglePw('registerPassword', this)" type="button">👁</button>
-          </div>
-        </div>
-
-        <button class="btn-submit" id="btnRegister">Daftar Sekarang →</button>
-        <div class="auth-msg" id="registerMsg"></div>
-      </div>
+  <div class="form-group">
+    <label>👤 Nama Lengkap</label>
+    <div class="input-wrap">
+      <span class="input-icon">👤</span>
+      <input type="text" id="registerNama" placeholder="contoh: Toga Sijabat" autocomplete="name" />
     </div>
+  </div>
+
+  <div class="form-group">
+    <label>🎓 NIM</label>
+    <div class="input-wrap">
+      <span class="input-icon">🎓</span>
+      <input type="text" id="registerNim" placeholder="contoh: 43325040" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>📱 Nomor WhatsApp</label>
+    <div class="input-wrap">
+      <span class="input-icon">📱</span>
+      <input type="tel" id="registerWa" placeholder="contoh: 08123456789" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>📧 Email</label>
+    <div class="input-wrap">
+      <span class="input-icon">✉️</span>
+      <input type="email" id="registerEmail" placeholder="email@example.com" autocomplete="email" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>🔒 Password</label>
+    <div class="input-wrap">
+      <span class="input-icon">🔑</span>
+      <input type="password" id="registerPassword" placeholder="Minimal 6 karakter" autocomplete="new-password" />
+      <button class="toggle-pw" onclick="togglePw('registerPassword', this)" type="button">👁</button>
+    </div>
+  </div>
+
+  <button class="btn-submit" id="btnRegister">Daftar Sekarang →</button>
+  <div class="auth-msg" id="registerMsg"></div>
+</div>
 
     <!-- Trust -->
     <div class="trust-row">
