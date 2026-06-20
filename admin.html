@@ -478,6 +478,9 @@
       <button class="nav-item" onclick="switchTab('konten', this)">
         <span class="nav-icon">✏️</span> Edit Konten
       </button>
+      <button class="nav-item" onclick="switchTab('sections', this)">
+         <span class="nav-icon">📑</span> Editor Section
+      </button>
       <button class="nav-item" onclick="switchTab('soal', this)">
         <span class="nav-icon">📝</span> Kelola Soal
       </button>
@@ -765,6 +768,116 @@
     </div>
     <div id="kontenStatusList"><div class="loading">⏳ Memuat...</div></div>
   </div>
+</div>
+
+      <!-- ── TAB: EDITOR SECTION ── -->
+<div class="tab-page" id="tab-sections">
+
+  <!-- Pilih Materi -->
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">📑 Editor Section Materi</div><div class="card-sub">Kelola section per materi — tambah, edit, hapus, urutkan</div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Modul</label>
+        <select id="secModul" onchange="loadSecMateriList()">
+          <option value="diskrit">∑ Matematika Diskrit</option>
+          <option value="aljabar">λ Aljabar Linear</option>
+          <option value="kriptografi">🔐 Kriptografi</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Pilih Materi</label>
+        <select id="secMateriPilih" onchange="loadSections()">
+          <option value="">-- Pilih materi --</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daftar & Kelola Section -->
+  <div id="secWrap" style="display:none">
+
+    <!-- Info materi -->
+    <div class="card" style="background:var(--accent-light);border-color:rgba(108,71,255,.2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:1rem;font-weight:700;color:var(--accent)" id="secMateriJudul"></div>
+          <div style="font-size:.8rem;color:var(--text2);margin-top:3px" id="secMateriMeta"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-accent btn-sm" onclick="showFormTambahSection()">+ Tambah Section</button>
+          <button class="btn btn-outline btn-sm" onclick="previewMateriSection()">👁 Preview</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Tambah/Edit Section -->
+    <div class="card" id="secForm" style="display:none">
+      <div class="card-header">
+        <div><div class="card-title" id="secFormTitle">Tambah Section Baru</div></div>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('secForm').style.display='none'">✕ Tutup</button>
+      </div>
+      <input type="hidden" id="secId" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Judul Section</label>
+          <input type="text" id="secJudul" placeholder="contoh: Definisi & Konsep" />
+        </div>
+        <div class="form-group">
+          <label>Urutan</label>
+          <input type="number" id="secUrutan" placeholder="1" min="1" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tipe Section</label>
+        <select id="secTipe" onchange="updateSecEditor()">
+          <option value="text">📝 Teks Biasa</option>
+          <option value="definisi">📖 Definisi & Konsep</option>
+          <option value="contoh">💡 Contoh & Penerapan</option>
+          <option value="rumus">🔢 Rumus & Formula</option>
+          <option value="tabel">📊 Tabel</option>
+          <option value="kesimpulan">✅ Kesimpulan</option>
+          <option value="html">⚙️ HTML Kustom</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Isi Konten</label>
+        <div id="secEditorWrap">
+          <!-- Quill editor -->
+          <div id="secQuillEditor" style="height:350px;border-radius:var(--radius-sm);background:var(--surface)"></div>
+        </div>
+        <!-- HTML editor (hidden by default) -->
+        <textarea id="secHtmlEditor" rows="12" placeholder="Ketik HTML kustom di sini..." style="display:none;font-family:'JetBrains Mono',monospace;font-size:.85rem"></textarea>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-accent" onclick="simpanSection()">💾 Simpan Section</button>
+        <button class="btn btn-outline" onclick="document.getElementById('secForm').style.display='none'">Batal</button>
+      </div>
+      <div id="secMsg" style="margin-top:10px"></div>
+    </div>
+
+    <!-- List Section -->
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Daftar Section</div><div class="card-sub" id="secCount">0 section</div></div>
+      </div>
+      <div id="secList"><div class="loading">⏳ Memuat...</div></div>
+    </div>
+
+  </div>
+
+  <!-- Empty state -->
+  <div id="secEmpty" style="text-align:center;padding:60px 20px;color:var(--text3)">
+    <div style="font-size:2.5rem;margin-bottom:12px">📑</div>
+    <p style="font-size:.875rem">Pilih modul dan materi untuk mulai mengelola section</p>
+  </div>
+
 </div>
 
     </div><!-- end content -->
