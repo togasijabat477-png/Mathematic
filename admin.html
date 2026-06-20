@@ -1031,8 +1031,8 @@ async function loadDashboard() {
   document.getElementById('statUser').textContent = userRes.count ?? '-';
   document.getElementById('statKuis').textContent = kuisRes.count ?? '-';
 
-  const { data: recent } = await db.from('materi').select('*').order('created_at', { ascending: false }).limit(5);
-  if (!recent || !recent.length) {
+//  Sesudah — order by urutan saja, lebih aman
+const { data: recent } = await db.from('materi').select('*').order('urutan').limit(5);  if (!recent || !recent.length) {
     document.getElementById('recentMateri').innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><p>Belum ada materi</p></div>';
   }
   const badgeMap = { diskrit:'badge-diskrit', aljabar:'badge-aljabar', kriptografi:'badge-kriptografi' };
