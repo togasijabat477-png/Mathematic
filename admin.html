@@ -893,6 +893,249 @@ const db = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY'
 );
 
+  // ── EDITOR SECTION ──
+let secQuill = null;
+let currentSecMateriId = null;
+
+function initSecQuill() {
+  if (secQuill) return;
+  secQuill = new Quill('#secQuillEditor', {
+    theme: 'snow',
+    placeholder: 'Ketik isi section di sini...',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ color: [] }, { background: [] }],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['blockquote', 'code-block'],
+        ['link', 'image'],
+        ['clean']
+      ]
+    }
+  });
+}
+
+function updateSecEditor() {
+  const tipe = document.getElementById('secTipe').value;
+  const quillWrap = document.getElementById('secEditorWrap');
+  const htmlEditor = document.getElementById('secHtmlEditor');
+
+  if (tipe === 'html') {
+    quillWrap.style.display = 'none';
+    htmlEditor.style.display = 'block';
+  } else {
+    quillWrap.style.display = 'block';
+    htmlEditor.style.display = 'none';
+    initSecQuill();
+  }
+}
+
+async function loadSecMateriList() {
+  const modul = document.getElementById('secModul').value;
+  const select = document.getElementById('secMateriPilih');
+  select.innerHTML = '<option value="">-- Pilih materi --</option>';
+  document.getElementById('secWrap').style.display = 'none';
+  document.getElementById('secEmpty').style.display = 'block';
+
+  const { data } = await db.from('materi').select('id, judul, urutan')
+    .eq('modul', modul).order('urutan');
+
+  if (!data || !data.length) return;
+  data.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.judul;
+    select.appendChild(opt);
+  });
+}
+
+async function loadSections() {
+  const id = document.getElementById('secMateriPilih').value;
+  if (!id) {
+    document.getElementById('secWrap').style.display = 'none';
+    document.getElementById('secEmpty').style.display = 'block';
+    return;
+  }
+
+  currentSecMateriId = id;
+
+  // Ambil info materi
+  const { data: materi } = await db.from('materi').select('*').eq('id', id).single();
+  if (materi) {
+    document.getElementById('secMateriJudul').textContent = materi.judul;
+    document.getElementById('secMateriMeta').textContent = 'Modul: ' + materi.modul + ' · Urutan: ' + (materi.urutan || '-');
+  }
+
+  document.getElementById('secWrap').style.display = 'block';
+  document.getElementById('secEmpty').style.display = 'none';
+  document.getElementById('secForm').style.display = 'none';
+
+  await renderSectionList();
+}
+
+async function renderSectionList() {
+  const list = document.getElementById('secList');
+  list.innerHTML = '<div class="loading">⏳ Memuat section...</div>';
+
+  const { data, error } = await db
+    .from('materi_sections')
+    .select('*')
+    .eq('materi_id', currentSecMateriId)
+    .order('urutan');
+
+  if (error) {
+    list.innerHTML = '<div class="empty-state"><div class="e-icon">❌</div><p>' + error.message + '</p></div>';
+    return;
+  }
+
+  document.getElementById('secCount').textContent = (data?.length || 0) + ' section';
+
+  if (!data || !data.length) {
+    list.innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><p>Belum ada section. Klik "+ Tambah Section" untuk mulai.</p></div>';
+    return;
+  }
+
+  const tipeIcon = {
+    text: '📝', definisi: '📖', contoh: '💡',
+    rumus: '🔢', tabel: '📊', kesimpulan: '✅', html: '⚙️'
+  };
+
+  list.innerHTML = '<div class="data-list">' + data.map((s, i) => `
+    <div class="data-item" id="sec-${s.id}" style="flex-direction:column;align-items:flex-start;gap:10px">
+      <div style="display:flex;width:100%;align-items:center;gap:10px">
+        <span style="width:28px;height:28px;border-radius:8px;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0">${s.urutan}</span>
+        <div style="font-size:1rem;margin-right:4px">${tipeIcon[s.tipe_section] || '📝'}</div>
+        <div class="info">
+          <h3>${s.judul_section}</h3>
+          <p>Tipe: ${s.tipe_section} · ${s.konten_section ? Math.round(s.konten_section.length / 5) + ' kata' : 'Kosong'}</p>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-outline btn-sm" onclick="naikkSection('${s.id}', ${s.urutan})" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button class="btn btn-outline btn-sm" onclick="turunSection('${s.id}', ${s.urutan})" ${i === data.length - 1 ? 'disabled' : ''}>↓</button>
+          <button class="btn btn-outline btn-sm" onclick="editSection(${JSON.stringify(s).replace(/'/g,"&#39;")})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="hapusSection('${s.id}')">🗑</button>
+        </div>
+      </div>
+      ${s.konten_section ? `<div style="font-size:.8rem;color:var(--text3);padding-left:38px;max-height:40px;overflow:hidden;text-overflow:ellipsis">${s.konten_section.replace(/<[^>]*>/g,'').substring(0,120)}...</div>` : ''}
+    </div>`).join('') + '</div>';
+}
+
+function showFormTambahSection() {
+  document.getElementById('secId').value = '';
+  document.getElementById('secJudul').value = '';
+  document.getElementById('secUrutan').value = '';
+  document.getElementById('secTipe').value = 'text';
+  document.getElementById('secMsg').textContent = '';
+  document.getElementById('secFormTitle').textContent = 'Tambah Section Baru';
+  document.getElementById('secForm').style.display = 'block';
+  updateSecEditor();
+  if (secQuill) secQuill.root.innerHTML = '';
+  document.getElementById('secHtmlEditor').value = '';
+  document.getElementById('secForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function editSection(s) {
+  document.getElementById('secId').value = s.id;
+  document.getElementById('secJudul').value = s.judul_section;
+  document.getElementById('secUrutan').value = s.urutan;
+  document.getElementById('secTipe').value = s.tipe_section || 'text';
+  document.getElementById('secFormTitle').textContent = 'Edit Section';
+  document.getElementById('secMsg').textContent = '';
+  document.getElementById('secForm').style.display = 'block';
+  updateSecEditor();
+
+  if (s.tipe_section === 'html') {
+    document.getElementById('secHtmlEditor').value = s.konten_section || '';
+  } else {
+    initSecQuill();
+    secQuill.root.innerHTML = s.konten_section || '';
+  }
+  document.getElementById('secForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function simpanSection() {
+  const id = document.getElementById('secId').value;
+  const judul = document.getElementById('secJudul').value.trim();
+  const urutan = parseInt(document.getElementById('secUrutan').value) || 1;
+  const tipe = document.getElementById('secTipe').value;
+
+  let konten = '';
+  if (tipe === 'html') {
+    konten = document.getElementById('secHtmlEditor').value;
+  } else {
+    initSecQuill();
+    konten = secQuill.root.innerHTML;
+  }
+
+  if (!judul) { showMsg('secMsg', '❌ Judul section wajib diisi', 'error'); return; }
+  if (!currentSecMateriId) return;
+
+  const payload = {
+    materi_id: currentSecMateriId,
+    judul_section: judul,
+    urutan: urutan,
+    tipe_section: tipe,
+    konten_section: konten
+  };
+
+  const { error } = id
+    ? await db.from('materi_sections').update(payload).eq('id', id)
+    : await db.from('materi_sections').insert(payload);
+
+  if (error) {
+    showMsg('secMsg', '❌ Gagal: ' + error.message, 'error');
+    return;
+  }
+
+  showToast('✅ Section berhasil disimpan!', 'success');
+  document.getElementById('secForm').style.display = 'none';
+  renderSectionList();
+}
+
+async function hapusSection(id) {
+  if (!confirm('Yakin hapus section ini?')) return;
+  const { error } = await db.from('materi_sections').delete().eq('id', id);
+  if (error) { showToast('❌ Gagal hapus', 'error'); return; }
+  showToast('✅ Section dihapus');
+  renderSectionList();
+}
+
+async function naikkSection(id, urutan) {
+  if (urutan <= 1) return;
+  // Tukar urutan dengan section di atasnya
+  const { data } = await db.from('materi_sections')
+    .select('id, urutan')
+    .eq('materi_id', currentSecMateriId)
+    .eq('urutan', urutan - 1)
+    .single();
+
+  if (data) {
+    await db.from('materi_sections').update({ urutan: urutan }).eq('id', data.id);
+    await db.from('materi_sections').update({ urutan: urutan - 1 }).eq('id', id);
+    renderSectionList();
+  }
+}
+
+async function turunSection(id, urutan) {
+  const { data } = await db.from('materi_sections')
+    .select('id, urutan')
+    .eq('materi_id', currentSecMateriId)
+    .eq('urutan', urutan + 1)
+    .single();
+
+  if (data) {
+    await db.from('materi_sections').update({ urutan: urutan }).eq('id', data.id);
+    await db.from('materi_sections').update({ urutan: urutan + 1 }).eq('id', id);
+    renderSectionList();
+  }
+}
+
+function previewMateriSection() {
+  if (!currentSecMateriId) return;
+  window.open('materi-section-viewer.html?id=' + currentSecMateriId, '_blank');
+}
+
   // ── EDITOR KONTEN ──
 let quill = null;
 let currentKontenId = null;
@@ -1116,6 +1359,7 @@ async function showAdminPanel(user) {
   updateJudulOptions();
   updateTxtJudul();
   loadKontenList();
+  loadSecMateriList();
 }
 
 function doLogout() {
