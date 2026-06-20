@@ -807,6 +807,29 @@ function initQuill() {
 
 async function loadKontenList() {
   const modul = document.getElementById('kontenModul').value;
+  console.log('Modul dipilih:', modul);
+
+  const select = document.getElementById('kontenPilih');
+  select.innerHTML = '<option value="">-- Pilih materi --</option>';
+
+  const { data, error } = await db.from('materi').select('id, judul, konten, urutan')
+    .eq('modul', modul).order('urutan');
+
+  console.log('Data:', data);
+  console.log('Error:', error);
+
+  if (!data || !data.length) return;
+
+  data.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = (m.konten ? '✅ ' : '📭 ') + m.judul;
+    select.appendChild(opt);
+  });
+}
+  
+  async function loadKontenList() {
+  const modul = document.getElementById('kontenModul').value;
   const select = document.getElementById('kontenPilih');
 
   select.innerHTML = '<option value="">-- Pilih materi --</option>';
