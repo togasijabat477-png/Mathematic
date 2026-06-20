@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Materi — Math Unity</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f0f4ff;
+      --surface: #ffffff;
+      --border: #e4e8f5;
+      --text: #0f1526;
+      --text2: #4a5280;
+      --text3: #9aa0c0;
+      --accent: #5c41f5;
+      --accent-light: #ede9ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 14px 28px; display: flex; align-items: center;
+      gap: 16px; position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text2); font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .85rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all .2s;
+    }
+    .btn-back:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+    .topbar-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .modul-badge {
+      font-size: .75rem; font-family: 'JetBrains Mono', monospace;
+      padding: 4px 10px; border-radius: 99px; font-weight: 600;
+      background: var(--accent-light); color: var(--accent);
+    }
+
+    /* MAIN */
+    .main { max-width: 820px; margin: 0 auto; padding: 40px 20px; }
+
+    /* KONTEN MATERI */
+    .konten-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 48px;
+      box-shadow: 0 4px 24px rgba(92,65,245,.06);
+    }
+
+    .konten-header { margin-bottom: 36px; padding-bottom: 24px; border-bottom: 2px solid var(--border); }
+    .konten-header .modul { font-size: .8rem; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+    .konten-header h1 { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1.3; }
+    .konten-header .meta { font-size: .85rem; color: var(--text3); margin-top: 10px; }
+
+    /* Rich text styles */
+    .konten-body { line-height: 1.8; font-size: 1rem; color: var(--text); }
+    .konten-body h1 { font-size: 1.7rem; font-weight: 800; margin: 28px 0 12px; color: var(--text); }
+    .konten-body h2 { font-size: 1.4rem; font-weight: 700; margin: 24px 0 10px; color: var(--text); padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+    .konten-body h3 { font-size: 1.1rem; font-weight: 700; margin: 20px 0 8px; color: var(--accent); }
+    .konten-body p { margin-bottom: 14px; }
+    .konten-body ul, .konten-body ol { margin: 12px 0 12px 24px; }
+    .konten-body li { margin-bottom: 6px; }
+    .konten-body strong { font-weight: 700; color: var(--text); }
+    .konten-body em { font-style: italic; color: var(--text2); }
+    .konten-body blockquote {
+      border-left: 4px solid var(--accent); margin: 20px 0;
+      padding: 12px 20px; background: var(--accent-light);
+      border-radius: 0 12px 12px 0; color: var(--text2);
+      font-style: italic;
+    }
+    .konten-body code {
+      font-family: 'JetBrains Mono', monospace; font-size: .875rem;
+      background: #f1f3f9; padding: 2px 8px; border-radius: 6px;
+      color: var(--accent);
+    }
+    .konten-body pre {
+      background: #1a1d2e; color: #e2e8f0; padding: 20px 24px;
+      border-radius: 12px; margin: 16px 0; overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace; font-size: .875rem;
+      line-height: 1.7;
+    }
+    .konten-body pre code { background: none; padding: 0; color: inherit; }
+    .konten-body table {
+      width: 100%; border-collapse: collapse; margin: 16px 0;
+      border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .konten-body th {
+      background: var(--accent); color: #fff;
+      padding: 12px 16px; text-align: left; font-size: .875rem;
+    }
+    .konten-body td {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      font-size: .9rem;
+    }
+    .konten-body tr:last-child td { border-bottom: none; }
+    .konten-body tr:nth-child(even) td { background: var(--bg); }
+    .konten-body img { max-width: 100%; border-radius: 12px; margin: 16px 0; }
+    .konten-body hr { border: none; border-top: 2px solid var(--border); margin: 28px 0; }
+
+    /* Loading & Error */
+    .state-box { text-align: center; padding: 80px 20px; }
+    .state-box .icon { font-size: 3rem; margin-bottom: 16px; }
+    .state-box h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .state-box p { color: var(--text3); font-size: .9rem; }
+
+    /* Nav bawah */
+    .bottom-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 48px; padding-top: 24px; border-top: 2px solid var(--border);
+    }
+    .btn-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: var(--surface);
+      color: var(--text2); font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .875rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all .2s;
+    }
+    .btn-nav:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+    .btn-nav.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-nav.primary:hover { background: #4f35d4; }
+
+    @media (max-width: 640px) {
+      .konten-wrap { padding: 24px 20px; }
+      .konten-header h1 { font-size: 1.5rem; }
+      .topbar { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="#" class="btn-back" id="btnBack">← Kembali</a>
+  <span class="topbar-title" id="topbarTitle">Materi</span>
+  <span class="modul-badge" id="topbarModul">-</span>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="konten-wrap">
+
+    <!-- Loading -->
+    <div id="stateLoading" class="state-box">
+      <div class="icon">⏳</div>
+      <h2>Memuat materi...</h2>
+      <p>Mohon tunggu sebentar</p>
+    </div>
+
+    <!-- Error -->
+    <div id="stateError" class="state-box" style="display:none">
+      <div class="icon">😕</div>
+      <h2>Materi tidak ditemukan</h2>
+      <p>Materi ini belum tersedia atau telah dihapus</p>
+    </div>
+
+    <!-- Konten -->
+    <div id="stateKonten" style="display:none">
+      <div class="konten-header">
+        <div class="modul" id="kontenModul"></div>
+        <h1 id="kontenJudul"></h1>
+        <div class="meta" id="kontenMeta"></div>
+      </div>
+      <div class="konten-body" id="kontenBody"></div>
+      <div class="bottom-nav">
+        <a href="#" class="btn-nav" id="btnBackBottom">← Kembali ke Materi</a>
+        <a href="index.html?page=materi" class="btn-nav primary">Lihat Materi Lain →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const { createClient } = supabase;
+  const db = createClient(
+    'https://ytwfwxjutdlukjvnlnzv.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY'
+  );
+
+  // Ambil ID dari URL: materi-viewer.html?id=UUID
+  const params = new URLSearchParams(window.location.search);
+  const materiId = params.get('id');
+  const backPage = sessionStorage.getItem('backPage') || 'materi';
+  const materiTab = sessionStorage.getItem('materiTab') || 'diskrit';
+  const backUrl = 'index.html?page=' + backPage + '&tab=' + materiTab;
+
+  document.getElementById('btnBack').href = backUrl;
+  document.getElementById('btnBackBottom').href = backUrl;
+
+  async function loadMateri() {
+    if (!materiId) { showError(); return; }
+
+    const { data, error } = await db
+      .from('materi')
+      .select('*')
+      .eq('id', materiId)
+      .single();
+
+    if (error || !data) { showError(); return; }
+
+    // Update topbar
+    document.getElementById('topbarTitle').textContent = data.judul;
+    document.getElementById('topbarModul').textContent = data.modul || '-';
+    document.title = data.judul + ' — Math Unity';
+
+    // Update header konten
+    document.getElementById('kontenModul').textContent = data.modul || '';
+    document.getElementById('kontenJudul').textContent = data.judul;
+    document.getElementById('kontenMeta').textContent = 'Urutan ' + (data.urutan || '-');
+
+    // Tampilkan konten
+    const body = document.getElementById('kontenBody');
+    if (data.konten) {
+      body.innerHTML = data.konten;
+    } else {
+      body.innerHTML = '<p style="color:var(--text3);text-align:center;padding:40px">Konten materi belum tersedia.</p>';
+    }
+
+    showKonten();
+  }
+
+  function showError() {
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('stateError').style.display = 'block';
+  }
+
+  function showKonten() {
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('stateKonten').style.display = 'block';
+  }
+
+  loadMateri();
+</script>
+</body>
+</html>
