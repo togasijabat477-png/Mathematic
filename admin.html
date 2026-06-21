@@ -574,6 +574,44 @@
            <button class="btn btn-outline" id="btnBuatManual" style="flex:1;padding:12px">✏️ Buat Materi Baru</button>
           </div>
           <div id="uploadMsg"></div>
+          <!-- Form Buat Materi Manual -->
+<div id="formBuatManual" style="display:none;margin-top:20px;border-top:2px solid var(--border);padding-top:20px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text)">✏️ Buat Materi Baru</div>
+      <div style="font-size:.8rem;color:var(--text3);margin-top:2px">Isi informasi materi tanpa upload file</div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="tutupFormBuatManual()">✕ Tutup</button>
+  </div>
+
+  <div class="form-group">
+    <label>Judul Materi</label>
+    <input type="text" id="manualJudul" placeholder="contoh: Logika Matematika" />
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Modul</label>
+      <select id="manualModul">
+        <option value="diskrit">∑ Matematika Diskrit</option>
+        <option value="aljabar">λ Aljabar Linear</option>
+        <option value="kriptografi">🔐 Kriptografi</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Urutan</label>
+      <input type="number" id="manualUrutan" placeholder="contoh: 1" min="1" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Deskripsi Singkat</label>
+    <input type="text" id="manualDeskripsi" placeholder="contoh: Mempelajari dasar-dasar logika matematika" />
+  </div>
+
+  <button class="btn btn-accent" onclick="simpanMateriManual()" style="width:100%;padding:12px">✅ Buat & Lanjut ke Editor Section</button>
+  <div id="manualMsg" style="margin-top:10px"></div>
+</div>
         </div>
 
         <!-- Daftar Materi -->
@@ -1193,6 +1231,53 @@ function showToast(text, type = 'success') {
 document.getElementById('adminPassword').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('btnLogin').click();
 });
+// ── BUAT MATERI MANUAL ──
+document.getElementById('btnBuatManual').addEventListener('click', () => {
+  const form = document.getElementById('formBuatManual');
+  const isOpen = form.style.display !== 'none';
+  form.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) form.scrollIntoView({ behavior: 'smooth' });
+});
+
+function tutupFormBuatManual() {
+  document.getElementById('formBuatManual').style.display = 'none';
+}
+
+async function simpanMateriManual() {
+  const judul = document.getElementById('manualJudul').value.trim();
+  const modul = document.getElementById('manualModul').value;
+  const urutan = parseInt(document.getElementById('manualUrutan').value) || 99;
+  const deskripsi = document.getElementById('manualDeskripsi').value.trim();
+
+  if (!judul) { showMsg('manualMsg', '❌ Judul wajib diisi', 'error'); return; }
+
+  const { data, error } = await db.from('materi').insert({
+    judul,
+    modul,
+    urutan,
+    konten: deskripsi || null,
+    tipe: 'editor',
+    konten_tipe: 'editor'
+  }).select().single();
+
+  if (error) { showMsg('manualMsg', '❌ Gagal: ' + error.message, 'error'); return; }
+
+  showToast('✅ Materi berhasil dibuat!', 'success');
+  tutupFormBuatManual();
+
+  // Reset form
+  document.getElementById('manualJudul').value = '';
+  document.getElementById('manualDeskripsi').value = '';
+  document.getElementById('manualUrutan').value = '';
+
+  // Refresh daftar materi
+  await loadMateriList();
+
+  // Langsung buka section editor untuk materi baru
+  openSectionEditor(data.id, data.judul, data.modul, data.urutan);
+  document.getElementById('sectionEditorPanel').scrollIntoView({ behavior: 'smooth' });
+}
+  
 </script>
 </body>
 </html>
