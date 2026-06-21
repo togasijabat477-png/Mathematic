@@ -962,7 +962,8 @@ async function loadMateriList() {
       <span class="badge ${bm[item.modul]||''}">${item.modul||'-'}</span>
       <div class="info"><h3 id="judul-${item.id}">${item.judul}</h3><p>${item.url||'-'}</p></div>
       <span class="badge ${tipe==='pdf'?'badge-pdf':'badge-html'}">${tipe.toUpperCase()}</span>
-      <button class="btn btn-outline btn-sm" onclick="editJudul('${item.id}','${item.judul.replace(/'/g,"\\'")}')">✏️</button>
+      <button class="btn btn-accent btn-sm" onclick="openSectionEditor('${item.id}','${item.judul.replace(/'/g,"\\'")}','${item.modul}',${item.urutan||0})">📑 Kelola Isi</button>
+      <button class="btn btn-outline btn-sm" onclick="editJudul('${item.id}','${item.judul.replace(/'/g,"\\'")}')">✏️ Judul</button>
       <button class="btn btn-danger btn-sm" onclick="hapusMateri('${item.id}','${(item.url||'').replace(/'/g,"\\'")}')">🗑</button>
     </div>`;
   });
