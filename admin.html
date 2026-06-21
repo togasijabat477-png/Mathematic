@@ -1444,6 +1444,80 @@ async function simpanMateriManual() {
     panel.scrollIntoView({ behavior: 'smooth' });
   }
 
+   async function renderSectionList(){
+
+    const list = document.getElementById('sectionList');
+
+    if(!list){
+        console.log("sectionList belum ada");
+        return;
+    }
+
+
+    const {data,error}=await supabaseClient
+        .from('materi_sections')
+        .select('*')
+        .eq('materi_id', currentSecMateriId)
+        .order('urutan');
+
+
+    if(error){
+
+        console.log(error);
+        return;
+
+    }
+
+
+    list.innerHTML="";
+
+
+    if(data.length===0){
+
+        list.innerHTML=`
+        <div class="loading">
+        Belum ada bagian materi
+        </div>
+        `;
+
+        return;
+    }
+
+
+
+    data.forEach((item)=>{
+
+
+        list.innerHTML += `
+
+        <div class="section-item">
+
+            <h4>
+            ${item.urutan}. ${item.judul_section}
+            </h4>
+
+
+            <small>
+            ${item.sub_topik || ''}
+            |
+            ${item.tipe_section}
+            </small>
+
+
+            <p>
+            ${item.konten_section}
+            </p>
+
+
+        </div>
+
+        `;
+
+
+    });
+
+
+}
   //renderSectionList();
 }
 </script>
