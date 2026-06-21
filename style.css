@@ -3,6 +3,27 @@
    Platform Pembelajaran Matematika
    ═══════════════════════════════════════════ */
 
+/* Mencegah teks disorot/diblok oleh user */
+body {
+    -webkit-user-select: none; /* Safari / Chrome */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE 10+ */
+    user-select: none;         /* Standard syntax */
+    
+    /* Mencegah gambar diseret (drag) */
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+/* PENTING: Jika Anda memiliki form input (textarea, input text), 
+   Anda harus mengaktifkan kembali user-select agar user bisa mengetik! */
+input, textarea, [contenteditable="true"] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
 .creators-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
