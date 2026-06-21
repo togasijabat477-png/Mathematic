@@ -736,6 +736,28 @@
         </div>
       </div>
 
+      <!-- SECTION EDITOR -->
+<div class="card" id="sectionEditorPanel" style="display:none">
+  <div class="card-header">
+    <div>
+      <div class="card-title" id="secMateriJudul">
+        Judul Materi
+      </div>
+      <div class="card-sub" id="secMateriMeta">
+        Modul:
+      </div>
+    </div>
+  </div>
+
+  <div id="secForm" class="soal-form">
+    Form section di sini
+  </div>
+
+  <div id="sectionList">
+    Memuat section...
+  </div>
+</div>
+
     </div><!-- end content -->
   </main>
 </div><!-- end app -->
@@ -743,6 +765,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
+document.getElementById('secMateriJudul')
+  
 const { createClient } = supabase;
 const db = createClient(
   'https://ytwfwxjutdlukjvnlnzv.supabase.co',
@@ -1278,13 +1302,23 @@ async function simpanMateriManual() {
   openSectionEditor(data.id, data.judul, data.modul, data.urutan);
   document.getElementById('sectionEditorPanel').scrollIntoView({ behavior: 'smooth' });
 }
-  function openSectionEditor(id, judul, modul, urutan) {
+ function openSectionEditor(id, judul, modul, urutan) {
   currentSecMateriId = id;
-  document.getElementById('secMateriJudul').textContent = judul;
-  document.getElementById('secMateriMeta').textContent = 'Modul: ' + modul + ' · Urutan: ' + urutan;
-  document.getElementById('sectionEditorPanel').style.display = 'block';
-  document.getElementById('secForm').classList.remove('show');
-  document.getElementById('sectionEditorPanel').scrollIntoView({ behavior: 'smooth' });
+
+  const title = document.getElementById('secMateriJudul');
+  const meta = document.getElementById('secMateriMeta');
+  const panel = document.getElementById('sectionEditorPanel');
+  const form = document.getElementById('secForm');
+
+  if (title) title.textContent = judul;
+  if (meta) meta.textContent = 'Modul: ' + modul + ' · Urutan: ' + urutan;
+  if (panel) panel.style.display = 'block';
+  if (form) form.classList.remove('show');
+
+  if (panel) {
+    panel.scrollIntoView({ behavior: 'smooth' });
+  }
+
   renderSectionList();
 }
 </script>
