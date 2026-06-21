@@ -1,3 +1,63 @@
+// 1. BLOKIR KLIK KANAN (Context Menu)
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); // Mencegah menu klik kanan muncul
+    // Opsional: Anda bisa menambahkan alert atau notifikasi kustom di sini
+    // alert('Klik kanan dinonaktifkan!'); 
+});
+
+// 2. BLOKIR SHORTCUT KEYBOARD
+document.addEventListener('keydown', function(e) {
+    // Blokir F12 (Developer Tools)
+    if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+    }
+
+    // Blokir Ctrl+Shift+I, J, C (Windows/Linux) 
+    // dan Cmd+Option+I, J, C (Mac)
+    if (
+        (e.ctrlKey || e.metaKey) && 
+        e.shiftKey && 
+        (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'j' || e.key.toLowerCase() === 'c')
+    ) {
+        e.preventDefault();
+        return false;
+    }
+
+    // Blokir Ctrl+U (View Source) dan Cmd+Option+U (Mac)
+    if (
+        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') ||
+        ((e.ctrlKey || e.metaKey) && e.altKey && e.key.toLowerCase() === 'u')
+    ) {
+        e.preventDefault();
+        return false;
+    }
+
+    // Blokir Ctrl+S (Save Page) - Opsional
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        return false;
+    }
+
+    // Blokir Ctrl+P (Print) - Opsional
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// 3. BLOKIR SELEKSI TEKS MELALUI MOUSE/KEYBOARD
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// 4. BLOKIR DRAG & DROP GAMBAR (Mencegah user menyeret gambar ke tab baru)
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+    return false;
+});
+
 /* ═══════════════════════════════════════════
    MATHEMATIC — JavaScript (Interaksi Saja)
    Hanya untuk: navigasi, toggle, modal, quiz
