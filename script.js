@@ -1,10 +1,11 @@
+
 // 1. BLOKIR KLIK KANAN (Context Menu)
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault(); // Mencegah menu klik kanan muncul
     // Opsional: Anda bisa menambahkan alert atau notifikasi kustom di sini
     // alert('Klik kanan dinonaktifkan!'); 
 });
-
+ 
 // 2. BLOKIR SHORTCUT KEYBOARD
 document.addEventListener('keydown', function(e) {
     // Blokir F12 (Developer Tools)
@@ -12,7 +13,7 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         return false;
     }
-
+ 
     // Blokir Ctrl+Shift+I, J, C (Windows/Linux) 
     // dan Cmd+Option+I, J, C (Mac)
     if (
@@ -23,7 +24,7 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         return false;
     }
-
+ 
     // Blokir Ctrl+U (View Source) dan Cmd+Option+U (Mac)
     if (
         ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') ||
@@ -32,37 +33,37 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         return false;
     }
-
+ 
     // Blokir Ctrl+S (Save Page) - Opsional
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
         return false;
     }
-
+ 
     // Blokir Ctrl+P (Print) - Opsional
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
         e.preventDefault();
         return false;
     }
 });
-
+ 
 // 3. BLOKIR SELEKSI TEKS MELALUI MOUSE/KEYBOARD
 document.addEventListener('selectstart', function(e) {
     e.preventDefault();
     return false;
 });
-
+ 
 // 4. BLOKIR DRAG & DROP GAMBAR (Mencegah user menyeret gambar ke tab baru)
 document.addEventListener('dragstart', function(e) {
     e.preventDefault();
     return false;
 });
-
+ 
 /* ═══════════════════════════════════════════
    MATHEMATIC — JavaScript (Interaksi Saja)
    Hanya untuk: navigasi, toggle, modal, quiz
    ═══════════════════════════════════════════ */
-
+ 
 /* CAROUSEL SCROLL FUNCTION - Defined immediately */
 window.carouselScrollById = function(gridId, dir) {
   var grid = document.getElementById(gridId);
@@ -74,21 +75,21 @@ window.carouselScrollById = function(gridId, dir) {
   var step = (cardW + gap) * 1;
   grid.scrollBy({ left: dir * step, behavior: 'smooth' });
 };
-
+ 
 /* tombol kembali - integrated into init */
 function handlePageParam() {
     var page = null, tab = null;
-
+ 
     // Baca dari query string: ?page=materi&tab=diskrit (dipakai saat kembali dari modul)
     var qs = new URLSearchParams(window.location.search);
     page = qs.get('page') || null;
     tab  = qs.get('tab')  || null;
-
+ 
     // Fallback: hash biasa #materi
     if (!page && window.location.hash) {
         page = window.location.hash.replace('#', '') || null;
     }
-
+ 
     if (page) {
         // Setel tab dulu SEBELUM navigateTo agar renderMateri pakai tab yang benar
         if (tab && page === 'materi') activeMateriTab = tab;
@@ -97,7 +98,7 @@ function handlePageParam() {
         navigateTo(currentPage);
     }
 }
-
+ 
 // Handle browser back/forward navigation
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.page) {
@@ -110,10 +111,10 @@ window.addEventListener('popstate', function(event) {
         handlePageParam();
     }
 });
-
-
+ 
+ 
 /* ═══ DATA ═══ */
-
+ 
 var funFacts = [
   {id:"nol",
     emoji:"🔢",
@@ -134,7 +135,7 @@ var funFacts = [
   {id:"game",emoji:"🎮",title:"Game = Matematika yang Dimainkan",summary:"Setiap game video menggunakan fisika berbasis kalkulus, grafis berbasis aljabar linear, AI berbasis teori graf.",tag:"Terapan",category:"Terapan",color:"violet",details:{fullStory:"Setiap frame game 3D melibatkan ribuan operasi matriks.",whyItMatters:"Industri game bernilai $200+ miliar/tahun dan membutuhkan programmer yang paham matematika.",funExtra:"John Carmack, pembuat Doom, pada dasarnya adalah seorang matematikawan yang kebetulan membuat game!"}},
   {id:"fourier",emoji:"🌊",title:"Gelombang Laut Bisa Diprediksi",summary:"Transformasi Fourier membuktikan bahwa gelombang laut yang tampak kacau adalah jumlahan ribuan gelombang sederhana.",tag:"Terapan",category:"Terapan",color:"amber",details:{fullStory:"Joseph Fourier menunjukkan bahwa SETIAP fungsi periodik bisa diuraikan menjadi jumlahan gelombang sinus dan kosinus.",whyItMatters:"Fourier Transform ada DI MANA-MANA: kompresi MP3 dan JPEG, pengenalan suara.",funExtra:"Fourier mengembangkan teorinya saat mempelajari konduksi panas — bukan gelombang!"}}
 ];
-
+ 
 var vokasiItems = [
   {id:"coding",num:"01",icon:"💻",title:"Coding Lebih Bersih",summary:"Logika matematika = logika pemrograman. If-else, loop, rekursi — semua berakar dari proposisi logika.",tag:"Logika & Pemrograman",details:{explanation:"Setiap statement if-else dalam kode adalah proposisi logika.",realExample:"Saat membuat validasi form: (email valid) ∧ (password ≥ 8 karakter) ∧ (username unik).",skillsNeeded:"Logika Proposisi, Teori Himpunan, Relasi & Fungsi"}},
   {id:"database",num:"02",icon:"🗄️",title:"Database Jadi Mudah",summary:"Relasi antar tabel di SQL? Itu teori relasi dan fungsi. Join, union, intersect — operasi himpunan.",tag:"Database & SQL",details:{explanation:"Database relasional diciptakan oleh Edgar Codd berdasarkan teori relasi matematika.",realExample:"SELECT * FROM mahasiswa JOIN nilai ON mahasiswa.id = nilai.mhs_id WHERE nilai.skor > 80",skillsNeeded:"Teori Himpunan, Relasi, Fungsi"}},
@@ -145,7 +146,7 @@ var vokasiItems = [
   {id:"mobile",num:"07",icon:"📱",title:"Pengembangan Aplikasi Mobile",summary:"Animasi halus di aplikasi mobile menggunakan interpolasi matematika dan kurva Bezier.",tag:"Mobile Dev",isNew:true,details:{explanation:"Animasi smooth menggunakan kurva Bezier dan easing functions.",realExample:"Saat swipe Instagram Stories, titik-titik koordinat diinterpolasi.",skillsNeeded:"Kalkulus, Interpolasi, Kurva Parametrik"}},
   {id:"cloud",num:"08",icon:"☁️",title:"Cloud & DevOps",summary:"Load balancing server menggunakan teori antrian berbasis probabilitas.",tag:"Cloud Computing",isNew:true,details:{explanation:"Cloud computing menggunakan teori antrian untuk load balancing.",realExample:"AWS Auto Scaling menggunakan exponential smoothing.",skillsNeeded:"Teori Antrian, Probabilitas, Optimasi"}}
 ];
-
+ 
 var realLifeItems = [
   {id:"whatsapp",emoji:"📱",title:"WhatsApp & Enkripsi End-to-End",subtitle:"Kriptografi · Teori Bilangan · Modular Arithmetic",summary:"Setiap pesan WhatsApp dienkripsi menggunakan protokol Signal.",details:{howItWorks:"Pesanmu dienkripsi di HP-mu menggunakan kunci unik. Bahkan WhatsApp sendiri tidak bisa membaca pesanmu!",mathBehind:"Diffie-Hellman Key Exchange: g^(ab) mod p.",mindBlown:"WhatsApp memproses lebih dari 100 miliar pesan per hari!"}},
   {id:"gmaps",emoji:"🗺️",title:"Google Maps Cari Rute Tercepat",subtitle:"Teori Graf · Algoritma Dijkstra · Optimasi",summary:"Di baliknya berjalan algoritma graf Dijkstra dan A*.",details:{howItWorks:"Google Maps merepresentasikan jaringan jalan sebagai weighted directed graph.",mathBehind:"Dijkstra's Algorithm: O((V+E) log V) dengan priority queue.",mindBlown:"Google Maps memproses lebih dari 1 miliar kilometer navigasi per hari!"}},
@@ -157,7 +158,7 @@ var realLifeItems = [
   {id:"car",emoji:"🚗",title:"Mobil Listrik & Kendaraan Otonom",subtitle:"Aljabar Linear · Kalkulus · Teori Graf · Probabilitas",summary:"Tesla Autopilot memproses ratusan sensor setiap detik.",details:{howItWorks:"Computer Vision dengan CNN mendeteksi objek. Kalman Filter menggabungkan data sensor.",mathBehind:"Kalman Filter: prediksi state lalu update berdasarkan pengukuran.",mindBlown:"Tesla Autopilot: 2.3 triliun operasi matriks per detik!"}},
   {id:"netflix",emoji:"🎬",title:"Netflix Tahu Film yang Belum Kamu Tonton",subtitle:"Aljabar Linear · SVD · Probabilitas",summary:"Netflix menggunakan SVD untuk menemukan pola tersembunyi.",details:{howItWorks:"SVD memfaktorkan matriks rating User×Movie menjadi tiga matriks.",mathBehind:"SVD: M = UΣV^T",mindBlown:"80% konten yang ditonton Netflix berasal dari rekomendasi!"}}
 ];
-
+ 
 var quizData = [
   {q:"Berapa banyak bilangan prima antara 1 dan 100?",hint:"Ingat: bilangan prima hanya habis dibagi 1 dan dirinya sendiri.",opts:["20","25","30","21"],ans:1,exp:"25 bilangan prima antara 1–100."},
   {q:"Jika sebuah koin dilempar 6 kali dan semua hasilnya kepala, berapa peluang lemparan ke-7 menghasilkan ekor?",hint:"Apakah koin punya \"memori\"?",opts:["Lebih dari 50%","Tepat 50%","Kurang dari 50%","Tergantung koinnya"],ans:1,exp:"Tepat 50%. Ini adalah Gambler's Fallacy."},
@@ -165,7 +166,7 @@ var quizData = [
   {q:"Protokol mana yang menggunakan konsep Spanning Tree?",hint:"Minimum spanning tree dari Teori Graf.",opts:["HTTP","DNS","STP (Spanning Tree Protocol)","FTP"],ans:2,exp:"STP mengimplementasikan algoritma minimum spanning tree."},
   {q:"Matriks A berukuran 3×4 dikalikan matriks B. Agar valid, berapa ukuran minimum matriks B?",hint:"Kolom A harus sama dengan baris B.",opts:["4×3","3×4","4×1","3×3"],ans:0,exp:"4×3. Untuk A(3×4) × B(m×n), syaratnya m = 4."}
 ];
-
+ 
 var materiData = {
   diskrit: [{
     icon:"∑", title:"Matematika Diskrit",
@@ -246,7 +247,7 @@ var materiData = {
     ]
   }]
 };
-
+ 
 var gameData = [
   {icon:"🎮",title:"Game Matematika Diskrit",items:[
     {num:"01",title:"Binary Maze Escape",description:"Navigasi labirin menggunakan logika biner — setiap pintu adalah gerbang logika AND, OR, NOT yang harus kamu selesaikan!",tag:"Logika Biner",file:"game/matdis/binary-maze-escape.html"},
@@ -270,24 +271,24 @@ var gameData = [
     {num:"05",title:"⚿ Crypto Escape Room",description:"Kabur dari ruangan berkunci dengan kriptografi! Pecahkan teka-teki cipher bertingkat — setiap kunci membuka pintu berikutnya.",tag:"Multi-Cipher",isNew:true,accentColor:"green",file:"game/kriptografi/crypto-escape-room.html"}
   ]}
 ];
-
+ 
 var subjects = [
   {id:"diskrit",icon:"∑",title:"Matematika Diskrit",description:"Logika, himpunan, relasi, graf, dan kombinatorik untuk fondasi ilmu komputer",topics:[{num:"01",name:"Logika Matematika"},{num:"02",name:"Teori Himpunan"},{num:"03",name:"Relasi & Fungsi"},{num:"04",name:"Teori Graf"},{num:"05",name:"Aljabar Bolean"},{num:"06",name:"Pohon"},{num:"07",name:"Number Of Theory"}],totalTopics:7,availableTopics:7},
   {id:"aljabar",icon:"λ",title:"Aljabar Linear",description:"Vektor, matriks, transformasi linear, dan ruang vektor",topics:[{num:"01",name:"Sistem Persamaan Linear"},{num:"02",name:"Matriks"},{num:"03",name:"Determinan"},{num:"04",name:"Nilai Eigen dan Vektor Eigen"},{num:"05",name:"Diagonalisasi"}],totalTopics:5,availableTopics:5},
   {id:"kripto",icon:"🔐",title:"Kriptografi",description:"Enkripsi, dekripsi, algoritma kunci publik, dan keamanan data",topics:[{num:"01",name:"Kriptografi"}],totalTopics:1,availableTopics:1}
 ];
-
+ 
 var referensiData = [
   {icon:"📚",title:"Buku Referensi",gradient:"from-teal-to-amber",items:[{title:"Discrete Mathematics and Its Applications",desc:"oleh Kenneth H. Rosen",detail:"Buku referensi paling populer untuk Matematika Diskrit"},{title:"Discrete Mathematics",desc:"oleh Richard Johnsonbaugh",detail:"Pendekatan praktis dengan banyak contoh soal"},{title:"Matematika Diskrit",desc:"oleh Rinaldi Munir",detail:"Buku dalam bahasa Indonesia yang mudah dipahami"}]},
   {icon:"🌐",title:"Website & Platform",gradient:"from-teal-to-cyan",items:[{title:"GeeksforGeeks",desc:"Tutorial dan contoh code untuk berbagai topik",url:"https://www.geeksforgeeks.org/discrete-mathematics/"},{title:"Khan Academy",desc:"Video pembelajaran interaktif gratis",url:"https://www.khanacademy.org/computing/computer-science"},{title:"Brilliant.org",desc:"Platform pembelajaran dengan pendekatan problem-solving",url:"https://brilliant.org/courses/discrete-mathematics/"}]}
 ];
-
+ 
 var filterCategories = [
   {key:"all",label:"🌟 Semua"},{key:"Sejarah",label:"📜 Sejarah"},{key:"Kriptografi",label:"🔐 Kriptografi"},
   {key:"Teori Graf",label:"🕸️ Teori Graf"},{key:"Probabilitas",label:"🎲 Probabilitas"},{key:"Alam",label:"🌿 Alam & Sains"},
   {key:"Bilangan",label:"🔢 Bilangan"},{key:"Terapan",label:"⚙️ Terapan"}
 ];
-
+ 
 var stats = [
   {
     icon:'🧠',
@@ -311,14 +312,14 @@ var stats = [
     suffix:''
   }
 ];
-
+ 
 var features = [
   {icon:'⚡',title:'Visualisasi Interaktif',desc:'Pahami konsep abstrak melalui animasi dan visualisasi real-time'},
   {icon:'🧠',title:'Adaptive Learning',desc:'Konten yang menyesuaikan dengan kecepatan belajar kamu'},
   {icon:'🎯',title:'Latihan Bertarget',desc:'Soal-soal yang dirancang untuk menguji pemahaman konsep inti'},
   {icon:'📖',title:'Studi Kasus Nyata',desc:'Aplikasi matematika dalam dunia teknologi dan industri'}
 ];
-
+ 
 var creators = [
   {
     initial: "T",
@@ -331,7 +332,7 @@ var creators = [
     email: "toga@gmail.com",
     avatarClass: "avatar-1"
   },
-
+ 
   {
     initial: "J",
     nim: "43325024",
@@ -343,7 +344,7 @@ var creators = [
     email: "joshua@gmail.com",
     avatarClass: "avatar-2"
   },
-
+ 
   {
     initial: "D",
     nim: "43325041",
@@ -355,7 +356,7 @@ var creators = [
     email: "desmonth@gmail.com",
     avatarClass: "avatar-3"
   },
-
+ 
   {
     initial: "A",
     nim: "43325006",
@@ -368,7 +369,7 @@ var creators = [
     avatarClass: "avatar-4"
   }
 ];
-
+ 
 /* ═══ STATE ═══ */
 var currentPage = 'beranda';
 var activeMateriTab = 'diskrit';
@@ -378,7 +379,7 @@ var openAccordions = {};
 var menuOpen = false;
 var isLight = localStorage.getItem('mathematic-theme') === 'light';
 var letters = ['A','B','C','D'];
-
+ 
 /* ═══ NAVIGASI — Update penanda halaman aktif di semua menu ═══ */
 function updateActiveNavLinks(page) {
   // Menu desktop (Beranda / Materi / Game)
@@ -390,7 +391,7 @@ function updateActiveNavLinks(page) {
     a.classList.toggle('active', a.getAttribute('data-page') === page);
   });
 }
-
+ 
 /* ═══ NAVIGASI — Berpindah halaman ═══ */
 function navigateTo(page, tab) {
   // Sembunyikan halaman lama
@@ -399,10 +400,10 @@ function navigateTo(page, tab) {
   var el = document.getElementById('page-' + page);
   if (el) el.classList.add('active');
   currentPage = page;
-
+ 
   // Update penanda halaman aktif di semua menu — langsung, tanpa delay
   updateActiveNavLinks(page);
-
+ 
   // Tab materi
   if (page === 'materi') {
     renderMateri();
@@ -416,14 +417,14 @@ function navigateTo(page, tab) {
   if (page === 'referensi') {
     renderReferensi();
   }
-
+ 
   // Tutup menu
   menuOpen = false;
   document.getElementById('dropdownMenu').classList.remove('open');
   document.getElementById('menuBtn').textContent = '☰';
-
+ 
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
+ 
   // Gunakan pushState (bukan hash) agar tidak trigger popstate/hashchange
   // yang bisa mereset activeMateriTab
   var newUrl = '?page=' + page + (page === 'materi' ? '&tab=' + activeMateriTab : '');
@@ -431,7 +432,7 @@ function navigateTo(page, tab) {
     history.pushState({ page: page, tab: page === 'materi' ? activeMateriTab : null }, '', newUrl);
   }
 }
-
+ 
 /* ═══ TOAST — Notifikasi singkat ═══ */
 function showToast(msg, type) {
   var t = document.getElementById('toast');
@@ -439,18 +440,18 @@ function showToast(msg, type) {
   t.className = 'toast show ' + type;
   setTimeout(function() { t.classList.remove('show'); }, 3500);
 }
-
+ 
 /* ═══ MODAL — Popup detail konten ═══ */
 function openModal(emoji, tag, title, sections, color) {
   var colorMap = { teal:'hsl(var(--teal))', amber:'hsl(var(--amber))', violet:'hsl(var(--violet))' };
   var bgMap = { teal:'hsl(174 72% 52%/.1)', amber:'hsl(38 95% 58%/.1)', violet:'hsl(265 65% 65%/.1)' };
   var c = color || 'teal';
-
+ 
   document.getElementById('modalHeader').innerHTML =
     '<span class="emoji">' + emoji + '</span>' +
     '<div><span style="display:inline-block;border-radius:99px;padding:4px 12px;font-family:var(--font-mono);font-size:.875rem;background:' + bgMap[c] + ';color:' + colorMap[c] + '">' + tag + '</span>' +
     '<h2 class="font-display" style="margin-top:8px;font-size:1.5rem;font-weight:800">' + title + '</h2></div>';
-
+ 
   var body = '';
   sections.forEach(function(s, i) {
     body += '<div class="modal-section" style="animation:fadeUp .5s cubic-bezier(0,0,0.2,1) ' + (i*0.1) + 's both">' +
@@ -458,17 +459,17 @@ function openModal(emoji, tag, title, sections, color) {
       '<p>' + s.content + '</p></div>';
   });
   document.getElementById('modalBody').innerHTML = body;
-
+ 
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
+ 
 function closeModal() {
   var overlay = document.getElementById('modalOverlay');
   overlay.classList.remove('open');
   document.body.style.overflow = '';
 }
-
+ 
 // Close modal when ESC is pressed or clicking outside
 document.addEventListener('click', function(e) {
   var overlay = document.getElementById('modalOverlay');
@@ -476,13 +477,13 @@ document.addEventListener('click', function(e) {
     closeModal();
   }
 });
-
+ 
 /* ═══ TYPEWRITER — Efek ketik di hero ═══ */
 function startTypewriter() {
   var words = ["Matematika Diskrit", "Aljabar Linear", "Kriptografi"];
   var el = document.getElementById('typewriter');
   var wordIdx = 0, charIdx = 0, isDeleting = false, isPaused = false;
-
+ 
   function step() {
     var word = words[wordIdx];
     if (isPaused) { isPaused = false; isDeleting = true; setTimeout(step, 60); return; }
@@ -500,9 +501,9 @@ function startTypewriter() {
   }
   setTimeout(step, 90);
 }
-
+ 
 /* ═══ RENDER FUNCTIONS — Membangun HTML dari data ═══ */
-
+ 
 function renderSubjectCards() {
   var iconClasses = { diskrit:'icon-violet', aljabar:'icon-teal', kripto:'icon-amber' };
   var progClasses = { diskrit:'prog-violet', aljabar:'prog-teal', kripto:'prog-amber' };
@@ -526,7 +527,7 @@ function renderSubjectCards() {
   document.getElementById('subjectCards').innerHTML = html;
   initSubjectCards();
 }
-
+ 
 /* ═══ SUBJECT CARDS — Active State Logic ═══
    Menggantikan sistem :hover dengan class .active berbasis JS.
    - Card pertama otomatis aktif saat load
@@ -536,29 +537,29 @@ function renderSubjectCards() {
 function initSubjectCards() {
   var cards = document.querySelectorAll('#subjectCards .subject-card');
   if (!cards.length) return;
-
+ 
   function activateCard(targetCard) {
     cards.forEach(function(c) { c.classList.remove('active'); });
     targetCard.classList.add('active');
   }
-
+ 
   cards.forEach(function(card) {
     // Click: wajib untuk mobile compatibility
     card.addEventListener('click', function(e) {
       if (e.target.closest('.btn-sm-teal')) return;
       activateCard(card);
     });
-
+ 
     // Mouseenter (opsional): untuk pengalaman desktop yang lebih smooth
     card.addEventListener('mouseenter', function() {
       activateCard(card);
     });
   });
-
+ 
   // Card pertama aktif saat pertama kali load
   activateCard(cards[0]);
 }
-
+ 
 function renderStats() {
   var html = '';
   stats.forEach(function(s) {
@@ -569,7 +570,7 @@ function renderStats() {
   });
   document.getElementById('statsGrid').innerHTML = html;
 }
-
+ 
 function renderFeatures() {
   var html = '';
   features.forEach(function(f) {
@@ -578,7 +579,7 @@ function renderFeatures() {
   });
   document.getElementById('featuresGrid').innerHTML = html;
 }
-
+ 
 function openModuleFile(file, tipe) {
   history.replaceState(
     { page: 'materi', tab: activeMateriTab },
@@ -587,7 +588,7 @@ function openModuleFile(file, tipe) {
   );
   sessionStorage.setItem('backPage', 'materi');
   sessionStorage.setItem('materiTab', activeMateriTab);
-
+ 
   if (tipe === 'pdf') {
     // Buka PDF di viewer khusus
     window.location.href = 'pdf-viewer.html?url=' + encodeURIComponent(file);
@@ -595,7 +596,7 @@ function openModuleFile(file, tipe) {
     window.location.href = file;
   }
 }
-
+ 
 function openGameFile(file) {
   history.replaceState(
     { page: 'game', tab: null },
@@ -605,7 +606,7 @@ function openGameFile(file) {
   sessionStorage.setItem('backPage', 'game');
   window.location.href = file;
 }
-
+ 
 async function renderMateri() {
   // Tabs
   var tabs = [
@@ -619,11 +620,11 @@ async function renderMateri() {
       '" onclick="activeMateriTab=\'' + t.key + '\';renderMateri()">' + t.label + '</button>';
   });
   document.getElementById('materiTabs').innerHTML = tabHtml;
-
+ 
   // Loading state
   document.getElementById('materiContent').innerHTML = 
     '<div style="text-align:center;padding:60px;color:hsl(var(--fg3))">⏳ Memuat materi...</div>';
-
+ 
   try {
     // Fetch dari Supabase
     const { data, error } = await db
@@ -631,15 +632,15 @@ async function renderMateri() {
       .select('*')
       .eq('modul', activeMateriTab)
       .order('urutan', { ascending: true });
-
+ 
     if (error) throw error;
-
+ 
     // Kalau tidak ada data di DB, fallback ke data lokal
     if (!data || data.length === 0) {
       renderMateriLokal();
       return;
     }
-
+ 
     // Render dari DB — grouping berdasarkan tag (Learn/Watch/Practice)
     // Karena DB hanya simpan materi (Learn), gabungkan dengan video & soal dari lokal
     var lokalSections = materiData[activeMateriTab] || [];
@@ -652,30 +653,31 @@ async function renderMateri() {
           title: row.judul,
           description: row.konten || '',
           tag: 'Learn',
-          file: row.url
+          file: row.url || ('materi-viewer.html?id=' + row.id),
+          tipe: row.tipe
         };
       })
     };
-
+ 
     // Gabung: section materi dari DB + section video & soal dari lokal
     var sections = [dbSection];
     if (lokalSections[1]) sections.push(lokalSections[1]); // Video
     if (lokalSections[2]) sections.push(lokalSections[2]); // Soal
-
+ 
     renderMateriSections(sections);
-
+ 
   } catch(err) {
     console.error('Gagal fetch materi:', err);
     // Fallback ke data lokal jika DB error
     renderMateriLokal();
   }
 }
-
+ 
 function renderMateriLokal() {
   var sections = materiData[activeMateriTab] || [];
   renderMateriSections(sections);
 }
-
+ 
 function renderMateriSections(sections) {
   var html = '';
   sections.forEach(function(s, sectionIndex) {
@@ -687,7 +689,7 @@ function renderMateriSections(sections) {
       '<div class="carousel-wrap">' +
       '<button type="button" class="carousel-btn prev" onclick="carouselScrollById(\'' + gridId + '\', -1)">&#10094;</button>' +
       '<div id="' + gridId + '" class="materi-grid">';
-
+ 
    s.items.forEach(function(item) {
   html += '<div class="materi-card"' + (item.file ? ' onclick="openModuleFile(\'' + item.file + '\',\'' + (item.tipe||'html') + '\')"' : '') + '>' +
         '<div class="accent-line"></div>' +
@@ -698,19 +700,19 @@ function renderMateriSections(sections) {
         (item.file ? '<span class="link-arrow">➔</span>' : '') + 
         '</div>';
     });
-
+ 
     html += '</div>' +
       '<button type="button" class="carousel-btn next" onclick="carouselScrollById(\'' + gridId + '\', 1)">&#10095;</button>' +
       '<div class="carousel-dots"></div>' +
       '</div></div>';
   });
-
+ 
   document.getElementById('materiContent').innerHTML = html;
   if (typeof window.refreshCarouselGrids === 'function') {
     window.refreshCarouselGrids();
   }
 }
-
+ 
 function renderGame() {
   var html = '';
   gameData.forEach(function(section, sectionIndex) {
@@ -744,7 +746,7 @@ function renderGame() {
     window.refreshCarouselGrids();
   }
 }
-
+ 
 function renderFunFacts() {
   var filtered = funFacts;
   var html = '';
@@ -755,7 +757,7 @@ function renderFunFacts() {
       '<div class="bottom"><span class="tag">' + f.tag + '</span><span class="read-more">Baca selengkapnya →</span></div></div>';
   });
   document.getElementById('factGrid').innerHTML = html;
-
+ 
   // Add event listeners after rendering
   document.querySelectorAll('.fact-card').forEach(function(card, idx) {
     card.addEventListener('click', function() {
@@ -771,7 +773,7 @@ function renderFunFacts() {
     });
   });
 }
-
+ 
 function renderVokasi() {
   var html = '';
   vokasiItems.forEach(function(v, idx) {
@@ -784,7 +786,7 @@ function renderVokasi() {
       '<span class="hover-arrow">Lihat detail →</span></div>';
   });
   document.getElementById('vokasiGrid').innerHTML = html;
-
+ 
   // Add event listeners after rendering
   document.querySelectorAll('.vokasi-card').forEach(function(card) {
     card.addEventListener('click', function() {
@@ -800,7 +802,7 @@ function renderVokasi() {
     });
   });
 }
-
+ 
 function renderRealLife() {
   var html = '';
   realLifeItems.forEach(function(item) {
@@ -816,7 +818,7 @@ function renderRealLife() {
       '</div></div>';
   });
   document.getElementById('realLifeAccordion').innerHTML = html;
-
+ 
   document.querySelectorAll('.read-more-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var itemId = this.dataset.realId;
@@ -830,23 +832,23 @@ function renderRealLife() {
     });
   });
 }
-
+ 
 function toggleAccordion(id) {
   openAccordions[id] = !openAccordions[id];
   renderRealLife();
 }
-
+ 
 function renderQuiz() {
   var box = document.getElementById('quizBox');
   var pct = quizIndex >= quizData.length ? 100 : (quizIndex / quizData.length) * 100;
-
+ 
   var html = '<div class="quiz-header"><div class="quiz-progress">' +
     '<div class="quiz-bar"><div class="quiz-bar-fill" style="width:' + pct + '%"></div></div>' +
     '<span class="font-mono" style="font-size:.875rem;color:hsl(var(--fg3));margin-top:6px;display:block">' +
     (quizIndex >= quizData.length ? 'Selesai!' : 'Soal ' + (quizIndex+1) + ' dari ' + quizData.length) + '</span>' +
     '</div><div style="text-align:center"><span class="font-mono" style="font-size:.75rem;text-transform:uppercase;color:hsl(var(--fg3))">Skor</span>' +
     '<span class="font-display grad-text" style="display:block;font-size:1.5rem;font-weight:900">' + quizScore + '</span></div></div>';
-
+ 
   html += '<div class="quiz-body">';
   if (quizIndex >= quizData.length) {
     var emoji = quizScore >= 4 ? '🏆' : quizScore >= 3 ? '😊' : '💪';
@@ -880,7 +882,7 @@ function renderQuiz() {
   html += '</div>';
   box.innerHTML = html;
 }
-
+ 
 function pickAnswer(i) {
   if (quizAnswered) return;
   quizAnswered = true;
@@ -888,14 +890,14 @@ function pickAnswer(i) {
   if (i === quizData[quizIndex].ans) quizScore++;
   renderQuiz();
 }
-
+ 
 function nextQuiz() {
   quizIndex++;
   quizAnswered = false;
   selectedAnswer = null;
   renderQuiz();
 }
-
+ 
 function restartQuiz() {
   quizIndex = 0;
   quizScore = 0;
@@ -903,7 +905,7 @@ function restartQuiz() {
   selectedAnswer = null;
   renderQuiz();
 }
-
+ 
 function renderReferensi() {
   var gradients = {
     'from-teal-to-amber':'linear-gradient(135deg,hsl(var(--teal)),hsl(var(--amber)))',
@@ -925,13 +927,13 @@ function renderReferensi() {
   });
 var refEl = document.getElementById('referensiContent');
 if (refEl) refEl.innerHTML = html;}
-
+ 
 function renderCreators() {
   var html = '';
   creators.forEach(function(c) {
     var cardClass = 'creator-card ' + (c.avatarClass || '');
     var photoStyle = c.avatar ? ' style="background-image:url(' + c.avatar + ')"' : '';
-
+ 
     html += '<div class="' + cardClass + '">';
     html += '<div class="creator-photo"' + photoStyle + '></div>';
     html += '<div class="creator-details">';
@@ -944,31 +946,31 @@ function renderCreators() {
   });
   document.getElementById('creatorsGrid').innerHTML = html;
 }
-
+ 
 /* ═══ SCROLL EFFECT — Shadow pada navbar ═══ */
 window.addEventListener('scroll', function() {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
 }, { passive: true });
-
+ 
 /* ═══ THEME TOGGLE — Dark/Light mode ═══ */
 function applyTheme() {
   document.documentElement.classList.toggle('light', isLight);
   document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
   localStorage.setItem('mathematic-theme', isLight ? 'light' : 'dark');
 }
-
+ 
 document.getElementById('themeBtn').addEventListener('click', function() {
   isLight = !isLight;
   applyTheme();
 });
-
+ 
 /* ═══ MENU TOGGLE — Buka/tutup dropdown ═══ */
 document.getElementById('menuBtn').addEventListener('click', function() {
   menuOpen = !menuOpen;
   document.getElementById('dropdownMenu').classList.toggle('open', menuOpen);
   this.textContent = menuOpen ? '✕' : '☰';
 });
-
+ 
 // Tutup menu saat klik di luar
 document.addEventListener('mousedown', function(e) {
   var wrapper = document.getElementById('menuWrapper');
@@ -978,12 +980,12 @@ document.addEventListener('mousedown', function(e) {
     document.getElementById('menuBtn').textContent = '☰';
   }
 });
-
+ 
 /* ═══ CLOSE MODAL ON ESCAPE ═══ */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeModal();
 });
-
+ 
 /* ═══ CONTACT FORM ═══ */
 document.getElementById('contactForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -994,7 +996,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   showToast('Pesan berhasil dikirim! Terima kasih.', 'success');
   this.reset();
 });
-
+ 
 /* ═══ INIT — Jalankan semua render saat halaman dimuat ═══ */
 (function init() {
   applyTheme();
@@ -1015,7 +1017,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   handlePageParam();
    checkAuthNav(); // ← tambahkan ini
 })();
-
+ 
 // ── CEK STATUS LOGIN DI NAVBAR ──
 async function checkAuthNav() {
   const { data: { session } } = await db.auth.getSession();
@@ -1048,12 +1050,12 @@ async function checkAuthNav() {
     }
   }
 }
-
+ 
 async function logoutUser() {
   await db.auth.signOut();
   window.location.reload();
 }
-
+ 
 /* ═══════════════════════════════════════════
    ADAPTIVE CAROUSEL SYSTEM
    ─────────────────────────────────────────
@@ -1069,7 +1071,7 @@ async function logoutUser() {
    ═══════════════════════════════════════════ */
 (function () {
   'use strict';
-
+ 
   /* ── Selector target ── */
   var TARGET_SELECTORS = [
     '.stats-grid',
@@ -1078,18 +1080,18 @@ async function logoutUser() {
     '.fact-grid',
     '.vokasi-grid',
   ];
-
+ 
   /* ── Breakpoints ── */
   var BP_DESKTOP = 1024;
   var BP_TABLET  = 768;
-
+ 
   /* ─────────────────────────────────────
      Hitung berapa card muat di container
      Gunakan lebar minimal card sebagai patokan
   ───────────────────────────────────────*/
   var CARD_MIN_WIDTH = 260; // px — sama dengan minmax CSS
   var GAP            = 24;  // px — gap antar card
-
+ 
   function getContainerWidth(grid) {
     /* Gunakan lebar grid itu sendiri setelah flex layout terbentuk,
        bukan lebar wrap (yang termasuk tombol kiri/kanan) */
@@ -1102,7 +1104,7 @@ async function logoutUser() {
     }
     return 300;
   }
-
+ 
   function calcCardsPerView(containerWidth, vw) {
     if (vw >= BP_DESKTOP) {
       /* Desktop: hitung berapa banyak muat, min 1 */
@@ -1115,7 +1117,7 @@ async function logoutUser() {
       return 1;
     }
   }
-
+ 
   /* ─────────────────────────────────────
      Pastikan grid dibungkus .carousel-wrap
      dan punya tombol prev/next serta dots
@@ -1128,7 +1130,7 @@ async function logoutUser() {
     wrap.className = 'carousel-wrap';
     grid.parentNode.insertBefore(wrap, grid);
     wrap.appendChild(grid);
-
+ 
     /* Tombol prev — dimasukkan SEBELUM grid (insertBefore) */
     var prev = document.createElement('button');
     prev.className = 'carousel-btn prev';
@@ -1136,7 +1138,7 @@ async function logoutUser() {
     prev.setAttribute('aria-label', 'Sebelumnya');
     prev.innerHTML = '&#9664;';
     wrap.insertBefore(prev, grid); /* prev ada di kiri grid */
-
+ 
     /* Tombol next — dimasukkan SESUDAH grid (appendChild) */
     var next = document.createElement('button');
     next.className = 'carousel-btn next';
@@ -1144,12 +1146,12 @@ async function logoutUser() {
     next.setAttribute('aria-label', 'Berikutnya');
     next.innerHTML = '&#9654;';
     wrap.appendChild(next); /* next ada di kanan grid */
-
+ 
     /* Dots — di bawah (absolute positioned via CSS) */
     var dotsEl = document.createElement('div');
     dotsEl.className = 'carousel-dots';
     wrap.appendChild(dotsEl);
-
+ 
     /* Scroll event untuk update tombol & dots */
     var scrollTimer;
     grid.addEventListener('scroll', function () {
@@ -1159,13 +1161,13 @@ async function logoutUser() {
         updateButtons(grid);
       }, 50);
     });
-
+ 
     prev.addEventListener('click', function () { scrollByGroup(grid, -1); });
     next.addEventListener('click', function () { scrollByGroup(grid, 1); });
-
+ 
     return wrap;
   }
-
+ 
   /* ─────────────────────────────────────
      Aktifkan / nonaktifkan mode slider
   ───────────────────────────────────────*/
@@ -1173,7 +1175,7 @@ async function logoutUser() {
     var wrap = grid.parentElement;
     var containerWidth = getContainerWidth(grid);
     var cardWidth;
-
+ 
     if (vw < BP_TABLET) {
       /* Mobile: 1 card dengan sedikit peek (5%) */
       cardWidth = containerWidth * 0.88;
@@ -1181,41 +1183,41 @@ async function logoutUser() {
       /* Tablet: N cards per view */
       cardWidth = (containerWidth - GAP * (cardsPerView - 1)) / cardsPerView;
     }
-
+ 
     /* Terapkan lebar ke setiap card */
     Array.from(grid.children).forEach(function (card) {
       card.style.flex     = '0 0 ' + Math.floor(cardWidth) + 'px';
       card.style.maxWidth = Math.floor(cardWidth) + 'px';
       card.style.minWidth = '0';
     });
-
+ 
     var alreadyActive = grid.classList.contains('is-slider');
-
+ 
     /* Aktifkan mode slider */
     grid.classList.add('is-slider');
     if (wrap) wrap.classList.add('slider-active');
-
+ 
     /* Reset scroll ke awal HANYA jika baru pertama kali diaktifkan */
     if (!alreadyActive) {
       grid.scrollLeft = 0;
     }
   }
-
+ 
   function deactivateSlider(grid) {
     var wrap = grid.parentElement;
-
+ 
     /* Reset lebar card agar grid CSS mengambil alih */
     Array.from(grid.children).forEach(function (card) {
       card.style.flex     = '';
       card.style.maxWidth = '';
       card.style.minWidth = '';
     });
-
+ 
     grid.classList.remove('is-slider');
     if (wrap) wrap.classList.remove('slider-active');
     grid.scrollLeft = 0;
   }
-
+ 
   /* ─────────────────────────────────────
      Hitung jumlah slide (grup card)
      1 slide = N cards yang terlihat sekaligus
@@ -1224,7 +1226,7 @@ async function logoutUser() {
     var total = grid.children.length;
     return Math.ceil(total / cardsPerView);
   }
-
+ 
   /* ─────────────────────────────────────
      Scroll sebesar 1 grup card (bukan 1 card)
   ───────────────────────────────────────*/
@@ -1236,14 +1238,14 @@ async function logoutUser() {
     var gap = parseFloat(styles.columnGap || styles.gap || '0') || GAP;
     return (cardW + gap) * cardsPerView;
   }
-
+ 
   function scrollByGroup(grid, dir) {
     /* Ambil cardsPerView dari dataset yang disimpan saat enhance */
     var cpv = parseInt(grid.dataset.cardsPerView || '1', 10);
     var step = getGroupStep(grid, cpv);
     grid.scrollBy({ left: dir * step, behavior: 'smooth' });
   }
-
+ 
   /* ─────────────────────────────────────
      Dots — satu dot per slide-group
   ───────────────────────────────────────*/
@@ -1252,12 +1254,12 @@ async function logoutUser() {
     if (!wrap) return;
     var dotsEl = wrap.querySelector('.carousel-dots');
     if (!dotsEl) return;
-
+ 
     /* Rebuild hanya jika jumlah slide berubah */
     if (parseInt(dotsEl.dataset.slideCount || '0', 10) === slideCount) return;
     dotsEl.dataset.slideCount = slideCount;
     dotsEl.innerHTML = '';
-
+ 
     for (var i = 0; i < slideCount; i++) {
       (function (idx) {
         var dot = document.createElement('button');
@@ -1273,21 +1275,21 @@ async function logoutUser() {
       })(i);
     }
   }
-
+ 
   function updateDots(grid) {
     var wrap = grid.parentElement;
     if (!wrap) return;
     var dots = wrap.querySelectorAll('.carousel-dot');
     if (!dots.length) return;
-
+ 
     var cpv  = parseInt(grid.dataset.cardsPerView || '1', 10);
     var step = getGroupStep(grid, cpv);
     var idx  = step > 0 ? Math.round(grid.scrollLeft / step) : 0;
     idx = Math.max(0, Math.min(dots.length - 1, idx));
-
+ 
     dots.forEach(function (d, i) { d.classList.toggle('active', i === idx); });
   }
-
+ 
   /* ─────────────────────────────────────
      Update status tombol prev/next
   ───────────────────────────────────────*/
@@ -1297,22 +1299,22 @@ async function logoutUser() {
     var prev = wrap.querySelector('.carousel-btn.prev');
     var next = wrap.querySelector('.carousel-btn.next');
     if (!prev || !next) return;
-
+ 
     var atStart = grid.scrollLeft <= 4;
     var atEnd   = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4;
     prev.disabled = atStart;
     next.disabled = atEnd;
   }
-
+ 
   /* ─────────────────────────────────────
      Enhance: titik masuk utama per grid
   ───────────────────────────────────────*/
   function enhance(grid) {
     if (!grid || !grid.children.length) return;
-
+ 
     /* Pastikan sudah dibungkus */
     var wrap = ensureWrapped(grid);
-
+ 
     /* Pastikan scroll listener & button listeners aktif untuk wrap yang sudah ada */
     if (wrap && !grid.dataset.listenersSetup) {
       grid.dataset.listenersSetup = 'true';
@@ -1340,19 +1342,19 @@ async function logoutUser() {
         nextBtn.addEventListener('click', function () { scrollByGroup(grid, 1); });
       }
     }
-
+ 
     var vw             = window.innerWidth;
     var containerWidth = getContainerWidth(grid);
     var totalCards     = grid.children.length;
     var cardsPerView   = calcCardsPerView(containerWidth, vw);
-
+ 
     /* Simpan untuk dipakai scrollByGroup & dot click */
     var prevCpv = parseInt(grid.dataset.cardsPerView || '0', 10);
     grid.dataset.cardsPerView = cardsPerView;
-
+ 
     var needsSlider = totalCards > cardsPerView;
     var alreadySlider = grid.classList.contains('is-slider');
-
+ 
     if (needsSlider) {
       /* Hanya re-activate jika cardsPerView berubah (misal resize layar) */
       if (!alreadySlider || prevCpv !== cardsPerView) {
@@ -1372,7 +1374,7 @@ async function logoutUser() {
       }
     }
   }
-
+ 
   /* ─────────────────────────────────────
      Scan semua target grid di halaman
   ───────────────────────────────────────*/
@@ -1381,18 +1383,18 @@ async function logoutUser() {
       document.querySelectorAll(sel).forEach(enhance);
     });
   }
-
+ 
   /* expose refresh helper for content re-renders */
   window.refreshCarouselGrids = scanAll;
   window.carouselScrollByGrid = scrollByGroup;
-
+ 
   /* Debounce resize agar tidak terlalu sering */
   var resizeTimer;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(scanAll, 120);
   });
-
+ 
   /* Observe DOM — konten dirender secara async */
   var scheduled = false;
   function schedule(mutations) {
@@ -1408,7 +1410,7 @@ async function logoutUser() {
       scanAll();
     });
   }
-
+ 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       scanAll();
@@ -1418,7 +1420,7 @@ async function logoutUser() {
     scanAll();
     new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
   }
-
+ 
 })();
 /* ═══ DATA REFERENSI ═══ */
 var referensiData = [
@@ -1473,19 +1475,19 @@ var referensiData = [
     ]
   }
 ];
-
+ 
 /* ═══ RENDER REFERENSI ═══ */
 function renderReferensi() {
   var colorMap = { teal:'hsl(var(--teal))', amber:'hsl(var(--amber))', violet:'hsl(var(--violet))' };
   var bgMap    = { teal:'hsl(174 72% 52%/.1)', amber:'hsl(38 95% 58%/.1)', violet:'hsl(265 65% 65%/.1)' };
   var html = '';
-
+ 
   referensiData.forEach(function(kategori) {
     var c = kategori.warna;
     html += '<div style="margin-bottom:48px">';
     html += '<h2 class="font-display" style="font-size:1.5rem;font-weight:800;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid ' + colorMap[c] + '">' + kategori.kategori + '</h2>';
     html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px">';
-
+ 
     kategori.items.forEach(function(item) {
       html += '<div class="card" style="padding:24px;display:flex;flex-direction:column;gap:12px;border-top:3px solid ' + colorMap[c] + '">' +
         '<div style="display:flex;align-items:flex-start;gap:12px">' +
@@ -1500,10 +1502,10 @@ function renderReferensi() {
         '<a href="' + item.link + '" target="_blank" rel="noopener" style="font-size:.8rem;font-weight:600;color:' + colorMap[c] + ';text-decoration:none;display:flex;align-items:center;gap:4px">Kunjungi ↗</a>' +
         '</div></div>';
     });
-
+ 
     html += '</div></div>';
   });
-
+ 
   document.getElementById('referensiContent').innerHTML = html;
 }
 /* === MENU RESIZE FIX === */
@@ -1514,3 +1516,4 @@ window.addEventListener('resize', function() {
     document.getElementById('menuBtn').textContent = '☰';
   }
 });
+ 
