@@ -684,6 +684,131 @@
         </div>
       </div>
 
+      <!-- Form Tambah/Edit Section Materi -->
+<div class="soal-form" id="formSection">
+
+<h3 id="formSectionTitle">
+Tambah Bagian Materi
+</h3>
+
+
+<input type="hidden" id="sectionId">
+
+
+<div class="form-group">
+<label>Sub Topik</label>
+
+<input 
+type="text" 
+id="sectionSubTopik"
+placeholder="Contoh: Konsep Dasar Aljabar Boolean">
+
+</div>
+
+
+
+<div class="form-group">
+
+<label>Judul Bagian</label>
+
+<input 
+type="text"
+id="sectionJudul"
+placeholder="Contoh: Pengertian Aljabar Boolean">
+
+</div>
+
+
+
+
+<div class="form-group">
+
+<label>Tipe Section</label>
+
+<select id="sectionTipe">
+
+<option value="definisi">
+Definisi
+</option>
+
+<option value="teks">
+Teks Biasa
+</option>
+
+<option value="rumus">
+Rumus
+</option>
+
+<option value="contoh">
+Contoh
+</option>
+
+</select>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+<label>Isi Materi</label>
+
+<textarea 
+id="sectionKonten"
+rows="6"
+placeholder="Tulis isi materi...">
+</textarea>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+<label>Urutan</label>
+
+<input 
+type="number"
+id="sectionUrutan"
+value="1">
+
+</div>
+
+
+
+<div style="display:flex;gap:8px;margin-top:10px">
+
+
+<button 
+class="btn btn-accent"
+onclick="simpanSection()">
+
+💾 Simpan Materi
+
+</button>
+
+
+
+<button 
+class="btn btn-outline"
+onclick="document.getElementById('formSection').classList.remove('show')">
+
+Batal
+
+</button>
+
+
+</div>
+
+
+
+<div id="formSectionMsg"></div>
+
+
+</div>
+
       <!-- ── TAB: IMPORT TXT ── -->
       <div class="tab-page" id="tab-import">
         <div class="card">
