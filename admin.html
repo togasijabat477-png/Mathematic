@@ -1446,12 +1446,9 @@ async function simpanMateriManual() {
 
    async function renderSectionList(){
 
-    const list = document.getElementById('sectionList');
+    console.log("1. Fungsi dipanggil");
 
-    if(!list){
-        console.log("sectionList belum ada");
-        return;
-    }
+    const list = document.getElementById('sectionList');
 
 
     const {data,error}=await supabaseClient
@@ -1461,12 +1458,11 @@ async function simpanMateriManual() {
         .order('urutan');
 
 
-    if(error){
+    console.log("2. Data:", data);
+    console.log("3. Error:", error);
 
-        console.log(error);
-        return;
 
-    }
+}
 
 
     list.innerHTML="";
