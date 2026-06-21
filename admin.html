@@ -1452,15 +1452,31 @@ async function simpanMateriManual() {
 
 
     const {data,error}=await db
-.from('materi_sections')
-.select('*')
-.eq('materi_id', currentSecMateriId)
-.order('urutan');
+    .from('materi_sections')
+    .select('*')
+    .eq('materi_id', currentSecMateriId)
+    .order('urutan');
 
 
     console.log("2. Data:", data);
     console.log("3. Error:", error);
 
+
+}
+
+   
+   function openSectionEditor(){
+
+    currentSecMateriId=id;
+
+    renderSectionList();
+
+}
+
+
+async function renderSectionList(){
+
+    console.log("jalan");
 
 }
 
