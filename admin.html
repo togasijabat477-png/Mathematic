@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -31,16 +32,16 @@
       --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
       --shadow-md: 0 4px 16px rgba(0,0,0,.08);
     }
-
+ 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
-
+ 
     /* ── LOGIN ── */
     .login-page {
       min-height: 100vh; display: flex;
@@ -69,7 +70,7 @@
     }
     .login-card h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
     .login-card p { color: var(--text2); font-size: .9rem; margin-bottom: 28px; }
-
+ 
     .form-group { margin-bottom: 16px; }
     .form-group label {
       display: block; font-size: .8rem; font-weight: 600;
@@ -86,7 +87,7 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(108,71,255,.1);
     }
-
+ 
     .btn-primary {
       width: 100%; padding: 12px; border-radius: var(--radius-sm);
       background: var(--accent); color: #fff; border: none;
@@ -96,15 +97,15 @@
     }
     .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
     .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-
+ 
     .msg { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .875rem; text-align: center; }
     .msg.error { background: var(--red-light); color: var(--red); }
     .msg.success { background: var(--green-light); color: var(--green); }
-
+ 
     /* ── LAYOUT ── */
     .app { display: none; }
     .app.show { display: flex; min-height: 100vh; }
-
+ 
     /* ── SIDEBAR ── */
     .sidebar {
       width: 260px; flex-shrink: 0;
@@ -115,7 +116,7 @@
       height: 100vh; z-index: 100;
       transition: transform .3s;
     }
-
+ 
     .sidebar-header {
       padding: 20px 20px 16px;
       border-bottom: 1px solid var(--border);
@@ -137,15 +138,15 @@
       display: block; font-size: .7rem; color: var(--text3);
       font-weight: 400; margin-top: 1px;
     }
-
+ 
     .sidebar-nav { flex: 1; padding: 12px 12px; overflow-y: auto; }
-
+ 
     .nav-section-label {
       font-size: .7rem; font-weight: 600; color: var(--text3);
       text-transform: uppercase; letter-spacing: .1em;
       padding: 8px 8px 4px; margin-top: 8px;
     }
-
+ 
     .nav-item {
       display: flex; align-items: center; gap: 10px;
       padding: 10px 12px; border-radius: var(--radius-sm);
@@ -165,7 +166,7 @@
       font-size: .7rem; font-weight: 700; padding: 2px 7px;
       border-radius: 99px;
     }
-
+ 
     .sidebar-footer {
       padding: 12px; border-top: 1px solid var(--border);
     }
@@ -189,14 +190,14 @@
       border-radius: 6px; transition: all .2s; flex-shrink: 0;
     }
     .btn-logout-sm:hover { color: var(--red); background: var(--red-light); }
-
+ 
     /* ── MAIN CONTENT ── */
     .main {
       margin-left: 260px; flex: 1;
       display: flex; flex-direction: column;
       min-height: 100vh;
     }
-
+ 
     .topbar {
       background: var(--surface); border-bottom: 1px solid var(--border);
       padding: 16px 32px; display: flex; align-items: center;
@@ -204,9 +205,9 @@
     }
     .topbar-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
     .topbar-sub { font-size: .8rem; color: var(--text3); margin-top: 2px; }
-
+ 
     .content { padding: 28px 32px; flex: 1; }
-
+ 
     /* ── CARDS ── */
     .card {
       background: var(--surface); border: 1px solid var(--border);
@@ -220,11 +221,11 @@
     }
     .card-title { font-size: 1rem; font-weight: 700; color: var(--text); }
     .card-sub { font-size: .8rem; color: var(--text3); margin-top: 2px; }
-
+ 
     /* ── TABS (page sections) ── */
     .tab-page { display: none; }
     .tab-page.active { display: block; }
-
+ 
     /* ── UPLOAD AREA ── */
     .upload-area {
       border: 2px dashed var(--border); border-radius: var(--radius);
@@ -237,7 +238,7 @@
     .upload-area .u-icon { font-size: 2.2rem; margin-bottom: 10px; }
     .upload-area p { color: var(--text2); font-size: .875rem; }
     .upload-area strong { color: var(--accent); }
-
+ 
     .file-preview {
       background: var(--accent-light); border: 1px solid rgba(108,71,255,.2);
       border-radius: var(--radius-sm); padding: 12px 16px; margin-top: 12px;
@@ -245,14 +246,14 @@
     }
     .file-preview .fname { font-weight: 600; color: var(--accent); flex: 1; font-size: .875rem; }
     .file-preview .fsize { font-size: .8rem; color: var(--text3); }
-
+ 
     /* ── PROGRESS ── */
     .progress-wrap { margin-top: 16px; display: none; }
     .progress-wrap.show { display: block; }
     .progress-track { background: var(--surface2); border-radius: 99px; height: 6px; overflow: hidden; }
     .progress-fill { background: var(--accent); height: 100%; width: 0%; transition: width .3s; border-radius: 99px; }
     .progress-label { font-size: .8rem; color: var(--text2); margin-top: 6px; }
-
+ 
     /* ── TABLE / LIST ── */
     .data-list { display: flex; flex-direction: column; gap: 8px; }
     .data-item {
@@ -265,7 +266,7 @@
     .data-item .info { flex: 1; min-width: 0; }
     .data-item .info h3 { font-size: .9rem; font-weight: 600; color: var(--text); }
     .data-item .info p { font-size: .78rem; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
+ 
     /* ── BADGES ── */
     .badge {
       font-size: .72rem; font-family: 'JetBrains Mono', monospace;
@@ -279,7 +280,7 @@
     .badge-user { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
     .badge-pdf { background: var(--red-light); color: var(--red); }
     .badge-html { background: var(--green-light); color: var(--green); }
-
+ 
     /* ── BUTTONS ── */
     .btn {
       padding: 7px 14px; border-radius: var(--radius-sm);
@@ -296,11 +297,11 @@
     .btn-success { background: transparent; border-color: #86efac; color: var(--green); }
     .btn-success:hover { background: var(--green-light); }
     .btn-sm { padding: 5px 10px; font-size: .75rem; }
-
+ 
     /* ── FORM ROW ── */
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-
+ 
     /* ── FILTER BAR ── */
     .filter-bar {
       display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
@@ -314,7 +315,7 @@
       transition: border-color .2s;
     }
     .filter-bar select:focus { border-color: var(--accent); }
-
+ 
     /* ── FILTER TABS ── */
     .filter-tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 16px; width: fit-content; }
     .filter-tab {
@@ -324,7 +325,7 @@
       transition: all .15s;
     }
     .filter-tab.active { background: var(--surface); color: var(--accent); font-weight: 600; box-shadow: var(--shadow); }
-
+ 
     /* ── SOAL FORM ── */
     .soal-form {
       background: var(--surface2); border: 1px solid var(--border);
@@ -333,7 +334,7 @@
     }
     .soal-form.show { display: block; }
     .soal-form h3 { font-size: .95rem; font-weight: 700; margin-bottom: 16px; color: var(--accent); }
-
+ 
     .opsi-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
     .opsi-row { display: flex; align-items: center; gap: 8px; }
     .opsi-label {
@@ -344,7 +345,7 @@
       font-weight: 700; flex-shrink: 0;
     }
     .opsi-row input { flex: 1; }
-
+ 
     /* ── STATS ── */
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
     .stat-card {
@@ -355,12 +356,12 @@
     .stat-card .s-icon { font-size: 1.5rem; margin-bottom: 10px; }
     .stat-card .s-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
     .stat-card .s-label { font-size: .78rem; color: var(--text3); margin-top: 4px; }
-
+ 
     /* ── EMPTY / LOADING ── */
     .empty-state { text-align: center; padding: 48px 20px; color: var(--text3); }
     .empty-state .e-icon { font-size: 2.5rem; margin-bottom: 12px; }
     .loading { text-align: center; padding: 40px; color: var(--text3); }
-
+ 
     /* ── SOAL ITEM ── */
     .soal-item {
       background: var(--surface2); border: 1px solid var(--border);
@@ -383,7 +384,7 @@
       color: var(--text2);
     }
     .opt-chip.correct { background: var(--green-light); border-color: #86efac; color: var(--green); font-weight: 600; }
-
+ 
     /* ── TOAST ── */
     .toast {
       position: fixed; bottom: 24px; right: 24px;
@@ -397,7 +398,7 @@
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.success { background: var(--green); }
     .toast.error { background: var(--red); }
-
+ 
     /* ── MOBILE ── */
     .menu-toggle {
       display: none; position: fixed; top: 16px; left: 16px;
@@ -406,7 +407,7 @@
       cursor: pointer; font-size: 1.1rem; box-shadow: var(--shadow);
     }
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 99; }
-
+ 
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
@@ -421,7 +422,7 @@
   </style>
 </head>
 <body>
-
+ 
 <!-- ── LOGIN ── -->
 <div id="loginPage">
   <div class="login-page">
@@ -445,13 +446,13 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- ── APP ── -->
 <button class="menu-toggle" id="menuToggle">☰</button>
 <div class="overlay" id="overlay"></div>
-
+ 
 <div id="app" class="app">
-
+ 
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -463,7 +464,7 @@
         </div>
       </a>
     </div>
-
+ 
     <nav class="sidebar-nav">
       <div class="nav-section-label">Menu Utama</div>
       <button class="nav-item active" onclick="switchTab('dashboard', this)">
@@ -478,18 +479,18 @@
       <button class="nav-item" onclick="switchTab('import', this)">
         <span class="nav-icon">📋</span> Import dari TXT
       </button>
-
+ 
       <div class="nav-section-label">Pengguna</div>
       <button class="nav-item" onclick="switchTab('users', this)">
         <span class="nav-icon">👥</span> Kelola User
       </button>
-
+ 
       <div class="nav-section-label">Lainnya</div>
       <a href="index.html" class="nav-item" style="text-decoration:none">
         <span class="nav-icon">🏠</span> Kembali ke Web
       </a>
     </nav>
-
+ 
     <div class="sidebar-footer">
       <div class="user-card">
         <div class="user-avatar" id="sidebarAvatar">A</div>
@@ -501,7 +502,7 @@
       </div>
     </div>
   </aside>
-
+ 
   <!-- MAIN -->
   <main class="main">
     <div class="topbar">
@@ -510,9 +511,9 @@
         <div class="topbar-sub" id="topbarSub">Ringkasan data Math Unity</div>
       </div>
     </div>
-
+ 
     <div class="content">
-
+ 
       <!-- ── TAB: DASHBOARD ── -->
       <div class="tab-page active" id="tab-dashboard">
         <div class="stats-row" id="statsRow">
@@ -528,7 +529,7 @@
           <div id="recentMateri"><div class="loading">⏳ Memuat...</div></div>
         </div>
       </div>
-
+ 
       <!-- ── TAB: MATERI ── -->
       <div class="tab-page" id="tab-materi">
         <!-- Upload -->
@@ -573,6 +574,7 @@
            <button class="btn btn-accent" id="btnUpload" style="flex:1;padding:12px">📤 Upload & Simpan Materi</button>
            <button class="btn btn-outline" id="btnBuatManual" style="flex:1;padding:12px">✏️ Buat Materi Baru</button>
           </div>
+          <button class="btn btn-outline btn-sm" style="margin-top:10px;width:100%" onclick="importContohAljabarBoolean()">📥 Import Contoh: Aljabar Boolean → sistem Bagian Materi</button>
           <div id="uploadMsg"></div>
           <!-- Form Buat Materi Manual -->
 <div id="formBuatManual" style="display:none;margin-top:20px;border-top:2px solid var(--border);padding-top:20px">
@@ -583,12 +585,12 @@
     </div>
     <button class="btn btn-outline btn-sm" onclick="tutupFormBuatManual()">✕ Tutup</button>
   </div>
-
+ 
   <div class="form-group">
     <label>Judul Materi</label>
     <input type="text" id="manualJudul" placeholder="contoh: Logika Matematika" />
   </div>
-
+ 
   <div class="form-row">
     <div class="form-group">
       <label>Modul</label>
@@ -603,17 +605,17 @@
       <input type="number" id="manualUrutan" placeholder="contoh: 1" min="1" />
     </div>
   </div>
-
+ 
   <div class="form-group">
     <label>Deskripsi Singkat</label>
     <input type="text" id="manualDeskripsi" placeholder="contoh: Mempelajari dasar-dasar logika matematika" />
   </div>
-
+ 
   <button class="btn btn-accent" onclick="simpanMateriManual()" style="width:100%;padding:12px">✅ Buat & Lanjut ke Editor Section</button>
   <div id="manualMsg" style="margin-top:10px"></div>
 </div>
         </div>
-
+ 
         <!-- Daftar Materi -->
         <div class="card">
           <div class="card-header">
@@ -628,7 +630,7 @@
           <div id="materiList"><div class="loading">⏳ Memuat...</div></div>
         </div>
       </div>
-
+ 
       <!-- ── TAB: SOAL ── -->
       <div class="tab-page" id="tab-soal">
         <div class="card">
@@ -636,7 +638,7 @@
             <div><div class="card-title">Kelola Soal Kuis</div><div class="card-sub">Tambah, edit, dan hapus soal per topik</div></div>
             <button class="btn btn-accent btn-sm" onclick="showFormTambahSoal()">+ Tambah Soal</button>
           </div>
-
+ 
           <div class="filter-bar">
             <select id="filterModulSoal" onchange="updateJudulOptions();loadSoalList()">
               <option value="Matematika Diskrit">∑ Matematika Diskrit</option>
@@ -650,7 +652,7 @@
               <option value="hard">Hard</option>
             </select>
           </div>
-
+ 
           <!-- Form Tambah/Edit -->
           <div class="soal-form" id="formSoal">
             <h3 id="formSoalTitle">Tambah Soal Baru</h3>
@@ -679,136 +681,11 @@
             </div>
             <div id="formSoalMsg" style="margin-top:10px"></div>
           </div>
-
+ 
           <div id="soalList"><div class="loading">⏳ Memuat soal...</div></div>
         </div>
       </div>
-
-      <!-- Form Tambah/Edit Section Materi -->
-<div class="soal-form" id="formSection">
-
-<h3 id="formSectionTitle">
-Tambah Bagian Materi
-</h3>
-
-
-<input type="hidden" id="sectionId">
-
-
-<div class="form-group">
-<label>Sub Topik</label>
-
-<input 
-type="text" 
-id="sectionSubTopik"
-placeholder="Contoh: Konsep Dasar Aljabar Boolean">
-
-</div>
-
-
-
-<div class="form-group">
-
-<label>Judul Bagian</label>
-
-<input 
-type="text"
-id="sectionJudul"
-placeholder="Contoh: Pengertian Aljabar Boolean">
-
-</div>
-
-
-
-
-<div class="form-group">
-
-<label>Tipe Section</label>
-
-<select id="sectionTipe">
-
-<option value="definisi">
-Definisi
-</option>
-
-<option value="teks">
-Teks Biasa
-</option>
-
-<option value="rumus">
-Rumus
-</option>
-
-<option value="contoh">
-Contoh
-</option>
-
-</select>
-
-</div>
-
-
-
-
-<div class="form-group">
-
-<label>Isi Materi</label>
-
-<textarea 
-id="sectionKonten"
-rows="6"
-placeholder="Tulis isi materi...">
-</textarea>
-
-</div>
-
-
-
-
-<div class="form-group">
-
-<label>Urutan</label>
-
-<input 
-type="number"
-id="sectionUrutan"
-value="1">
-
-</div>
-
-
-
-<div style="display:flex;gap:8px;margin-top:10px">
-
-
-<button 
-class="btn btn-accent"
-onclick="simpanSection()">
-
-💾 Simpan Materi
-
-</button>
-
-
-
-<button 
-class="btn btn-outline"
-onclick="document.getElementById('formSection').classList.remove('show')">
-
-Batal
-
-</button>
-
-
-</div>
-
-
-
-<div id="formSectionMsg"></div>
-
-
-</div>
-
+ 
       <!-- ── TAB: IMPORT TXT ── -->
       <div class="tab-page" id="tab-import">
         <div class="card">
@@ -816,7 +693,7 @@ Batal
             <div><div class="card-title">Import Soal dari File TXT</div><div class="card-sub">Upload file .txt berisi soal — sistem otomatis parsing dan simpan ke database</div></div>
             <button class="btn btn-outline btn-sm" onclick="downloadTemplate()">📥 Download Template</button>
           </div>
-
+ 
           <div class="form-row" style="margin-bottom:16px">
             <div class="form-group">
               <label>Modul</label>
@@ -832,14 +709,14 @@ Batal
             <label>Level</label>
             <select id="txtLevel"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select>
           </div>
-
+ 
           <div class="upload-area" id="txtUploadArea">
             <div class="u-icon">📋</div>
             <p><strong>Klik untuk pilih file .txt</strong></p>
             <p style="margin-top:6px;font-size:.8rem">Format harus sesuai template yang diunduh</p>
             <input type="file" id="txtFileInput" accept=".txt" style="display:none" />
           </div>
-
+ 
           <div id="txtPreview" style="display:none;margin-top:16px">
             <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
               <h3 style="color:var(--accent);margin-bottom:12px;font-size:.9rem" id="txtPreviewTitle"></h3>
@@ -850,7 +727,7 @@ Batal
           <div id="txtMsg" style="margin-top:10px"></div>
         </div>
       </div>
-
+ 
       <!-- ── TAB: USERS ── -->
       <div class="tab-page" id="tab-users">
         <div class="card">
@@ -860,7 +737,7 @@ Batal
           <div id="userList"><div class="loading">⏳ Memuat user...</div></div>
         </div>
       </div>
-
+ 
       <!-- SECTION EDITOR -->
 <div class="card" id="sectionEditorPanel" style="display:none">
   <div class="card-header">
@@ -872,48 +749,97 @@ Batal
         Modul:
       </div>
     </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <a class="btn btn-outline btn-sm" id="btnLihatHalaman" href="#" target="_blank" rel="noopener">👁️ Lihat Halaman</a>
+      <button class="btn btn-accent btn-sm" onclick="showFormTambahSection()">+ Tambah Bagian</button>
+    </div>
   </div>
-
+ 
   <div id="secForm" class="soal-form">
-    Form section di sini
+    <h3 id="formSectionTitle">➕ Tambah Bagian Materi</h3>
+    <input type="hidden" id="sectionId">
+ 
+    <div class="form-group">
+      <label>Sub Topik <span style="color:var(--text3);font-weight:400;text-transform:none">(opsional, bebas isi)</span></label>
+      <input type="text" id="sectionSubTopik" placeholder="Contoh: Konsep Dasar Aljabar Boolean">
+    </div>
+ 
+    <div class="form-group">
+      <label>Judul Bagian</label>
+      <input type="text" id="sectionJudul" placeholder="Contoh: Pengertian Aljabar Boolean">
+    </div>
+ 
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tipe Section</label>
+        <select id="sectionTipe" onchange="toggleTipeCustom()">
+          <option value="definisi">📘 Definisi</option>
+          <option value="teks">📝 Teks Biasa</option>
+          <option value="rumus">🧮 Rumus</option>
+          <option value="contoh">💡 Contoh</option>
+          <option value="__custom__">✏️ Tipe lain (isi sendiri)...</option>
+        </select>
+      </div>
+      <div class="form-group" id="sectionTipeCustomWrap" style="display:none">
+        <label>Nama Tipe Baru</label>
+        <input type="text" id="sectionTipeCustom" placeholder="Contoh: Tabel, Catatan, Studi Kasus">
+      </div>
+    </div>
+ 
+    <div class="form-group">
+      <label>Isi Materi</label>
+      <textarea id="sectionKonten" rows="7" placeholder="Tulis isi materi di sini. Baris kosong = paragraf baru. Boleh juga tulis HTML langsung (misal &lt;ul&gt;&lt;li&gt;...&lt;/li&gt;&lt;/ul&gt;) kalau perlu format lebih kaya."></textarea>
+    </div>
+ 
+    <div class="form-group" style="max-width:160px">
+      <label>Urutan</label>
+      <input type="number" id="sectionUrutan" value="1" min="1">
+    </div>
+ 
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-accent" onclick="simpanSection()">💾 Simpan Bagian</button>
+      <button class="btn btn-outline" onclick="document.getElementById('secForm').classList.remove('show')">Batal</button>
+    </div>
+    <div id="formSectionMsg" style="margin-top:8px"></div>
   </div>
-
+ 
   <div id="sectionList">
     Memuat section...
   </div>
 </div>
-
+ 
     </div><!-- end content -->
   </main>
 </div><!-- end app -->
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
-document.getElementById('secMateriJudul')
-  
 const { createClient } = supabase;
 const db = createClient(
   'https://ytwfwxjutdlukjvnlnzv.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY'
 );
-
+ 
 let currentUser = null;
 let currentFilter = 'semua';
 let selectedFile = null;
 let parsedSoal = [];
-
+let currentSecMateriId = null;
+let sectionCache = [];
+const TIPE_SECTION_PRESET = ['definisi', 'teks', 'rumus', 'contoh'];
+ 
 const JUDUL_MAP = {
   'Matematika Diskrit': ['Logika','Himpunan','Aljabar Bolean','Matriks','Graf','Pohon','Teori Graf'],
   'Aljabar Linear': ['Sistem Persamaan Linear','Matriks','Determinan','Nilai Eigen dan Vektor Eigen','Diagonalisasi'],
   'Kriptografi': ['Kriptografi']
 };
-
+ 
 // ── AUTH ──
 db.auth.getSession().then(({ data: { session } }) => {
   if (session) showAdminPanel(session.user);
 });
-
+ 
 document.getElementById('btnLogin').addEventListener('click', async () => {
   const email = document.getElementById('adminEmail').value;
   const password = document.getElementById('adminPassword').value;
@@ -930,13 +856,13 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
     showAdminPanel(data.user);
   }
 });
-
+ 
 function showLoginMsg(text, type) {
   const el = document.getElementById('loginMsg');
   el.className = 'msg ' + type;
   el.textContent = text;
 }
-
+ 
 async function showAdminPanel(user) {
   const { data, error } = await db.from('profiles').select('role').eq('id', user.id).single();
   if (error || !data || data.role !== 'admin') {
@@ -958,12 +884,12 @@ async function showAdminPanel(user) {
   updateJudulOptions();
   updateTxtJudul();
 }
-
+ 
 function doLogout() {
   db.auth.signOut();
   location.reload();
 }
-
+ 
 // ── SIDEBAR MOBILE ──
 document.getElementById('menuToggle').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
@@ -973,7 +899,7 @@ document.getElementById('overlay').addEventListener('click', () => {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
 });
-
+ 
 // ── TAB NAVIGATION ──
 const tabTitles = {
   dashboard: { title: 'Dashboard', sub: 'Ringkasan data Math Unity' },
@@ -982,7 +908,7 @@ const tabTitles = {
   import: { title: 'Import dari TXT', sub: 'Upload soal dalam format file teks' },
   users: { title: 'Kelola User', sub: 'Atur hak akses pengguna' }
 };
-
+ 
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-page').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -994,7 +920,7 @@ function switchTab(name, btn) {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
 }
-
+ 
 // ── DASHBOARD ──
 async function loadDashboard() {
   const [matRes, soalRes, userRes, kuisRes] = await Promise.all([
@@ -1007,7 +933,7 @@ async function loadDashboard() {
   document.getElementById('statSoal').textContent = soalRes.count ?? '-';
   document.getElementById('statUser').textContent = userRes.count ?? '-';
   document.getElementById('statKuis').textContent = kuisRes.count ?? '-';
-
+ 
   const { data: recent } = await db.from('materi').select('*').order('created_at', { ascending: false }).limit(5);
   if (!recent || !recent.length) {
     document.getElementById('recentMateri').innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><p>Belum ada materi</p></div>';
@@ -1026,17 +952,17 @@ async function loadDashboard() {
   html += '</div>';
   document.getElementById('recentMateri').innerHTML = html;
 }
-
+ 
 // ── UPLOAD MATERI ──
 const uploadArea = document.getElementById('uploadArea');
 const fileInput = document.getElementById('fileInput');
-
+ 
 uploadArea.addEventListener('click', () => fileInput.click());
 uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag'); });
 uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag'));
 uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('drag'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
 fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
-
+ 
 function handleFile(file) {
   const isHtml = file.name.endsWith('.html');
   const isPdf = file.name.endsWith('.pdf');
@@ -1050,7 +976,7 @@ function handleFile(file) {
     document.getElementById('inputJudul').value = file.name.replace(/\.(html|pdf)$/, '').replace(/[_-]/g, ' ');
   }
 }
-
+ 
 document.getElementById('btnUpload').addEventListener('click', async () => {
   const judul = document.getElementById('inputJudul').value.trim();
   const modul = document.getElementById('inputModul').value;
@@ -1058,14 +984,14 @@ document.getElementById('btnUpload').addEventListener('click', async () => {
   const deskripsi = document.getElementById('inputDeskripsi').value.trim();
   if (!selectedFile) { showMsg('uploadMsg', '❌ Pilih file dulu', 'error'); return; }
   if (!judul) { showMsg('uploadMsg', '❌ Judul wajib diisi', 'error'); return; }
-
+ 
   const btn = document.getElementById('btnUpload');
   btn.disabled = true; btn.textContent = '⏳ Mengupload...';
   const pw = document.getElementById('progressWrap');
   const pf = document.getElementById('progressFill');
   const pl = document.getElementById('progressLabel');
   pw.classList.add('show'); pf.style.width = '30%'; pl.textContent = 'Mengupload file...';
-
+ 
   try {
     const isPdf = selectedFile.name.endsWith('.pdf');
     const filePath = modul + '/' + Date.now() + '_' + selectedFile.name;
@@ -1093,7 +1019,7 @@ document.getElementById('btnUpload').addEventListener('click', async () => {
   }
   btn.disabled = false; btn.textContent = '📤 Upload & Simpan Materi';
 });
-
+ 
 // ── DAFTAR MATERI ──
 async function loadMateriList() {
   const list = document.getElementById('materiList');
@@ -1112,6 +1038,7 @@ async function loadMateriList() {
       <div class="info"><h3 id="judul-${item.id}">${item.judul}</h3><p>${item.url||'-'}</p></div>
       <span class="badge ${tipe==='pdf'?'badge-pdf':'badge-html'}">${tipe.toUpperCase()}</span>
       <button class="btn btn-accent btn-sm" onclick="openSectionEditor('${item.id}','${item.judul.replace(/'/g,"\\'")}','${item.modul}',${item.urutan||0})">📑 Kelola Isi</button>
+      <a class="btn btn-outline btn-sm" href="materi-viewer.html?id=${item.id}" target="_blank" rel="noopener">👁️ Lihat</a>
       <button class="btn btn-outline btn-sm" onclick="editJudul('${item.id}','${item.judul.replace(/'/g,"\\'")}')">✏️ Judul</button>
       <button class="btn btn-danger btn-sm" onclick="hapusMateri('${item.id}','${(item.url||'').replace(/'/g,"\\'")}')">🗑</button>
     </div>`;
@@ -1119,14 +1046,14 @@ async function loadMateriList() {
   html += '</div>';
   list.innerHTML = html;
 }
-
+ 
 function filterMateri(filter, btn) {
   currentFilter = filter;
   document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   loadMateriList();
 }
-
+ 
 async function editJudul(id, judulLama) {
   const judulBaru = prompt('Edit judul materi:', judulLama);
   if (!judulBaru || judulBaru.trim() === judulLama) return;
@@ -1135,7 +1062,7 @@ async function editJudul(id, judulLama) {
   document.getElementById('judul-' + id).textContent = judulBaru.trim();
   showToast('✅ Judul diperbarui');
 }
-
+ 
 async function hapusMateri(id, url) {
   if (!confirm('Yakin hapus materi ini?')) return;
   const { error } = await db.from('materi').delete().eq('id', id);
@@ -1149,14 +1076,14 @@ async function hapusMateri(id, url) {
   loadMateriList(); loadDashboard();
   showToast('✅ Materi dihapus');
 }
-
+ 
 // ── KELOLA SOAL ──
 function updateJudulOptions() {
   const modul = document.getElementById('filterModulSoal').value;
   const sel = document.getElementById('filterJudulSoal');
   sel.innerHTML = (JUDUL_MAP[modul] || []).map(j => `<option value="${j}">${j}</option>`).join('');
 }
-
+ 
 function showFormTambahSoal() {
   ['soalId','soalPertanyaan','opsi0','opsi1','opsi2','opsi3','opsi4','soalPenjelasanJudul','soalPenjelasanIsi'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('soalJawaban').value = '0';
@@ -1166,7 +1093,7 @@ function showFormTambahSoal() {
   f.classList.add('show');
   f.scrollIntoView({ behavior: 'smooth' });
 }
-
+ 
 function showFormEditSoal(soal) {
   const opsi = soal.opsi || [];
   document.getElementById('soalId').value = soal.id;
@@ -1181,7 +1108,7 @@ function showFormEditSoal(soal) {
   f.classList.add('show');
   f.scrollIntoView({ behavior: 'smooth' });
 }
-
+ 
 async function simpanSoal() {
   const id = document.getElementById('soalId').value;
   const pertanyaan = document.getElementById('soalPertanyaan').value.trim();
@@ -1199,7 +1126,7 @@ async function simpanSoal() {
   document.getElementById('formSoal').classList.remove('show');
   loadSoalList(); loadDashboard();
 }
-
+ 
 async function loadSoalList() {
   const list = document.getElementById('soalList');
   if (!list) return;
@@ -1223,7 +1150,7 @@ async function loadSoalList() {
       <div class="soal-opts">${(s.opsi||[]).map((o,idx)=>`<span class="opt-chip${idx===s.jawaban_benar?' correct':''}">${L[idx]}. ${o}</span>`).join('')}</div>
     </div>`).join('');
 }
-
+ 
 async function hapusSoal(id) {
   if (!confirm('Yakin hapus soal ini?')) return;
   const { error } = await db.from('soal').delete().eq('id', id);
@@ -1231,12 +1158,12 @@ async function hapusSoal(id) {
   loadSoalList(); loadDashboard();
   showToast('✅ Soal dihapus');
 }
-
+ 
 function showFormMsg(text, type) {
   const el = document.getElementById('formSoalMsg');
   el.className = 'msg ' + type; el.textContent = text;
 }
-
+ 
 // ── KELOLA USER ──
 async function loadUserList() {
   const list = document.getElementById('userList');
@@ -1255,7 +1182,7 @@ async function loadUserList() {
       </button>
     </div>`).join('') + '</div>';
 }
-
+ 
 async function toggleRole(id, roleSekarang) {
   const roleBaru = roleSekarang === 'admin' ? 'user' : 'admin';
   if (!confirm('Ubah role menjadi ' + roleBaru + '?')) return;
@@ -1264,7 +1191,7 @@ async function toggleRole(id, roleSekarang) {
   loadUserList();
   showToast('✅ Role diperbarui');
 }
-
+ 
 // ── IMPORT TXT ──
 function updateTxtJudul() {
   const modul = document.getElementById('txtModul').value;
@@ -1272,10 +1199,10 @@ function updateTxtJudul() {
   if (!sel) return;
   sel.innerHTML = (JUDUL_MAP[modul] || []).map(j => `<option value="${j}">${j}</option>`).join('');
 }
-
+ 
 document.getElementById('txtUploadArea').addEventListener('click', () => document.getElementById('txtFileInput').click());
 document.getElementById('txtFileInput').addEventListener('change', e => { if (e.target.files[0]) parseTxtFile(e.target.files[0]); });
-
+ 
 function parseTxtFile(file) {
   if (!file.name.endsWith('.txt')) { showTxtMsg('❌ Hanya file .txt', 'error'); return; }
   const reader = new FileReader();
@@ -1287,7 +1214,7 @@ function parseTxtFile(file) {
   };
   reader.readAsText(file, 'UTF-8');
 }
-
+ 
 function parseSoalFromTxt(text) {
   const result = [];
   const L = ['A','B','C','D','E'];
@@ -1310,7 +1237,7 @@ function parseSoalFromTxt(text) {
   });
   return result;
 }
-
+ 
 function showTxtPreview(soalList) {
   const L = ['A','B','C','D','E'];
   document.getElementById('txtPreviewTitle').textContent = `Preview — ${soalList.length} soal berhasil di-parse:`;
@@ -1324,7 +1251,7 @@ function showTxtPreview(soalList) {
     </div>`).join('');
   document.getElementById('txtPreview').style.display = 'block';
 }
-
+ 
 document.getElementById('btnImportSoal').addEventListener('click', async () => {
   if (!parsedSoal.length) return;
   const modul = document.getElementById('txtModul').value;
@@ -1345,13 +1272,13 @@ document.getElementById('btnImportSoal').addEventListener('click', async () => {
   }
   btn.disabled = false; btn.textContent = '💾 Import Semua Soal ke Database';
 });
-
+ 
 function showTxtMsg(text, type) {
   const el = document.getElementById('txtMsg');
   el.className = 'msg ' + type; el.textContent = text;
   setTimeout(() => { el.textContent = ''; el.className = ''; }, 5000);
 }
-
+ 
 function downloadTemplate() {
   const t = `SOAL\nTulis pertanyaan soal di sini...\nA. Opsi jawaban A\nB. Opsi jawaban B\nC. Opsi jawaban C\nD. Opsi jawaban D\nE. Opsi jawaban E\nJAWABAN: A\nPENJELASAN: Tulis penjelasan jawaban di sini.\n---\nSOAL\nPertanyaan kedua di sini...\nA. Opsi A\nB. Opsi B\nC. Opsi C\nD. Opsi D\nE. Opsi E\nJAWABAN: B\nPENJELASAN: Penjelasan soal kedua.\n---`;
   const a = document.createElement('a');
@@ -1359,7 +1286,7 @@ function downloadTemplate() {
   a.download = 'template_soal.txt';
   a.click();
 }
-
+ 
 // ── HELPERS ──
 function showMsg(elId, text, type) {
   const el = document.getElementById(elId);
@@ -1367,7 +1294,7 @@ function showMsg(elId, text, type) {
   el.className = 'msg ' + type; el.textContent = text;
   setTimeout(() => { el.textContent = ''; el.className = ''; }, 5000);
 }
-
+ 
 let toastTimer;
 function showToast(text, type = 'success') {
   const t = document.getElementById('toast');
@@ -1376,7 +1303,7 @@ function showToast(text, type = 'success') {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
-
+ 
 // Enter key on login
 document.getElementById('adminPassword').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('btnLogin').click();
@@ -1388,94 +1315,253 @@ document.getElementById('btnBuatManual').addEventListener('click', () => {
   form.style.display = isOpen ? 'none' : 'block';
   if (!isOpen) form.scrollIntoView({ behavior: 'smooth' });
 });
-
+ 
 function tutupFormBuatManual() {
   document.getElementById('formBuatManual').style.display = 'none';
 }
-
+ 
 async function simpanMateriManual() {
   const judul = document.getElementById('manualJudul').value.trim();
   const modul = document.getElementById('manualModul').value;
   const urutan = parseInt(document.getElementById('manualUrutan').value) || 99;
   const deskripsi = document.getElementById('manualDeskripsi').value.trim();
-
+ 
   if (!judul) { showMsg('manualMsg', '❌ Judul wajib diisi', 'error'); return; }
-
+ 
   const { data, error } = await db.from('materi').insert({
     judul,
     modul,
     urutan,
     konten: deskripsi || null,
     tipe: 'editor',
-    konten_tipe: 'editor'
+    konten_tipe: 'sections'
   }).select().single();
-
+ 
   if (error) { showMsg('manualMsg', '❌ Gagal: ' + error.message, 'error'); return; }
-
+ 
   showToast('✅ Materi berhasil dibuat!', 'success');
   tutupFormBuatManual();
-
+ 
   // Reset form
   document.getElementById('manualJudul').value = '';
   document.getElementById('manualDeskripsi').value = '';
   document.getElementById('manualUrutan').value = '';
-
+ 
   // Refresh daftar materi
   await loadMateriList();
-
+ 
   // Langsung buka section editor untuk materi baru
   openSectionEditor(data.id, data.judul, data.modul, data.urutan);
   document.getElementById('sectionEditorPanel').scrollIntoView({ behavior: 'smooth' });
 }
+ 
+// ── IMPORT CONTOH: ALJABAR BOOLEAN → SISTEM BAGIAN MATERI ──
+async function importContohAljabarBoolean() {
+  if (!confirm('Buat materi contoh "Aljabar Boolean" beserta bagian-bagiannya ke database?')) return;
+ 
+  const { data: materi, error: e1 } = await db.from('materi').insert({
+    judul: 'Aljabar Boolean (Contoh Bagian)',
+    modul: 'diskrit',
+    urutan: 99,
+    konten: 'Dasar-dasar logika dua nilai (0 dan 1) yang menjadi fondasi seluruh sistem digital modern.',
+    tipe: 'editor',
+    konten_tipe: 'sections'
+  }).select().single();
+ 
+  if (e1) { showToast('❌ Gagal membuat materi: ' + e1.message, 'error'); return; }
+ 
+  const sections = [
+    { sub_topik: 'Pendahuluan', judul_section: 'Pengertian Aljabar Boolean', tipe_section: 'definisi', urutan: 1,
+      konten_section: 'Aljabar Boolean adalah cabang matematika yang mengatur operasi logika dengan hanya dua nilai: 1 (true/benar) dan 0 (false/salah). Dikembangkan oleh George Boole, konsep ini menjadi fondasi seluruh sistem digital modern — dari prosesor komputer hingga kecerdasan buatan.' },
+    { sub_topik: 'Operator Dasar', judul_section: 'AND, OR, dan NOT', tipe_section: 'definisi', urutan: 2,
+      konten_section: 'AND (·) menghasilkan 1 hanya jika kedua input bernilai 1.\nOR (+) menghasilkan 1 jika salah satu input bernilai 1.\nNOT (\') membalik nilai input: 1 menjadi 0, dan sebaliknya.' },
+    { sub_topik: 'Operator Lanjutan', judul_section: 'XOR, NAND, NOR, dan XNOR', tipe_section: 'teks', urutan: 3,
+      konten_section: 'XOR menghasilkan 1 jika kedua input berbeda nilai.\nNAND adalah kebalikan dari AND.\nNOR adalah kebalikan dari OR.\nXNOR menghasilkan 1 jika kedua input bernilai sama.\n\nKeempat operator ini adalah kombinasi dari operator dasar dan banyak dipakai dalam rangkaian digital praktis.' },
+    { sub_topik: 'Tabel Kebenaran', judul_section: 'Tabel Kebenaran Operator Logika', tipe_section: 'contoh', urutan: 4,
+      konten_section: '<table style="width:100%;border-collapse:collapse;font-size:.9rem"><thead><tr><th style="text-align:left;padding:8px;border-bottom:2px solid #d9cfc2">A</th><th style="text-align:left;padding:8px;border-bottom:2px solid #d9cfc2">B</th><th style="text-align:left;padding:8px;border-bottom:2px solid #d9cfc2">AND</th><th style="text-align:left;padding:8px;border-bottom:2px solid #d9cfc2">OR</th><th style="text-align:left;padding:8px;border-bottom:2px solid #d9cfc2">XOR</th></tr></thead><tbody><tr><td style="padding:8px">0</td><td style="padding:8px">0</td><td style="padding:8px">0</td><td style="padding:8px">0</td><td style="padding:8px">0</td></tr><tr><td style="padding:8px">0</td><td style="padding:8px">1</td><td style="padding:8px">0</td><td style="padding:8px">1</td><td style="padding:8px">1</td></tr><tr><td style="padding:8px">1</td><td style="padding:8px">0</td><td style="padding:8px">0</td><td style="padding:8px">1</td><td style="padding:8px">1</td></tr><tr><td style="padding:8px">1</td><td style="padding:8px">1</td><td style="padding:8px">1</td><td style="padding:8px">1</td><td style="padding:8px">0</td></tr></tbody></table>' },
+    { sub_topik: 'Hukum Aljabar Boolean', judul_section: 'Hukum-Hukum Dasar', tipe_section: 'rumus', urutan: 5,
+      konten_section: 'Identitas:   A + 0 = A      |   A . 1 = A\nNull:        A + 1 = 1      |   A . 0 = 0\nIdempoten:   A + A = A      |   A . A = A\nKomplemen:   A + A\' = 1     |   A . A\' = 0\nDistributif: A.(B+C) = (A.B)+(A.C)\nDe Morgan:   (A.B)\' = A\' + B\'   |   (A+B)\' = A\' . B\'' },
+    { sub_topik: 'Penyederhanaan', judul_section: 'Karnaugh Map (K-Map)', tipe_section: 'definisi', urutan: 6,
+      konten_section: 'Karnaugh Map adalah metode visual untuk menyederhanakan ekspresi Boolean secara cepat tanpa perhitungan aljabar yang panjang. Sel-sel pada peta yang bernilai 1 dikelompokkan untuk mendapatkan bentuk fungsi yang paling sederhana.' },
+    { sub_topik: 'Implementasi Fisik', judul_section: 'Gerbang Logika (Logic Gates)', tipe_section: 'teks', urutan: 7,
+      konten_section: 'Setiap operator Boolean memiliki bentuk fisiknya sendiri yang disebut gerbang logika, yaitu komponen elektronik yang menerima sinyal tegangan tinggi (1) atau rendah (0). Gabungan jutaan gerbang logika inilah yang membentuk mikroprosesor pada komputer dan smartphone.' },
+    { sub_topik: 'Rangkaian Digital', judul_section: 'Kombinasional vs Sequential', tipe_section: 'Perbandingan', urutan: 8,
+      konten_section: 'Rangkaian Kombinasional: output hanya bergantung pada input saat ini, tanpa memori. Contoh: Adder, Multiplexer (MUX).\n\nRangkaian Sequential: memiliki memori dan outputnya bergantung pada state sebelumnya. Contoh: Flip-Flop, Counter.' },
+    { sub_topik: 'Relevansi', judul_section: 'Aplikasi di Dunia Nyata', tipe_section: 'contoh', urutan: 9,
+      konten_section: 'CPU & mikroprosesor menyusun jutaan gerbang logika.\nAI menggunakan logika Boolean untuk pengambilan keputusan.\nDatabase mengandalkan operasi AND, OR, NOT pada query.\nSistem keamanan memakai logika biner untuk autentikasi digital.' },
+    { sub_topik: 'Penutup', judul_section: 'Kesimpulan', tipe_section: 'teks', urutan: 10,
+      konten_section: 'Semakin sederhana sebuah ekspresi Boolean, semakin sedikit komponen yang dibutuhkan rangkaian — artinya lebih hemat energi, lebih kecil, lebih cepat, dan lebih murah. Dari dua nilai sederhana, 1 dan 0, lahirlah seluruh teknologi digital modern yang kita gunakan hari ini.' }
+  ];
+ 
+  const rows = sections.map(s => ({ materi_id: materi.id, ...s }));
+  const { error: e2 } = await db.from('materi_sections').insert(rows);
+ 
+  if (e2) {
+    showToast('❌ Materi dibuat, tapi gagal isi bagian: ' + e2.message, 'error');
+  } else {
+    showToast('✅ Contoh materi Aljabar Boolean berhasil dibuat!', 'success');
+  }
+ 
+  await loadMateriList();
+  openSectionEditor(materi.id, materi.judul, materi.modul, materi.urutan);
+}
 function openSectionEditor(id, judul, modul, urutan) {
   currentSecMateriId = id;
-
+ 
   const title = document.getElementById('secMateriJudul');
   const meta  = document.getElementById('secMateriMeta');
   const panel = document.getElementById('sectionEditorPanel');
   const form  = document.getElementById('secForm');
-
+  const btnLihat = document.getElementById('btnLihatHalaman');
+ 
   if (title) title.textContent = judul;
   if (meta)  meta.textContent  = 'Modul: ' + modul + ' · Urutan: ' + urutan;
   if (panel) panel.style.display = 'block';
   if (form)  form.classList.remove('show');
-
+  if (btnLihat) btnLihat.href = 'materi-viewer.html?id=' + id;
+ 
   if (panel) panel.scrollIntoView({ behavior: 'smooth' });
-
+ 
   renderSectionList();
 }
-
+ 
+// ── FORM TAMBAH/EDIT BAGIAN MATERI ──
+function toggleTipeCustom() {
+  const isCustom = document.getElementById('sectionTipe').value === '__custom__';
+  document.getElementById('sectionTipeCustomWrap').style.display = isCustom ? 'block' : 'none';
+}
+ 
+function showFormTambahSection() {
+  document.getElementById('sectionId').value = '';
+  document.getElementById('sectionSubTopik').value = '';
+  document.getElementById('sectionJudul').value = '';
+  document.getElementById('sectionTipe').value = 'definisi';
+  document.getElementById('sectionTipeCustom').value = '';
+  document.getElementById('sectionTipeCustomWrap').style.display = 'none';
+  document.getElementById('sectionKonten').value = '';
+  document.getElementById('sectionUrutan').value = (sectionCache.length || 0) + 1;
+  document.getElementById('formSectionTitle').textContent = '➕ Tambah Bagian Materi';
+  document.getElementById('formSectionMsg').textContent = '';
+  const f = document.getElementById('secForm');
+  f.classList.add('show');
+  f.scrollIntoView({ behavior: 'smooth' });
+}
+ 
+function showFormEditSection(section) {
+  if (!section) return;
+  document.getElementById('sectionId').value = section.id;
+  document.getElementById('sectionSubTopik').value = section.sub_topik || '';
+  document.getElementById('sectionJudul').value = section.judul_section || '';
+ 
+  const tipe = section.tipe_section || 'definisi';
+  if (TIPE_SECTION_PRESET.includes(tipe)) {
+    document.getElementById('sectionTipe').value = tipe;
+    document.getElementById('sectionTipeCustomWrap').style.display = 'none';
+    document.getElementById('sectionTipeCustom').value = '';
+  } else {
+    document.getElementById('sectionTipe').value = '__custom__';
+    document.getElementById('sectionTipeCustomWrap').style.display = 'block';
+    document.getElementById('sectionTipeCustom').value = tipe;
+  }
+ 
+  document.getElementById('sectionKonten').value = section.konten_section || '';
+  document.getElementById('sectionUrutan').value = section.urutan || 1;
+  document.getElementById('formSectionTitle').textContent = '✏️ Edit Bagian Materi';
+  document.getElementById('formSectionMsg').textContent = '';
+  const f = document.getElementById('secForm');
+  f.classList.add('show');
+  f.scrollIntoView({ behavior: 'smooth' });
+}
+ 
+function showSectionMsg(text, type) {
+  const el = document.getElementById('formSectionMsg');
+  if (!el) return;
+  el.className = 'msg ' + type;
+  el.textContent = text;
+}
+ 
+async function simpanSection() {
+  const id = document.getElementById('sectionId').value;
+  const sub_topik = document.getElementById('sectionSubTopik').value.trim();
+  const judul_section = document.getElementById('sectionJudul').value.trim();
+  const tipeSelect = document.getElementById('sectionTipe').value;
+  const tipe_section = tipeSelect === '__custom__'
+    ? document.getElementById('sectionTipeCustom').value.trim()
+    : tipeSelect;
+  const konten_section = document.getElementById('sectionKonten').value.trim();
+  const urutan = parseInt(document.getElementById('sectionUrutan').value) || 1;
+ 
+  if (!judul_section) { showSectionMsg('❌ Judul bagian wajib diisi', 'error'); return; }
+  if (!tipe_section)  { showSectionMsg('❌ Tipe section wajib diisi', 'error'); return; }
+  if (!currentSecMateriId) { showSectionMsg('❌ Materi tidak ditemukan, coba buka ulang dari daftar materi', 'error'); return; }
+ 
+  const payload = { materi_id: currentSecMateriId, sub_topik, judul_section, tipe_section, konten_section, urutan };
+  const { error } = id
+    ? await db.from('materi_sections').update(payload).eq('id', id)
+    : await db.from('materi_sections').insert(payload);
+ 
+  if (error) { showSectionMsg('❌ Gagal: ' + error.message, 'error'); return; }
+ 
+  showToast('✅ Bagian materi disimpan!', 'success');
+  document.getElementById('secForm').classList.remove('show');
+ 
+  // Pastikan materi ini ditandai sebagai materi berbasis section
+  await db.from('materi').update({ konten_tipe: 'sections' }).eq('id', currentSecMateriId);
+ 
+  renderSectionList();
+}
+ 
+async function hapusSection(id) {
+  if (!confirm('Yakin hapus bagian materi ini?')) return;
+  const { error } = await db.from('materi_sections').delete().eq('id', id);
+  if (error) { showToast('❌ Gagal hapus: ' + error.message, 'error'); return; }
+  showToast('✅ Bagian dihapus');
+  renderSectionList();
+}
+ 
 async function renderSectionList() {
   const list = document.getElementById('sectionList');
   if (!list) return;
-
-  list.innerHTML = '<div class="loading">Memuat...</div>';
-
+ 
+  list.innerHTML = '<div class="loading">⏳ Memuat...</div>';
+ 
   const { data, error } = await db
     .from('materi_sections')
     .select('*')
     .eq('materi_id', currentSecMateriId)
     .order('urutan');
-
+ 
   if (error) {
-    list.innerHTML = `<div class="loading">❌ Gagal memuat: ${error.message}</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="e-icon">❌</div><p>Gagal memuat: ${error.message}</p></div>`;
     return;
   }
-
-  if (!data || data.length === 0) {
-    list.innerHTML = '<div class="loading">Belum ada bagian materi</div>';
+ 
+  sectionCache = data || [];
+ 
+  if (!sectionCache.length) {
+    list.innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><p>Belum ada bagian materi. Klik "+ Tambah Bagian" untuk mulai mengisi.</p></div>';
     return;
   }
-
-  list.innerHTML = data.map(item => `
-    <div class="section-item">
-      <h4>${item.urutan}. ${item.judul_section}</h4>
-      <small>${item.sub_topik || ''} | ${item.tipe_section}</small>
-      <p>${item.konten_section}</p>
-    </div>
-  `).join('');
+ 
+  list.innerHTML = sectionCache.map((item, i) => `
+    <div class="soal-item" id="section-${item.id}">
+      <div class="s-top">
+        <div class="soal-num">${item.urutan ?? i + 1}</div>
+        <div class="soal-q">
+          ${item.sub_topik ? `<div style="font-size:.72rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">${item.sub_topik}</div>` : ''}
+          ${item.judul_section}
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="showFormEditSection(sectionCache[${i}])">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="hapusSection('${item.id}')">🗑</button>
+      </div>
+      <div class="soal-opts" style="padding-left:40px;align-items:center">
+        <span class="badge badge-diskrit">${item.tipe_section || '-'}</span>
+      </div>
+      <p style="padding-left:40px;margin-top:8px;font-size:.82rem;color:var(--text2);white-space:pre-wrap">${(item.konten_section || '').slice(0,180)}${(item.konten_section||'').length > 180 ? '…' : ''}</p>
+    </div>`).join('');
 }
-
+ 
 </script>
 </body>
 </html>
+ 
