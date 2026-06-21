@@ -1278,7 +1278,15 @@ async function simpanMateriManual() {
   openSectionEditor(data.id, data.judul, data.modul, data.urutan);
   document.getElementById('sectionEditorPanel').scrollIntoView({ behavior: 'smooth' });
 }
-  
+  function openSectionEditor(id, judul, modul, urutan) {
+  currentSecMateriId = id;
+  document.getElementById('secMateriJudul').textContent = judul;
+  document.getElementById('secMateriMeta').textContent = 'Modul: ' + modul + ' · Urutan: ' + urutan;
+  document.getElementById('sectionEditorPanel').style.display = 'block';
+  document.getElementById('secForm').classList.remove('show');
+  document.getElementById('sectionEditorPanel').scrollIntoView({ behavior: 'smooth' });
+  renderSectionList();
+}
 </script>
 </body>
 </html>
