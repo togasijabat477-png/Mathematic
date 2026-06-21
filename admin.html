@@ -1451,11 +1451,11 @@ async function simpanMateriManual() {
     const list = document.getElementById('sectionList');
 
 
-    const {data,error}=await supabaseClient
-        .from('materi_sections')
-        .select('*')
-        .eq('materi_id', currentSecMateriId)
-        .order('urutan');
+    const {data,error}=await db
+.from('materi_sections')
+.select('*')
+.eq('materi_id', currentSecMateriId)
+.order('urutan');
 
 
     console.log("2. Data:", data);
