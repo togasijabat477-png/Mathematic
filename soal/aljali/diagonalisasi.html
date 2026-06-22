@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quiz Diagonalisasi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -353,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -422,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -628,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -686,13 +685,13 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Diagonalisasi ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Diagonalisasi ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
         <div class="hero-rule"></div>
       </h1>
-      <p class="hero-sub">Asah pemahamanmu tentang <strong>Diagonalisasi Matriks</strong> melalui kumpulan soal yang tersusun bertahap. Pilih tingkat kesulitan dan buktikan kemampuanmu.</p>
+   <p class="hero-sub">Asah pemahamanmu tentang <strong>Diagonalisasi Matriks</strong> melalui kumpulan soal yang tersusun bertahap. Pilih tingkat kesulitan dan buktikan kemampuanmu.</p>
     </div>
 
     <div class="level-grid">
@@ -748,6 +747,7 @@ body::before {
     </div>
   </div>
 
+
   <!-- ══════ QUIZ SCREEN ══════ -->
   <div id="quizScreen" class="screen">
     <div class="quiz-topbar">
@@ -765,9 +765,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -889,86 +886,28 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{q:"Matriks diagonal adalah matriks yang...",opts:["Semua elemennya sama","Elemen di luar diagonal utama bernilai 0","Semua elemen bernilai 1","Tidak memiliki diagonal","Jumlah baris dan kolom berbeda"],ans:1,exp:{title:"Matriks Diagonal",body:"Pada matriks diagonal, semua elemen di luar diagonal utama bernilai 0. Elemen diagonal utama dapat bernilai apa pun."}},
-{q:"Diagonal utama matriks berada dari...",opts:["Kanan atas ke kiri bawah","Kiri bawah ke kanan atas","Kiri atas ke kanan bawah","Tengah ke samping","Semua arah"],ans:2,exp:{title:"Diagonal Utama",body:"Diagonal utama dimulai dari pojok kiri atas menuju pojok kanan bawah."}},
-{q:"Simbol yang umum digunakan untuk nilai eigen adalah...",opts:["Δ","π","λ","Ω","μ"],ans:2,exp:{title:"Notasi Nilai Eigen",body:"Nilai eigen biasanya dilambangkan dengan λ (lambda), huruf Yunani."}},
-{q:"Vektor eigen adalah vektor yang...",opts:["Menjadi nol","Tidak berubah arah setelah transformasi","Selalu tegak lurus","Berubah menjadi skalar","Tidak memiliki nilai"],ans:1,exp:{title:"Vektor Eigen",body:"Vektor eigen hanya berubah skala (panjang) tetapi arah dasarnya tidak berubah setelah transformasi."}},
-{q:"Tujuan diagonalisasi matriks adalah...",opts:["Menghapus elemen matriks","Mengubah matriks menjadi diagonal","Menentukan transpose","Mencari determinan saja","Mengurangi ukuran matriks"],ans:1,exp:{title:"Tujuan Diagonalisasi",body:"Diagonalisasi bertujuan mengubah matriks menjadi bentuk diagonal sehingga operasi seperti perpangkatan lebih mudah."}},
-{q:"Matriks [[4,0],[0,7]] termasuk jenis matriks...",opts:["Segitiga","Nol","Diagonal","Transpose","Singular"],ans:2,exp:{title:"Identifikasi Matriks",body:"Semua elemen di luar diagonal utama bernilai 0, sehingga ini adalah matriks diagonal."}},
-{q:"Nilai eigen diperoleh dari persamaan...",opts:["|A - λI| = 0","A + I = 0","A² = 0","A = I","det(A)=1"],ans:0,exp:{title:"Persamaan Karakteristik",body:"Nilai eigen dicari menggunakan persamaan karakteristik det(A - λI) = 0."}},
-{q:"Bentuk umum diagonalisasi matriks adalah...",opts:["A = PDP⁻¹","A = P + D","A = D - P","A = PP","A = DD"],ans:0,exp:{title:"Rumus Diagonalisasi",body:"Rumus umum diagonalisasi adalah A = PDP⁻¹, di mana P berisi vektor eigen dan D adalah matriks diagonal."}},
-{q:"Huruf D pada A = PDP⁻¹ menyatakan...",opts:["Determinan","Matriks diagonal","Dimensi","Deret","Domain"],ans:1,exp:{title:"Matriks D",body:"D adalah matriks diagonal yang elemen-elemen diagonalnya adalah nilai-nilai eigen dari A."}},
-{q:"Huruf P pada A = PDP⁻¹ berisi...",opts:["Nilai eigen","Matriks nol","Vektor eigen","Transpose","Skalar"],ans:2,exp:{title:"Matriks P",body:"Matriks P disusun dari vektor-vektor eigen yang bersesuaian dengan nilai eigen masing-masing."}},
-// MEDIUM 10-29
-{q:"Nilai eigen dari matriks [[2,0],[0,5]] adalah...",opts:["2 dan 5","1 dan 5","0 dan 5","2 dan 0","3 dan 4"],ans:0,exp:{title:"Nilai Eigen Matriks Diagonal",body:"Pada matriks diagonal, nilai eigennya langsung diambil dari elemen diagonal utama."}},
-{q:"Matriks identitas 3×3 memiliki diagonal utama...",opts:["Semua 0","Semua 1","Semua 2","Acak","Tidak tetap"],ans:1,exp:{title:"Matriks Identitas",body:"Diagonal utama matriks identitas selalu bernilai 1, dan semua elemen lainnya bernilai 0."}},
-{q:"Jika λ = 6 maka λ² = ...",opts:["12","18","24","36","42"],ans:3,exp:{title:"Kuadrat Nilai Eigen",body:"6² = 36. Nilai eigen dapat dipangkatkan untuk menghitung perpangkatan matriks diagonal."}},
-{q:"Nilai eigen dari matriks [[7,0],[0,3]] adalah...",opts:["7 dan 3","0 dan 3","1 dan 7","7 dan 0","5 dan 2"],ans:0,exp:{title:"Nilai Eigen Diagonal",body:"Nilai eigen matriks diagonal diambil langsung dari diagonal utamanya."}},
-{q:"Matriks yang dapat didiagonalisasi disebut...",opts:["Singular","Diagonalizable","Baris","Nol","Transpose"],ans:1,exp:{title:"Terminologi",body:"Matriks yang bisa diubah menjadi bentuk diagonal disebut diagonalizable (dapat didiagonalisasi)."}},
-{q:"Vektor eigen hanya berubah pada bagian...",opts:["Arah","Ukuran/skala","Dimensi","Jumlah elemen","Diagonal"],ans:1,exp:{title:"Sifat Vektor Eigen",body:"Vektor eigen mempertahankan arah tetapi skalanya berubah sebanding dengan nilai eigen λ."}},
-{q:"Elemen diagonal utama matriks [[4,0],[0,9]] adalah...",opts:["0 dan 0","4 dan 9","4 dan 0","9 dan 0","1 dan 1"],ans:1,exp:{title:"Elemen Diagonal",body:"Elemen diagonal utama adalah elemen (1,1) dan (2,2), yaitu 4 dan 9."}},
-{q:"Matriks 2×2 memiliki jumlah elemen sebanyak...",opts:["2","3","4","5","6"],ans:2,exp:{title:"Ordo Matriks",body:"Matriks 2×2 memiliki 2×2 = 4 elemen."}},
-{q:"Diagonal utama matriks berada dari...",opts:["Kanan atas ke kiri bawah","Kiri bawah ke kanan atas","Kiri atas ke kanan bawah","Tengah ke samping","Semua arah"],ans:2,exp:{title:"Posisi Diagonal Utama",body:"Diagonal utama dimulai dari kiri atas menuju kanan bawah."}},
-{q:"Simbol λ dibaca...",opts:["Omega","Sigma","Lambda","Delta","Theta"],ans:2,exp:{title:"Bacaan Simbol",body:"λ dibaca 'lambda', huruf ke-11 dalam alfabet Yunani."}},
-{q:"Jika λ = 2 maka λ³ = ...",opts:["2","4","6","8","10"],ans:3,exp:{title:"Pangkat Tiga",body:"2³ = 8. Ini berguna untuk menghitung A³ = PD³P⁻¹."}},
-{q:"Matriks [[1,0],[0,1]] disebut matriks...",opts:["Diagonal","Identitas","Nol","Kolom","Baris"],ans:1,exp:{title:"Matriks Identitas",body:"Matriks dengan diagonal 1 dan semua elemen lain 0 disebut matriks identitas."}},
-{q:"Jika λ = 5 maka 2λ + 1 = ...",opts:["9","10","11","12","13"],ans:2,exp:{title:"Operasi Nilai Eigen",body:"2(5) + 1 = 11."}},
-{q:"Matriks diagonal selalu merupakan matriks...",opts:["Persegi","Segitiga","Baris","Kolom","Acak"],ans:0,exp:{title:"Jenis Matriks Diagonal",body:"Matriks diagonal harus berbentuk persegi (jumlah baris = jumlah kolom)."}},
-{q:"Jika λ = 12 maka λ - 7 = ...",opts:["3","4","5","6","7"],ans:2,exp:{title:"Operasi Dasar",body:"12 - 7 = 5."}},
-{q:"Matriks [[6,0],[0,2]] memiliki nilai eigen...",opts:["6 dan 2","0 dan 2","1 dan 6","6 dan 0","3 dan 4"],ans:0,exp:{title:"Nilai Eigen",body:"Nilai eigen matriks diagonal adalah elemen diagonal utamanya: 6 dan 2."}},
-{q:"Jika λ = 15 maka λ ÷ 3 = ...",opts:["3","4","5","6","7"],ans:2,exp:{title:"Pembagian",body:"15 ÷ 3 = 5."}},
-{q:"Matriks 3×3 memiliki jumlah elemen sebanyak...",opts:["6","7","8","9","10"],ans:3,exp:{title:"Ordo Matriks",body:"Matriks 3×3 memiliki 3×3 = 9 elemen."}},
-{q:"Jika λ = 3 maka 4λ = ...",opts:["6","9","12","15","18"],ans:2,exp:{title:"Perkalian Skalar",body:"4 × 3 = 12."}},
-{q:"Matriks diagonal mempermudah operasi...",opts:["Perpangkatan matriks","Penghapusan matriks","Pembagian matriks","Rotasi gambar","Pencerminan"],ans:0,exp:{title:"Kegunaan Diagonalisasi",body:"Matriks diagonal sangat mempermudah perpangkatan: Dⁿ cukup memangkatkan tiap elemen diagonal."}},
-// HARD 60-89 — used as index 30-59
-{q:"Jika A = PDP⁻¹, maka P⁻¹ menyatakan...",opts:["Transpose dari P","Determinan P","Invers dari P","Matriks diagonal","Nilai eigen"],ans:2,exp:{title:"Invers dalam Diagonalisasi",body:"P⁻¹ adalah invers dari matriks P. Perkalian PP⁻¹ = I (identitas)."}},
-{q:"Syarat utama matriks dapat didiagonalisasi adalah...",opts:["Memiliki determinan nol","Jumlah baris lebih besar","Memiliki cukup vektor eigen bebas linear","Semua elemen sama","Matriks harus diagonal"],ans:2,exp:{title:"Syarat Diagonalisasi",body:"Matriks n×n dapat didiagonalisasi jika dan hanya jika memiliki n vektor eigen yang bebas linear."}},
-{q:"Nilai eigen matriks [[4,0],[0,9]] adalah...",opts:["4 dan 9","0 dan 9","1 dan 4","4 dan 0","5 dan 8"],ans:0,exp:{title:"Nilai Eigen Matriks Diagonal",body:"Nilai eigen matriks diagonal langsung diambil dari elemen diagonal utamanya: 4 dan 9."}},
-{q:"Jika λ = 5 maka λ³ = ...",opts:["25","75","100","125","150"],ans:3,exp:{title:"Pangkat Nilai Eigen",body:"5³ = 125. Untuk Aⁿ = PDⁿP⁻¹, nilai eigen juga dipangkatkan."}},
-{q:"Jika A = PDP⁻¹ maka D merupakan...",opts:["Matriks identitas","Matriks diagonal","Matriks singular","Matriks nol","Transpose matriks"],ans:1,exp:{title:"Matriks D",body:"D adalah matriks diagonal yang elemen-elemen diagonalnya adalah nilai-nilai eigen dari A."}},
-{q:"Jika λ = 2 maka 5λ² = ...",opts:["10","15","20","25","30"],ans:2,exp:{title:"Operasi Eigen",body:"5 × 2² = 5 × 4 = 20."}},
-{q:"Persamaan karakteristik ditentukan dari...",opts:["|A - λI| = 0","|A + I| = 0","A² = 0","A = I","det(A)=1"],ans:0,exp:{title:"Persamaan Karakteristik",body:"Persamaan karakteristik det(A − λI) = 0 digunakan untuk mencari semua nilai eigen."}},
-{q:"Jika λ = -3 maka λ² = ...",opts:["-9","6","9","12","18"],ans:2,exp:{title:"Kuadrat Eigen Negatif",body:"(-3)² = 9. Perpangkatan genap selalu menghasilkan nilai positif."}},
-{q:"Jika λ = 7 maka 2λ² = ...",opts:["49","72","84","98","112"],ans:3,exp:{title:"Operasi Lanjut",body:"2 × 7² = 2 × 49 = 98."}},
-{q:"Matriks yang tidak memiliki cukup vektor eigen bebas linear akan...",opts:["Selalu diagonal","Tidak dapat didiagonalisasi","Menjadi identitas","Memiliki determinan 1","Berubah ordo"],ans:1,exp:{title:"Diagonalizable Test",body:"Tanpa n vektor eigen bebas linear, matriks n×n tidak bisa didiagonalisasi secara penuh."}},
-{q:"Jika λ = 4 maka λ³ + 1 = ...",opts:["32","48","64","65","81"],ans:3,exp:{title:"Ekspresi Eigen",body:"4³ + 1 = 64 + 1 = 65."}},
-{q:"Huruf P pada A = PDP⁻¹ dibentuk dari...",opts:["Nilai eigen","Determinan","Vektor eigen","Diagonal utama","Transpose"],ans:2,exp:{title:"Konstruksi P",body:"Kolom-kolom matriks P adalah vektor-vektor eigen dari A yang bersesuaian."}},
-{q:"Jika λ = 9 maka √λ = ...",opts:["2","3","4","5","6"],ans:1,exp:{title:"Akar Nilai Eigen",body:"√9 = 3."}},
-{q:"Nilai eigen matriks identitas selalu...",opts:["0","1","2","-1","Tak tentu"],ans:1,exp:{title:"Eigen Matriks Identitas",body:"Semua nilai eigen matriks identitas adalah 1, karena Ix = 1·x untuk semua x."}},
-{q:"Jika λ = 8 maka λ² ÷ 4 = ...",opts:["8","12","16","20","24"],ans:2,exp:{title:"Operasi Campuran",body:"8² ÷ 4 = 64 ÷ 4 = 16."}},
-{q:"Jika λ = -2 maka λ³ = ...",opts:["-8","-4","4","8","16"],ans:0,exp:{title:"Kubik Negatif",body:"(-2)³ = -8. Pangkat ganjil mempertahankan tanda negatif."}},
-{q:"Matriks [[5,0],[0,5]] memiliki nilai eigen...",opts:["5 dan 5","0 dan 5","1 dan 5","5 dan 0","2 dan 3"],ans:0,exp:{title:"Nilai Eigen Ganda",body:"Kedua elemen diagonal adalah 5, sehingga nilai eigen adalah 5 (ganda)."}},
-{q:"Jika λ = 3 maka 2λ³ = ...",opts:["18","24","36","48","54"],ans:4,exp:{title:"Pangkat Kubik",body:"2 × 3³ = 2 × 27 = 54."}},
-{q:"Jika λ = 11 maka λ² - 21 = ...",opts:["80","90","100","110","121"],ans:2,exp:{title:"Persamaan Eigen",body:"11² - 21 = 121 - 21 = 100."}},
-{q:"Jika suatu matriks memiliki n nilai eigen berbeda maka matriks tersebut...",opts:["Tidak memiliki invers","Dapat didiagonalisasi","Menjadi singular","Berubah menjadi nol","Tidak memiliki diagonal"],ans:1,exp:{title:"Teorema Diagonalisasi",body:"Matriks n×n dengan n nilai eigen berbeda (distinct eigenvalues) selalu dapat didiagonalisasi."}},
-{q:"Jika λ = 5 maka λ² + λ³ = ...",opts:["100","125","150","175","200"],ans:2,exp:{title:"Ekspresi Polinomial Eigen",body:"5² + 5³ = 25 + 125 = 150."}},
-{q:"Jika λ = 12 maka λ² ÷ 3 = ...",opts:["24","36","48","60","72"],ans:2,exp:{title:"Pembagian Eigen",body:"12² ÷ 3 = 144 ÷ 3 = 48."}},
-{q:"Jika λ = 6 maka λ² - 10 = ...",opts:["16","20","24","26","30"],ans:3,exp:{title:"Ekspresi Kuadrat",body:"6² - 10 = 36 - 10 = 26."}}
-];
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Aljabar Linear';
+const SOAL_JUDUL = 'Diagonalisasi';
+  
+let ALL_Q = [];
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -981,9 +920,7 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
@@ -1017,9 +954,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1028,9 +963,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -1043,10 +976,63 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1055,7 +1041,6 @@ function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1067,29 +1052,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -1113,9 +1076,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -1135,29 +1096,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
+    if (a === -1) {
+      // Surrendered — lock all options
       div.classList.add('locked');
     } else {
+      // Can still answer — highlight selected with neutral dark style only
       div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
     }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -1167,12 +1124,11 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
@@ -1196,9 +1152,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -1210,9 +1164,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -1232,9 +1184,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -1252,9 +1202,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -1284,7 +1232,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -1295,9 +1243,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -1375,9 +1321,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1387,15 +1331,11 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
   buildWord('w2', 'Diagonalisasi', 0.75);
