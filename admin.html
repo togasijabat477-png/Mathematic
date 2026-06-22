@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -473,6 +472,9 @@
       <button class="nav-item" onclick="switchTab('materi', this)">
         <span class="nav-icon">📚</span> Kelola Materi
       </button>
+      <button class="nav-item" onclick="switchTab('latihan', this)">
+        <span class="nav-icon">🎯</span> Kelola Latihan
+      </button>
       <button class="nav-item" onclick="switchTab('soal', this)">
         <span class="nav-icon">📝</span> Kelola Soal
       </button>
@@ -628,6 +630,61 @@
             <button class="filter-tab" onclick="filterMateri('kriptografi',this)">🔐 Kripto</button>
           </div>
           <div id="materiList"><div class="loading">⏳ Memuat...</div></div>
+        </div>
+      </div>
+ 
+      <!-- ── TAB: LATIHAN ── -->
+      <div class="tab-page" id="tab-latihan">
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Tambah Topik Latihan</div><div class="card-sub">Bikin "wadah" latihan dulu, isi soalnya menyusul</div></div>
+          </div>
+ 
+          <div class="form-group">
+            <label>Judul Topik Latihan</label>
+            <input type="text" id="latihanJudul" placeholder="Contoh: Logika">
+          </div>
+ 
+          <div class="form-row-3">
+                <option value="Matematika Diskrit">∑ Matematika Diskrit</option>
+                <option value="Aljabar Linear">λ Aljabar Linear</option>
+                <option value="Kriptografi">🔐 Kriptografi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Level</label>
+              <select id="latihanLevel">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <div class="form-group" style="max-width:140px">
+              <label>Urutan</label>
+              <input type="number" id="latihanUrutan" value="1" min="1">
+            </div>
+          </div>
+ 
+          <div class="form-group">
+            <label>Deskripsi Singkat <span style="color:var(--text3);font-weight:400;text-transform:none">(tampil di kartu latihan)</span></label>
+            <textarea id="latihanDeskripsi" rows="2" placeholder="Contoh: Latihan soal Logika tingkat menengah"></textarea>
+          </div>
+ 
+          <button class="btn btn-accent" id="btnSimpanLatihan" style="padding:12px 22px">💾 Simpan Topik Latihan</button>
+          <div id="latihanFormMsg" style="margin-top:8px"></div>
+        </div>
+ 
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Daftar Latihan</div><div class="card-sub">Klik "Kelola Soal" untuk isi pertanyaannya</div></div>
+          </div>
+          <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterLatihan('semua',this)">Semua</button>
+            <button class="filter-tab" onclick="filterLatihan('Matematika Diskrit',this)">∑ Diskrit</button>
+            <button class="filter-tab" onclick="filterLatihan('Aljabar Linear',this)">λ Aljabar</button>
+            <button class="filter-tab" onclick="filterLatihan('Kriptografi',this)">🔐 Kripto</button>
+          </div>
+          <div id="latihanList"><div class="loading">⏳ Memuat...</div></div>
         </div>
       </div>
  
@@ -826,6 +883,8 @@ let currentFilter = 'semua';
 let selectedFile = null;
 let parsedSoal = [];
 let currentSecMateriId = null;
+let currentLatihanFilter = 'semua';
+let latihanCache = [];
 let sectionCache = [];
 const TIPE_SECTION_PRESET = ['definisi', 'teks', 'rumus', 'contoh'];
  
@@ -879,6 +938,7 @@ async function showAdminPanel(user) {
   document.getElementById('sidebarAvatar').textContent = user.email.charAt(0).toUpperCase();
   loadDashboard();
   loadMateriList();
+  loadLatihanList();
   loadSoalList();
   loadUserList();
   updateJudulOptions();
@@ -904,6 +964,7 @@ document.getElementById('overlay').addEventListener('click', () => {
 const tabTitles = {
   dashboard: { title: 'Dashboard', sub: 'Ringkasan data Math Unity' },
   materi: { title: 'Kelola Materi', sub: 'Upload dan atur materi pembelajaran' },
+  latihan: { title: 'Kelola Latihan', sub: 'Atur daftar topik latihan soal' },
   soal: { title: 'Kelola Soal', sub: 'Tambah, edit, dan hapus soal kuis' },
   import: { title: 'Import dari TXT', sub: 'Upload soal dalam format file teks' },
   users: { title: 'Kelola User', sub: 'Atur hak akses pengguna' }
@@ -1075,6 +1136,114 @@ async function hapusMateri(id, url) {
   }
   loadMateriList(); loadDashboard();
   showToast('✅ Materi dihapus');
+}
+ 
+// ── KELOLA LATIHAN ──
+document.getElementById('btnSimpanLatihan').addEventListener('click', async () => {
+  const id = document.getElementById('btnSimpanLatihan').dataset.editId || '';
+  const judul = document.getElementById('latihanJudul').value.trim();
+  const modul = document.getElementById('latihanModul').value;
+  const level = document.getElementById('latihanLevel').value;
+  const urutan = parseInt(document.getElementById('latihanUrutan').value) || 1;
+  const deskripsi = document.getElementById('latihanDeskripsi').value.trim();
+ 
+  if (!judul) { showMsg('latihanFormMsg', '❌ Judul topik wajib diisi', 'error'); return; }
+ 
+  const payload = { judul, modul, level, urutan, deskripsi: deskripsi || null };
+  const { error } = id
+    ? await db.from('latihan').update(payload).eq('id', id)
+    : await db.from('latihan').insert(payload);
+ 
+  if (error) { showMsg('latihanFormMsg', '❌ Gagal: ' + error.message, 'error'); return; }
+ 
+  showToast(id ? '✅ Topik latihan diperbarui!' : '✅ Topik latihan dibuat!', 'success');
+  resetFormLatihan();
+  loadLatihanList(); loadDashboard();
+});
+ 
+function resetFormLatihan() {
+  document.getElementById('latihanJudul').value = '';
+  document.getElementById('latihanUrutan').value = 1;
+  document.getElementById('latihanDeskripsi').value = '';
+  document.getElementById('latihanFormMsg').textContent = '';
+  const btn = document.getElementById('btnSimpanLatihan');
+  btn.textContent = '💾 Simpan Topik Latihan';
+  delete btn.dataset.editId;
+}
+ 
+function editLatihan(item) {
+  document.getElementById('latihanJudul').value = item.judul;
+  document.getElementById('latihanModul').value = item.modul;
+  document.getElementById('latihanLevel').value = item.level || 'medium';
+  document.getElementById('latihanUrutan').value = item.urutan || 1;
+  document.getElementById('latihanDeskripsi').value = item.deskripsi || '';
+  const btn = document.getElementById('btnSimpanLatihan');
+  btn.textContent = '💾 Update Topik Latihan';
+  btn.dataset.editId = item.id;
+  btn.scrollIntoView({ behavior: 'smooth' });
+}
+ 
+async function hapusLatihan(id) {
+  if (!confirm('Yakin hapus topik latihan ini? (soal di dalamnya tidak ikut terhapus, hanya "wadah"-nya)')) return;
+  const { error } = await db.from('latihan').delete().eq('id', id);
+  if (error) { showToast('❌ Gagal hapus: ' + error.message, 'error'); return; }
+  showToast('✅ Topik latihan dihapus');
+  loadLatihanList(); loadDashboard();
+}
+ 
+function filterLatihan(filter, btn) {
+  currentLatihanFilter = filter;
+  btn.parentElement.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadLatihanList();
+}
+ 
+async function loadLatihanList() {
+  const list = document.getElementById('latihanList');
+  if (!list) return;
+  list.innerHTML = '<div class="loading">⏳ Memuat...</div>';
+ 
+  let query = db.from('latihan').select('*').order('modul').order('urutan');
+  if (currentLatihanFilter !== 'semua') query = query.eq('modul', currentLatihanFilter);
+  const { data, error } = await query;
+ 
+  if (error) { list.innerHTML = `<div class="empty-state"><div class="e-icon">❌</div><p>${error.message}</p></div>`; return; }
+  if (!data || !data.length) { list.innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><p>Belum ada topik latihan. Isi form di atas untuk membuat yang pertama.</p></div>'; return; }
+ 
+  latihanCache = data;
+  const bm = { 'Matematika Diskrit': 'badge-diskrit', 'Aljabar Linear': 'badge-aljabar', 'Kriptografi': 'badge-kriptografi' };
+ 
+  list.innerHTML = data.map((item, i) => `
+    <div class="data-item" id="latihan-${item.id}">
+      <span class="badge ${bm[item.modul] || ''}">${item.modul}</span>
+      <div class="info">
+        <h3>${item.judul}</h3>
+        <p>${item.deskripsi || '-'} · Level: ${item.level} · Urutan: ${item.urutan}</p>
+      </div>
+      <a class="btn btn-outline btn-sm" href="latihan-viewer.html?id=${item.id}" target="_blank" rel="noopener">👁️ Lihat</a>
+      <button class="btn btn-accent btn-sm" onclick="kelolaSoalLatihan(latihanCache[${i}])">📝 Kelola Soal</button>
+      <button class="btn btn-outline btn-sm" onclick="editLatihan(latihanCache[${i}])">✏️ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="hapusLatihan('${item.id}')">🗑</button>
+    </div>`).join('');
+}
+ 
+function kelolaSoalLatihan(item) {
+  switchTab('soal', document.querySelector('.nav-item[onclick*="\'soal\'"]'));
+ 
+  document.getElementById('filterModulSoal').value = item.modul;
+  updateJudulOptions();
+ 
+  const sel = document.getElementById('filterJudulSoal');
+  if (![...sel.options].some(o => o.value === item.judul)) {
+    const opt = document.createElement('option');
+    opt.value = item.judul;
+    opt.textContent = item.judul;
+    sel.appendChild(opt);
+  }
+  sel.value = item.judul;
+  document.getElementById('filterLevelSoal').value = item.level || 'medium';
+ 
+  loadSoalList();
 }
  
 // ── KELOLA SOAL ──
@@ -1564,4 +1733,3 @@ async function renderSectionList() {
 </script>
 </body>
 </html>
- 
