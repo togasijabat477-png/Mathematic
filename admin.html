@@ -1223,7 +1223,7 @@ async function loadLatihanList() {
         <h3>${item.judul}</h3>
         <p>${item.deskripsi || '-'} · Level: ${item.level} · Urutan: ${item.urutan}</p>
       </div>
-      <a class="btn btn-outline btn-sm" href="latihan-viewer.html?id=${item.id}" target="_blank" rel="noopener">👁️ Lihat</a>
+      <a class="btn btn-outline btn-sm" href="latihan-viewer.html?modul=${encodeURIComponent(item.modul)}&judul=${encodeURIComponent(item.judul)}" target="_blank" rel="noopener">👁️ Lihat</a>
       <button class="btn btn-accent btn-sm" onclick="kelolaSoalLatihan(latihanCache[${i}])">📝 Kelola Soal</button>
       <button class="btn btn-outline btn-sm" onclick="editLatihan(latihanCache[${i}])">✏️ Edit</button>
       <button class="btn btn-danger btn-sm" onclick="hapusLatihan('${item.id}')">🗑</button>
