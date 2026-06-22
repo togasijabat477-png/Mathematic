@@ -1,4 +1,3 @@
-
 // 1. BLOKIR KLIK KANAN (Context Menu)
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault(); // Mencegah menu klik kanan muncul
@@ -607,6 +606,38 @@ function openGameFile(file) {
   window.location.href = file;
 }
  
+const LATIHAN_MODUL_MAP = { diskrit: 'Matematika Diskrit', aljabar: 'Aljabar Linear', kriptografi: 'Kriptografi' };
+ 
+async function buildLatihanSection(fallbackSection) {
+  try {
+    const modulFull = LATIHAN_MODUL_MAP[activeMateriTab];
+    const { data, error } = await db
+      .from('latihan')
+      .select('*')
+      .eq('modul', modulFull)
+      .order('urutan', { ascending: true });
+ 
+    if (error || !data || !data.length) return fallbackSection || null;
+ 
+    return {
+      icon: (fallbackSection && fallbackSection.icon) || '🎯',
+      title: (fallbackSection && fallbackSection.title) || 'Latihan Soal',
+      items: data.map(function(row) {
+        return {
+          num: 'Latihan',
+          title: row.judul,
+          description: row.deskripsi || '',
+          tag: 'Practice',
+          file: 'latihan-viewer.html?id=' + row.id
+        };
+      })
+    };
+  } catch (e) {
+    console.error('Gagal fetch latihan:', e);
+    return fallbackSection || null;
+  }
+}
+ 
 async function renderMateri() {
   // Tabs
   var tabs = [
@@ -642,7 +673,7 @@ async function renderMateri() {
     }
  
     // Render dari DB — grouping berdasarkan tag (Learn/Watch/Practice)
-    // Karena DB hanya simpan materi (Learn), gabungkan dengan video & soal dari lokal
+    // Karena DB hanya simpan materi (Learn), gabungkan dengan video & latihan
     var lokalSections = materiData[activeMateriTab] || [];
     var dbSection = {
       icon: lokalSections[0]?.icon || '📚',
@@ -659,10 +690,11 @@ async function renderMateri() {
       })
     };
  
-    // Gabung: section materi dari DB + section video & soal dari lokal
+    // Gabung: section materi dari DB + video (lokal) + latihan (dinamis dari DB, fallback lokal)
     var sections = [dbSection];
     if (lokalSections[1]) sections.push(lokalSections[1]); // Video
-    if (lokalSections[2]) sections.push(lokalSections[2]); // Soal
+    var latihanSection = await buildLatihanSection(lokalSections[2]);
+    if (latihanSection) sections.push(latihanSection); // Latihan/Practice
  
     renderMateriSections(sections);
  
@@ -1516,4 +1548,3 @@ window.addEventListener('resize', function() {
     document.getElementById('menuBtn').textContent = '☰';
   }
 });
- 
