@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quiz Sistem Persamaan Linear</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -353,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -422,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -628,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -686,7 +685,7 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Sistem Persamaan Linear ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Sistem Persamaan Linear ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
@@ -765,9 +764,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -889,677 +885,28 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{
-  q: "Bentuk umum SPL dua variabel adalah...",
-  opts: [
-    "ax + by = c dan dx + ey = f",
-    "ax^2 + bx = c",
-    "a/x + b/y = c",
-    "ax + b = 0",
-    "x + y + z = 0"
-  ],
-  ans: 0,
-  exp: { title: "Bentuk SPL", body: "SPL terdiri dari minimal 2 persamaan linear dengan dua variabel." }
-},
-{
-  q: "Yang termasuk persamaan linear dua variabel adalah...",
-  opts: [
-    "x^2 + y = 5",
-    "2x + 3y = 10",
-    "x/y = 3",
-    "√x + y = 4",
-    "x^2 + y^2 = 9"
-  ],
-  ans: 1,
-  exp: { title: "Linear", body: "Linear berarti pangkat variabel hanya 1 dan tidak ada akar variabel." }
-},
-{
-  q: "Jika x = 3 dan y = 2, maka x + y = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 1,
-  exp: { title: "Substitusi", body: "3 + 2 = 5" }
-},
-{
-  q: "Jika x + 5 = 12 maka x = ...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Persamaan Linear", body: "x = 12 - 5 = 7" }
-},
-{
-  q: "Metode substitusi adalah...",
-  opts: [
-    "Menghapus variabel dengan perkalian",
-    "Mengganti satu variabel ke persamaan lain",
-    "Menjumlahkan semua variabel",
-    "Mengubah ke kuadrat",
-    "Membagi semua persamaan"
-  ],
-  ans: 1,
-  exp: { title: "Substitusi", body: "Satu variabel diganti dengan bentuk dari persamaan lain." }
-},
-{
-  q: "Metode eliminasi dilakukan dengan...",
-  opts: [
-    "Menebak nilai",
-    "Menambah atau mengurangkan persamaan",
-    "Menghapus semua variabel",
-    "Mengalikan sembarang",
-    "Membagi tanpa aturan"
-  ],
-  ans: 1,
-  exp: { title: "Eliminasi", body: "Eliminasi menghilangkan salah satu variabel dengan operasi penjumlahan/pengurangan." }
-},
-{
-  q: "Jika x + y = 9 dan x = 4 maka y = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 9 - 4 = 5" }
-},
-{
-  q: "Jika 2x = 14 maka x = ...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 14/2 = 7" }
-},
-{
-  q: "Jika x - 3 = 5 maka x = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 5 + 3 = 8" }
-},
-{
-  q: "Jika x + y = 10 dan y = 6 maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 10 - 6 = 4" }
-},
-{
-  q: "SPL minimal terdiri dari...",
-  opts: ["1 persamaan", "2 persamaan", "3 persamaan", "4 persamaan", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "Definisi", body: "SPL membutuhkan minimal 2 persamaan." }
-},
-{
-  q: "Jika x + y = 7 maka pasangan yang benar adalah...",
-  opts: ["(1,6)", "(2,5)", "(3,4)", "Semua benar", "Tidak ada"],
-  ans: 3,
-  exp: { title: "Solusi", body: "Semua pasangan yang jumlahnya 7 benar." }
-},
-{
-  q: "Jika x = 5 dan y = 1 maka x - y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "5 - 1 = 4" }
-},
-{
-  q: "Jika 3x = 12 maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 12/3 = 4" }
-},
-{
-  q: "Jika x + y = 8 dan x = 3 maka y = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 8 - 3 = 5" }
-},
-{
-  q: "Bentuk 2x + 3y = 6 termasuk...",
-  opts: [
-    "Linear dua variabel",
-    "Kuadrat",
-    "Eksponen",
-    "Logaritma",
-    "Fungsi trigonomeri"
-  ],
-  ans: 0,
-  exp: { title: "Klasifikasi", body: "Karena pangkat variabel 1 dan ada dua variabel." }
-},
-{
-  q: "Jika x = 0 dan y = 5 maka x + y = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "0 + 5 = 5" }
-},
-{
-  q: "Jika x + y = 6 dan x = 2 maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 6 - 2 = 4" }
-},
-{
-  q: "Jika x - y = 2 dan x = 6 maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 6 - 2 = 4" }
-},
-{
-  q: "Jika 4x = 20 maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 20/4 = 5" }
-},
-{
-  q: "Jika x + x = 10 maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Aljabar", body: "2x = 10 → x = 5" }
-},
-{
-  q: "Jika x + y = 11 dan y = 7 maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 11 - 7 = 4" }
-},
-{
-  q: "Jika x - 4 = 9 maka x = ...",
-  opts: ["11", "12", "13", "14", "15"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 9 + 4 = 13" }
-},
-{
-  q: "Jika 5x = 25 maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 25/5 = 5" }
-},
-{
-  q: "Jika x + y = 12 dan x = 5 maka y = ...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 12 - 5 = 7" }
-},
-{
-  q: "Jika x + 2 = 9 maka x = ...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 9 - 2 = 7" }
-},
-{
-  q: "Jika x = 2 dan y = 4 maka x + y = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "2 + 4 = 6" }
-},
-{
-  q: "Jika x + y = 14 dan y = 9 maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 14 - 9 = 5" }
-},
-{
-  q: "Jika 6x = 30 maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 30/6 = 5" }
-},
-{
-  q: "Jika x + y = 15 dan x = 8 maka y = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 15 - 8 = 7" }
-},
-
-// MEDIUM 10-29
-{
-  q: "Sistem Persamaan Linear dua variabel terdiri dari...",
-  opts: [
-    "1 persamaan dengan 2 variabel",
-    "2 persamaan dengan 2 variabel",
-    "2 persamaan dengan 1 variabel",
-    "3 persamaan dengan 2 variabel",
-    "1 persamaan dengan 3 variabel"
-  ],
-  ans: 1,
-  exp: { title: "Definisi SPL", body: "SPL terdiri dari minimal 2 persamaan linear dengan 2 variabel." }
-},
-{
-  q: "Bentuk umum SPL dua variabel adalah...",
-  opts: [
-    "ax + by = c dan dx + ey = f",
-    "ax^2 + bx = c",
-    "x/y + y/x = c",
-    "ax + b = 0",
-    "x^2 + y^2 = c"
-  ],
-  ans: 0,
-  exp: { title: "Bentuk SPL", body: "SPL terdiri dari dua persamaan linear dengan dua variabel." }
-},
-{
-  q: "Metode substitusi berarti...",
-  opts: [
-    "Menjumlahkan dua persamaan",
-    "Menghapus variabel dengan pengurangan",
-    "Mengganti satu variabel ke persamaan lain",
-    "Mengalikan semua persamaan",
-    "Membagi semua variabel"
-  ],
-  ans: 2,
-  exp: { title: "Substitusi", body: "Substitusi mengganti satu variabel dengan bentuk dari persamaan lain." }
-},
-{
-  q: "Metode eliminasi dilakukan dengan cara...",
-  opts: [
-    "Menebak jawaban",
-    "Menjumlahkan atau mengurangkan persamaan",
-    "Mengubah ke kuadrat",
-    "Menghapus semua variabel",
-    "Mengalikan tanpa aturan"
-  ],
-  ans: 1,
-  exp: { title: "Eliminasi", body: "Eliminasi menghilangkan salah satu variabel dengan operasi penjumlahan/pengurangan." }
-},
-{
-  q: "Jika x + y = 10 dan x = 6, maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 10 - 6 = 4" }
-},
-{
-  q: "Jika x + y = 12 dan y = 5, maka x = ...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 12 - 5 = 7" }
-},
-{
-  q: "Jika 2x + y = 11 dan x = 3, maka y = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "2(3) + y = 11 → y = 5" }
-},
-{
-  q: "Jika 3x = 15 maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 3,
-  exp: { title: "Persamaan Linear", body: "x = 15/3 = 5" }
-},
-{
-  q: "Jika x - y = 4 dan x = 9, maka y = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 9 - 4 = 5" }
-},
-{
-  q: "Jika x + y = 8 dan x = 3, maka y = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 8 - 3 = 5" }
-},
-{
-  q: "Jika 2x + 3y = 12 dan x = 3, maka y = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "6 + 3y = 12 → y = 2" }
-},
-{
-  q: "Jika x + y = 7 dan x - y = 3, maka x = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: { title: "Eliminasi", body: "Jumlahkan: 2x = 10 → x = 5" }
-},
-{
-  q: "Jika x + y = 7 dan x - y = 3, maka y = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Eliminasi", body: "y = 7 - 5 = 2" }
-},
-{
-  q: "Jika x + y = 9 dan y = 4, maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 9 - 4 = 5" }
-},
-{
-  q: "Jika 4x = 20 maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 3,
-  exp: { title: "Linear", body: "x = 5" }
-},
-{
-  q: "Jika x + y = 6 dan y = 2, maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 4" }
-},
-{
-  q: "Jika x - 3 = 5 maka x = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 8" }
-},
-{
-  q: "Jika 2x + y = 10 dan x = 4, maka y = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "8 + y = 10 → y = 2" }
-},
-{
-  q: "Jika x + 2y = 10 dan y = 3, maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x + 6 = 10 → x = 4" }
-},
-{
-  q: "Jika x + y = 5 dan x = y, maka x = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Sistem Simetri", body: "2x = 5 → x = 2.5 (dibulatkan konsep dasar = 2 atau 3 tergantung konteks)" }
-},
-{
-  q: "Jika x + y = 11 dan x = 7, maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 4" }
-},
-{
-  q: "Jika 3x + y = 15 dan x = 4, maka y = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 1,
-  exp: { title: "Substitusi", body: "12 + y = 15 → y = 3" }
-},
-{
-  q: "Jika x - y = 6 dan x = 10, maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 4" }
-},
-{
-  q: "Jika 5x = 25 maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 5" }
-},
-{
-  q: "Jika x + y = 13 dan y = 8, maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 5" }
-},
-{
-  q: "Jika 2x + 2y = 14 dan x = 3, maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "6 + 2y = 14 → y = 4" }
-},
-{
-  q: "Jika x + y = 16 dan x = 9, maka y = ...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "y = 7" }
-},
-{
-  q: "Jika x - y = 8 dan y = 3, maka x = ...",
-  opts: ["9", "10", "11", "12", "13"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 11" }
-},
-{
-  q: "Jika 6x = 30 maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Linear", body: "x = 5" }
-},
-{
-  q: "Jika x + y = 20 dan y = 12, maka x = ...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "x = 8" }
-},
-
-// HARD 60-89 — used as index 30-59
-{
-  q: "Bentuk umum SPL tiga variabel yang benar adalah...",
-  opts: [
-    "ax + by + cz = d, ex + fy + gz = h, ix + jy + kz = l",
-    "ax + by = c",
-    "ax^2 + by + cz = d",
-    "x + y + z = 0 saja",
-    "a/x + b/y + c/z = d"
-  ],
-  ans: 0,
-  exp: { title: "Bentuk SPL 3 Variabel", body: "SPL 3 variabel terdiri dari 3 persamaan linear dengan variabel x, y, z berpangkat 1." }
-},
-{
-  q: "Manakah yang merupakan SPL 3 variabel?",
-  opts: [
-    "x + y + z = 6",
-    "x + y = 5",
-    "2x + y + z = 10, x + y = 3",
-    "x^2 + y + z = 7",
-    "x + y + z = 6, x + y = 4, y + z = 5"
-  ],
-  ans: 4,
-  exp: { title: "Identifikasi SPL", body: "SPL 3 variabel harus memiliki minimal 3 persamaan linear independen." }
-},
-{
-  q: "Jika x + y + z = 12, x = 3, y = 4 maka z = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: { title: "Substitusi Bertingkat", body: "z = 12 - (3 + 4) = 5" }
-},
-{
-  q: "Jika 2x + 3y + z = 20, x = 2, y = 3 maka z = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: { title: "Substitusi SPL", body: "2(2) + 3(3) + z = 20 → 4 + 9 + z = 20 → z = 7" }
-},
-{
-  q: "Eliminasi bertujuan untuk...",
-  opts: [
-    "Menambah variabel",
-    "Menghapus satu variabel",
-    "Membuat semua variabel sama",
-    "Mengganti semua angka",
-    "Menebak nilai"
-  ],
-  ans: 1,
-  exp: { title: "Eliminasi", body: "Eliminasi menghilangkan satu variabel agar sistem lebih sederhana." }
-},
-{
-  q: "Jika x + y + z = 9 dan x = y = z, maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 1,
-  exp: { title: "Simetri SPL", body: "3x = 9 → x = 3" }
-},
-{
-  q: "Jika x + y + z = 15, y = 2x, z = x maka x = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 3,
-  exp: { title: "Substitusi Kompleks", body: "x + 2x + x = 15 → 4x = 15 → x = 3.75 (dibulatkan soal → 4)" }
-},
-{
-  q: "Dalam SPL, syarat solusi tunggal adalah...",
-  opts: [
-    "Jumlah variabel lebih banyak",
-    "Determinannya nol",
-    "Sistem independen",
-    "Semua variabel sama",
-    "Tidak ada persamaan"
-  ],
-  ans: 2,
-  exp: { title: "Solusi SPL", body: "SPL memiliki solusi tunggal jika persamaan independen." }
-},
-{
-  q: "Jika x + y + z = 6, x + y = 4 maka z = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 1,
-  exp: { title: "Eliminasi langsung", body: "z = 6 - 4 = 2" }
-},
-{
-  q: "Jika 3x + y + z = 18 dan y + z = 12 maka x = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 1,
-  exp: { title: "Eliminasi bertingkat", body: "3x = 6 → x = 2" }
-},
-{
-  q: "Jika x = 1, y = 2, z = 3 maka x + y + z = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: { title: "Substitusi dasar", body: "1 + 2 + 3 = 6" }
-},
-{
-  q: "Jika x + y = 10, y + z = 8, x + z = 12 maka x = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: { title: "Eliminasi SPL klasik", body: "Jumlahkan dua persamaan lalu eliminasi → x = 6" }
-},
-{
-  q: "Jika x + y + z = 21 dan x + y = 13 maka z = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 1,
-  exp: { title: "Eliminasi cepat", body: "z = 21 - 13 = 8" }
-},
-{
-  q: "Jika x + y + z = 18, x = 2y, z = y maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi SPL", body: "2y + y + y = 18 → 4y = 18 → y = 4.5 (≈4)" }
-},
-{
-  q: "Metode gabungan dalam SPL berarti...",
-  opts: [
-    "Hanya substitusi",
-    "Hanya eliminasi",
-    "Substitusi + eliminasi",
-    "Menebak jawaban",
-    "Menghapus semua variabel"
-  ],
-  ans: 2,
-  exp: { title: "Metode Campuran", body: "Metode gabungan = kombinasi substitusi dan eliminasi." }
-},
-{
-  q: "Jika x + y + z = 30, x = 5, y = 10 maka z = ...",
-  opts: ["10", "15", "20", "25", "30"],
-  ans: 1,
-  exp: { title: "Substitusi langsung", body: "z = 30 - 15 = 15" }
-},
-{
-  q: "Jika 2x + 2y + 2z = 24 maka x + y + z = ...",
-  opts: ["10", "11", "12", "13", "14"],
-  ans: 2,
-  exp: { title: "Penyederhanaan SPL", body: "Bagi 2 → x + y + z = 12" }
-},
-{
-  q: "Jika x + y + z = 9 dan x + y = z maka z = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Substitusi hubungan", body: "2z = 9 → z = 4.5 (≈5)" }
-},
-{
-  q: "Jika x + y + z = 14, x = 4, z = 5 maka y = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 1,
-  exp: { title: "Substitusi", body: "y = 14 - 9 = 5" }
-},
-{
-  q: "Jika x + y + z = 20, y = x + 2, z = x maka x = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "SPL campuran", body: "x + (x+2) + x = 20 → 3x + 2 = 20 → x = 6" }
-},
-{
-  q: "Jika x + y + z = 27 dan semua sama, maka x = ...",
-  opts: ["7", "8", "9", "10", "11"],
-  ans: 2,
-  exp: { title: "Simetri SPL", body: "3x = 27 → x = 9" }
-},
-{
-  q: "Jika x + y = 7, y + z = 5, x + z = 6 maka y = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Eliminasi sistem", body: "y = 3 dari kombinasi persamaan" }
-},
-{
-  q: "Jika x + y + z = 10 dan x = 2, y = 3 maka z = ...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 1,
-  exp: { title: "Substitusi", body: "z = 10 - 5 = 5" }
-},
-{
-  q: "Jika 3x + 3y + 3z = 18 maka x + y + z = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 2,
-  exp: { title: "Simplifikasi SPL", body: "Bagi 3 → x + y + z = 6" }
-},
-{
-  q: "Jika x + y + z = 12, x = 3y maka y = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "3y + y + z = 12 → 4y + z = 12 (y = 3)" }
-},
-{
-  q: "Jika x + y + z = 18 dan x + y = 10 maka z = ...",
-  opts: ["6", "7", "8", "9", "10"],
-  ans: 2,
-  exp: { title: "Eliminasi", body: "z = 8" }
-},
-{
-  q: "Jika x + y + z = 15 dan z = 0 maka sistem menjadi...",
-  opts: [
-    "SPL 2 variabel",
-    "SPL tidak berubah",
-    "SPL 3 variabel tetap",
-    "Tidak dapat diselesaikan",
-    "Tidak linear"
-  ],
-  ans: 0,
-  exp: { title: "Reduksi variabel", body: "Jika z = 0 maka SPL menjadi 2 variabel." }
-},
-{
-  q: "Jika x + y + z = 24, x = 6, y = 8 maka z = ...",
-  opts: ["8", "9", "10", "11", "12"],
-  ans: 2,
-  exp: { title: "Substitusi", body: "z = 24 - 14 = 10" }
-},
-{
-  q: "Jika x + y + z = 30, x = y = z maka x = ...",
-  opts: ["8", "9", "10", "11", "12"],
-  ans: 2,
-  exp: { title: "Simetri", body: "3x = 30 → x = 10" }
-},
-{
-  q: "Jika x + y + z = 9, x + y = 5 maka z = ...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 2,
-  exp: { title: "Eliminasi cepat", body: "z = 4" }
-},
-{
-  q: "Jika x + y + z = 40 dan x + y + z = 30 maka sistem...",
-  opts: [
-    "Solusi tunggal",
-    "Tidak konsisten",
-    "Banyak solusi",
-    "Tidak linear",
-    "Tidak dapat ditentukan"
-  ],
-  ans: 1,
-  exp: { title: "Kontradiksi SPL", body: "Dua persamaan berbeda dengan bentuk sama → sistem tidak konsisten." }
-}
-];
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Matematika Diskrit';
+const SOAL_JUDUL = 'Sistem Persamaan Linear';
+  
+let ALL_Q = [];
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -1572,9 +919,7 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
@@ -1608,9 +953,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1619,9 +962,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -1634,10 +975,63 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1646,7 +1040,6 @@ function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1658,29 +1051,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -1704,9 +1075,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -1726,29 +1095,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
+    if (a === -1) {
+      // Surrendered — lock all options
       div.classList.add('locked');
     } else {
+      // Can still answer — highlight selected with neutral dark style only
       div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
     }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -1758,12 +1123,11 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
@@ -1787,9 +1151,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -1801,9 +1163,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -1823,9 +1183,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -1843,9 +1201,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -1875,7 +1231,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -1886,9 +1242,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -1966,9 +1320,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1978,15 +1330,11 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
   buildWord('w2', 'Sistem Persamaan Linear', 0.75);
