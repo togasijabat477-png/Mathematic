@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Aljabar Bolean</title>
+<title>Quiz Aljabar Bolean</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -20,7 +21,7 @@
   --accent-med-bg: #e0eaf8;
   --accent-hard: #8c1818;
   --accent-hard-bg: #fce8e8;
-  --gold: #c8961e;      
+  --gold: #c8961e;
   --gold-2: #e8b832;
   --gold-bg: #fef6e0;
   --correct: #1a7a4a;
@@ -353,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -422,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -628,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -686,7 +685,7 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Aljabar Bolean ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Aljabar Bolean ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
@@ -765,9 +764,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -889,596 +885,28 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{
-  q: "Dalam Aljabar Boolean, operasi AND (∧) bernilai benar jika...",
-  opts: ["Salah satu benar", "Keduanya benar", "Keduanya salah", "Tidak ada yang benar", "Semua kondisi salah"],
-  ans: 1,
-  exp: { title: "Operasi AND", body: "AND hanya bernilai BENAR jika kedua input bernilai BENAR.\n\nB ∧ B = B\nB ∧ S = S\nS ∧ B = S\nS ∧ S = S" }
-},
-{
-  q: "Hasil dari OR (∨) jika p = Benar dan q = Salah adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung kondisi", "Kosong"],
-  ans: 0,
-  exp: { title: "Operasi OR", body: "OR bernilai BENAR jika minimal satu input benar.\n\nB ∨ S = B" }
-},
-{
-  q: "NOT dari Benar (¬B) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Keduanya benar", "Keduanya salah"],
-  ans: 1,
-  exp: { title: "Operasi NOT", body: "NOT membalik nilai:\n¬B = S\n¬S = B" }
-},
-{
-  q: "NOT dari Salah (¬S) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Tidak berubah", "Kosong"],
-  ans: 0,
-  exp: { title: "Operasi NOT", body: "NOT membalik nilai:\n¬S = B" }
-},
-{
-  q: "Hasil dari B ∧ S adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Keduanya benar", "Bergantung"],
-  ans: 1,
-  exp: { title: "Tabel Kebenaran AND", body: "B ∧ S = S karena AND butuh keduanya benar." }
-},
-{
-  q: "Hasil dari B ∨ B adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Kosong", "Bergantung"],
-  ans: 0,
-  exp: { title: "OR", body: "B ∨ B = B" }
-},
-{
-  q: "Hasil dari S ∨ S adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 1,
-  exp: { title: "OR", body: "S ∨ S = S" }
-},
-{
-  q: "Hasil dari S ∧ S adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 1,
-  exp: { title: "AND", body: "S ∧ S = S" }
-},
-{
-  q: "Jika p = Benar, maka ¬p adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 1,
-  exp: { title: "NOT", body: "¬p membalik nilai p. Jika p = B maka ¬p = S." }
-},
-{
-  q: "Jika p = Salah, maka ¬p adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 0,
-  exp: { title: "NOT", body: "¬p = B jika p = S." }
-},
-{
-  q: "Hasil dari B ∨ S adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 0,
-  exp: { title: "OR", body: "B ∨ S = B karena cukup satu benar." }
-},
-{
-  q: "Hasil dari S ∨ B adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 0,
-  exp: { title: "OR", body: "S ∨ B = B" }
-},
-{
-  q: "Manakah yang benar tentang AND?",
-  opts: ["Salah jika salah satu benar", "Benar jika keduanya benar", "Benar jika keduanya salah", "Selalu benar", "Selalu salah"],
-  ans: 1,
-  exp: { title: "AND", body: "AND hanya benar jika semua input benar." }
-},
-{
-  q: "Manakah yang benar tentang OR?",
-  opts: ["Hanya benar jika keduanya benar", "Benar jika minimal satu benar", "Selalu salah", "Selalu benar", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "OR", body: "OR benar jika minimal satu input benar." }
-},
-{
-  q: "Hasil dari ¬(¬B) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Kosong", "Bergantung"],
-  ans: 0,
-  exp: { title: "Double Negation", body: "¬(¬B) = B" }
-},
-{
-  q: "Hasil dari ¬(¬S) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Kosong", "Bergantung"],
-  ans: 1,
-  exp: { title: "Double Negation", body: "¬(¬S) = S" }
-},
-{
-  q: "Nilai dari (B ∧ B) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Kosong", "Bergantung"],
-  ans: 0,
-  exp: { title: "AND", body: "B ∧ B = B" }
-},
-{
-  q: "Nilai dari (S ∨ B) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Kosong", "Bergantung"],
-  ans: 0,
-  exp: { title: "OR", body: "S ∨ B = B" }
-},
-{
-  q: "Nilai dari (S ∨ S) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Kosong", "Bergantung"],
-  ans: 1,
-  exp: { title: "OR", body: "S ∨ S = S" }
-},
-{
-  q: "Nilai dari (B ∧ S) adalah...",
-  opts: ["Benar", "Salah", "Tidak tentu", "Kosong", "Bergantung"],
-  ans: 1,
-  exp: { title: "AND", body: "B ∧ S = S" }
-},
-{
-  q: "Ekspresi ¬B berarti...",
-  opts: ["B tetap", "Kebalikan B", "Selalu benar", "Selalu salah", "Tidak berubah"],
-  ans: 1,
-  exp: { title: "NOT", body: "¬B adalah kebalikan dari B." }
-},
-{
-  q: "Ekspresi ¬S berarti...",
-  opts: ["S tetap", "Kebalikan S", "Selalu salah", "Selalu benar", "Tidak berubah"],
-  ans: 1,
-  exp: { title: "NOT", body: "¬S = B" }
-},
-{
-  q: "Jika p ∧ q = B, maka...",
-  opts: ["p atau q salah", "p dan q benar", "p salah semua", "q salah semua", "tidak tentu"],
-  ans: 1,
-  exp: { title: "AND", body: "AND benar hanya jika p dan q keduanya benar." }
-},
-{
-  q: "Jika p ∨ q = S, maka...",
-  opts: ["p dan q benar", "p dan q salah", "p benar semua", "q benar semua", "tidak tentu"],
-  ans: 1,
-  exp: { title: "OR", body: "OR salah hanya jika p dan q keduanya salah." }
-},
-{
-  q: "Manakah simbol AND dalam Aljabar Boolean?",
-  opts: ["+", "·", "¬", "=", "≠"],
-  ans: 1,
-  exp: { title: "Simbol Boolean", body: "AND biasanya ditulis sebagai · atau ∧." }
-},
-{
-  q: "Manakah simbol OR dalam Aljabar Boolean?",
-  opts: ["·", "+", "¬", "≠", "≡"],
-  ans: 1,
-  exp: { title: "Simbol Boolean", body: "OR biasanya ditulis sebagai + atau ∨." }
-},
-{
-  q: "Manakah simbol NOT dalam Aljabar Boolean?",
-  opts: ["+", "·", "¬", "≡", "⊕"],
-  ans: 2,
-  exp: { title: "Simbol Boolean", body: "NOT ditulis sebagai ¬ atau bar (overline)." }
-},
-{
-  q: "Sederhana dari B + B adalah...",
-  opts: ["B", "S", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 0,
-  exp: { title: "Idempotent Law", body: "B + B = B" }
-},
-{
-  q: "Sederhana dari B · B adalah...",
-  opts: ["B", "S", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 0,
-  exp: { title: "Idempotent Law", body: "B · B = B" }
-},
-{
-  q: "Sederhana dari B + S adalah...",
-  opts: ["B", "S", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 0,
-  exp: { title: "OR", body: "B + S = B" }
-},
-{
-  q: "Sederhana dari B · S adalah...",
-  opts: ["B", "S", "Tidak tentu", "Bergantung", "Kosong"],
-  ans: 1,
-  exp: { title: "AND", body: "B · S = S" }
-},
-
-// MEDIUM 10-29
-{
-  q: "Hukum identitas pada Aljabar Boolean menyatakan A + 0 = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Identitas", body: "A + 0 = A" }
-},
-{
-  q: "Hukum identitas pada Aljabar Boolean menyatakan A · 1 = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Identitas", body: "A · 1 = A" }
-},
-{
-  q: "Hukum dominasi: A + 1 = ...",
-  opts: ["A", "0", "1", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Dominasi", body: "A + 1 = 1" }
-},
-{
-  q: "Hukum dominasi: A · 0 = ...",
-  opts: ["A", "1", "0", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Dominasi", body: "A · 0 = 0" }
-},
-{
-  q: "Hukum komplemen: A + ~A = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "Komplemen", body: "A + ~A = 1" }
-},
-{
-  q: "Hukum komplemen: A · ~A = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "Komplemen", body: "A · ~A = 0" }
-},
-{
-  q: "Hukum idempotent: A + A = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Idempotent", body: "A + A = A" }
-},
-{
-  q: "Hukum idempotent: A · A = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Idempotent", body: "A · A = A" }
-},
-{
-  q: "Hukum komutatif untuk OR adalah...",
-  opts: ["A + B = B + A", "A · B = A + B", "A = ~A", "A + 1 = 0", "A · 0 = 1"],
-  ans: 0,
-  exp: { title: "Komutatif", body: "A + B = B + A" }
-},
-{
-  q: "Hukum komutatif untuk AND adalah...",
-  opts: ["A · B = B · A", "A + B = 1", "A · B = A + B", "A = ~B", "A + 0 = 1"],
-  ans: 0,
-  exp: { title: "Komutatif", body: "A · B = B · A" }
-},
-{
-  q: "Hukum distributif: A · (B + C) = ...",
-  opts: ["A·B + A·C", "A + B + C", "B + C", "A·B·C", "A + BC"],
-  ans: 0,
-  exp: { title: "Distributif", body: "A·(B + C) = A·B + A·C" }
-},
-{
-  q: "Hukum distributif: A + (B · C) = ...",
-  opts: ["(A + B)(A + C)", "A·B + C", "A + B + C", "A·(B + C)", "B + C"],
-  ans: 0,
-  exp: { title: "Distributif", body: "A + (B·C) = (A + B)(A + C)" }
-},
-{
-  q: "Hukum De Morgan: ~(A + B) = ...",
-  opts: ["~A + ~B", "~A · ~B", "A · B", "A + B", "~A + B"],
-  ans: 1,
-  exp: { title: "De Morgan", body: "~(A + B) = ~A · ~B" }
-},
-{
-  q: "Hukum De Morgan: ~(A · B) = ...",
-  opts: ["~A · ~B", "~A + ~B", "A + B", "A · B", "~A + B"],
-  ans: 1,
-  exp: { title: "De Morgan", body: "~(A · B) = ~A + ~B" }
-},
-{
-  q: "Sederhana dari A + A·B adalah...",
-  opts: ["A", "B", "A·B", "0", "1"],
-  ans: 0,
-  exp: { title: "Absorpsi", body: "A + A·B = A" }
-},
-{
-  q: "Sederhana dari A · (A + B) adalah...",
-  opts: ["A", "B", "A+B", "0", "1"],
-  ans: 0,
-  exp: { title: "Absorpsi", body: "A·(A + B) = A" }
-},
-{
-  q: "Gerbang AND bernilai 1 jika...",
-  opts: ["Salah satu input 1", "Semua input 1", "Semua input 0", "Input berbeda", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "AND", body: "AND = 1 hanya jika semua input 1" }
-},
-{
-  q: "Gerbang OR bernilai 0 jika...",
-  opts: ["Semua input 1", "Semua input 0", "Salah satu input 1", "Input berbeda", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "OR", body: "OR = 0 hanya jika semua input 0" }
-},
-{
-  q: "Gerbang NOT berfungsi untuk...",
-  opts: ["Menjumlahkan", "Mengalikan", "Membalik nilai", "Menghapus input", "Menggandakan"],
-  ans: 2,
-  exp: { title: "NOT", body: "NOT membalik nilai (0 ↔ 1)" }
-},
-{
-  q: "Tabel kebenaran A + B bernilai 0 jika...",
-  opts: ["A=1 B=1", "A=1 B=0", "A=0 B=1", "A=0 B=0", "Tidak tentu"],
-  ans: 3,
-  exp: { title: "OR", body: "OR = 0 hanya jika A=0 dan B=0" }
-},
-{
-  q: "Tabel kebenaran A · B bernilai 1 jika...",
-  opts: ["A=0 B=0", "A=1 B=0", "A=0 B=1", "A=1 B=1", "Tidak tentu"],
-  ans: 3,
-  exp: { title: "AND", body: "AND = 1 hanya jika A=1 dan B=1" }
-},
-{
-  q: "Nilai A + (A·B) = ...",
-  opts: ["A", "B", "A+B", "0", "1"],
-  ans: 0,
-  exp: { title: "Absorpsi", body: "A + A·B = A" }
-},
-{
-  q: "Nilai A·(A + B) = ...",
-  opts: ["A", "B", "A+B", "0", "1"],
-  ans: 0,
-  exp: { title: "Absorpsi", body: "A·(A + B) = A" }
-},
-{
-  q: "Gerbang XOR bernilai 1 jika...",
-  opts: ["Input sama", "Input berbeda", "Semua 0", "Semua 1", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "XOR", body: "XOR = 1 jika input berbeda" }
-},
-{
-  q: "A ⊕ A = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 0,
-  exp: { title: "XOR", body: "A ⊕ A = 0" }
-},
-{
-  q: "Sederhana dari A + 1 = ...",
-  opts: ["A", "0", "1", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Dominasi", body: "A + 1 = 1" }
-},
-{
-  q: "Sederhana dari A · 0 = ...",
-  opts: ["A", "1", "0", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Dominasi", body: "A · 0 = 0" }
-},
-{
-  q: "Hasil dari (A + B)·A = ...",
-  opts: ["A + B", "A", "B", "0", "1"],
-  ans: 1,
-  exp: { title: "Absorpsi", body: "(A + B)·A = A" }
-},
-{
-  q: "Hasil dari (A·B) + A = ...",
-  opts: ["A", "B", "A·B", "0", "1"],
-  ans: 0,
-  exp: { title: "Absorpsi", body: "A + A·B = A" }
-},
-{
-  q: "Sederhana dari A + A + A = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Idempotent", body: "A + A + A = A" }
-},
-{
-  q: "Sederhana dari A·A·A = ...",
-  opts: ["0", "1", "A", "~A", "Tidak tentu"],
-  ans: 2,
-  exp: { title: "Idempotent", body: "A·A·A = A" }
-},
-
-// HARD 60-89 — used as index 30-59
-{
-  q: "Sederhanakan ekspresi: A·B + A·~B = ...",
-  opts: ["A", "B", "A·B", "A + B", "0"],
-  ans: 0,
-  exp: { title: "Faktorisasi Boolean", body: "A·B + A·~B = A(B + ~B) = A·1 = A" }
-},
-{
-  q: "Sederhanakan: (A + B)(A + ~B) = ...",
-  opts: ["A", "B", "A + B", "0", "1"],
-  ans: 0,
-  exp: { title: "Distribusi & Komplemen", body: "(A + B)(A + ~B) = A + (B·~B) = A + 0 = A" }
-},
-{
-  q: "Sederhanakan: A + A·B + A·~B = ...",
-  opts: ["A", "B", "A·B", "A + B", "0"],
-  ans: 0,
-  exp: { title: "Absorpsi Lanjutan", body: "A + A·B + A·~B = A + A(B + ~B) = A + A = A" }
-},
-{
-  q: "Hasil dari (A + B + C)(A + B) = ...",
-  opts: ["A + B", "A + C", "B + C", "A·B", "0"],
-  ans: 0,
-  exp: { title: "Absorpsi Kompleks", body: "(A + B + C)(A + B) = A + B" }
-},
-{
-  q: "Sederhanakan: A·(A + B·C) = ...",
-  opts: ["A", "B·C", "A + B·C", "0", "1"],
-  ans: 0,
-  exp: { title: "Absorpsi", body: "A·(A + X) = A" }
-},
-{
-  q: "Hasil dari A + (B·C) + (~A·B) = ...",
-  opts: ["A + B", "A + C", "A", "B·C", "0"],
-  ans: 0,
-  exp: { title: "Reduksi Boolean", body: "A + (~A·B) = A + B → jadi A + B + B·C = A + B" }
-},
-{
-  q: "Hasil dari (A·B) + (A·~B) + (~A·B) = ...",
-  opts: ["A + B", "A", "B", "A·B", "0"],
-  ans: 0,
-  exp: { title: "Penyederhanaan Lengkap", body: "A·B + A·~B = A → A + ~A·B = A + B" }
-},
-{
-  q: "Sederhanakan: (A + B)(~A + B) = ...",
-  opts: ["B", "A", "A + B", "A·B", "0"],
-  ans: 0,
-  exp: { title: "Consensus Theorem", body: "(A + B)(~A + B) = B" }
-},
-{
-  q: "Sederhanakan: (A + B)(A + C)(B + C) = ...",
-  opts: ["A + B + C", "A·B·C", "0", "A", "B"],
-  ans: 0,
-  exp: { title: "Consensus Reduction", body: "Hasil akhirnya: A + B + C" }
-},
-{
-  q: "Jika output Y = A·B + ~A·B, maka Y = ...",
-  opts: ["A", "B", "A + B", "0", "1"],
-  ans: 1,
-  exp: { title: "Faktorisasi", body: "Y = B(A + ~A) = B·1 = B" }
-},
-
-{
-  q: "Jika Y = (A + B)(A + ~B), maka Y = ...",
-  opts: ["A", "B", "A + B", "0", "1"],
-  ans: 0,
-  exp: { title: "Simplifikasi K-Map", body: "Hasil grouping: A tetap dominan → Y = A" }
-},
-{
-  q: "Output gerbang NAND dari A·B adalah...",
-  opts: ["A·B", "~(A·B)", "A + B", "~A·~B", "A + ~B"],
-  ans: 1,
-  exp: { title: "Gerbang NAND", body: "NAND = negasi dari AND → ~(A·B)" }
-},
-{
-  q: "Output gerbang NOR dari A + B adalah...",
-  opts: ["A + B", "~(A + B)", "~A + ~B", "A·B", "~A·B"],
-  ans: 1,
-  exp: { title: "Gerbang NOR", body: "NOR = negasi dari OR → ~(A + B)" }
-},
-{
-  q: "Jika A=1, B=0 maka output A·B + A·~B = ...",
-  opts: ["0", "1", "A", "B", "~A"],
-  ans: 2,
-  exp: { title: "Evaluasi Rangkaian", body: "A·B=0, A·~B=1 → total = 1 = A" }
-},
-{
-  q: "Jika A=0, B=1 maka (A + B)(A + ~B) = ...",
-  opts: ["0", "1", "A", "B", "~A"],
-  ans: 2,
-  exp: { title: "Evaluasi Rangkaian", body: "(0+1)(0+0)=1·0=0 → hasil A=0" }
-},
-
-{
-  q: "Sederhanakan: A·(B + C) + A·(~B + C)",
-  opts: ["A + C", "A·B", "A·C", "B + C", "0"],
-  ans: 0,
-  exp: { title: "Distribusi Kompleks", body: "A(B+C)+A(~B+C)=A(B+~B+C)=A(1+C)=A" }
-},
-{
-  q: "Hasil dari (A·B) + (~A·B) + (A·~B) + (~A·~B) adalah...",
-  opts: ["0", "A", "B", "1", "A·B"],
-  ans: 3,
-  exp: { title: "Tautologi Lengkap", body: "Semua kombinasi input → selalu 1" }
-},
-{
-  q: "Sederhanakan: A + A·B + A·B·C",
-  opts: ["A", "B", "C", "A·B", "0"],
-  ans: 0,
-  exp: { title: "Absorpsi Bertingkat", body: "A + A·X = A → hasil = A" }
-},
-{
-  q: "Jika Y = ~(A·B)·A maka Y = ...",
-  opts: ["A", "B", "0", "1", "~A"],
-  ans: 2,
-  exp: { title: "Kontradiksi", body: "~(A·B)·A = A·(~A + ~B)=A·~A + A·~B = 0" }
-},
-{
-  q: "Sederhanakan: (A + B + C)(~A + B + C)",
-  opts: ["B + C", "A + B", "A + C", "A·B·C", "0"],
-  ans: 0,
-  exp: { title: "Consensus", body: "Hasil penyederhanaan = B + C" }
-},
-
-{
-  q: "Output XOR A ⊕ B ⊕ B = ...",
-  opts: ["A", "B", "0", "1", "~A"],
-  ans: 0,
-  exp: { title: "Sifat XOR", body: "B ⊕ B = 0 → A ⊕ 0 = A" }
-},
-{
-  q: "Jika A ⊕ B = 1, maka A dan B adalah...",
-  opts: ["Sama", "Berbeda", "Keduanya 1", "Keduanya 0", "Tidak tentu"],
-  ans: 1,
-  exp: { title: "XOR", body: "XOR = 1 jika input berbeda" }
-},
-{
-  q: "Sederhanakan: A + (~A·B) + (~A·~B)",
-  opts: ["A + B", "A", "B", "A·B", "1"],
-  ans: 0,
-  exp: { title: "Absorpsi Kompleks", body: "A + (~A(B+~B)) = A + ~A = 1 → tapi dominasi A + X = A + B" }
-},
-{
-  q: "Jika output Y = (A + B)(~A + ~B), maka Y = ...",
-  opts: ["A ⊕ B", "A · B", "A + B", "~A", "0"],
-  ans: 0,
-  exp: { title: "XOR Implementasi", body: "Ini bentuk XOR dalam POS form" }
-},
-{
-  q: "Sederhanakan: (A + B)(A + C)(~A + B + C)",
-  opts: ["A + B + C", "A·B·C", "B + C", "A", "0"],
-  ans: 0,
-  exp: { title: "Reduksi K-Map", body: "Hasil grouping: A + B + C" }
-},
-{
-  q: "Output dari Y = A·~A + B adalah...",
-  opts: ["A", "B", "0", "1", "~B"],
-  ans: 1,
-  exp: { title: "Kontradiksi", body: "A·~A = 0 → Y = B" }
-},
-{
-  q: "Sederhanakan: (A·B + A·C + B·C)",
-  opts: ["A + B + C", "A·B·C", "A + B·C", "0", "1"],
-  ans: 2,
-  exp: { title: "Consensus Form", body: "Hasil minimal: A·B + A·C + B·C = A + B·C (bentuk reduksi)" }
-},
-{
-  q: "Jika A=1, B=1 maka (A + B)(A·B) = ...",
-  opts: ["0", "1", "A", "B", "~A"],
-  ans: 1,
-  exp: { title: "Evaluasi", body: "(1+1)(1·1)=1·1=1" }
-},
-{
-  q: "Gerbang logika yang ekuivalen dengan ~(A·B) adalah...",
-  opts: ["AND", "OR", "NAND", "NOR", "XOR"],
-  ans: 2,
-  exp: { title: "NAND", body: "NAND = NOT AND" }
-},
-{
-  q: "Gerbang logika yang ekuivalen dengan ~(A + B) adalah...",
-  opts: ["NOR", "NAND", "XOR", "AND", "OR"],
-  ans: 0,
-  exp: { title: "NOR", body: "NOR = NOT OR" }
-},
-{
-  q: "Sederhanakan: (A + B)(A + ~B)(~A + B)",
-  opts: ["A ⊕ B", "A + B", "A·B", "0", "1"],
-  ans: 0,
-  exp: { title: "XOR Struktur", body: "Bentuk ini menghasilkan XOR" }
-}
-];
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Matematika Diskrit';
+const SOAL_JUDUL = 'Alajabar Boolean';
+  
+let ALL_Q = [];
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -1491,9 +919,7 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
@@ -1527,9 +953,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1538,9 +962,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -1553,10 +975,63 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1565,7 +1040,6 @@ function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1577,29 +1051,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -1623,9 +1075,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -1645,29 +1095,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
+    if (a === -1) {
+      // Surrendered — lock all options
       div.classList.add('locked');
     } else {
+      // Can still answer — highlight selected with neutral dark style only
       div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
     }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -1677,12 +1123,11 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
@@ -1706,9 +1151,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -1720,9 +1163,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -1742,9 +1183,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -1762,9 +1201,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -1794,7 +1231,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -1805,9 +1242,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -1885,9 +1320,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1897,15 +1330,11 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
   buildWord('w2', 'Aljabar Bolean', 0.75);
