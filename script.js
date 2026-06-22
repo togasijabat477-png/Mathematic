@@ -617,7 +617,8 @@ async function buildLatihanSection(fallbackSection) {
       .eq('modul', modulFull)
       .order('urutan', { ascending: true });
  
-    if (error || !data || !data.length) return fallbackSection || null;
+    if (error) { console.error('Gagal fetch latihan (RLS/izin?):', error); return fallbackSection || null; }
+    if (!data || !data.length) { console.warn('Tabel latihan kosong untuk modul:', modulFull); return fallbackSection || null; }
  
     return {
       icon: (fallbackSection && fallbackSection.icon) || '🎯',
