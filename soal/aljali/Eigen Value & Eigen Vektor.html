@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quiz Eigen Value & Eigen Vektor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -353,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -422,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -628,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -686,13 +685,13 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Eigen Value & Eigen Vektor ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Eigen Value & Eigen Vektor ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
         <div class="hero-rule"></div>
       </h1>
-      <p class="hero-sub">Asah kemampuanmu dalam memahami konsep eigen value dan eigen vektor melalui kumpulan latihan soal yang disusun dari tingkat mudah hingga menantang. Pilih level kesulitan yang sesuai untuk menguji sekaligus meningkatkan pemahamanmu tentang nilai eigen, vektor eigen, serta penerapannya pada matriks.</p>
+     <p class="hero-sub">Asah kemampuanmu dalam memahami konsep eigen value dan eigen vektor melalui kumpulan latihan soal yang disusun dari tingkat mudah hingga menantang. Pilih level kesulitan yang sesuai untuk menguji sekaligus meningkatkan pemahamanmu tentang nilai eigen, vektor eigen, serta penerapannya pada matriks.</p>
     </div>
 
     <div class="level-grid">
@@ -747,7 +746,6 @@ body::before {
       <cite>— Gilbert Strang</cite>
     </div>
   </div>
-
   <!-- ══════ QUIZ SCREEN ══════ -->
   <div id="quizScreen" class="screen">
     <div class="quiz-topbar">
@@ -765,9 +763,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -889,922 +884,28 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{
-  q: "Eigen value dari matriks identitas [[1,0],[0,1]] adalah...",
-  opts: ["0", "1", "2", "-1", "3"],
-  ans: 1,
-  exp: { title: "Eigen Value", body: "Semua eigen value matriks identitas bernilai 1." }
-},
-{
-  q: "Eigen vector adalah vektor yang...",
-  opts: [
-    "berubah arah setelah transformasi",
-    "tetap pada ruang nol",
-    "hanya berubah skala saat ditransformasikan",
-    "selalu menjadi nol",
-    "tegak lurus matriks"
-  ],
-  ans: 2,
-  exp: { title: "Definisi", body: "Eigen vector hanya berubah skala, bukan arah." }
-},
-{
-  q: "Persamaan dasar eigen value adalah...",
-  opts: [
-    "A + v = λ",
-    "Av = λv",
-    "Aλ = v",
-    "vA = λ",
-    "A - v = 0"
-  ],
-  ans: 1,
-  exp: { title: "Rumus Dasar", body: "Persamaan eigen adalah Av = λv." }
-},
-{
-  q: "Nilai λ pada Av = λv disebut...",
-  opts: ["minor", "determinan", "eigen value", "kofaktor", "trace"],
-  ans: 2,
-  exp: { title: "Istilah", body: "λ disebut eigen value." }
-},
-{
-  q: "Vektor v pada Av = λv disebut...",
-  opts: ["vektor nol", "eigen vector", "vektor basis", "trace", "minor"],
-  ans: 1,
-  exp: { title: "Istilah", body: "v disebut eigen vector." }
-},
-{
-  q: "Eigen value matriks [[2,0],[0,3]] adalah...",
-  opts: ["2 dan 3", "1 dan 2", "0 dan 3", "5 dan 6", "1 dan 3"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Untuk matriks diagonal, eigen value adalah elemen diagonalnya." }
-},
-{
-  q: "Jika λ = 0 maka matriks kemungkinan...",
-  opts: ["invertible", "singular", "identitas", "diagonal", "simetris"],
-  ans: 1,
-  exp: { title: "Sifat", body: "Eigen value 0 menandakan matriks singular." }
-},
-{
-  q: "Determinan yang digunakan mencari eigen value adalah...",
-  opts: [
-    "det(A)",
-    "det(λA)",
-    "det(A - λI)",
-    "det(I)",
-    "det(v)"
-  ],
-  ans: 2,
-  exp: { title: "Karakteristik", body: "Eigen value dicari dari det(A - λI)=0." }
-},
-{
-  q: "Matriks I pada det(A - λI) disebut...",
-  opts: [
-    "matriks nol",
-    "matriks diagonal",
-    "matriks identitas",
-    "matriks invers",
-    "matriks singular"
-  ],
-  ans: 2,
-  exp: { title: "Identitas", body: "I adalah matriks identitas." }
-},
-{
-  q: "Eigen value matriks [[5,0],[0,5]] adalah...",
-  opts: ["0", "1", "5", "10", "25"],
-  ans: 2,
-  exp: { title: "Diagonal", body: "Semua diagonal bernilai 5, maka eigen value = 5." }
-},
-
-{
-  q: "Trace matriks 2×2 adalah...",
-  opts: [
-    "jumlah semua elemen",
-    "hasil kali diagonal",
-    "jumlah diagonal utama",
-    "jumlah kolom",
-    "jumlah baris"
-  ],
-  ans: 2,
-  exp: { title: "Trace", body: "Trace adalah jumlah elemen diagonal utama." }
-},
-{
-  q: "Trace matriks [[2,1],[0,3]] adalah...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 3,
-  exp: { title: "Perhitungan", body: "2 + 3 = 5." }
-},
-{
-  q: "Eigen value matriks segitiga atas diperoleh dari...",
-  opts: [
-    "baris pertama",
-    "kolom pertama",
-    "elemen diagonal",
-    "determinan",
-    "minor"
-  ],
-  ans: 2,
-  exp: { title: "Segitiga", body: "Eigen value matriks segitiga berasal dari diagonal utama." }
-},
-{
-  q: "Matriks [[4,0],[0,1]] memiliki eigen value...",
-  opts: ["4 dan 1", "5 dan 1", "0 dan 4", "1 dan 0", "2 dan 2"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Eigen value adalah 4 dan 1." }
-},
-{
-  q: "Jika semua eigen value ≠ 0 maka matriks...",
-  opts: [
-    "singular",
-    "tidak punya invers",
-    "invertible",
-    "nol",
-    "simetris"
-  ],
-  ans: 2,
-  exp: { title: "Invertible", body: "Matriks invertible jika semua eigen value tidak nol." }
-},
-{
-  q: "Eigen vector tidak boleh berupa...",
-  opts: [
-    "vektor diagonal",
-    "vektor nol",
-    "vektor satuan",
-    "vektor kolom",
-    "vektor baris"
-  ],
-  ans: 1,
-  exp: { title: "Syarat", body: "Eigen vector tidak boleh vektor nol." }
-},
-{
-  q: "Persamaan karakteristik diperoleh dari...",
-  opts: [
-    "det(A + λI)",
-    "det(A - λI)=0",
-    "A²",
-    "Av",
-    "trace(A)"
-  ],
-  ans: 1,
-  exp: { title: "Karakteristik", body: "Persamaan karakteristik adalah det(A - λI)=0." }
-},
-{
-  q: "Eigen value matriks [[7,0],[0,2]] adalah...",
-  opts: ["7 dan 2", "9 dan 2", "5 dan 2", "7 dan 0", "1 dan 2"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Eigen value langsung dari diagonal utama." }
-},
-{
-  q: "Matriks diagonal adalah matriks yang...",
-  opts: [
-    "semua elemen sama",
-    "semua elemen nol",
-    "elemen selain diagonal bernilai nol",
-    "tidak punya diagonal",
-    "baris = kolom"
-  ],
-  ans: 2,
-  exp: { title: "Definisi", body: "Selain diagonal utama semuanya nol." }
-},
-{
-  q: "Eigen value matriks nol adalah...",
-  opts: ["0", "1", "-1", "2", "tak hingga"],
-  ans: 0,
-  exp: { title: "Matriks Nol", body: "Semua eigen value matriks nol adalah 0." }
-},
-
-{
-  q: "Jika Av = 3v maka eigen value-nya adalah...",
-  opts: ["0", "1", "2", "3", "v"],
-  ans: 3,
-  exp: { title: "Langsung", body: "Koefisien pada v adalah eigen value." }
-},
-{
-  q: "Matriks identitas memiliki eigen vector...",
-  opts: [
-    "semua vektor non nol",
-    "hanya satu vektor",
-    "vektor nol",
-    "tidak ada",
-    "vektor diagonal saja"
-  ],
-  ans: 0,
-  exp: { title: "Identitas", body: "Semua vektor non nol menjadi eigen vector." }
-},
-{
-  q: "Jika λ adalah eigen value maka vektor eigennya memenuhi...",
-  opts: [
-    "Av = 0",
-    "(A - λI)v = 0",
-    "A + v = 0",
-    "Av = I",
-    "A²v = 0"
-  ],
-  ans: 1,
-  exp: { title: "Eigen Vector", body: "Eigen vector diperoleh dari (A - λI)v = 0." }
-},
-{
-  q: "Eigen value matriks [[6,0],[0,4]] adalah...",
-  opts: ["6 dan 4", "10 dan 4", "2 dan 4", "6 dan 0", "1 dan 4"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Nilai diagonal menjadi eigen value." }
-},
-{
-  q: "Jumlah eigen value matriks sama dengan...",
-  opts: [
-    "determinan",
-    "trace",
-    "minor",
-    "rank",
-    "invers"
-  ],
-  ans: 1,
-  exp: { title: "Sifat", body: "Jumlah eigen value = trace matriks." }
-},
-{
-  q: "Hasil kali eigen value matriks sama dengan...",
-  opts: [
-    "trace",
-    "rank",
-    "determinan",
-    "minor",
-    "transpose"
-  ],
-  ans: 2,
-  exp: { title: "Sifat", body: "Perkalian eigen value = determinan." }
-},
-{
-  q: "Eigen value matriks [[9,0],[0,1]] adalah...",
-  opts: ["9 dan 1", "10 dan 1", "8 dan 1", "9 dan 0", "1 dan 1"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Elemen diagonal utama menjadi eigen value." }
-},
-{
-  q: "Jika matriks memiliki eigen value berbeda maka eigen vector-nya...",
-  opts: [
-    "selalu nol",
-    "bebas linear",
-    "sama",
-    "negatif",
-    "tidak ada"
-  ],
-  ans: 1,
-  exp: { title: "Sifat", body: "Eigen vector dari eigen value berbeda bersifat bebas linear." }
-},
-{
-  q: "Matriks [[3,0],[0,3]] memiliki eigen value...",
-  opts: ["0", "1", "2", "3", "6"],
-  ans: 3,
-  exp: { title: "Diagonal", body: "Semua diagonal bernilai 3." }
-},
-{
-  q: "Tujuan utama mencari eigen value adalah memahami...",
-  opts: [
-    "warna matriks",
-    "transformasi linear",
-    "jumlah kolom",
-    "ukuran matriks",
-    "transpose"
-  ],
-  ans: 1,
-  exp: { title: "Konsep", body: "Eigen value membantu memahami transformasi linear." }
-},
-// MEDIUM 10-29
-{
-  q: "Eigen value matriks [[2,0],[0,3]] adalah...",
-  opts: ["2 dan 3", "1 dan 2", "0 dan 3", "5 dan 6", "1 dan 3"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Eigen value matriks diagonal adalah elemen diagonalnya." }
-},
-{
-  q: "Persamaan karakteristik diperoleh dari...",
-  opts: [
-    "det(A + λI)=0",
-    "det(A - λI)=0",
-    "A² = I",
-    "Av = 0",
-    "trace(A)=0"
-  ],
-  ans: 1,
-  exp: { title: "Karakteristik", body: "Eigen value dicari dari det(A - λI)=0." }
-},
-{
-  q: "Jika Av = 4v maka eigen value-nya adalah...",
-  opts: ["0", "1", "2", "4", "v"],
-  ans: 3,
-  exp: { title: "Langsung", body: "Koefisien pada v adalah eigen value." }
-},
-{
-  q: "Eigen vector memenuhi persamaan...",
-  opts: [
-    "Av = λv",
-    "A + v = λ",
-    "Av = I",
-    "A²v = 0",
-    "A - v = 0"
-  ],
-  ans: 0,
-  exp: { title: "Rumus Dasar", body: "Persamaan dasar eigen vector adalah Av = λv." }
-},
-{
-  q: "Eigen value matriks [[5,0],[0,1]] adalah...",
-  opts: ["5 dan 1", "6 dan 1", "4 dan 1", "5 dan 0", "1 dan 1"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Diagonal utama menjadi eigen value." }
-},
-{
-  q: "Jika λ = 0 maka matriks kemungkinan...",
-  opts: ["invertible", "singular", "identitas", "simetris", "ortogonal"],
-  ans: 1,
-  exp: { title: "Singular", body: "Eigen value nol menandakan matriks singular." }
-},
-{
-  q: "Matriks identitas memiliki eigen value...",
-  opts: ["0", "1", "-1", "2", "tak hingga"],
-  ans: 1,
-  exp: { title: "Identitas", body: "Semua eigen value matriks identitas bernilai 1." }
-},
-{
-  q: "Persamaan (A - λI)v = 0 digunakan untuk mencari...",
-  opts: [
-    "determinan",
-    "trace",
-    "eigen vector",
-    "transpose",
-    "rank"
-  ],
-  ans: 2,
-  exp: { title: "Eigen Vector", body: "Persamaan tersebut digunakan mencari eigen vector." }
-},
-{
-  q: "Eigen vector tidak boleh berupa...",
-  opts: [
-    "vektor diagonal",
-    "vektor nol",
-    "vektor satuan",
-    "vektor basis",
-    "vektor kolom"
-  ],
-  ans: 1,
-  exp: { title: "Syarat", body: "Eigen vector harus vektor non nol." }
-},
-{
-  q: "Eigen value matriks [[7,0],[0,4]] adalah...",
-  opts: ["7 dan 4", "11 dan 4", "3 dan 4", "7 dan 0", "1 dan 4"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Elemen diagonal utama menjadi eigen value." }
-},
-
-{
-  q: "Trace matriks [[3,1],[0,2]] adalah...",
-  opts: ["3", "4", "5", "6", "7"],
-  ans: 2,
-  exp: { title: "Trace", body: "3 + 2 = 5." }
-},
-{
-  q: "Jumlah eigen value matriks sama dengan...",
-  opts: [
-    "determinan",
-    "trace",
-    "minor",
-    "rank",
-    "transpose"
-  ],
-  ans: 1,
-  exp: { title: "Sifat", body: "Jumlah eigen value = trace matriks." }
-},
-{
-  q: "Hasil kali eigen value matriks sama dengan...",
-  opts: [
-    "trace",
-    "minor",
-    "determinan",
-    "rank",
-    "transpose"
-  ],
-  ans: 2,
-  exp: { title: "Sifat", body: "Perkalian eigen value = determinan." }
-},
-{
-  q: "Eigen value matriks [[6,0],[0,2]] adalah...",
-  opts: ["6 dan 2", "8 dan 2", "4 dan 2", "6 dan 0", "1 dan 2"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Nilai diagonal utama menjadi eigen value." }
-},
-{
-  q: "Eigen value matriks nol adalah...",
-  opts: ["0", "1", "-1", "2", "tak hingga"],
-  ans: 0,
-  exp: { title: "Matriks Nol", body: "Semua eigen value matriks nol adalah 0." }
-},
-{
-  q: "Matriks [[8,0],[0,1]] memiliki eigen value...",
-  opts: ["8 dan 1", "9 dan 1", "7 dan 1", "8 dan 0", "1 dan 1"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Eigen value berasal dari diagonal utama." }
-},
-{
-  q: "Jika semua eigen value ≠ 0 maka matriks...",
-  opts: [
-    "singular",
-    "tidak punya invers",
-    "invertible",
-    "nol",
-    "tak tentu"
-  ],
-  ans: 2,
-  exp: { title: "Invertible", body: "Matriks invertible jika semua eigen value tidak nol." }
-},
-{
-  q: "Eigen value matriks segitiga atas diperoleh dari...",
-  opts: [
-    "baris pertama",
-    "kolom pertama",
-    "diagonal utama",
-    "minor",
-    "trace"
-  ],
-  ans: 2,
-  exp: { title: "Segitiga", body: "Eigen value matriks segitiga berasal dari diagonal utama." }
-},
-{
-  q: "Matriks [[9,0],[0,2]] memiliki eigen value...",
-  opts: ["9 dan 2", "11 dan 2", "7 dan 2", "9 dan 0", "1 dan 2"],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Diagonal utama menjadi eigen value." }
-},
-{
-  q: "Jika eigen value berbeda maka eigen vector-nya...",
-  opts: [
-    "nol",
-    "bebas linear",
-    "sama",
-    "negatif",
-    "tidak ada"
-  ],
-  ans: 1,
-  exp: { title: "Linear Independence", body: "Eigen vector dari eigen value berbeda bersifat bebas linear." }
-},
-
-{
-  q: "Eigen value matriks [[3,0],[0,3]] adalah...",
-  opts: ["0", "1", "2", "3", "6"],
-  ans: 3,
-  exp: { title: "Diagonal", body: "Semua diagonal bernilai 3." }
-},
-{
-  q: "Determinan matriks [[2,0],[0,5]] adalah...",
-  opts: ["5", "7", "10", "12", "15"],
-  ans: 2,
-  exp: { title: "Determinan", body: "2×5 = 10." }
-},
-{
-  q: "Jika λ adalah eigen value matriks A maka...",
-  opts: [
-    "det(A - λI)=0",
-    "det(A + λI)=0",
-    "A²=0",
-    "trace(A)=0",
-    "Av=0"
-  ],
-  ans: 0,
-  exp: { title: "Karakteristik", body: "Eigen value memenuhi det(A - λI)=0." }
-},
-{
-  q: "Matriks diagonal adalah matriks yang...",
-  opts: [
-    "semua elemen sama",
-    "seluruh elemen nol",
-    "elemen selain diagonal bernilai nol",
-    "baris = kolom",
-    "tak punya diagonal"
-  ],
-  ans: 2,
-  exp: { title: "Definisi", body: "Semua elemen selain diagonal utama bernilai nol." }
-},
-{
-  q: "Trace matriks [[4,1],[0,6]] adalah...",
-  opts: ["4", "5", "6", "9", "10"],
-  ans: 4,
-  exp: { title: "Trace", body: "4 + 6 = 10." }
-},
-{
-  q: "Eigen value matriks [[1,0,0],[0,2,0],[0,0,3]] adalah...",
-  opts: [
-    "1,2,3",
-    "1,1,1",
-    "2,2,2",
-    "3,3,3",
-    "0,1,2"
-  ],
-  ans: 0,
-  exp: { title: "Diagonal 3×3", body: "Eigen value matriks diagonal adalah elemen diagonalnya." }
-},
-{
-  q: "Jika Av = λv maka transformasi pada v hanya mengubah...",
-  opts: [
-    "arah",
-    "panjang/skala",
-    "warna",
-    "baris",
-    "kolom"
-  ],
-  ans: 1,
-  exp: { title: "Transformasi", body: "Eigen vector hanya berubah skala." }
-},
-{
-  q: "Eigen value matriks [[5,0,0],[0,1,0],[0,0,4]] adalah...",
-  opts: [
-    "5,1,4",
-    "5,5,5",
-    "1,1,1",
-    "4,4,4",
-    "0,1,4"
-  ],
-  ans: 0,
-  exp: { title: "Diagonal 3×3", body: "Diagonal utama menjadi eigen value." }
-},
-{
-  q: "Jika matriks memiliki eigen value 2 dan 5 maka trace matriks adalah...",
-  opts: ["5", "6", "7", "8", "10"],
-  ans: 2,
-  exp: { title: "Trace", body: "Trace = jumlah eigen value = 2 + 5 = 7." }
-},
-{
-  q: "Jika matriks memiliki eigen value 3 dan 4 maka determinannya adalah...",
-  opts: ["7", "10", "12", "14", "16"],
-  ans: 2,
-  exp: { title: "Determinan", body: "Determinan = hasil kali eigen value = 3×4 = 12." }
-},
-{
-  q: "Tujuan utama mencari eigen value adalah memahami...",
-  opts: [
-    "warna matriks",
-    "transformasi linear",
-    "jumlah elemen",
-    "transpose",
-    "ukuran matriks"
-  ],
-  ans: 1,
-  exp: { title: "Konsep", body: "Eigen value membantu memahami transformasi linear." }
-},
-
-// HARD 60-89 — used as index 30-59
-{
-  q: "Persamaan karakteristik matriks A diperoleh dari...",
-  opts: [
-    "det(A + λI)=0",
-    "det(A - λI)=0",
-    "A²=0",
-    "Av=0",
-    "trace(A)=0"
-  ],
-  ans: 1,
-  exp: { title: "Karakteristik", body: "Eigen value diperoleh dari det(A - λI)=0." }
-},
-{
-  q: "Matriks dapat didiagonalisasi jika...",
-  opts: [
-    "det(A)=0",
-    "memiliki cukup eigen vector bebas linear",
-    "semua elemennya sama",
-    "trace(A)=0",
-    "A=Aᵀ"
-  ],
-  ans: 1,
-  exp: { title: "Diagonalization", body: "Diperlukan basis eigen vector bebas linear." }
-},
-{
-  q: "Eigen value matriks diagonal [[2,0,0],[0,5,0],[0,0,7]] adalah...",
-  opts: [
-    "2,5,7",
-    "14",
-    "0,5,7",
-    "1,1,1",
-    "2,2,2"
-  ],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Eigen value matriks diagonal adalah elemen diagonal utama." }
-},
-{
-  q: "Jika matriks memiliki n eigen vector bebas linear maka matriks...",
-  opts: [
-    "singular",
-    "dapat didiagonalisasi",
-    "nol",
-    "simetris",
-    "tak invertible"
-  ],
-  ans: 1,
-  exp: { title: "Diagonalization", body: "Syarat diagonalization adalah eigen vector bebas linear." }
-},
-{
-  q: "Jumlah eigen value suatu matriks sama dengan...",
-  opts: [
-    "determinan",
-    "trace",
-    "rank",
-    "minor",
-    "transpose"
-  ],
-  ans: 1,
-  exp: { title: "Trace", body: "Jumlah eigen value = trace matriks." }
-},
-{
-  q: "Hasil kali seluruh eigen value matriks sama dengan...",
-  opts: [
-    "trace",
-    "determinan",
-    "minor",
-    "rank",
-    "transpose"
-  ],
-  ans: 1,
-  exp: { title: "Determinan", body: "Perkalian eigen value = determinan." }
-},
-{
-  q: "Jika λ = 0 merupakan eigen value maka matriks...",
-  opts: [
-    "invertible",
-    "singular",
-    "diagonal",
-    "ortogonal",
-    "simetris"
-  ],
-  ans: 1,
-  exp: { title: "Singular", body: "Eigen value nol menandakan matriks singular." }
-},
-{
-  q: "Eigen vector memenuhi persamaan...",
-  opts: [
-    "Av = λv",
-    "A + v = λ",
-    "A²v = 0",
-    "Av = I",
-    "A - v = 0"
-  ],
-  ans: 0,
-  exp: { title: "Eigen Vector", body: "Persamaan dasar eigen vector adalah Av = λv." }
-},
-{
-  q: "Jika A = PDP⁻¹ maka D adalah...",
-  opts: [
-    "matriks nol",
-    "matriks diagonal eigen value",
-    "transpose",
-    "minor",
-    "matriks singular"
-  ],
-  ans: 1,
-  exp: { title: "Diagonalization", body: "D berisi eigen value pada diagonal utama." }
-},
-{
-  q: "Kolom-kolom matriks P pada diagonalization adalah...",
-  opts: [
-    "minor",
-    "eigen vector",
-    "transpose",
-    "determinan",
-    "kofaktor"
-  ],
-  ans: 1,
-  exp: { title: "Diagonalization", body: "P disusun dari eigen vector bebas linear." }
-},
-
-{
-  q: "Eigen value matriks segitiga atas diperoleh dari...",
-  opts: [
-    "baris pertama",
-    "kolom pertama",
-    "diagonal utama",
-    "minor",
-    "rank"
-  ],
-  ans: 2,
-  exp: { title: "Segitiga", body: "Eigen value matriks segitiga berasal dari diagonal utama." }
-},
-{
-  q: "Jika Av = 6v maka eigen value matriks adalah...",
-  opts: ["0", "1", "2", "6", "v"],
-  ans: 3,
-  exp: { title: "Langsung", body: "Koefisien v adalah eigen value." }
-},
-{
-  q: "Eigen vector tidak boleh berupa...",
-  opts: [
-    "vektor diagonal",
-    "vektor nol",
-    "vektor basis",
-    "vektor kolom",
-    "vektor satuan"
-  ],
-  ans: 1,
-  exp: { title: "Syarat", body: "Eigen vector harus non nol." }
-},
-{
-  q: "Matriks ortogonal memenuhi sifat...",
-  opts: [
-    "A⁻¹ = Aᵀ",
-    "A = 0",
-    "det(A)=0",
-    "A=A⁻¹",
-    "trace(A)=0"
-  ],
-  ans: 0,
-  exp: { title: "Ortogonal", body: "Untuk matriks ortogonal berlaku A⁻¹ = Aᵀ." }
-},
-{
-  q: "Eigen value matriks identitas selalu...",
-  opts: ["0", "1", "-1", "2", "tak hingga"],
-  ans: 1,
-  exp: { title: "Identitas", body: "Semua eigen value matriks identitas bernilai 1." }
-},
-{
-  q: "Jika matriks memiliki eigen value berbeda maka eigen vector-nya...",
-  opts: [
-    "sama",
-    "bebas linear",
-    "nol",
-    "negatif",
-    "tak ada"
-  ],
-  ans: 1,
-  exp: { title: "Linear Independence", body: "Eigen vector dari eigen value berbeda bebas linear." }
-},
-{
-  q: "Matriks simetris selalu memiliki eigen value...",
-  opts: [
-    "kompleks",
-    "real",
-    "nol",
-    "imajiner",
-    "tak hingga"
-  ],
-  ans: 1,
-  exp: { title: "Simetris", body: "Matriks simetris memiliki eigen value real." }
-},
-{
-  q: "Jika λ adalah eigen value dari A maka λ² adalah eigen value dari...",
-  opts: [
-    "A⁻¹",
-    "A²",
-    "Aᵀ",
-    "I",
-    "0"
-  ],
-  ans: 1,
-  exp: { title: "Pangkat Matriks", body: "Eigen value A² adalah λ²." }
-},
-{
-  q: "Jika λ eigen value A maka 1/λ adalah eigen value dari...",
-  opts: [
-    "A²",
-    "Aᵀ",
-    "A⁻¹",
-    "0",
-    "I"
-  ],
-  ans: 2,
-  exp: { title: "Invers", body: "Eigen value invers matriks adalah kebalikan eigen value awal." }
-},
-{
-  q: "Trace matriks [[4,1],[0,3]] adalah...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 3,
-  exp: { title: "Trace", body: "4 + 3 = 7." }
-},
-
-{
-  q: "Determinan matriks [[2,0],[0,5]] adalah...",
-  opts: ["5", "7", "10", "12", "15"],
-  ans: 2,
-  exp: { title: "Determinan", body: "2×5 = 10." }
-},
-{
-  q: "Jika matriks memiliki eigen value 2 dan 5 maka determinannya adalah...",
-  opts: ["5", "7", "10", "12", "15"],
-  ans: 2,
-  exp: { title: "Determinan", body: "Determinan = 2×5 = 10." }
-},
-{
-  q: "Jika matriks memiliki eigen value 3 dan 4 maka trace matriks adalah...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 2,
-  exp: { title: "Trace", body: "Trace = 3 + 4 = 7." }
-},
-{
-  q: "Matriks diagonal adalah matriks yang...",
-  opts: [
-    "semua elemen sama",
-    "semua elemen nol",
-    "elemen selain diagonal bernilai nol",
-    "baris = kolom",
-    "tak punya diagonal"
-  ],
-  ans: 2,
-  exp: { title: "Diagonal", body: "Elemen selain diagonal utama bernilai nol." }
-},
-{
-  q: "Persamaan (A - λI)v = 0 digunakan untuk mencari...",
-  opts: [
-    "determinan",
-    "trace",
-    "eigen vector",
-    "minor",
-    "rank"
-  ],
-  ans: 2,
-  exp: { title: "Eigen Vector", body: "Digunakan untuk menentukan eigen vector." }
-},
-{
-  q: "Eigen value matriks nol adalah...",
-  opts: ["0", "1", "-1", "2", "tak hingga"],
-  ans: 0,
-  exp: { title: "Matriks Nol", body: "Semua eigen value matriks nol adalah 0." }
-},
-{
-  q: "Jika A memiliki eigen value λ maka kA memiliki eigen value...",
-  opts: [
-    "λ",
-    "kλ",
-    "λ²",
-    "1/λ",
-    "0"
-  ],
-  ans: 1,
-  exp: { title: "Skalar", body: "Perkalian matriks dengan skalar mengalikan eigen value." }
-},
-{
-  q: "Matriks dapat didiagonalisasi jika jumlah eigen vector bebas linear...",
-  opts: [
-    "kurang dari n",
-    "sama dengan n",
-    "nol",
-    "tak hingga",
-    "lebih kecil dari rank"
-  ],
-  ans: 1,
-  exp: { title: "Diagonalization", body: "Diperlukan n eigen vector bebas linear." }
-},
-{
-  q: "Jika matriks A simetris maka eigen vector-nya dapat dibuat...",
-  opts: [
-    "nol",
-    "ortogonal",
-    "singular",
-    "kompleks",
-    "acak"
-  ],
-  ans: 1,
-  exp: { title: "Ortogonal", body: "Eigen vector matriks simetris dapat diortogonalkan." }
-},
-{
-  q: "Tujuan utama diagonalization adalah...",
-  opts: [
-    "memperbesar matriks",
-    "menyederhanakan operasi matriks",
-    "menghapus determinan",
-    "mengubah ukuran matriks",
-    "menghilangkan invers"
-  ],
-  ans: 1,
-  exp: { title: "Aplikasi", body: "Diagonalization mempermudah perpangkatan dan transformasi matriks." }
-},
-{
-  q: "Eigen value kompleks biasanya muncul pada matriks...",
-  opts: [
-    "real tertentu",
-    "identitas",
-    "nol",
-    "diagonal positif",
-    "simetris real"
-  ],
-  ans: 0,
-  exp: { title: "Kompleks", body: "Beberapa matriks real dapat memiliki eigen value kompleks." }
-}
-];
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Matematika Diskrit';
+const SOAL_JUDUL = 'Eigen Value & Eigen Vektor';
+  
+let ALL_Q = [];
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -1817,9 +918,7 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
@@ -1853,9 +952,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1864,9 +961,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -1879,10 +974,63 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1891,7 +1039,6 @@ function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1903,29 +1050,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -1949,9 +1074,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -1971,29 +1094,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
+    if (a === -1) {
+      // Surrendered — lock all options
       div.classList.add('locked');
     } else {
+      // Can still answer — highlight selected with neutral dark style only
       div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
     }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -2003,12 +1122,11 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
@@ -2032,9 +1150,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -2046,9 +1162,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -2068,9 +1182,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -2088,9 +1200,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -2120,7 +1230,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -2131,9 +1241,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -2211,9 +1319,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -2223,18 +1329,14 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
-  buildWord('w2', 'Eigen Value & Eigen Vektor', 0.75);            
+  buildWord('w2', 'Eigen Value & Eigen Vektor', 0.75);
   document.querySelectorAll('.level-card').forEach((card, i) => {
     card.style.animationDelay = (1.5 + i * 0.2) + 's';
     card.classList.add('in');
