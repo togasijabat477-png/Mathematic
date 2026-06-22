@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Quiz Kriptografi</title>
+<title>Kriptografi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -353,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -422,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -628,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -686,16 +685,15 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Kriptografi ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Kriptografi ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
         <div class="hero-rule"></div>
       </h1>
-      <p class="hero-sub">Uji kemampuan pemahamanmu dengan soal-soal Kriptografi <strong>(KRP)</strong> yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
+      <p class="hero-sub">Uji kemampuan nalarmu dengan soal-soal logika yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
     </div>
-
-    <div class="level-grid">
+ <div class="level-grid">
       <div class="level-card easy" onclick="startQuizRipple(event,'easy')">
         <div class="bg-symbol">🔐</div>
         <div class="lv-icon">🧩</div>
@@ -765,9 +763,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -889,983 +884,28 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{
-  q: "Kriptografi adalah ilmu yang mempelajari tentang...",
-  opts: [
-    "Pengolahan gambar",
-    "Keamanan dan kerahasiaan pesan",
-    "Perhitungan matematika",
-    "Pengolahan data statistik",
-    "Desain jaringan komputer"
-  ],
-  ans: 1,
-  exp: { title: "Kriptografi", body: "Kriptografi fokus pada pengamanan informasi agar tidak dibaca pihak tidak berwenang." }
-},
-{
-  q: "Proses mengubah pesan asli menjadi bentuk rahasia disebut...",
-  opts: ["Dekripsi", "Enkripsi", "Transmisi", "Komunikasi", "Validasi"],
-  ans: 1,
-  exp: { title: "Enkripsi", body: "Enkripsi mengubah plaintext menjadi ciphertext." }
-},
-{
-  q: "Proses mengubah pesan rahasia kembali menjadi pesan asli disebut...",
-  opts: ["Enkripsi", "Dekripsi", "Hashing", "Encoding", "Routing"],
-  ans: 1,
-  exp: { title: "Dekripsi", body: "Dekripsi membuka ciphertext menjadi plaintext." }
-},
-{
-  q: "Pesan asli sebelum dienkripsi disebut...",
-  opts: ["Ciphertext", "Plaintext", "Hash", "Key", "Token"],
-  ans: 1,
-  exp: { title: "Plaintext", body: "Plaintext adalah pesan yang belum diamankan." }
-},
-{
-  q: "Pesan yang sudah dienkripsi disebut...",
-  opts: ["Plaintext", "Ciphertext", "Input", "Output", "Data"],
-  ans: 1,
-  exp: { title: "Ciphertext", body: "Ciphertext adalah hasil enkripsi yang tidak dapat dibaca langsung." }
-},
-{
-  q: "Alat utama untuk melakukan enkripsi dan dekripsi disebut...",
-  opts: ["Firewall", "Kunci (Key)", "Server", "Router", "Database"],
-  ans: 1,
-  exp: { title: "Key", body: "Key digunakan untuk mengunci dan membuka pesan." }
-},
-{
-  q: "Cipher Caesar bekerja dengan cara...",
-  opts: [
-    "Mengacak bit data",
-    "Menggeser huruf dalam alfabet",
-    "Menghapus huruf vokal",
-    "Mengubah angka menjadi simbol",
-    "Mengacak urutan kata"
-  ],
-  ans: 1,
-  exp: { title: "Caesar Cipher", body: "Setiap huruf digeser sejumlah posisi tertentu dalam alfabet." }
-},
-{
-  q: "Jika A → D dalam Caesar Cipher, maka shift-nya adalah...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Shift Caesar", body: "A ke D berarti geser 3 langkah." }
-},
-{
-  q: "Cipher Vigenère menggunakan...",
-  opts: [
-    "Satu kunci angka",
-    "Kunci berupa kata",
-    "Tanpa kunci",
-    "Hashing",
-    "Random generator"
-  ],
-  ans: 1,
-  exp: { title: "Vigenère", body: "Menggunakan kata kunci untuk mengacak pesan." }
-},
-{
-  q: "Tujuan utama kriptografi adalah...",
-  opts: [
-    "Mempercepat komputer",
-    "Mengamankan informasi",
-    "Menghapus data",
-    "Mengatur jaringan",
-    "Mengompresi file"
-  ],
-  ans: 1,
-  exp: { title: "Tujuan Kriptografi", body: "Menjaga kerahasiaan, integritas, dan autentikasi data." }
-},
-{
-  q: "Serangan yang mencoba semua kemungkinan kunci disebut...",
-  opts: [
-    "Phishing",
-    "Brute force",
-    "SQL injection",
-    "Sniffing",
-    "Spoofing"
-  ],
-  ans: 1,
-  exp: { title: "Brute Force", body: "Menebak semua kemungkinan sampai menemukan kunci." }
-},
-{
-  q: "Algoritma yang mengubah pesan menjadi bentuk tetap (hash) disebut...",
-  opts: ["Encryption", "Hashing", "Decryption", "Compression", "Encoding"],
-  ans: 1,
-  exp: { title: "Hashing", body: "Hashing menghasilkan nilai unik dari data." }
-},
-{
-  q: "Contoh algoritma hashing adalah...",
-  opts: ["RSA", "AES", "SHA-256", "Caesar", "DES"],
-  ans: 2,
-  exp: { title: "Hash", body: "SHA-256 adalah fungsi hash populer." }
-},
-{
-  q: "AES termasuk jenis algoritma...",
-  opts: ["Hash", "Asimetris", "Simetris", "Kompressi", "Encoding"],
-  ans: 2,
-  exp: { title: "AES", body: "AES menggunakan kunci yang sama untuk enkripsi dan dekripsi." }
-},
-{
-  q: "RSA termasuk kriptografi...",
-  opts: ["Simetris", "Asimetris", "Hash", "Caesar", "Substitusi"],
-  ans: 1,
-  exp: { title: "RSA", body: "RSA menggunakan public key dan private key." }
-},
-{
-  q: "Public key digunakan untuk...",
-  opts: [
-    "Membuka pesan",
-    "Enkripsi pesan",
-    "Menghapus data",
-    "Menyimpan file",
-    "Mengirim virus"
-  ],
-  ans: 1,
-  exp: { title: "Public Key", body: "Public key digunakan untuk mengenkripsi pesan." }
-},
-{
-  q: "Private key digunakan untuk...",
-  opts: [
-    "Enkripsi",
-    "Dekripsi",
-    "Kompressi",
-    "Upload data",
-    "Backup file"
-  ],
-  ans: 1,
-  exp: { title: "Private Key", body: "Private key digunakan untuk membuka pesan terenkripsi." }
-},
-{
-  q: "Keamanan pesan bertujuan untuk menjaga...",
-  opts: [
-    "Kecepatan internet",
-    "Kerahasiaan data",
-    "Ukuran file",
-    "Tampilan aplikasi",
-    "Baterai perangkat"
-  ],
-  ans: 1,
-  exp: { title: "Security", body: "Keamanan menjaga data tetap rahasia dan tidak diubah." }
-},
-{
-  q: "Jika pesan tidak berubah saat dikirim, maka sifat ini disebut...",
-  opts: [
-    "Confidentiality",
-    "Integrity",
-    "Availability",
-    "Speed",
-    "Compression"
-  ],
-  ans: 1,
-  exp: { title: "Integrity", body: "Integrity memastikan data tidak diubah." }
-},
-{
-  q: "Firewall digunakan untuk...",
-  opts: [
-    "Mempercepat CPU",
-    "Mengamankan jaringan",
-    "Menyimpan data",
-    "Mengedit file",
-    "Menghapus virus secara manual"
-  ],
-  ans: 1,
-  exp: { title: "Firewall", body: "Firewall melindungi jaringan dari akses tidak sah." }
-},
-{
-  q: "Steganografi adalah teknik untuk...",
-  opts: [
-    "Menghapus data",
-    "Menyembunyikan pesan dalam media lain",
-    "Menghitung hash",
-    "Menghapus virus",
-    "Mengubah file sistem"
-  ],
-  ans: 1,
-  exp: { title: "Steganografi", body: "Pesan disembunyikan dalam gambar, audio, atau teks." }
-},
-{
-  q: "Contoh media steganografi adalah...",
-  opts: ["CPU", "Gambar", "RAM", "Router", "Database"],
-  ans: 1,
-  exp: { title: "Steganografi", body: "Gambar sering digunakan untuk menyembunyikan pesan." }
-},
-{
-  q: "Tujuan enkripsi adalah untuk membuat pesan...",
-  opts: [
-    "Lebih panjang",
-    "Tidak dapat dibaca",
-    "Lebih cepat",
-    "Lebih kecil",
-    "Lebih berwarna"
-  ],
-  ans: 1,
-  exp: { title: "Enkripsi", body: "Pesan dibuat tidak dapat dibaca tanpa kunci." }
-},
-{
-  q: "Cipher substitusi bekerja dengan cara...",
-  opts: [
-    "Menghapus huruf",
-    "Mengganti huruf dengan huruf lain",
-    "Menambah angka",
-    "Mengurutkan data",
-    "Menghapus spasi"
-  ],
-  ans: 1,
-  exp: { title: "Substitusi", body: "Setiap huruf diganti dengan huruf lain." }
-},
-{
-  q: "Jika A → B, B → C, maka ini contoh cipher...",
-  opts: ["Transposisi", "Substitusi", "Hash", "RSA", "AES"],
-  ans: 1,
-  exp: { title: "Cipher", body: "Huruf diganti satu per satu dengan pola tertentu." }
-},
-{
-  q: "Keamanan data penting karena...",
-  opts: [
-    "Menghemat baterai",
-    "Melindungi informasi pribadi",
-    "Mempercepat komputer",
-    "Memperbesar file",
-    "Menghapus malware"
-  ],
-  ans: 1,
-  exp: { title: "Security", body: "Data harus dilindungi dari akses ilegal." }
-},
-{
-  q: "Serangan yang menyadap komunikasi disebut...",
-  opts: [
-    "Sniffing",
-    "Brute force",
-    "Phishing",
-    "Spam",
-    "Crash"
-  ],
-  ans: 0,
-  exp: { title: "Sniffing", body: "Menangkap data yang sedang dikirim." }
-},
-{
-  q: "Digital signature digunakan untuk...",
-  opts: [
-    "Mempercepat file",
-    "Memverifikasi keaslian pesan",
-    "Menghapus data",
-    "Mengkompresi file",
-    "Mengedit video"
-  ],
-  ans: 1,
-  exp: { title: "Digital Signature", body: "Menjamin keaslian dan integritas pesan." }
-},
-{
-  q: "Kriptografi modern banyak digunakan pada...",
-  opts: [
-    "Permainan offline",
-    "Internet dan komunikasi online",
-    "Kalkulator sederhana",
-    "Jam digital",
-    "Lampu LED"
-  ],
-  ans: 1,
-  exp: { title: "Aplikasi", body: "Digunakan dalam HTTPS, banking, dan komunikasi digital." }
-},
-
-// MEDIUM 10-29
-{
-  q: "Caesar Cipher bekerja dengan cara...",
-  opts: [
-    "Menghapus huruf dalam pesan",
-    "Menggeser huruf dalam alfabet",
-    "Mengacak urutan kata",
-    "Mengubah angka menjadi simbol",
-    "Menghapus spasi"
-  ],
-  ans: 1,
-  exp: { title: "Caesar Cipher", body: "Setiap huruf digeser sejumlah posisi dalam alfabet." }
-},
-{
-  q: "Jika A → D pada Caesar Cipher, maka besar pergeserannya adalah...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Shift", body: "A ke D berarti geser 3 langkah." }
-},
-{
-  q: "Cipher Vigenère menggunakan...",
-  opts: [
-    "Satu angka kunci",
-    "Kata kunci",
-    "Tanpa kunci",
-    "Hashing",
-    "Random noise"
-  ],
-  ans: 1,
-  exp: { title: "Vigenère Cipher", body: "Menggunakan kata kunci untuk enkripsi." }
-},
-{
-  q: "Dalam Caesar Cipher, huruf D dengan shift +3 menjadi...",
-  opts: ["A", "B", "C", "E", "F"],
-  ans: 3,
-  exp: { title: "Shift", body: "D → E (1), F (2), G (3)" }
-},
-{
-  q: "Cipher substitusi berarti...",
-  opts: [
-    "Menghapus huruf",
-    "Mengganti huruf dengan huruf lain",
-    "Mengacak urutan kalimat",
-    "Menambah angka",
-    "Menghapus vokal"
-  ],
-  ans: 1,
-  exp: { title: "Substitusi", body: "Huruf diganti dengan huruf lain sesuai pola." }
-},
-{
-  q: "Transposition cipher bekerja dengan cara...",
-  opts: [
-    "Menghapus huruf",
-    "Mengubah urutan huruf",
-    "Mengganti huruf",
-    "Mengubah angka",
-    "Menghapus spasi"
-  ],
-  ans: 1,
-  exp: { title: "Transposisi", body: "Huruf tetap sama, hanya urutannya diubah." }
-},
-{
-  q: "Jika plaintext adalah HELLO dan diacak menjadi OLEHL, ini termasuk...",
-  opts: [
-    "Caesar Cipher",
-    "Substitusi",
-    "Transposisi",
-    "Hashing",
-    "RSA"
-  ],
-  ans: 2,
-  exp: { title: "Transposisi", body: "Huruf diubah urutannya tanpa diganti." }
-},
-{
-  q: "Vigenère Cipher lebih kuat dari Caesar karena...",
-  opts: [
-    "Menggunakan angka",
-    "Menggunakan kata kunci panjang",
-    "Tidak memakai kunci",
-    "Menghapus huruf",
-    "Mengubah format file"
-  ],
-  ans: 1,
-  exp: { title: "Keamanan", body: "Kata kunci membuat pola lebih sulit ditebak." }
-},
-{
-  q: "Jika kunci Vigenère adalah KEY, maka pola kunci akan...",
-  opts: [
-    "K E Y K E Y ...",
-    "K K K K K ...",
-    "E Y K E Y K ...",
-    "Acak penuh",
-    "Tidak digunakan"
-  ],
-  ans: 0,
-  exp: { title: "Vigenère", body: "Kunci diulang sepanjang pesan." }
-},
-{
-  q: "Analisis frekuensi digunakan untuk...",
-  opts: [
-    "Menambah enkripsi",
-    "Menebak huruf paling sering muncul",
-    "Menghapus pesan",
-    "Mengubah format data",
-    "Mengacak jaringan"
-  ],
-  ans: 1,
-  exp: { title: "Analisis", body: "Huruf sering muncul membantu memecahkan cipher." }
-},
-{
-  q: "Huruf yang paling sering muncul dalam bahasa Inggris biasanya adalah...",
-  opts: ["Z", "Q", "E", "X", "J"],
-  ans: 2,
-  exp: { title: "Frekuensi", body: "Huruf E paling sering muncul." }
-},
-{
-  q: "Jika plaintext ABC menjadi DEF, maka cipher yang digunakan adalah...",
-  opts: [
-    "Substitusi shift +3",
-    "Transposisi",
-    "Hashing",
-    "RSA",
-    "Vigenère acak"
-  ],
-  ans: 0,
-  exp: { title: "Caesar", body: "Setiap huruf digeser 3 langkah." }
-},
-{
-  q: "Dalam cipher, kunci digunakan untuk...",
-  opts: [
-    "Mempercepat komputer",
-    "Mengamankan pesan",
-    "Menghapus data",
-    "Mengurangi ukuran file",
-    "Mengubah hardware"
-  ],
-  ans: 1,
-  exp: { title: "Key", body: "Kunci mengontrol proses enkripsi." }
-},
-{
-  q: "Cipher monoalphabetic berarti...",
-  opts: [
-    "Satu huruf berubah jadi banyak huruf",
-    "Setiap huruf diganti satu huruf tetap",
-    "Tidak ada kunci",
-    "Menggunakan angka saja",
-    "Menghapus huruf"
-  ],
-  ans: 1,
-  exp: { title: "Monoalphabetic", body: "Setiap huruf memiliki pengganti tetap." }
-},
-{
-  q: "Cipher polyalphabetic berarti...",
-  opts: [
-    "Satu huruf = satu huruf",
-    "Menggunakan banyak substitusi huruf",
-    "Tanpa kunci",
-    "Menghapus data",
-    "Mengacak file"
-  ],
-  ans: 1,
-  exp: { title: "Polyalphabetic", body: "Satu huruf bisa berubah berbeda tergantung posisi." }
-},
-{
-  q: "Jika pesan diubah menjadi angka sesuai posisi alfabet, ini disebut...",
-  opts: [
-    "Encoding",
-    "Ciphertext",
-    "Hashing sederhana",
-    "Compression",
-    "Firewall"
-  ],
-  ans: 0,
-  exp: { title: "Encoding", body: "Huruf diubah menjadi representasi angka." }
-},
-{
-  q: "Keamanan Caesar Cipher lemah karena...",
-  opts: [
-    "Terlalu panjang",
-    "Jumlah kemungkinan kunci sedikit",
-    "Menggunakan internet",
-    "Tidak punya algoritma",
-    "Tidak bisa dienkripsi"
-  ],
-  ans: 1,
-  exp: { title: "Kelemahan", body: "Hanya ada 25 kemungkinan shift." }
-},
-{
-  q: "Cipher yang tidak mengubah huruf tetapi hanya posisi disebut...",
-  opts: [
-    "Substitusi",
-    "Transposisi",
-    "Hash",
-    "RSA",
-    "AES"
-  ],
-  ans: 1,
-  exp: { title: "Transposisi", body: "Hanya urutan yang berubah." }
-},
-{
-  q: "Jika kata sandi berubah tiap huruf sesuai posisi, ini disebut...",
-  opts: [
-    "Static cipher",
-    "Dynamic cipher",
-    "Linear cipher",
-    "Random cipher",
-    "Null cipher"
-  ],
-  ans: 1,
-  exp: { title: "Dynamic", body: "Perubahan bergantung posisi huruf." }
-},
-{
-  q: "Tujuan utama analisis kriptografi adalah...",
-  opts: [
-    "Mempercepat CPU",
-    "Memecahkan cipher",
-    "Menghapus data",
-    "Mengompresi file",
-    "Mengubah sistem operasi"
-  ],
-  ans: 1,
-  exp: { title: "Cryptanalysis", body: "Menganalisis dan memecahkan sandi." }
-},
-{
-  q: "Jika kata HELLO menjadi KHOOR, cipher yang digunakan adalah...",
-  opts: [
-    "Caesar +3",
-    "Vigenère",
-    "Transposisi",
-    "Hash",
-    "RSA"
-  ],
-  ans: 0,
-  exp: { title: "Caesar", body: "Setiap huruf digeser 3 langkah." }
-},
-{
-  q: "Cipher yang menggunakan grid atau tabel biasanya adalah...",
-  opts: [
-    "Caesar",
-    "Transposisi",
-    "Vigenère",
-    "Hash",
-    "AES"
-  ],
-  ans: 1,
-  exp: { title: "Transposisi", body: "Huruf disusun dalam tabel lalu diacak." }
-},
-{
-  q: "Kelebihan Vigenère dibanding Caesar adalah...",
-  opts: [
-    "Lebih cepat",
-    "Lebih aman karena multi-kunci",
-    "Tidak butuh kunci",
-    "Tidak bisa dienkripsi",
-    "Menghapus data"
-  ],
-  ans: 1,
-  exp: { title: "Keamanan", body: "Menggunakan kata kunci membuat lebih kuat." }
-},
-{
-  q: "Jika pola huruf berulang secara teratur, kemungkinan itu adalah...",
-  opts: [
-    "Hash",
-    "Cipher sederhana",
-    "Random noise",
-    "Firewall",
-    "Database"
-  ],
-  ans: 1,
-  exp: { title: "Pola", body: "Cipher sederhana memiliki pola yang bisa dianalisis." }
-},
-{
-  q: "Dalam kriptografi, plaintext adalah...",
-  opts: [
-    "Pesan terenkripsi",
-    "Pesan asli",
-    "Kunci rahasia",
-    "Algoritma",
-    "Server"
-  ],
-  ans: 1,
-  exp: { title: "Plaintext", body: "Pesan sebelum dienkripsi." }
-},
-{
-  q: "Ciphertext adalah...",
-  opts: [
-    "Pesan asli",
-    "Pesan terenkripsi",
-    "Kunci publik",
-    "Data kosong",
-    "Virus"
-  ],
-  ans: 1,
-  exp: { title: "Ciphertext", body: "Pesan setelah dienkripsi." }
-},
-{
-  q: "Jika kunci berubah setiap huruf, cipher tersebut disebut...",
-  opts: [
-    "Monoalphabetic",
-    "Polyalphabetic",
-    "Static",
-    "Caesar",
-    "Hash"
-  ],
-  ans: 1,
-  exp: { title: "Polyalphabetic", body: "Kunci berubah-ubah sepanjang teks." }
-},
-{
-  q: "Analisis frekuensi tidak efektif terhadap...",
-  opts: [
-    "Caesar Cipher",
-    "Vigenère Cipher panjang",
-    "Substitusi sederhana",
-    "Transposisi",
-    "Monoalphabetic"
-  ],
-  ans: 1,
-  exp: { title: "Keamanan", body: "Vigenère dengan kunci panjang lebih sulit dianalisis." }
-},
-{
-  q: "Transposisi tidak mengubah...",
-  opts: [
-    "Urutan huruf",
-    "Jumlah huruf",
-    "Isi huruf",
-    "Panjang teks",
-    "Struktur grid"
-  ],
-  ans: 2,
-  exp: { title: "Transposisi", body: "Huruf tetap sama, hanya posisi berubah." }
-},
-
-// HARD 60-89 — used as index 30-59
-{
-  q: "RSA termasuk jenis kriptografi...",
-  opts: [
-    "Simetris",
-    "Asimetris",
-    "Substitusi",
-    "Transposisi",
-    "Caesar"
-  ],
-  ans: 1,
-  exp: { title: "RSA", body: "RSA menggunakan public key dan private key (asymmetric cryptography)." }
-},
-{
-  q: "Dalam RSA, public key digunakan untuk...",
-  opts: [
-    "Dekripsi pesan",
-    "Enkripsi pesan",
-    "Menghapus data",
-    "Mengacak file",
-    "Mengompresi data"
-  ],
-  ans: 1,
-  exp: { title: "RSA Public Key", body: "Public key digunakan untuk mengenkripsi pesan." }
-},
-{
-  q: "Private key dalam RSA berfungsi untuk...",
-  opts: [
-    "Enkripsi",
-    "Dekripsi",
-    "Kompressi",
-    "Transmisi",
-    "Hashing"
-  ],
-  ans: 1,
-  exp: { title: "RSA Private Key", body: "Private key digunakan untuk membuka pesan terenkripsi." }
-},
-{
-  q: "Hashing menghasilkan output yang bersifat...",
-  opts: [
-    "Dapat dibalik",
-    "Tidak dapat dibalik",
-    "Selalu sama panjang input",
-    "Acak tanpa aturan",
-    "Bisa diedit"
-  ],
-  ans: 1,
-  exp: { title: "Hashing", body: "Hash bersifat one-way function (tidak bisa dibalik)." }
-},
-{
-  q: "Contoh algoritma hashing adalah...",
-  opts: ["RSA", "AES", "SHA-256", "Caesar", "Vigenère"],
-  ans: 2,
-  exp: { title: "SHA-256", body: "SHA-256 adalah algoritma hashing modern." }
-},
-{
-  q: "Tujuan utama hashing adalah...",
-  opts: [
-    "Enkripsi data",
-    "Verifikasi integritas data",
-    "Menghapus data",
-    "Mengacak jaringan",
-    "Mengompresi file"
-  ],
-  ans: 1,
-  exp: { title: "Hashing", body: "Hash digunakan untuk memastikan data tidak berubah." }
-},
-{
-  q: "Brute force attack adalah...",
-  opts: [
-    "Menebak password satu kali",
-    "Mencoba semua kemungkinan kunci",
-    "Menghapus data",
-    "Mengubah algoritma",
-    "Mengacak server"
-  ],
-  ans: 1,
-  exp: { title: "Brute Force", body: "Semua kemungkinan kunci dicoba satu per satu." }
-},
-{
-  q: "Kelemahan brute force adalah...",
-  opts: [
-    "Tidak akurat",
-    "Membutuhkan waktu sangat lama",
-    "Tidak bisa digunakan",
-    "Tidak butuh komputer",
-    "Selalu gagal"
-  ],
-  ans: 1,
-  exp: { title: "Brute Force", body: "Semakin panjang kunci, semakin lama waktu yang dibutuhkan." }
-},
-{
-  q: "Semakin panjang password maka...",
-  opts: [
-    "Lebih mudah ditebak",
-    "Lebih aman dari brute force",
-    "Tidak bisa digunakan",
-    "Lebih cepat diretas",
-    "Tidak berpengaruh"
-  ],
-  ans: 1,
-  exp: { title: "Security", body: "Panjang password meningkatkan keamanan." }
-},
-{
-  q: "Fungsi utama digital signature adalah...",
-  opts: [
-    "Menghapus data",
-    "Memverifikasi keaslian pesan",
-    "Mengompresi file",
-    "Mengubah format file",
-    "Menghapus virus"
-  ],
-  ans: 1,
-  exp: { title: "Digital Signature", body: "Menjamin autentikasi dan integritas data." }
-},
-{
-  q: "Dalam kriptografi modern, keamanan bergantung pada...",
-  opts: [
-    "Kecepatan komputer",
-    "Kekuatan algoritma dan panjang kunci",
-    "Ukuran file",
-    "Warna data",
-    "Jenis file"
-  ],
-  ans: 1,
-  exp: { title: "Security", body: "Keamanan tergantung pada algoritma dan panjang kunci." }
-},
-{
-  q: "AES termasuk algoritma...",
-  opts: [
-    "Asimetris",
-    "Simetris",
-    "Hash",
-    "Caesar",
-    "Transposisi"
-  ],
-  ans: 1,
-  exp: { title: "AES", body: "AES menggunakan satu kunci untuk enkripsi dan dekripsi." }
-},
-{
-  q: "RSA didasarkan pada kesulitan...",
-  opts: [
-    "Penjumlahan sederhana",
-    "Faktorisasi bilangan besar",
-    "Pengurangan huruf",
-    "Pengacakan teks",
-    "Sorting data"
-  ],
-  ans: 1,
-  exp: { title: "RSA", body: "RSA sulit dipecahkan karena faktorisasi bilangan besar." }
-},
-{
-  q: "Collision dalam hashing berarti...",
-  opts: [
-    "Dua input sama output",
-    "Dua input berbeda menghasilkan hash sama",
-    "Data rusak",
-    "Server crash",
-    "Password hilang"
-  ],
-  ans: 1,
-  exp: { title: "Collision", body: "Dua data berbeda menghasilkan hash yang sama." }
-},
-{
-  q: "Hash yang baik harus bersifat...",
-  opts: [
-    "Cepat dan bisa dibalik",
-    "One-way dan sulit collision",
-    "Besar dan lambat",
-    "Random tanpa aturan",
-    "Tanpa output"
-  ],
-  ans: 1,
-  exp: { title: "Hash Properties", body: "Hash harus sulit dibalik dan minim collision." }
-},
-{
-  q: "Man-in-the-middle attack adalah...",
-  opts: [
-    "Serangan fisik komputer",
-    "Menyadap komunikasi antara dua pihak",
-    "Menghapus file",
-    "Mengubah hardware",
-    "Mempercepat jaringan"
-  ],
-  ans: 1,
-  exp: { title: "MITM", body: "Penyerang berada di tengah komunikasi dua pihak." }
-},
-{
-  q: "Tujuan enkripsi adalah...",
-  opts: [
-    "Mempercepat data",
-    "Menjaga kerahasiaan informasi",
-    "Menghapus file",
-    "Mengubah sistem operasi",
-    "Mengurangi ukuran file"
-  ],
-  ans: 1,
-  exp: { title: "Enkripsi", body: "Enkripsi melindungi data dari pihak tidak sah." }
-},
-{
-  q: "Kriptografi modern banyak digunakan pada...",
-  opts: [
-    "Lampu LED",
-    "Internet banking dan komunikasi online",
-    "Kalkulator",
-    "Jam tangan",
-    "Printer offline"
-  ],
-  ans: 1,
-  exp: { title: "Aplikasi", body: "Digunakan di HTTPS, banking, dan sistem keamanan digital." }
-},
-{
-  q: "Jika kunci terlalu pendek maka...",
-  opts: [
-    "Lebih aman",
-    "Mudah diretas dengan brute force",
-    "Tidak bisa dipakai",
-    "Lebih cepat",
-    "Tidak berpengaruh"
-  ],
-  ans: 1,
-  exp: { title: "Key Security", body: "Kunci pendek mudah ditebak." }
-},
-{
-  q: "One-way function berarti...",
-  opts: [
-    "Bisa dibalik",
-    "Tidak bisa dikembalikan ke input awal",
-    "Selalu linear",
-    "Selalu cepat",
-    "Tanpa output"
-  ],
-  ans: 1,
-  exp: { title: "One-way", body: "Fungsi tidak dapat dibalik seperti hashing." }
-},
-{
-  q: "Public key cryptography berarti...",
-  opts: [
-    "Menggunakan satu kunci",
-    "Menggunakan dua kunci berbeda",
-    "Tanpa kunci",
-    "Menghapus data",
-    "Mengacak file"
-  ],
-  ans: 1,
-  exp: { title: "Asymmetric", body: "Menggunakan public dan private key." }
-},
-{
-  q: "Keamanan RSA tergantung pada...",
-  opts: [
-    "Kecepatan komputer",
-    "Sulitnya faktorisasi bilangan besar",
-    "Ukuran file",
-    "Jumlah user",
-    "Warna data"
-  ],
-  ans: 1,
-  exp: { title: "RSA Security", body: "Semakin besar bilangan, semakin sulit difaktorkan." }
-},
-{
-  q: "Replay attack adalah...",
-  opts: [
-    "Menghapus data",
-    "Mengirim ulang pesan lama untuk penipuan",
-    "Mengubah password",
-    "Mengacak server",
-    "Mengompresi data"
-  ],
-  ans: 1,
-  exp: { title: "Replay Attack", body: "Penyerang mengirim ulang data lama." }
-},
-{
-  q: "Salt dalam hashing digunakan untuk...",
-  opts: [
-    "Mempercepat proses",
-    "Menambah keamanan password",
-    "Menghapus data",
-    "Mengurangi ukuran",
-    "Mengubah algoritma"
-  ],
-  ans: 1,
-  exp: { title: "Salt", body: "Salt membuat hash lebih aman dari rainbow table attack." }
-},
-{
-  q: "Rainbow table attack menyerang...",
-  opts: [
-    "Hash password",
-    "Firewall",
-    "Router",
-    "CPU",
-    "RAM"
-  ],
-  ans: 0,
-  exp: { title: "Rainbow Table", body: "Digunakan untuk memecahkan hash password." }
-},
-{
-  q: "AES dianggap aman karena...",
-  opts: [
-    "Algoritma sederhana",
-    "Komputasi kompleks dan panjang kunci besar",
-    "Tidak menggunakan kunci",
-    "Tanpa enkripsi",
-    "Menghapus data"
-  ],
-  ans: 1,
-  exp: { title: "AES Security", body: "AES sulit dipecahkan dengan brute force." }
-},
-{
-  q: "Kriptografi modern fokus pada...",
-  opts: [
-    "Kecepatan CPU",
-    "Confidentiality, Integrity, Authentication",
-    "Ukuran file",
-    "Desain UI",
-    "Database saja"
-  ],
-  ans: 1,
-  exp: { title: "CIA Triad", body: "Tiga aspek utama keamanan informasi." }
-},
-{
-  q: "Jika hash berubah sedikit saja maka...",
-  opts: [
-    "Tidak berubah",
-    "Hasil hash berubah total",
-    "Tetap sama",
-    "Dihapus",
-    "Error sistem"
-  ],
-  ans: 1,
-  exp: { title: "Avalanche Effect", body: "Perubahan kecil mengubah hash secara drastis." }
-},
-{
-  q: "Serangan brute force paling efektif terhadap...",
-  opts: [
-    "AES 256",
-    "Password lemah",
-    "RSA",
-    "SHA-256",
-    "Digital signature"
-  ],
-  ans: 1,
-  exp: { title: "Security Weakness", body: "Password lemah mudah ditebak." }
-}
-];
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Matematika Diskrit';
+const SOAL_JUDUL = 'kriptografi';
+  
+let ALL_Q = [];
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -1878,9 +918,7 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
@@ -1914,9 +952,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1925,9 +961,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -1940,10 +974,63 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1952,7 +1039,6 @@ function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1964,29 +1050,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -2010,9 +1074,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -2032,29 +1094,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
+    if (a === -1) {
+      // Surrendered — lock all options
       div.classList.add('locked');
     } else {
+      // Can still answer — highlight selected with neutral dark style only
       div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
     }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -2064,12 +1122,11 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
@@ -2093,9 +1150,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -2107,9 +1162,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -2129,9 +1182,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -2149,9 +1200,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -2181,7 +1230,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -2192,9 +1241,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -2272,9 +1319,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -2284,15 +1329,11 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
   buildWord('w2', 'Kriptografi', 0.75);
