@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quiz Matriks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -353,6 +354,17 @@ body::before {
   transition:all .2s; margin-top:0;
 }
 
+/* Selected state (before submit — neutral dark highlight, NO correct/wrong color) */
+.opt.selected {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.opt.selected .opt-letter {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+}
+
 /* After submit states */
 .opt.correct {
   background:rgba(26,122,74,.12); border-color:rgba(26,122,74,.4);
@@ -422,7 +434,7 @@ body::before {
   box-shadow:0 6px 22px rgba(0,0,0,.2);
 }
 
-/* Submit button — only at question screen BOTTOM after nav */
+/* Submit button */
 .submit-row { margin-top: 6px; }
 .btn-submit {
   width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
@@ -628,28 +640,15 @@ body::before {
 }
 .modal-btn-cancel:hover { background:var(--ink); color:#fff; }
 
-/* Surrender modal specifics */
 .surrender-confirm {
   background:linear-gradient(135deg,#7a6015,#5a4510); color:#fff;
 }
 .surrender-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(122,96,21,.4); }
 
-/* Submit modal specifics */
 .submit-confirm {
   background:linear-gradient(135deg,#c8961e,#a87318); color:#fff;
 }
 .submit-confirm:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,150,30,.4); }
-
-/* ─── STREAK BADGE (new feature) ─── */
-.streak-bar {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:14px;
-}
-.streak-dot {
-  width:8px; height:8px; border-radius:50%; background:#e0ddd6;
-  transition:all .4s ease;
-}
-.streak-dot.hit { background:var(--gold-2); box-shadow:0 0 6px rgba(232,184,50,.5); }
 
 /* ─── TOAST ─── */
 .toast {
@@ -686,13 +685,13 @@ body::before {
   <!-- ══════ START SCREEN ══════ -->
   <div id="startScreen" class="screen active">
     <div class="hero">
-      <div class="hero-badge">✦ Matematika &middot; Matriks ✦</div>
+      <div class="hero-badge">✦ Matematika &middot; Matriks ✦</div>   
       <h1 class="hero-title">
         <span id="w1"></span>
         <span class="line2"><span id="w2"></span></span>
         <div class="hero-rule"></div>
       </h1>
-      <p class="hero-sub">Uji kemampuan pemahamanmu dengan soal-soal Matriks Matematika yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
+      <p class="hero-sub">Uji kemampuan nalarmu dengan soal-soal logika yang terstruktur. Pilih level yang sesuai dengan kesiapanmu.</p>
     </div>
 
     <div class="level-grid">
@@ -765,9 +764,6 @@ body::before {
     <div class="progress-track">
       <div id="progressFill" class="progress-fill fill-easy" style="width:0%"></div>
     </div>
-
-    <!-- Streak bar -->
-    <div class="streak-bar" id="streakBar"></div>
 
     <div class="dot-row" id="dotRow"></div>
 
@@ -889,879 +885,28 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-const ALL_Q = [
-// EASY 0-9
-{
-  q: "Matriks adalah...",
-  opts: [
-    "Kumpulan bilangan dalam bentuk baris dan kolom",
-    "Persamaan linear satu variabel",
-    "Fungsi trigonometri",
-    "Operasi akar",
-    "Bilangan berpangkat"
-  ],
-  ans: 0,
-  exp: { title: "Definisi Matriks", body: "Matriks adalah susunan bilangan dalam baris dan kolom." }
-},
-{
-  q: "Elemen matriks adalah...",
-  opts: [
-    "Jumlah baris",
-    "Angka di dalam matriks",
-    "Jumlah kolom",
-    "Ordo matriks",
-    "Determinan"
-  ],
-  ans: 1,
-  exp: { title: "Elemen", body: "Elemen adalah nilai yang terdapat dalam matriks." }
-},
-{
-  q: "Ordo matriks 2×3 artinya...",
-  opts: [
-    "2 kolom 3 baris",
-    "2 baris 3 kolom",
-    "3 baris 2 kolom",
-    "2×2 matriks identitas",
-    "Matriks nol"
-  ],
-  ans: 1,
-  exp: { title: "Ordo", body: "2×3 berarti 2 baris dan 3 kolom." }
-},
-{
-  q: "Matriks A = [[1,2],[3,4]] berordo...",
-  opts: ["1×4", "2×2", "2×3", "3×2", "4×1"],
-  ans: 1,
-  exp: { title: "Ordo", body: "Memiliki 2 baris dan 2 kolom." }
-},
-{
-  q: "Elemen baris pertama kolom kedua dari [[5,7],[1,3]] adalah...",
-  opts: ["5", "7", "1", "3", "0"],
-  ans: 1,
-  exp: { title: "Elemen", body: "Baris 1 kolom 2 = 7." }
-},
-{
-  q: "Matriks nol adalah matriks yang semua elemennya...",
-  opts: ["1", "bilangan negatif", "0", "tak terhingga", "acak"],
-  ans: 2,
-  exp: { title: "Matriks Nol", body: "Semua elemen bernilai 0." }
-},
-{
-  q: "Matriks identitas memiliki diagonal utama bernilai...",
-  opts: ["0", "1", "2", "-1", "acak"],
-  ans: 1,
-  exp: { title: "Identitas", body: "Diagonal utama bernilai 1." }
-},
-{
-  q: "Ordo matriks [[1,2,3],[4,5,6]] adalah...",
-  opts: ["2×2", "2×3", "3×2", "3×3", "1×6"],
-  ans: 1,
-  exp: { title: "Ordo", body: "2 baris dan 3 kolom." }
-},
-{
-  q: "Jumlah baris pada matriks [[1,2],[3,4],[5,6]] adalah...",
-  opts: ["2", "3", "4", "5", "6"],
-  ans: 1,
-  exp: { title: "Baris", body: "Ada 3 baris." }
-},
-{
-  q: "Jumlah kolom pada matriks [[1,2,3],[4,5,6]] adalah...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 2,
-  exp: { title: "Kolom", body: "Ada 3 kolom." }
-},
-
-{
-  q: "Hasil [[1,2]] + [[3,4]] adalah...",
-  opts: [
-    "[[4,6]]",
-    "[[3,4]]",
-    "[[1,2]]",
-    "[[5,6]]",
-    "[[2,2]]"
-  ],
-  ans: 0,
-  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
-},
-{
-  q: "[[5,7]] - [[2,3]] = ...",
-  opts: [
-    "[[3,4]]",
-    "[[7,10]]",
-    "[[2,3]]",
-    "[[5,7]]",
-    "[[1,1]]"
-  ],
-  ans: 0,
-  exp: { title: "Pengurangan", body: "Kurangkan elemen seposisi." }
-},
-{
-  q: "Matriks A = [[2,3],[4,5]] maka A berordo...",
-  opts: ["1×4", "2×2", "2×3", "3×2", "4×1"],
-  ans: 1,
-  exp: { title: "Ordo", body: "2 baris 2 kolom." }
-},
-{
-  q: "Elemen a₁₁ dari [[9,8],[7,6]] adalah...",
-  opts: ["9", "8", "7", "6", "0"],
-  ans: 0,
-  exp: { title: "Elemen", body: "a₁₁ = baris 1 kolom 1 = 9." }
-},
-{
-  q: "Jika A = [[1,0],[0,1]] maka A adalah...",
-  opts: [
-    "Matriks nol",
-    "Matriks identitas",
-    "Matriks baris",
-    "Matriks kolom",
-    "Matriks persegi panjang"
-  ],
-  ans: 1,
-  exp: { title: "Identitas", body: "Diagonal utama 1, lainnya 0." }
-},
-
-{
-  q: "Penjumlahan matriks hanya bisa dilakukan jika...",
-  opts: [
-    "Ordo berbeda",
-    "Jumlah elemen sama",
-    "Ordo sama",
-    "Tidak ada syarat",
-    "Harus 3×3"
-  ],
-  ans: 2,
-  exp: { title: "Syarat", body: "Harus memiliki ordo yang sama." }
-},
-{
-  q: "[[2,2],[2,2]] + [[1,1],[1,1]] = ...",
-  opts: [
-    "[[3,3],[3,3]]",
-    "[[2,2],[2,2]]",
-    "[[1,1],[1,1]]",
-    "[[4,4],[4,4]]",
-    "[[0,0],[0,0]]"
-  ],
-  ans: 0,
-  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
-},
-{
-  q: "[[6,4]] - [[1,2]] = ...",
-  opts: [
-    "[[5,2]]",
-    "[[7,6]]",
-    "[[4,2]]",
-    "[[6,4]]",
-    "[[3,2]]"
-  ],
-  ans: 0,
-  exp: { title: "Pengurangan", body: "Kurangkan elemen seposisi." }
-},
-{
-  q: "Ordo matriks [[1],[2],[3]] adalah...",
-  opts: ["1×3", "3×1", "2×1", "3×3", "1×1"],
-  ans: 1,
-  exp: { title: "Ordo", body: "3 baris 1 kolom." }
-},
-{
-  q: "Matriks kolom adalah matriks yang memiliki...",
-  opts: [
-    "1 baris",
-    "1 kolom",
-    "2 kolom",
-    "3 kolom",
-    "Tidak tentu"
-  ],
-  ans: 1,
-  exp: { title: "Matriks Kolom", body: "Hanya memiliki satu kolom." }
-},
-
-{
-  q: "Matriks baris adalah matriks yang memiliki...",
-  opts: [
-    "1 kolom",
-    "1 baris",
-    "2 baris",
-    "3 baris",
-    "Tidak tentu"
-  ],
-  ans: 1,
-  exp: { title: "Matriks Baris", body: "Hanya memiliki satu baris." }
-},
-{
-  q: "Hasil [[3,3],[3,3]] + [[1,2],[3,4]] = ...",
-  opts: [
-    "[[4,5],[6,7]]",
-    "[[3,3],[3,3]]",
-    "[[1,2],[3,4]]",
-    "[[5,5],[5,5]]",
-    "[[0,0],[0,0]]"
-  ],
-  ans: 0,
-  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
-},
-{
-  q: "Elemen a₂₂ dari [[1,2],[3,9]] adalah...",
-  opts: ["1", "2", "3", "9", "0"],
-  ans: 3,
-  exp: { title: "Elemen", body: "Baris 2 kolom 2 = 9." }
-},
-{
-  q: "Jika A + B = C, maka operasi yang digunakan adalah...",
-  opts: [
-    "Perkalian",
-    "Penjumlahan matriks",
-    "Transpose",
-    "Invers",
-    "Determinan"
-  ],
-  ans: 1,
-  exp: { title: "Operasi", body: "A + B adalah penjumlahan matriks." }
-},
-{
-  q: "Jika A dan B tidak memiliki ordo yang sama maka...",
-  opts: [
-    "Bisa dijumlahkan",
-    "Tidak bisa dijumlahkan",
-    "Hasil nol",
-    "Hasil identitas",
-    "Selalu sama"
-  ],
-  ans: 1,
-  exp: { title: "Syarat", body: "Ordo harus sama untuk penjumlahan." }
-},
-{
-  q: "[[0,0],[0,0]] disebut...",
-  opts: [
-    "Matriks identitas",
-    "Matriks nol",
-    "Matriks diagonal",
-    "Matriks persegi",
-    "Matriks baris"
-  ],
-  ans: 1,
-  exp: { title: "Matriks Nol", body: "Semua elemen bernilai 0." }
-},
-{
-  q: "Ordo matriks identitas 2×2 adalah...",
-  opts: ["1×2", "2×2", "2×3", "3×2", "1×1"],
-  ans: 1,
-  exp: { title: "Identitas", body: "Selalu matriks persegi." }
-},
-{
-  q: "Elemen utama diagonal pada matriks identitas adalah...",
-  opts: ["0", "1", "2", "acak", "-1"],
-  ans: 1,
-  exp: { title: "Identitas", body: "Diagonal utama bernilai 1." }
-},
-{
-  q: "Hasil [[1,1],[1,1]] - [[1,1],[1,1]] adalah...",
-  opts: [
-    "[[0,0],[0,0]]",
-    "[[1,1],[1,1]]",
-    "[[2,2],[2,2]]",
-    "[[3,3],[3,3]]",
-    "[[1,0],[0,1]]"
-  ],
-  ans: 0,
-  exp: { title: "Pengurangan", body: "Semua elemen saling menghapus." }
-},
-
-// MEDIUM 10-29
-{
-  q: "Hasil perkalian skalar 2 × [[1,2],[3,4]] adalah...",
-  opts: [
-    "[[2,4],[6,8]]",
-    "[[1,2],[3,4]]",
-    "[[3,6],[7,8]]",
-    "[[2,2],[2,2]]",
-    "[[4,8],[6,10]]"
-  ],
-  ans: 0,
-  exp: { title: "Perkalian skalar", body: "Setiap elemen dikalikan 2." }
-},
-{
-  q: "Jika A = [[1,2],[3,4]] dan B = [[5,6],[7,8]], maka A + B = ...",
-  opts: [
-    "[[6,8],[10,12]]",
-    "[[5,7],[8,10]]",
-    "[[1,2],[3,4]]",
-    "[[6,6],[6,6]]",
-    "[[7,8],[9,10]]"
-  ],
-  ans: 0,
-  exp: { title: "Penjumlahan", body: "Jumlahkan elemen seposisi." }
-},
-{
-  q: "Hasil [[1,2],[3,4]] × [[2,0],[1,2]] adalah...",
-  opts: [
-    "[[4,4],[10,8]]",
-    "[[2,2],[3,3]]",
-    "[[1,2],[3,4]]",
-    "[[5,5],[6,6]]",
-    "[[4,2],[8,4]]"
-  ],
-  ans: 0,
-  exp: { title: "Perkalian matriks", body: "Baris dikali kolom." }
-},
-{
-  q: "Determinan matriks [[1,2],[3,4]] adalah...",
-  opts: ["-2", "2", "4", "0", "6"],
-  ans: 0,
-  exp: { title: "Determinan", body: "ad - bc = 1×4 - 2×3 = -2" }
-},
-{
-  q: "Determinan [[2,3],[1,4]] adalah...",
-  opts: ["5", "6", "7", "8", "9"],
-  ans: 0,
-  exp: { title: "Determinan", body: "2×4 - 3×1 = 5" }
-},
-{
-  q: "Invers matriks hanya ada jika determinan...",
-  opts: ["0", "1", "≠ 0", "negatif", "positif"],
-  ans: 2,
-  exp: { title: "Invers", body: "Invers ada jika determinan tidak nol." }
-},
-{
-  q: "Matriks identitas 2×2 adalah...",
-  opts: [
-    "[[1,0],[0,1]]",
-    "[[0,0],[0,0]]",
-    "[[1,1],[1,1]]",
-    "[[2,0],[0,2]]",
-    "[[0,1],[1,0]]"
-  ],
-  ans: 0,
-  exp: { title: "Identitas", body: "Diagonal utama 1." }
-},
-{
-  q: "Transpose dari [[1,2],[3,4]] adalah...",
-  opts: [
-    "[[1,3],[2,4]]",
-    "[[1,2],[3,4]]",
-    "[[4,3],[2,1]]",
-    "[[2,1],[4,3]]",
-    "[[0,0],[0,0]]"
-  ],
-  ans: 0,
-  exp: { title: "Transpose", body: "Tukar baris menjadi kolom." }
-},
-{
-  q: "Hasil [[2,1],[0,3]] × [[1,2],[1,0]] adalah...",
-  opts: [
-    "[[3,4],[3,0]]",
-    "[[2,2],[3,3]]",
-    "[[1,1],[2,2]]",
-    "[[4,4],[6,6]]",
-    "[[3,3],[0,0]]"
-  ],
-  ans: 0,
-  exp: { title: "Perkalian", body: "Baris × kolom." }
-},
-{
-  q: "Jika A = [[a,b],[c,d]], maka determinan A adalah...",
-  opts: [
-    "ad - bc",
-    "a + b + c + d",
-    "ab + cd",
-    "a/b - c/d",
-    "ac - bd"
-  ],
-  ans: 0,
-  exp: { title: "Rumus", body: "Determinan 2×2 = ad - bc." }
-},
-
-{
-  q: "Determinan [[5,1],[2,3]] adalah...",
-  opts: ["13", "12", "11", "10", "9"],
-  ans: 0,
-  exp: { title: "Determinan", body: "5×3 - 1×2 = 13" }
-},
-{
-  q: "Jika det(A) = 0 maka matriks A...",
-  opts: [
-    "memiliki invers",
-    "tidak memiliki invers",
-    "identitas",
-    "diagonal",
-    "nol"
-  ],
-  ans: 1,
-  exp: { title: "Invers", body: "Tidak bisa dibalik jika determinan 0." }
-},
-{
-  q: "Hasil [[1,0],[0,1]] × [[2,3],[4,5]] adalah...",
-  opts: [
-    "[[2,3],[4,5]]",
-    "[[1,1],[1,1]]",
-    "[[2,2],[3,3]]",
-    "[[0,0],[0,0]]",
-    "[[5,5],[5,5]]"
-  ],
-  ans: 0,
-  exp: { title: "Identitas", body: "A × I = A." }
-},
-{
-  q: "Ordo hasil perkalian matriks 2×3 dan 3×2 adalah...",
-  opts: ["2×2", "3×3", "2×3", "3×2", "1×1"],
-  ans: 0,
-  exp: { title: "Ordo", body: "Hasil = baris pertama × kolom kedua." }
-},
-{
-  q: "Jika A = [[1,2],[3,4]] maka det(A⁻¹) adalah...",
-  opts: ["-1/2", "1/2", "-2", "2", "0"],
-  ans: 1,
-  exp: { title: "Invers", body: "det(A⁻¹) = 1/det(A)" }
-},
-
-{
-  q: "Hasil [[2,0],[0,2]] disebut...",
-  opts: [
-    "Matriks identitas skalar",
-    "Matriks nol",
-    "Matriks baris",
-    "Matriks kolom",
-    "Matriks sembarang"
-  ],
-  ans: 0,
-  exp: { title: "Skalar", body: "Identitas dikali 2." }
-},
-{
-  q: "Jika A = [[1,2],[3,4]] maka Aᵀ adalah...",
-  opts: [
-    "[[1,3],[2,4]]",
-    "[[1,2],[3,4]]",
-    "[[4,3],[2,1]]",
-    "[[2,1],[4,3]]",
-    "[[0,0],[0,0]]"
-  ],
-  ans: 0,
-  exp: { title: "Transpose", body: "Tukar baris jadi kolom." }
-},
-{
-  q: "Hasil [[1,2],[3,4]] × [[0,1],[1,0]] adalah...",
-  opts: [
-    "[[2,1],[4,3]]",
-    "[[1,2],[3,4]]",
-    "[[0,0],[0,0]]",
-    "[[3,3],[3,3]]",
-    "[[4,4],[4,4]]"
-  ],
-  ans: 0,
-  exp: { title: "Perkalian", body: "Penukaran kolom." }
-},
-{
-  q: "Matriks yang memiliki invers disebut...",
-  opts: [
-    "Singular",
-    "Invertible",
-    "Nol",
-    "Diagonal",
-    "Baris"
-  ],
-  ans: 1,
-  exp: { title: "Istilah", body: "Invertible = memiliki invers." }
-},
-{
-  q: "Jika det(A) = -5 maka...",
-  opts: [
-    "tidak punya invers",
-    "punya invers",
-    "matriks nol",
-    "matriks identitas",
-    "tidak terdefinisi"
-  ],
-  ans: 1,
-  exp: { title: "Invers", body: "Det ≠ 0 maka punya invers." }
-},
-
-{
-  q: "Hasil [[3,1],[2,1]] × [[1,2],[3,4]] adalah...",
-  opts: [
-    "[[6,10],[5,8]]",
-    "[[3,3],[2,2]]",
-    "[[1,1],[1,1]]",
-    "[[7,7],[7,7]]",
-    "[[0,0],[0,0]]"
-  ],
-  ans: 0,
-  exp: { title: "Perkalian", body: "Baris × kolom." }
-},
-{
-  q: "Determinant adalah...",
-  opts: [
-    "jumlah elemen",
-    "nilai skalar dari matriks persegi",
-    "perkalian elemen",
-    "transpose matriks",
-    "invers matriks"
-  ],
-  ans: 1,
-  exp: { title: "Definisi", body: "Determinan adalah nilai skalar matriks persegi." }
-},
-{
-  q: "Jika A = [[2,3],[1,2]] maka det(A) = ...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 0,
-  exp: { title: "Determinan", body: "2×2 - 3×1 = 1" }
-},
-{
-  q: "Jika A⁻¹ ada maka A harus...",
-  opts: [
-    "berordo sama",
-    "det ≠ 0",
-    "berisi nol",
-    "berisi 1",
-    "bukan matriks"
-  ],
-  ans: 1,
-  exp: { title: "Invers", body: "Syarat utama determinan tidak nol." }
-},
-{
-  q: "Hasil [[1,1],[1,1]] × [[1,1],[1,1]] adalah...",
-  opts: [
-    "[[2,2],[2,2]]",
-    "[[1,1],[1,1]]",
-    "[[0,0],[0,0]]",
-    "[[3,3],[3,3]]",
-    "[[4,4],[4,4]]"
-  ],
-  ans: 0,
-  exp: { title: "Perkalian", body: "Setiap elemen dijumlahkan." }
-},
-{
-  q: "Ordo matriks hasil A(2×2) × B(2×3) adalah...",
-  opts: ["2×2", "2×3", "3×2", "3×3", "1×1"],
-  ans: 1,
-  exp: { title: "Ordo", body: "2×3 hasil perkalian." }
-},
-{
-  q: "Jika A = I maka A⁻¹ adalah...",
-  opts: [
-    "I",
-    "0",
-    "A",
-    "tidak ada",
-    "negatif A"
-  ],
-  ans: 0,
-  exp: { title: "Identitas", body: "Invers identitas adalah dirinya sendiri." }
-},
-{
-  q: "Hasil [[2,3],[4,5]] × I adalah...",
-  opts: [
-    "[[2,3],[4,5]]",
-    "[[1,1],[1,1]]",
-    "[[0,0],[0,0]]",
-    "[[5,5],[5,5]]",
-    "[[3,3],[3,3]]"
-  ],
-  ans: 0,
-  exp: { title: "Identitas", body: "A × I = A." }
-},
-
-// HARD 60-89 — used as index 30-59
-{
-  q: "Determinan matriks 2×2 [[a,b],[c,d]] adalah...",
-  opts: [
-    "ad - bc",
-    "ab + cd",
-    "a + b + c + d",
-    "ac - bd",
-    "ad + bc"
-  ],
-  ans: 0,
-  exp: { title: "Determinan", body: "Rumus det 2×2 = ad - bc." }
-},
-{
-  q: "Determinan [[1,2,3],[0,1,4],[5,6,0]] adalah...",
-  opts: ["1", "2", "3", "4", "5"],
-  ans: 0,
-  exp: { title: "Determinan 3×3", body: "Hasil perhitungan determinan = 1." }
-},
-{
-  q: "Jika det(A) = 0 maka matriks A disebut...",
-  opts: ["Invertible", "Singular", "Diagonal", "Identitas", "Transpose"],
-  ans: 1,
-  exp: { title: "Singular", body: "Det = 0 berarti tidak memiliki invers." }
-},
-{
-  q: "Matriks identitas 3×3 adalah...",
-  opts: [
-    "[[1,0,0],[0,1,0],[0,0,1]]",
-    "[[1,1,1],[1,1,1],[1,1,1]]",
-    "[[0,0,0],[0,0,0],[0,0,0]]",
-    "[[2,0,0],[0,2,0],[0,0,2]]",
-    "[[1,2,3],[4,5,6],[7,8,9]]"
-  ],
-  ans: 0,
-  exp: { title: "Identitas", body: "Diagonal utama 1, lainnya 0." }
-},
-{
-  q: "Transpose matriks menukar...",
-  opts: [
-    "elemen menjadi nol",
-    "baris menjadi kolom",
-    "kolom menjadi nol",
-    "nilai menjadi negatif",
-    "diagonal saja"
-  ],
-  ans: 1,
-  exp: { title: "Transpose", body: "Baris ↔ kolom." }
-},
-
-{
-  q: "Adjoint matriks digunakan untuk mencari...",
-  opts: [
-    "penjumlahan",
-    "invers matriks",
-    "transpose",
-    "eigenvalue",
-    "trace"
-  ],
-  ans: 1,
-  exp: { title: "Adjoint", body: "Adjoint digunakan dalam rumus invers." }
-},
-{
-  q: "Rumus invers matriks adalah...",
-  opts: [
-    "A⁻¹ = adj(A) / det(A)",
-    "A⁻¹ = det(A) / adj(A)",
-    "A⁻¹ = A + I",
-    "A⁻¹ = A × A",
-    "A⁻¹ = 0"
-  ],
-  ans: 0,
-  exp: { title: "Invers", body: "Invers = adj(A) dibagi determinan." }
-},
-{
-  q: "Jika det(A) = 5 maka det(A⁻¹) adalah...",
-  opts: ["5", "1/5", "-5", "0", "10"],
-  ans: 1,
-  exp: { title: "Invers", body: "det(A⁻¹) = 1/det(A)" }
-},
-{
-  q: "Eigenvalue adalah...",
-  opts: [
-    "jumlah elemen matriks",
-    "nilai skalar khusus dari matriks",
-    "transpose matriks",
-    "invers matriks",
-    "determinant saja"
-  ],
-  ans: 1,
-  exp: { title: "Eigenvalue", body: "Nilai λ yang memenuhi Av = λv." }
-},
-{
-  q: "Matriks diagonal adalah matriks yang...",
-  opts: [
-    "semua elemen sama",
-    "hanya diagonal utama non nol",
-    "semua nol",
-    "tidak berbentuk persegi",
-    "acak"
-  ],
-  ans: 1,
-  exp: { title: "Diagonal", body: "Hanya diagonal utama yang boleh non nol." }
-},
-
-{
-  q: "Determinan matriks diagonal adalah...",
-  opts: [
-    "jumlah diagonal",
-    "hasil kali diagonal utama",
-    "nol selalu",
-    "acak",
-    "transpose"
-  ],
-  ans: 1,
-  exp: { title: "Diagonal", body: "Det = hasil kali elemen diagonal." }
-},
-{
-  q: "Jika A = I maka eigenvalue A adalah...",
-  opts: ["0", "1", "2", "-1", "tidak ada"],
-  ans: 1,
-  exp: { title: "Eigenvalue", body: "Identitas memiliki eigenvalue 1." }
-},
-{
-  q: "Matriks singular memiliki determinan...",
-  opts: ["1", "≠0", "0", "negatif", "positif"],
-  ans: 2,
-  exp: { title: "Singular", body: "Singular berarti det = 0." }
-},
-{
-  q: "Jika A = [[2,0],[0,3]] maka eigenvalue A adalah...",
-  opts: ["2 dan 3", "0 dan 1", "1 dan 2", "3 dan 4", "0 dan 0"],
-  ans: 0,
-  exp: { title: "Eigenvalue", body: "Diagonal matriks = eigenvalue." }
-},
-{
-  q: "Trace matriks adalah...",
-  opts: [
-    "jumlah semua elemen",
-    "jumlah diagonal utama",
-    "perkalian diagonal",
-    "determinant",
-    "invers"
-  ],
-  ans: 1,
-  exp: { title: "Trace", body: "Trace = jumlah elemen diagonal utama." }
-},
-
-{
-  q: "Jika A = [[1,2],[3,4]] maka trace(A) = ...",
-  opts: ["4", "5", "6", "7", "8"],
-  ans: 1,
-  exp: { title: "Trace", body: "1 + 4 = 5." }
-},
-{
-  q: "Adjoint digunakan dalam rumus...",
-  opts: [
-    "A⁻¹ = adj(A)/det(A)",
-    "A = adj(A) × det(A)",
-    "A + adj(A)",
-    "A × det(A)",
-    "tidak ada"
-  ],
-  ans: 0,
-  exp: { title: "Adjoint", body: "Digunakan dalam invers matriks." }
-},
-{
-  q: "Jika det(A) = -3 maka det(A⁻¹) = ...",
-  opts: ["-3", "1/3", "-1/3", "3", "0"],
-  ans: 2,
-  exp: { title: "Invers", body: "1/(-3) = -1/3." }
-},
-{
-  q: "Matriks identitas berfungsi sebagai...",
-  opts: [
-    "nol dalam penjumlahan",
-    "unsur netral perkalian",
-    "invers selalu",
-    "eigenvector",
-    "determinant"
-  ],
-  ans: 1,
-  exp: { title: "Identitas", body: "A × I = A." }
-},
-{
-  q: "Jika A diagonal maka A⁻¹ juga...",
-  opts: [
-    "diagonal",
-    "nol",
-    "identitas",
-    "tidak ada",
-    "acak"
-  ],
-  ans: 0,
-  exp: { title: "Diagonal", body: "Invers matriks diagonal tetap diagonal." }
-},
-
-{
-  q: "Eigenvector berkaitan dengan...",
-  opts: [
-    "skalar acak",
-    "arah tidak berubah",
-    "penjumlahan",
-    "transpose",
-    "determinant"
-  ],
-  ans: 1,
-  exp: { title: "Eigen", body: "Eigenvector tidak berubah arah saat transformasi." }
-},
-{
-  q: "Jika A = [[λ,0],[0,λ]] maka eigenvalue adalah...",
-  opts: ["0", "1", "λ", "2λ", "acak"],
-  ans: 2,
-  exp: { title: "Eigenvalue", body: "Semua diagonal = λ." }
-},
-{
-  q: "Determinant 3×3 dapat dihitung menggunakan...",
-  opts: [
-    "Sarrus rule",
-    "Substitusi",
-    "Eliminasi SPL",
-    "Integral",
-    "Limit"
-  ],
-  ans: 0,
-  exp: { title: "3×3", body: "Metode Sarrus digunakan." }
-},
-{
-  q: "Jika det(A) = 1 maka A disebut...",
-  opts: [
-    "singular",
-    "unimodular",
-    "nol",
-    "diagonal",
-    "segitiga"
-  ],
-  ans: 1,
-  exp: { title: "Unimodular", body: "Det = 1 disebut unimodular." }
-},
-{
-  q: "Matriks diagonal dapat ditulis sebagai...",
-  opts: [
-    "semua elemen sama",
-    "hanya diagonal non nol",
-    "semua nol",
-    "sembarang",
-    "tidak beraturan"
-  ],
-  ans: 1,
-  exp: { title: "Diagonal", body: "Hanya diagonal utama." }
-},
-{
-  q: "Jika A = [[1,0,0],[0,2,0],[0,0,3]] maka det(A) = ...",
-  opts: ["5", "6", "1", "2", "3"],
-  ans: 1,
-  exp: { title: "Diagonal", body: "1×2×3 = 6." }
-},
-{
-  q: "Jika A⁻¹ ada maka A harus...",
-  opts: [
-    "det = 0",
-    "det ≠ 0",
-    "semua nol",
-    "tidak persegi",
-    "acak"
-  ],
-  ans: 1,
-  exp: { title: "Invers", body: "Syarat utama det tidak nol." }
-},
-{
-  q: "Eigenvalue diperoleh dari persamaan...",
-  opts: [
-    "det(A - λI) = 0",
-    "A + I = 0",
-    "A × I = λ",
-    "A - I = 0",
-    "det(A) = λ"
-  ],
-  ans: 0,
-  exp: { title: "Eigenvalue", body: "Persamaan karakteristik." }
-}
-];
+const SUPABASE_URL = 'https://ytwfwxjutdlukjvnlnzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0d2Z3eGp1dGRsdWtqdm5sbnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDEyNTEsImV4cCI6MjA5NjU3NzI1MX0.elwvWee305pJaWxGCVuaHBtyegFsu7Gvhs5L4dYEZMY';
+const SOAL_MODUL = 'Matematika Diskrit';
+const SOAL_JUDUL = 'Matriks';
+  
+let ALL_Q = [];
 
 const LEVELS = {
-  easy:   { start:0,  count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
-  medium: { start:10, count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
-  hard:   { start:30, count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
+  easy:   { count:10, time:30*60, label:'Easy',   fill:'fill-easy',   badge:'badge-easy'   },
+  medium: { count:20, time:40*60, label:'Medium', fill:'fill-medium', badge:'badge-medium' },
+  hard:   { count:30, time:50*60, label:'Hard',   fill:'fill-hard',   badge:'badge-hard'   }
 };
 
 const LETTERS = ['a','b','c','d','e'];
 
 let S = {
   level: null, questions: [], current: 0,
-  // null = unanswered, -1 = surrendered, 0..4 = chosen answer index
   answers: [],
   timeLeft: 0, timerID: null
 };
 
-// ══════════════════════════════════════════
-// TITLE ANIMATION
-// ══════════════════════════════════════════
+// ── TITLE ANIMATION ──
 function buildWord(elId, text, baseDelay) {
   const el = document.getElementById(elId);
   el.innerHTML = '';
@@ -1774,9 +919,7 @@ function buildWord(elId, text, baseDelay) {
   });
 }
 
-// ══════════════════════════════════════════
-// PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 (function() {
   const cvs = document.getElementById('particle-canvas');
   const ctx = cvs.getContext('2d');
@@ -1810,9 +953,7 @@ function buildWord(elId, text, baseDelay) {
   setTimeout(()=>{ cvs.classList.add('visible'); frame(); }, 500);
 })();
 
-// ══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════
+// ── SCREEN MANAGEMENT ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -1821,9 +962,7 @@ function showScreen(id) {
   requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
-// ══════════════════════════════════════════
-// RIPPLE + START
-// ══════════════════════════════════════════
+// ── RIPPLE + START ──
 function startQuizRipple(e, level) {
   const card = e.currentTarget;
   const rect = card.getBoundingClientRect();
@@ -1836,10 +975,63 @@ function startQuizRipple(e, level) {
   setTimeout(() => startQuiz(level), 220);
 }
 
-function startQuiz(level) {
+async function startQuiz(level) {
   const cfg = LEVELS[level];
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '0.5';
+    c.style.pointerEvents = 'none';
+  });
+
+  let soalDB = [];
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await db
+      .from('soal')
+      .select('*')
+      .eq('modul', SOAL_MODUL)
+      .eq('judul', SOAL_JUDUL)
+      .eq('level', level)
+      .eq('aktif', true)
+      .order('urutan');
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      soalDB = data.map(row => ({
+        q: row.pertanyaan,
+        opts: row.opsi,
+        ans: row.jawaban_benar,
+        exp: {
+          title: row.penjelasan_judul || 'Penjelasan',
+          body: row.penjelasan_isi || ''
+        }
+      }));
+    }
+
+  } catch (err) {
+    console.error('Gagal fetch soal:', err);
+  }
+
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.style.opacity = '';
+    c.style.pointerEvents = '';
+  });
+
+  const sumberSoal = soalDB.length > 0 ? soalDB : ALL_Q;
+
+  if (sumberSoal.length === 0) {
+    alert('⚠️ Belum ada soal untuk level ini. Silakan tambah soal di admin panel.');
+    return;
+  }
+
+  const shuffled = [...sumberSoal].sort(() => Math.random() - 0.5);
+
   S.level = level;
-  S.questions = ALL_Q.slice(cfg.start, cfg.start + cfg.count);
+  S.questions = shuffled.slice(0, cfg.count);
   S.current = 0;
   S.answers = new Array(S.questions.length).fill(null);
   S.timeLeft = cfg.time;
@@ -1848,7 +1040,6 @@ function startQuiz(level) {
   document.getElementById('levelBadge').className = 'quiz-level-badge ' + cfg.badge;
   document.getElementById('progressFill').className = 'progress-fill ' + cfg.fill;
 
-  buildStreakBar();
   buildDots();
   renderQ();
   startTimer();
@@ -1860,29 +1051,7 @@ function backToLevelSelect() {
   showScreen('startScreen');
 }
 
-// ══════════════════════════════════════════
-// STREAK BAR
-// ══════════════════════════════════════════
-function buildStreakBar() {
-  const bar = document.getElementById('streakBar');
-  bar.innerHTML = '';
-  S.questions.forEach(() => {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    bar.appendChild(d);
-  });
-}
-
-function updateStreakBar() {
-  document.querySelectorAll('.streak-dot').forEach((d, i) => {
-    const a = S.answers[i];
-    d.classList.toggle('hit', a !== null && a !== -1 && a === S.questions[i].ans);
-  });
-}
-
-// ══════════════════════════════════════════
-// DOT ROW
-// ══════════════════════════════════════════
+// ── DOT ROW ──
 function buildDots() {
   const row = document.getElementById('dotRow');
   row.innerHTML = '';
@@ -1906,9 +1075,7 @@ function updateDots() {
   });
 }
 
-// ══════════════════════════════════════════
-// RENDER QUESTION
-// ══════════════════════════════════════════
+// ── RENDER QUESTION ──
 function renderQ() {
   const q = S.questions[S.current];
   const n = S.current;
@@ -1928,29 +1095,25 @@ function renderQ() {
   const sBtn = document.getElementById('surrenderBtn');
   sBtn.disabled = a !== null;
 
-  // Options — NO correct/wrong shown here (only after submit)
+  // Options — no correct/wrong colors before submit
   const list = document.getElementById('optsList');
   list.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const div = document.createElement('div');
     div.className = 'opt';
 
-    // After selecting (not surrendered, not null)
-    if (a !== null && a !== -1) {
-      div.classList.add('locked');
-      if (i === a) {
-        // Highlight chosen answer NEUTRALLY (ink color)
-        div.style.background = 'var(--ink)';
-        div.style.color = '#fff';
-        div.style.borderColor = 'var(--ink)';
-      }
-    } else if (a === -1) {
+    if (a === -1) {
+      // Surrendered — lock all options
       div.classList.add('locked');
     } else {
+      // Can still answer — highlight selected with neutral dark style only
       div.onclick = () => selectAnswer(i);
+      if (i === a) {
+        div.classList.add('selected');
+      }
     }
 
-    div.innerHTML = `<span class="opt-letter" style="${a !== null && a !== -1 && i === a ? 'background:rgba(255,255,255,.2);color:#fff' : ''}">${LETTERS[i]}</span><span>${opt}</span>`;
+    div.innerHTML = `<span class="opt-letter">${LETTERS[i]}</span><span>${opt}</span>`;
     list.appendChild(div);
   });
 
@@ -1960,12 +1123,11 @@ function renderQ() {
   nextBtn.textContent = isLast ? 'Selesaikan →' : 'Berikutnya →';
 
   updateDots();
-  updateStreakBar();
   updateSubmitStatus();
 }
 
 function selectAnswer(i) {
-  if (S.answers[S.current] !== null) return;
+  if (S.answers[S.current] === -1) return;
   S.answers[S.current] = i;
   renderQ();
 }
@@ -1989,9 +1151,7 @@ function updateSubmitStatus() {
     `${answered} dijawab · ${surrendered} menyerah · ${unanswered} belum`;
 }
 
-// ══════════════════════════════════════════
-// SURRENDER
-// ══════════════════════════════════════════
+// ── SURRENDER ──
 function confirmSurrender() {
   document.getElementById('surrenderModal').classList.add('open');
 }
@@ -2003,9 +1163,7 @@ function doSurrender() {
   showToast('🏳️ Soal ini ditandai menyerah');
 }
 
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
+// ── SUBMIT ──
 function confirmSubmit() {
   const answered   = S.answers.filter(a => a !== null && a !== -1).length;
   const surrendered = S.answers.filter(a => a === -1).length;
@@ -2025,9 +1183,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// TIMER
-// ══════════════════════════════════════════
+// ── TIMER ──
 function startTimer() {
   if (S.timerID) clearInterval(S.timerID);
   renderTimer();
@@ -2045,9 +1201,7 @@ function renderTimer() {
   pill.className = S.timeLeft <= 120 ? 'timer-pill urgent' : 'timer-pill';
 }
 
-// ══════════════════════════════════════════
-// END QUIZ
-// ══════════════════════════════════════════
+// ── END QUIZ ──
 function endQuiz() {
   if (S.timerID) clearInterval(S.timerID);
 
@@ -2077,7 +1231,7 @@ function endQuiz() {
   document.getElementById('rWrong').textContent = wrong;
   document.getElementById('rSurr').textContent = surr;
 
-  const circ = 2 * Math.PI * 74; // 465
+  const circ = 2 * Math.PI * 74;
   setTimeout(() => {
     const arc = document.getElementById('arcCircle');
     arc.style.stroke = color;
@@ -2088,9 +1242,7 @@ function endQuiz() {
   showScreen('resultScreen');
 }
 
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
+// ── REVIEW ──
 function buildReview(filter) {
   const list = document.getElementById('reviewList');
   list.innerHTML = '';
@@ -2168,9 +1320,7 @@ function filterReview(type, btn) {
   buildReview(type);
 }
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ── TOAST ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -2180,15 +1330,11 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// RETRY / HOME
-// ══════════════════════════════════════════
+// ── RETRY / HOME ──
 function retryLevel() { startQuiz(S.level); }
 function goHome() { showScreen('startScreen'); }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
   buildWord('w1', 'Quiz', 0.3);
   buildWord('w2', 'Matriks', 0.75);
