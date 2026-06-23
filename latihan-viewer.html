@@ -473,6 +473,7 @@ async function init() {
   if (!modul || !judulTopik) { showScreen('errorScreen'); return; }
  
   const { data: rows, error } = await db.from('latihan').select('*').eq('modul', modul).eq('judul', judulTopik);
+  console.log('🔍 Latihan ditemukan untuk modul="' + modul + '" judul="' + judulTopik + '":', rows);
   if (error || !rows || !rows.length) { showScreen('errorScreen'); return; }
  
   document.title = judulTopik + ' — Math Unity';
